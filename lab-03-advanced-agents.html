@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 3: Advanced Agent Patterns</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%); color: white; min-height: 100vh; padding: 40px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.8em; margin: 30px 0 15px 0; color: #90EE90; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 25px 0 10px 0; color: #98FB98; }
+        p { margin-bottom: 15px; }
+        .lab-info { background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .info-item { text-align: center; }
+        .info-label { font-size: 0.9em; opacity: 0.8; }
+        .info-value { font-size: 1.3em; font-weight: bold; color: #90EE90; }
+        .objectives { background-color: rgba(144, 238, 144, 0.2); border-left: 4px solid #90EE90; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .objectives ul { margin-left: 20px; }
+        .objectives li { margin-bottom: 8px; }
+        .code-block { background-color: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background-color: #2d2d44; padding: 10px 15px; font-size: 0.9em; color: #90EE90; }
+        .code-content { padding: 20px; overflow-x: auto; }
+        .code-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9em; color: #00ff00; white-space: pre; line-height: 1.5; }
+        .exercise { background-color: rgba(255,255,255,0.1); border-radius: 8px; padding: 25px; margin: 25px 0; border: 2px solid rgba(144, 238, 144, 0.5); }
+        .exercise-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .exercise-number { background-color: #90EE90; color: #1a5f2a; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; }
+        .exercise-title { font-size: 1.3em; font-weight: bold; }
+        .solution { background-color: rgba(0,0,0,0.3); border-radius: 8px; margin: 15px 0; overflow: hidden; }
+        .solution-header { background-color: rgba(144, 238, 144, 0.3); padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; }
+        .solution-content { display: none; padding: 20px; }
+        .solution-content.show { display: block; }
+        .hint { background-color: rgba(54, 162, 235, 0.2); border-left: 4px solid #36A2EB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .checkpoint { background-color: rgba(144, 238, 144, 0.2); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2); }
+        .nav-btn { background-color: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 25px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; }
+        .nav-btn:hover { background-color: white; color: #1a5f2a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lab 3: Advanced Agent Patterns</h1>
+        <p style="font-size: 1.2em; opacity: 0.9;">Module 3 - Advanced Agent Development</p>
+
+        <div class="lab-info">
+            <div class="info-item"><div class="info-value">120 min</div><div class="info-label">Duration</div></div>
+            <div class="info-item"><div class="info-value">Advanced</div><div class="info-label">Difficulty</div></div>
+            <div class="info-item"><div class="info-value">LangChain</div><div class="info-label">Framework</div></div>
+            <div class="info-item"><div class="info-value">3</div><div class="info-label">Exercises</div></div>
+        </div>
+
+        <div class="objectives">
+            <h3 style="margin-top: 0;">Learning Objectives</h3>
+            <ul>
+                <li>Implement Chain-of-Thought reasoning</li>
+                <li>Build a Plan-and-Execute agent</li>
+                <li>Create a self-reflecting agent with critique</li>
+            </ul>
+        </div>
+
+        <h2>Setup</h2>
+        <div class="code-block">
+            <div class="code-header">Python: Setup</div>
+            <div class="code-content">
+                <code>from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain.schema import HumanMessage, SystemMessage
+import json
+
+llm = ChatOpenAI(model="gpt-4", temperature=0.3)</code>
+            </div>
+        </div>
+
+        <!-- Exercise 1: Chain of Thought -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">1</div>
+                <div class="exercise-title">Implement Chain-of-Thought Prompting</div>
+            </div>
+            <p>Create a CoT prompt template that encourages step-by-step reasoning.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>def create_cot_prompt(question: str) -> str:
+    """Create a Chain-of-Thought prompt."""
+    # TODO: Design a prompt that encourages step-by-step reasoning
+    prompt = f"""
+Question: {question}
+
+Let's solve this step by step:
+
+Step 1: [Identify what we need to find]
+Step 2: [Break down the problem]
+Step 3: [Work through each part]
+Step 4: [Combine results]
+
+Final Answer:
+"""
+    return prompt
+
+
+def solve_with_cot(question: str) -> dict:
+    """Solve a problem using Chain-of-Thought."""
+    prompt = create_cot_prompt(question)
+
+    # TODO: Call the LLM and parse the response
+    response = llm.invoke([HumanMessage(content=prompt)])
+
+    return {
+        "question": question,
+        "reasoning": response.content,
+    }
+
+
+# Test problems
+problems = [
+    "A store has 45 apples. They sell 12 in the morning and receive a shipment of 30. How many apples do they have now?",
+    "If a train travels at 60 mph for 2 hours, then 80 mph for 1.5 hours, what's the total distance?",
+    "A rectangle has a perimeter of 24 cm. If the length is twice the width, what are the dimensions?"
+]
+
+for problem in problems:
+    result = solve_with_cot(problem)
+    print(f"\n{'='*60}")
+    print(f"Problem: {problem}")
+    print(f"\nReasoning:\n{result['reasoning']}")</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Plan and Execute -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">2</div>
+                <div class="exercise-title">Build a Plan-and-Execute Agent</div>
+            </div>
+            <p>Create an agent that first creates a plan, then executes each step.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>class PlanAndExecuteAgent:
+    def __init__(self, llm):
+        self.llm = llm
+        self.plan = []
+        self.results = []
+
+    def create_plan(self, task: str) -> list:
+        """Create a step-by-step plan for the task."""
+        planning_prompt = f"""
+You are a planning assistant. Create a detailed step-by-step plan for this task.
+Return the plan as a numbered list.
+
+Task: {task}
+
+Plan:
+1."""
+
+        # TODO: Generate plan and parse into list
+        response = self.llm.invoke([HumanMessage(content=planning_prompt)])
+
+        # Parse numbered list into steps
+        lines = response.content.strip().split('\n')
+        self.plan = [line.strip() for line in lines if line.strip()]
+
+        return self.plan
+
+    def execute_step(self, step: str, context: str) -> str:
+        """Execute a single step of the plan."""
+        execution_prompt = f"""
+Previous context: {context}
+
+Current step to execute: {step}
+
+Execute this step and provide a detailed result:
+"""
+        # TODO: Execute the step
+        response = self.llm.invoke([HumanMessage(content=execution_prompt)])
+        return response.content
+
+    def run(self, task: str) -> dict:
+        """Run the full plan-and-execute cycle."""
+        # Phase 1: Planning
+        print("📋 Creating plan...")
+        plan = self.create_plan(task)
+        print(f"Plan created with {len(plan)} steps")
+
+        # Phase 2: Execution
+        context = ""
+        for i, step in enumerate(plan):
+            print(f"\n⚙️ Executing step {i+1}: {step[:50]}...")
+            result = self.execute_step(step, context)
+            self.results.append({"step": step, "result": result})
+            context += f"\nStep {i+1} result: {result}"
+
+        return {
+            "task": task,
+            "plan": plan,
+            "results": self.results
+        }
+
+
+# Test the agent
+agent = PlanAndExecuteAgent(llm)
+result = agent.run("Research and summarize the key differences between BERT and GPT models")</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: Self-Reflecting Agent -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">3</div>
+                <div class="exercise-title">Create a Self-Reflecting Agent</div>
+            </div>
+            <p>Build an agent that critiques and improves its own output.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>class ReflectiveAgent:
+    def __init__(self, llm, max_iterations=3):
+        self.llm = llm
+        self.max_iterations = max_iterations
+
+    def generate(self, task: str) -> str:
+        """Generate initial response."""
+        prompt = f"Complete this task:\n{task}"
+        response = self.llm.invoke([HumanMessage(content=prompt)])
+        return response.content
+
+    def critique(self, task: str, response: str) -> dict:
+        """Critique the response and suggest improvements."""
+        critique_prompt = f"""
+Task: {task}
+
+Response to critique:
+{response}
+
+Analyze this response and provide:
+1. Score (1-10)
+2. Strengths
+3. Weaknesses
+4. Specific improvements needed
+
+Format as JSON:
+{{"score": X, "strengths": [...], "weaknesses": [...], "improvements": [...]}}
+"""
+        # TODO: Generate critique
+        result = self.llm.invoke([HumanMessage(content=critique_prompt)])
+
+        try:
+            return json.loads(result.content)
+        except:
+            return {"score": 5, "improvements": ["Could not parse critique"]}
+
+    def improve(self, task: str, response: str, critique: dict) -> str:
+        """Improve response based on critique."""
+        improve_prompt = f"""
+Task: {task}
+
+Previous response:
+{response}
+
+Critique feedback:
+- Weaknesses: {critique.get('weaknesses', [])}
+- Improvements needed: {critique.get('improvements', [])}
+
+Write an improved response addressing the feedback:
+"""
+        result = self.llm.invoke([HumanMessage(content=improve_prompt)])
+        return result.content
+
+    def run(self, task: str) -> dict:
+        """Run the reflection loop."""
+        response = self.generate(task)
+        history = [{"iteration": 0, "response": response}]
+
+        for i in range(self.max_iterations):
+            critique = self.critique(task, response)
+            print(f"Iteration {i+1} - Score: {critique.get('score', 'N/A')}")
+
+            if critique.get('score', 0) >= 8:
+                print("✅ Quality threshold met!")
+                break
+
+            response = self.improve(task, response, critique)
+            history.append({
+                "iteration": i + 1,
+                "critique": critique,
+                "response": response
+            })
+
+        return {"final_response": response, "history": history}
+
+
+# Test
+agent = ReflectiveAgent(llm)
+result = agent.run("Write a concise explanation of how neural networks learn")</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">🎉</div>
+            <h3>Lab Complete!</h3>
+            <p>You've implemented advanced agent patterns including CoT, Plan-and-Execute, and Self-Reflection.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="lab-02-langchain-agents.html" class="nav-btn">← Previous Lab</a>
+            <a href="lab-04-rag-pipeline.html" class="nav-btn">Next Lab →</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(element) {
+            const content = element.nextElementSibling;
+            content.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

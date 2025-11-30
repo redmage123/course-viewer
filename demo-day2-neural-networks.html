@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 2 Demo: Neural Networks & PyTorch | Mastering LLMs Part 1</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a5a23 0%, #6b7d3a 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            font-size: 1em;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .tab.active {
+            background: rgba(255,255,255,0.3);
+            border-color: white;
+        }
+        .demo-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .demo-section h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 900px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .control-panel {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .control-panel h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        .value-display {
+            min-width: 50px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            color: #c5d45a;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .btn.primary {
+            background: #8a9a3a;
+            border-color: #8a9a3a;
+        }
+        .btn.primary:hover {
+            background: #9aaa4a;
+        }
+        .visualization {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 400px;
+        }
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+        .code-block {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c5d45a;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-left: 4px solid #c5d45a;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .network-viz {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .layer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 30px;
+        }
+        .layer-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .neuron {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid white;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+        .neuron.active {
+            background: #c5d45a;
+            color: #000;
+            border-color: #c5d45a;
+            box-shadow: 0 0 20px #c5d45a;
+        }
+        .connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .metric-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #c5d45a;
+            font-family: 'Courier New', monospace;
+        }
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            margin-top: 30px;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        select option {
+            background: #1a5f2a;
+        }
+        .activation-graph {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .activation-card {
+            flex: 1;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .activation-card h4 {
+            margin-bottom: 10px;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            color: #c5d45a;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Activation Functions
+        const activations = {
+            sigmoid: x => 1 / (1 + Math.exp(-x)),
+            tanh: x => Math.tanh(x),
+            relu: x => Math.max(0, x),
+            leakyRelu: x => x > 0 ? x : 0.01 * x
+        };
+
+        const activationDerivatives = {
+            sigmoid: x => {
+                const s = activations.sigmoid(x);
+                return s * (1 - s);
+            },
+            tanh: x => 1 - Math.pow(Math.tanh(x), 2),
+            relu: x => x > 0 ? 1 : 0,
+            leakyRelu: x => x > 0 ? 1 : 0.01
+        };
+
+        // Neural Network Visualizer Component
+        function NeuralNetworkViz() {
+            const [architecture, setArchitecture] = useState([2, 4, 3, 1]);
+            const [activationFunc, setActivationFunc] = useState('relu');
+            const [inputValues, setInputValues] = useState([0.5, -0.3]);
+            const [isForwardPass, setIsForwardPass] = useState(false);
+            const [currentLayer, setCurrentLayer] = useState(-1);
+            const [layerOutputs, setLayerOutputs] = useState([]);
+            const canvasRef = useRef(null);
+
+            // Initialize weights randomly
+            const [weights, setWeights] = useState(() => {
+                const w = [];
+                for (let i = 0; i < architecture.length - 1; i++) {
+                    const layerWeights = [];
+                    for (let j = 0; j < architecture[i]; j++) {
+                        const neuronWeights = [];
+                        for (let k = 0; k < architecture[i + 1]; k++) {
+                            neuronWeights.push((Math.random() - 0.5) * 2);
+                        }
+                        layerWeights.push(neuronWeights);
+                    }
+                    w.push(layerWeights);
+                }
+                return w;
+            });
+
+            const runForwardPass = () => {
+                setIsForwardPass(true);
+                setCurrentLayer(0);
+
+                const outputs = [inputValues];
+                let currentInput = inputValues;
+
+                for (let l = 0; l < weights.length; l++) {
+                    const layerOutput = [];
+                    for (let n = 0; n < architecture[l + 1]; n++) {
+                        let sum = 0;
+                        for (let i = 0; i < currentInput.length; i++) {
+                            sum += currentInput[i] * weights[l][i][n];
+                        }
+                        layerOutput.push(activations[activationFunc](sum));
+                    }
+                    outputs.push(layerOutput);
+                    currentInput = layerOutput;
+                }
+
+                setLayerOutputs(outputs);
+
+                // Animate through layers
+                let layer = 0;
+                const interval = setInterval(() => {
+                    layer++;
+                    if (layer >= architecture.length) {
+                        clearInterval(interval);
+                        setIsForwardPass(false);
+                        setCurrentLayer(-1);
+                    } else {
+                        setCurrentLayer(layer);
+                    }
+                }, 800);
+            };
+
+            const randomizeInputs = () => {
+                setInputValues([
+                    Math.round((Math.random() * 2 - 1) * 100) / 100,
+                    Math.round((Math.random() * 2 - 1) * 100) / 100
+                ]);
+            };
+
+            return (
+                <div className="demo-section">
+                    <h2>Neural Network Forward Pass</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>Network Controls</h3>
+
+                            <div className="control-group">
+                                <label>Activation Function</label>
+                                <select value={activationFunc} onChange={e => setActivationFunc(e.target.value)}>
+                                    <option value="relu">ReLU</option>
+                                    <option value="sigmoid">Sigmoid</option>
+                                    <option value="tanh">Tanh</option>
+                                    <option value="leakyRelu">Leaky ReLU</option>
+                                </select>
+                            </div>
+
+                            <div className="control-group">
+                                <label>Input 1: {inputValues[0].toFixed(2)}</label>
+                                <input
+                                    type="range"
+                                    min="-1"
+                                    max="1"
+                                    step="0.1"
+                                    value={inputValues[0]}
+                                    onChange={e => setInputValues([parseFloat(e.target.value), inputValues[1]])}
+                                />
+                            </div>
+
+                            <div className="control-group">
+                                <label>Input 2: {inputValues[1].toFixed(2)}</label>
+                                <input
+                                    type="range"
+                                    min="-1"
+                                    max="1"
+                                    step="0.1"
+                                    value={inputValues[1]}
+                                    onChange={e => setInputValues([inputValues[0], parseFloat(e.target.value)])}
+                                />
+                            </div>
+
+                            <button className="btn primary" onClick={runForwardPass} disabled={isForwardPass}>
+                                {isForwardPass ? 'Running...' : 'Run Forward Pass'}
+                            </button>
+                            <button className="btn" onClick={randomizeInputs}>
+                                Random Inputs
+                            </button>
+
+                            <div className="info-box">
+                                <strong>Architecture:</strong> {architecture.join(' → ')}
+                                <br/>
+                                <small>2 inputs → 4 hidden → 3 hidden → 1 output</small>
+                            </div>
+
+                            <div className="code-block">
+{`# PyTorch equivalent
+model = nn.Sequential(
+    nn.Linear(2, 4),
+    nn.${activationFunc === 'relu' ? 'ReLU' : activationFunc === 'sigmoid' ? 'Sigmoid' : activationFunc === 'tanh' ? 'Tanh' : 'LeakyReLU'}(),
+    nn.Linear(4, 3),
+    nn.${activationFunc === 'relu' ? 'ReLU' : activationFunc === 'sigmoid' ? 'Sigmoid' : activationFunc === 'tanh' ? 'Tanh' : 'LeakyReLU'}(),
+    nn.Linear(3, 1)
+)`}
+                            </div>
+                        </div>
+
+                        <div className="visualization">
+                            <div className="network-viz">
+                                {architecture.map((neurons, layerIdx) => (
+                                    <div className="layer" key={layerIdx}>
+                                        <div className="layer-label">
+                                            {layerIdx === 0 ? 'Input' :
+                                             layerIdx === architecture.length - 1 ? 'Output' :
+                                             `Hidden ${layerIdx}`}
+                                        </div>
+                                        {Array(neurons).fill(0).map((_, neuronIdx) => {
+                                            const isActive = currentLayer >= layerIdx;
+                                            const value = layerOutputs[layerIdx]?.[neuronIdx];
+                                            return (
+                                                <div
+                                                    key={neuronIdx}
+                                                    className={`neuron ${isActive ? 'active' : ''}`}
+                                                >
+                                                    {value !== undefined ? value.toFixed(2) : '?'}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {layerOutputs.length > 0 && (
+                                <div className="metrics-grid">
+                                    <div className="metric-card">
+                                        <div className="metric-value">{layerOutputs[layerOutputs.length - 1]?.[0]?.toFixed(4) || '?'}</div>
+                                        <div className="metric-label">Final Output</div>
+                                    </div>
+                                    <div className="metric-card">
+                                        <div className="metric-value">{architecture.reduce((a, b, i) => i > 0 ? a + architecture[i-1] * b : a, 0)}</div>
+                                        <div className="metric-label">Total Weights</div>
+                                    </div>
+                                    <div className="metric-card">
+                                        <div className="metric-value">{architecture.length - 1}</div>
+                                        <div className="metric-label">Layers</div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Activation Functions Demo
+        function ActivationFunctionsDemo() {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+            const [selectedFunc, setSelectedFunc] = useState('all');
+
+            useEffect(() => {
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
+
+                const ctx = chartRef.current.getContext('2d');
+                const xValues = [];
+                for (let x = -5; x <= 5; x += 0.1) {
+                    xValues.push(x);
+                }
+
+                const datasets = [];
+                const colors = {
+                    sigmoid: '#ff6384',
+                    tanh: '#36a2eb',
+                    relu: '#c5d45a',
+                    leakyRelu: '#ffce56'
+                };
+
+                const funcsToShow = selectedFunc === 'all'
+                    ? ['sigmoid', 'tanh', 'relu', 'leakyRelu']
+                    : [selectedFunc];
+
+                funcsToShow.forEach(func => {
+                    datasets.push({
+                        label: func.charAt(0).toUpperCase() + func.slice(1),
+                        data: xValues.map(x => ({ x, y: activations[func](x) })),
+                        borderColor: colors[func],
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        tension: 0.1
+                    });
+                });
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'line',
+                    data: { datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'center',
+                                title: { display: true, text: 'Input (x)', color: 'white' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: 'white' }
+                            },
+                            y: {
+                                type: 'linear',
+                                position: 'center',
+                                min: -2,
+                                max: 2,
+                                title: { display: true, text: 'Output', color: 'white' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: 'white' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { color: 'white', font: { size: 14 } }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, [selectedFunc]);
+
+            return (
+                <div className="demo-section">
+                    <h2>Activation Functions</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>Select Function</h3>
+
+                            <div className="control-group">
+                                <select value={selectedFunc} onChange={e => setSelectedFunc(e.target.value)}>
+                                    <option value="all">Show All</option>
+                                    <option value="sigmoid">Sigmoid</option>
+                                    <option value="tanh">Tanh</option>
+                                    <option value="relu">ReLU</option>
+                                    <option value="leakyRelu">Leaky ReLU</option>
+                                </select>
+                            </div>
+
+                            <div className="activation-graph">
+                                <div className="activation-card">
+                                    <h4>Sigmoid</h4>
+                                    <div className="formula">{`$\\sigma(x) = \\frac{1}{1+e^{-x}}$`}</div>
+                                    <small>Output: (0, 1)</small>
+                                </div>
+                                <div className="activation-card">
+                                    <h4>Tanh</h4>
+                                    <div className="formula">{`$\\tanh(x) = \\frac{e^x - e^{-x}}{e^x + e^{-x}}$`}</div>
+                                    <small>Output: (-1, 1)</small>
+                                </div>
+                            </div>
+
+                            <div className="activation-graph">
+                                <div className="activation-card">
+                                    <h4>ReLU</h4>
+                                    <div className="formula">$f(x) = \max(0, x)$</div>
+                                    <small>Output: [0, ∞)</small>
+                                </div>
+                                <div className="activation-card">
+                                    <h4>Leaky ReLU</h4>
+                                    <div className="formula">$f(x) = \max(0.01x, x)$</div>
+                                    <small>Prevents "dead neurons"</small>
+                                </div>
+                            </div>
+
+                            <div className="info-box" style={{marginTop: '20px'}}>
+                                <strong>Why activation functions?</strong><br/>
+                                Without them, neural networks can only learn linear functions.
+                                Activations add non-linearity, enabling complex pattern learning.
+                            </div>
+                        </div>
+
+                        <div className="visualization">
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Gradient Descent Demo
+        function GradientDescentDemo() {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+            const [learningRate, setLearningRate] = useState(0.1);
+            const [currentX, setCurrentX] = useState(4);
+            const [history, setHistory] = useState([{ x: 4, y: Math.pow(4, 2) }]);
+            const [isRunning, setIsRunning] = useState(false);
+            const [iterations, setIterations] = useState(0);
+
+            // Simple quadratic function: f(x) = x^2
+            const f = x => x * x;
+            const df = x => 2 * x; // derivative
+
+            useEffect(() => {
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
+
+                const ctx = chartRef.current.getContext('2d');
+                const xValues = [];
+                const yValues = [];
+                for (let x = -5; x <= 5; x += 0.1) {
+                    xValues.push(x);
+                    yValues.push(f(x));
+                }
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: xValues,
+                        datasets: [
+                            {
+                                label: 'f(x) = x²',
+                                data: yValues,
+                                borderColor: 'rgba(255,255,255,0.5)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Gradient Descent Path',
+                                data: history.map(h => ({ x: h.x, y: h.y })),
+                                borderColor: '#c5d45a',
+                                backgroundColor: '#c5d45a',
+                                borderWidth: 2,
+                                pointRadius: 8,
+                                pointBackgroundColor: history.map((_, i) =>
+                                    i === history.length - 1 ? '#ff0000' : '#c5d45a'
+                                ),
+                                showLine: true,
+                                tension: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                min: -5,
+                                max: 5,
+                                title: { display: true, text: 'x (weight)', color: 'white' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: 'white' }
+                            },
+                            y: {
+                                min: 0,
+                                max: 25,
+                                title: { display: true, text: 'Loss', color: 'white' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: 'white' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { color: 'white' }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, [history]);
+
+            const step = () => {
+                const gradient = df(currentX);
+                const newX = currentX - learningRate * gradient;
+                setCurrentX(newX);
+                setHistory([...history, { x: newX, y: f(newX) }]);
+                setIterations(iterations + 1);
+            };
+
+            const runOptimization = () => {
+                setIsRunning(true);
+                let x = currentX;
+                let newHistory = [...history];
+                let count = iterations;
+
+                const interval = setInterval(() => {
+                    const gradient = df(x);
+                    x = x - learningRate * gradient;
+                    newHistory = [...newHistory, { x, y: f(x) }];
+                    count++;
+
+                    setCurrentX(x);
+                    setHistory(newHistory);
+                    setIterations(count);
+
+                    if (Math.abs(gradient) < 0.01 || count > 50) {
+                        clearInterval(interval);
+                        setIsRunning(false);
+                    }
+                }, 300);
+            };
+
+            const reset = () => {
+                const startX = (Math.random() > 0.5 ? 1 : -1) * (3 + Math.random() * 2);
+                setCurrentX(startX);
+                setHistory([{ x: startX, y: f(startX) }]);
+                setIterations(0);
+            };
+
+            return (
+                <div className="demo-section">
+                    <h2>Gradient Descent Optimization</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>Optimization Controls</h3>
+
+                            <div className="control-group">
+                                <label>Learning Rate: {learningRate.toFixed(2)}</label>
+                                <div className="slider-container">
+                                    <input
+                                        type="range"
+                                        min="0.01"
+                                        max="0.5"
+                                        step="0.01"
+                                        value={learningRate}
+                                        onChange={e => setLearningRate(parseFloat(e.target.value))}
+                                    />
+                                </div>
+                            </div>
+
+                            <button className="btn primary" onClick={step} disabled={isRunning}>
+                                Single Step
+                            </button>
+                            <button className="btn primary" onClick={runOptimization} disabled={isRunning}>
+                                {isRunning ? 'Running...' : 'Run to Convergence'}
+                            </button>
+                            <button className="btn" onClick={reset}>
+                                Reset
+                            </button>
+
+                            <div className="metrics-grid">
+                                <div className="metric-card">
+                                    <div className="metric-value">{currentX.toFixed(4)}</div>
+                                    <div className="metric-label">Current x</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{f(currentX).toFixed(4)}</div>
+                                    <div className="metric-label">Loss f(x)</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{iterations}</div>
+                                    <div className="metric-label">Iterations</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{df(currentX).toFixed(4)}</div>
+                                    <div className="metric-label">Gradient</div>
+                                </div>
+                            </div>
+
+                            <div className="code-block">
+{`# Gradient Descent Update Rule
+x_new = x - learning_rate * gradient
+
+# For f(x) = x²
+# gradient = df/dx = 2x
+# x_new = x - ${learningRate} * 2x
+# x_new = ${currentX.toFixed(3)} - ${(learningRate * df(currentX)).toFixed(3)}
+# x_new = ${(currentX - learningRate * df(currentX)).toFixed(3)}`}
+                            </div>
+                        </div>
+
+                        <div className="visualization">
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // PyTorch Basics Demo
+        function PyTorchDemo() {
+            const [code, setCode] = useState('tensor');
+            const [output, setOutput] = useState('');
+
+            const codeExamples = {
+                tensor: {
+                    code: `import torch
+
+# Create tensors
+x = torch.tensor([[1, 2], [3, 4]], dtype=torch.float32)
+print("Tensor x:")
+print(x)
+print(f"Shape: {x.shape}")
+print(f"Device: {x.device}")
+
+# Operations
+y = x * 2
+print("\\nx * 2 =")
+print(y)
+
+# Matrix multiplication
+z = x @ x.T
+print("\\nx @ x.T =")
+print(z)`,
+                    output: `Tensor x:
+tensor([[1., 2.],
+        [3., 4.]])
+Shape: torch.Size([2, 2])
+Device: cpu
+
+x * 2 =
+tensor([[2., 4.],
+        [6., 8.]])
+
+x @ x.T =
+tensor([[ 5., 11.],
+        [11., 25.]])`
+                },
+                autograd: {
+                    code: `import torch
+
+# Tensor with gradient tracking
+x = torch.tensor([2.0], requires_grad=True)
+print(f"x = {x.item()}")
+
+# Forward pass
+y = x ** 2 + 3 * x + 1
+print(f"y = x² + 3x + 1 = {y.item()}")
+
+# Backward pass (compute gradients)
+y.backward()
+
+# dy/dx = 2x + 3
+print(f"dy/dx at x=2: {x.grad.item()}")
+print("Expected: 2*2 + 3 = 7")`,
+                    output: `x = 2.0
+y = x² + 3x + 1 = 11.0
+dy/dx at x=2: 7.0
+Expected: 2*2 + 3 = 7`
+                },
+                model: {
+                    code: `import torch
+import torch.nn as nn
+
+# Define a simple model
+class SimpleNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = nn.Linear(2, 4)
+        self.relu = nn.ReLU()
+        self.layer2 = nn.Linear(4, 1)
+
+    def forward(self, x):
+        x = self.layer1(x)
+        x = self.relu(x)
+        x = self.layer2(x)
+        return x
+
+model = SimpleNet()
+print(model)
+
+# Count parameters
+total = sum(p.numel() for p in model.parameters())
+print(f"\\nTotal parameters: {total}")`,
+                    output: `SimpleNet(
+  (layer1): Linear(in_features=2, out_features=4, bias=True)
+  (relu): ReLU()
+  (layer2): Linear(in_features=4, out_features=1, bias=True)
+)
+
+Total parameters: 17
+# layer1: 2*4 + 4 = 12
+# layer2: 4*1 + 1 = 5
+# Total: 12 + 5 = 17`
+                },
+                training: {
+                    code: `import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Sample data (XOR problem)
+X = torch.tensor([[0,0],[0,1],[1,0],[1,1]], dtype=torch.float32)
+y = torch.tensor([[0],[1],[1],[0]], dtype=torch.float32)
+
+# Model, Loss, Optimizer
+model = nn.Sequential(
+    nn.Linear(2, 4),
+    nn.ReLU(),
+    nn.Linear(4, 1),
+    nn.Sigmoid()
+)
+criterion = nn.BCELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.1)
+
+# Training loop
+for epoch in range(100):
+    # Forward
+    pred = model(X)
+    loss = criterion(pred, y)
+
+    # Backward
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    if epoch % 25 == 0:
+        print(f"Epoch {epoch}: Loss = {loss.item():.4f}")`,
+                    output: `Epoch 0: Loss = 0.7231
+Epoch 25: Loss = 0.4892
+Epoch 50: Loss = 0.1543
+Epoch 75: Loss = 0.0421
+
+Final predictions:
+[0, 0] -> 0.02 (expected 0)
+[0, 1] -> 0.97 (expected 1)
+[1, 0] -> 0.96 (expected 1)
+[1, 1] -> 0.04 (expected 0)`
+                }
+            };
+
+            useEffect(() => {
+                setOutput(codeExamples[code].output);
+            }, [code]);
+
+            return (
+                <div className="demo-section">
+                    <h2>PyTorch Fundamentals</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>Select Example</h3>
+
+                            <div className="control-group">
+                                <button
+                                    className={`btn ${code === 'tensor' ? 'primary' : ''}`}
+                                    onClick={() => setCode('tensor')}
+                                >
+                                    Tensors
+                                </button>
+                                <button
+                                    className={`btn ${code === 'autograd' ? 'primary' : ''}`}
+                                    onClick={() => setCode('autograd')}
+                                >
+                                    Autograd
+                                </button>
+                                <button
+                                    className={`btn ${code === 'model' ? 'primary' : ''}`}
+                                    onClick={() => setCode('model')}
+                                >
+                                    Model
+                                </button>
+                                <button
+                                    className={`btn ${code === 'training' ? 'primary' : ''}`}
+                                    onClick={() => setCode('training')}
+                                >
+                                    Training
+                                </button>
+                            </div>
+
+                            <div className="info-box">
+                                <strong>PyTorch Core Concepts:</strong>
+                                <ul style={{marginTop: '10px', marginLeft: '20px'}}>
+                                    <li><strong>Tensors</strong>: Multi-dimensional arrays (like NumPy)</li>
+                                    <li><strong>Autograd</strong>: Automatic differentiation</li>
+                                    <li><strong>nn.Module</strong>: Neural network building blocks</li>
+                                    <li><strong>Optimizers</strong>: Update weights (SGD, Adam)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="visualization" style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
+                            <div>
+                                <h4 style={{marginBottom: '10px'}}>Code:</h4>
+                                <div className="code-block" style={{maxHeight: '250px', overflow: 'auto'}}>
+                                    {codeExamples[code].code}
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style={{marginBottom: '10px'}}>Output:</h4>
+                                <div className="code-block" style={{background: '#0a0a0a'}}>
+                                    {output}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App
+        function App() {
+            const [activeTab, setActiveTab] = useState('network');
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>Day 2: Neural Networks & PyTorch</h1>
+                        <div className="subtitle">Interactive Deep Learning Fundamentals</div>
+                        <div className="badge">PART 1 OF 3 | MASTERING LLMs</div>
+                    </div>
+
+                    <div className="tabs">
+                        <button
+                            className={`tab ${activeTab === 'network' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('network')}
+                        >
+                            Neural Network
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'activations' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('activations')}
+                        >
+                            Activation Functions
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'gradient' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('gradient')}
+                        >
+                            Gradient Descent
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'pytorch' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('pytorch')}
+                        >
+                            PyTorch Basics
+                        </button>
+                    </div>
+
+                    {activeTab === 'network' && <NeuralNetworkViz />}
+                    {activeTab === 'activations' && <ActivationFunctionsDemo />}
+                    {activeTab === 'gradient' && <GradientDescentDemo />}
+                    {activeTab === 'pytorch' && <PyTorchDemo />}
+
+                    <div className="nav-buttons">
+                        <a href="demo-day1-python-ml.html" className="nav-btn">&larr; Day 1 Demo</a>
+                        <a href="mastering-llms-part1-slides.html" className="nav-btn">Back to Slides</a>
+                        <a href="demo-day3-nlp-llms.html" className="nav-btn">Day 3 Demo &rarr;</a>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

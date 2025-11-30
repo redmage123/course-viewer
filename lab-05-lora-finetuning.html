@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5: LoRA Fine-tuning</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%); color: white; min-height: 100vh; padding: 40px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.8em; margin: 30px 0 15px 0; color: #90EE90; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 25px 0 10px 0; color: #98FB98; }
+        p { margin-bottom: 15px; }
+        .lab-info { background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .info-item { text-align: center; }
+        .info-label { font-size: 0.9em; opacity: 0.8; }
+        .info-value { font-size: 1.3em; font-weight: bold; color: #90EE90; }
+        .objectives { background-color: rgba(144, 238, 144, 0.2); border-left: 4px solid #90EE90; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .objectives ul { margin-left: 20px; }
+        .objectives li { margin-bottom: 8px; }
+        .code-block { background-color: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background-color: #2d2d44; padding: 10px 15px; font-size: 0.9em; color: #90EE90; }
+        .code-content { padding: 20px; overflow-x: auto; }
+        .code-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9em; color: #00ff00; white-space: pre; line-height: 1.5; }
+        .exercise { background-color: rgba(255,255,255,0.1); border-radius: 8px; padding: 25px; margin: 25px 0; border: 2px solid rgba(144, 238, 144, 0.5); }
+        .exercise-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .exercise-number { background-color: #90EE90; color: #1a5f2a; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; }
+        .exercise-title { font-size: 1.3em; font-weight: bold; }
+        .solution { background-color: rgba(0,0,0,0.3); border-radius: 8px; margin: 15px 0; overflow: hidden; }
+        .solution-header { background-color: rgba(144, 238, 144, 0.3); padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; }
+        .solution-content { display: none; padding: 20px; }
+        .solution-content.show { display: block; }
+        .hint { background-color: rgba(54, 162, 235, 0.2); border-left: 4px solid #36A2EB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .warning { background-color: rgba(255, 99, 71, 0.2); border-left: 4px solid #FF6347; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .checkpoint { background-color: rgba(144, 238, 144, 0.2); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2); }
+        .nav-btn { background-color: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 25px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; }
+        .nav-btn:hover { background-color: white; color: #1a5f2a; }
+        .concept-box { background-color: rgba(147, 112, 219, 0.2); border-left: 4px solid #9370DB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lab 5: LoRA Fine-tuning</h1>
+        <p style="font-size: 1.2em; opacity: 0.9;">Module 5 - Model Fine-tuning with Low-Rank Adaptation</p>
+
+        <div class="lab-info">
+            <div class="info-item"><div class="info-value">150 min</div><div class="info-label">Duration</div></div>
+            <div class="info-item"><div class="info-value">Advanced</div><div class="info-label">Difficulty</div></div>
+            <div class="info-item"><div class="info-value">PEFT + HF</div><div class="info-label">Framework</div></div>
+            <div class="info-item"><div class="info-value">4</div><div class="info-label">Exercises</div></div>
+        </div>
+
+        <div class="objectives">
+            <h3 style="margin-top: 0;">Learning Objectives</h3>
+            <ul>
+                <li>Understand LoRA mathematics and implementation</li>
+                <li>Prepare datasets for instruction fine-tuning</li>
+                <li>Configure and apply LoRA adapters</li>
+                <li>Train, evaluate, and merge LoRA weights</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>Hardware Requirements:</strong> This lab requires a GPU with at least 8GB VRAM
+            for practical fine-tuning. You can use Google Colab (free tier) or a cloud GPU instance.
+        </div>
+
+        <h2>Setup</h2>
+        <div class="code-block">
+            <div class="code-header">Terminal: Install Dependencies</div>
+            <div class="code-content">
+                <code>pip install transformers datasets peft accelerate bitsandbytes trl</code>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">Python: Setup</div>
+            <div class="code-content">
+                <code>import torch
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    TrainingArguments,
+    BitsAndBytesConfig
+)
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from datasets import Dataset
+from trl import SFTTrainer
+
+# Check GPU availability
+print(f"CUDA available: {torch.cuda.is_available()}")
+if torch.cuda.is_available():
+    print(f"GPU: {torch.cuda.get_device_name(0)}")
+    print(f"Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")</code>
+            </div>
+        </div>
+
+        <!-- Concept Box: LoRA Mathematics -->
+        <div class="concept-box">
+            <h3 style="margin-top: 0;">Understanding LoRA</h3>
+            <p>LoRA (Low-Rank Adaptation) freezes pretrained weights and injects trainable rank decomposition matrices:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Original:</strong> W (d × k matrix)</li>
+                <li><strong>LoRA:</strong> W + BA where B (d × r) and A (r × k), r &lt;&lt; min(d, k)</li>
+                <li><strong>Benefit:</strong> Train r × (d + k) parameters instead of d × k</li>
+            </ul>
+            <p style="margin-top: 10px;">For a 7B model: ~0.1% of parameters are trained (millions instead of billions)</p>
+        </div>
+
+        <!-- Exercise 1: Dataset Preparation -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">1</div>
+                <div class="exercise-title">Dataset Preparation for Instruction Tuning</div>
+            </div>
+            <p>Prepare a dataset in the instruction-following format for fine-tuning.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>def create_instruction_dataset():
+    """Create a sample instruction-following dataset."""
+
+    # Sample training data (in production, use thousands of examples)
+    training_data = [
+        {
+            "instruction": "Explain what machine learning is in simple terms.",
+            "input": "",
+            "output": "Machine learning is a type of artificial intelligence where computers learn patterns from data instead of being explicitly programmed. It's like teaching by example - show the computer many pictures of cats, and it learns to recognize cats on its own."
+        },
+        {
+            "instruction": "Summarize the following text.",
+            "input": "The transformer architecture revolutionized NLP by introducing self-attention mechanisms that allow models to process all positions in parallel while capturing long-range dependencies. This led to breakthroughs in translation, summarization, and text generation.",
+            "output": "Transformers changed NLP with self-attention, enabling parallel processing and better handling of long-range text dependencies, improving translation and generation tasks."
+        },
+        {
+            "instruction": "Convert this Python function to be more Pythonic.",
+            "input": "def get_even(numbers):\n    result = []\n    for n in numbers:\n        if n % 2 == 0:\n            result.append(n)\n    return result",
+            "output": "def get_even(numbers):\n    return [n for n in numbers if n % 2 == 0]"
+        },
+        {
+            "instruction": "What are the benefits of using LoRA for fine-tuning?",
+            "input": "",
+            "output": "LoRA offers several benefits: 1) Memory efficiency - trains only ~0.1% of parameters, 2) Speed - faster training with fewer parameters, 3) Modularity - swap adapters for different tasks, 4) Preservation - base model weights remain unchanged, reducing catastrophic forgetting."
+        },
+        # Add more examples...
+    ]
+
+    return Dataset.from_list(training_data)
+
+
+def format_instruction(example: dict, tokenizer) -> str:
+    """Format a single example into the instruction template."""
+    # Alpaca-style template
+    if example["input"]:
+        prompt = f"""### Instruction:
+{example["instruction"]}
+
+### Input:
+{example["input"]}
+
+### Response:
+{example["output"]}{tokenizer.eos_token}"""
+    else:
+        prompt = f"""### Instruction:
+{example["instruction"]}
+
+### Response:
+{example["output"]}{tokenizer.eos_token}"""
+
+    return prompt
+
+
+def prepare_dataset(dataset: Dataset, tokenizer, max_length: int = 512):
+    """Prepare dataset with proper formatting."""
+
+    def format_and_tokenize(examples):
+        texts = []
+        for i in range(len(examples["instruction"])):
+            example = {
+                "instruction": examples["instruction"][i],
+                "input": examples["input"][i],
+                "output": examples["output"][i]
+            }
+            texts.append(format_instruction(example, tokenizer))
+        return {"text": texts}
+
+    formatted_dataset = dataset.map(
+        format_and_tokenize,
+        batched=True,
+        remove_columns=dataset.column_names
+    )
+
+    return formatted_dataset
+
+
+# Create and inspect dataset
+dataset = create_instruction_dataset()
+print(f"Dataset size: {len(dataset)}")
+print(f"\nSample entry:")
+print(f"Instruction: {dataset[0]['instruction']}")
+print(f"Output: {dataset[0]['output'][:100]}...")</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <strong>Hint:</strong> Quality matters more than quantity for fine-tuning.
+                100-500 high-quality examples can be effective for domain-specific tasks.
+            </div>
+        </div>
+
+        <!-- Exercise 2: LoRA Configuration -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">2</div>
+                <div class="exercise-title">Configure LoRA Adapters</div>
+            </div>
+            <p>Set up LoRA configuration and apply it to a base model.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code># Quantization config for memory efficiency (optional, for limited GPU)
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True
+)
+
+# Load base model (using a small model for demonstration)
+MODEL_NAME = "microsoft/phi-2"  # 2.7B params, good for learning
+
+# Load tokenizer
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = "right"
+
+# Load model with quantization
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME,
+    quantization_config=bnb_config,
+    device_map="auto",
+    trust_remote_code=True
+)
+
+# Prepare for k-bit training
+model = prepare_model_for_kbit_training(model)
+
+
+def create_lora_config(
+    r: int = 8,
+    lora_alpha: int = 16,
+    target_modules: list = None,
+    lora_dropout: float = 0.05
+) -> LoraConfig:
+    """Create LoRA configuration."""
+
+    # Default target modules for most models
+    if target_modules is None:
+        target_modules = ["q_proj", "k_proj", "v_proj", "o_proj"]
+
+    config = LoraConfig(
+        r=r,                          # Rank of decomposition
+        lora_alpha=lora_alpha,        # Scaling factor
+        target_modules=target_modules, # Layers to adapt
+        lora_dropout=lora_dropout,    # Dropout for regularization
+        bias="none",                  # Don't train biases
+        task_type="CAUSAL_LM"
+    )
+
+    return config
+
+
+def analyze_lora_params(model, lora_config):
+    """Analyze trainable parameters with LoRA."""
+
+    # Apply LoRA
+    peft_model = get_peft_model(model, lora_config)
+
+    # Count parameters
+    trainable_params = sum(p.numel() for p in peft_model.parameters() if p.requires_grad)
+    total_params = sum(p.numel() for p in peft_model.parameters())
+
+    print(f"LoRA Configuration:")
+    print(f"  Rank (r): {lora_config.r}")
+    print(f"  Alpha: {lora_config.lora_alpha}")
+    print(f"  Target modules: {lora_config.target_modules}")
+    print(f"\nParameter Analysis:")
+    print(f"  Total parameters: {total_params:,}")
+    print(f"  Trainable parameters: {trainable_params:,}")
+    print(f"  Trainable %: {100 * trainable_params / total_params:.4f}%")
+
+    return peft_model
+
+
+# Test different LoRA configurations
+configs_to_test = [
+    {"r": 4, "lora_alpha": 8},
+    {"r": 8, "lora_alpha": 16},
+    {"r": 16, "lora_alpha": 32},
+    {"r": 32, "lora_alpha": 64},
+]
+
+print("Comparing LoRA configurations:\n")
+for config_params in configs_to_test:
+    lora_config = create_lora_config(**config_params)
+    print(f"\n--- r={config_params['r']}, alpha={config_params['lora_alpha']} ---")
+
+    # Note: In practice, reload model for each config
+    # Here we just show the math
+    d, k = 2560, 2560  # Example dimensions for phi-2
+    r = config_params['r']
+    original_params = d * k
+    lora_params = r * (d + k)
+    print(f"  Original layer params: {original_params:,}")
+    print(f"  LoRA adapter params: {lora_params:,}")
+    print(f"  Reduction: {original_params / lora_params:.1f}x")</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <strong>Hint:</strong> Higher rank (r) = more capacity but more parameters.
+                Start with r=8 or r=16 for most tasks. The alpha/r ratio affects learning rate scaling.
+            </div>
+        </div>
+
+        <!-- Exercise 3: Training Loop -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">3</div>
+                <div class="exercise-title">Fine-tuning with SFTTrainer</div>
+            </div>
+            <p>Train the model using Supervised Fine-Tuning (SFT) with LoRA.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>def setup_training(
+    model,
+    tokenizer,
+    dataset,
+    output_dir: str = "./lora_output",
+    num_epochs: int = 3,
+    batch_size: int = 4,
+    learning_rate: float = 2e-4
+):
+    """Set up and run LoRA fine-tuning."""
+
+    # Create LoRA config and apply
+    lora_config = create_lora_config(r=8, lora_alpha=16)
+    peft_model = get_peft_model(model, lora_config)
+
+    # Training arguments
+    training_args = TrainingArguments(
+        output_dir=output_dir,
+        num_train_epochs=num_epochs,
+        per_device_train_batch_size=batch_size,
+        gradient_accumulation_steps=4,
+        learning_rate=learning_rate,
+        weight_decay=0.01,
+        warmup_ratio=0.03,
+        lr_scheduler_type="cosine",
+        logging_steps=10,
+        save_strategy="epoch",
+        fp16=True,
+        optim="paged_adamw_8bit",
+        report_to="none",  # Disable wandb for this lab
+    )
+
+    # Prepare formatted dataset
+    formatted_dataset = prepare_dataset(dataset, tokenizer)
+
+    # Initialize trainer
+    trainer = SFTTrainer(
+        model=peft_model,
+        train_dataset=formatted_dataset,
+        args=training_args,
+        tokenizer=tokenizer,
+        dataset_text_field="text",
+        max_seq_length=512,
+    )
+
+    return trainer, peft_model
+
+
+def train_and_evaluate(trainer, model, tokenizer, test_prompts: list):
+    """Train the model and evaluate on test prompts."""
+
+    print("Starting training...")
+    print("=" * 50)
+
+    # Train
+    trainer.train()
+
+    print("\n" + "=" * 50)
+    print("Training complete! Evaluating...")
+
+    # Set to eval mode
+    model.eval()
+
+    # Test generation
+    for prompt in test_prompts:
+        formatted_prompt = f"### Instruction:\n{prompt}\n\n### Response:\n"
+
+        inputs = tokenizer(formatted_prompt, return_tensors="pt").to(model.device)
+
+        with torch.no_grad():
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=150,
+                temperature=0.7,
+                do_sample=True,
+                top_p=0.9,
+                pad_token_id=tokenizer.eos_token_id
+            )
+
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        print(f"\nPrompt: {prompt}")
+        print(f"Response: {response.split('### Response:')[-1].strip()}")
+
+
+# Set up training (don't run unless you have GPU)
+# trainer, peft_model = setup_training(model, tokenizer, dataset)
+
+# Test prompts
+test_prompts = [
+    "Explain the concept of transfer learning.",
+    "What is the difference between supervised and unsupervised learning?",
+    "Write a Python function to calculate factorial."
+]
+
+# To actually train (requires GPU):
+# train_and_evaluate(trainer, peft_model, tokenizer, test_prompts)</code>
+                </div>
+            </div>
+
+            <div class="warning">
+                <strong>Note:</strong> Actual training requires GPU. On Colab free tier,
+                expect ~15-30 minutes for a small dataset with the phi-2 model.
+            </div>
+        </div>
+
+        <!-- Exercise 4: Saving and Loading -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">4</div>
+                <div class="exercise-title">Save, Load, and Merge LoRA Weights</div>
+            </div>
+            <p>Learn to save LoRA adapters separately and merge them into the base model.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>from peft import PeftModel
+
+
+def save_lora_adapter(model, output_path: str):
+    """Save only the LoRA adapter weights."""
+    model.save_pretrained(output_path)
+    print(f"LoRA adapter saved to: {output_path}")
+
+    # Show what was saved
+    import os
+    files = os.listdir(output_path)
+    print(f"Saved files: {files}")
+
+    # Show size comparison
+    adapter_size = sum(
+        os.path.getsize(os.path.join(output_path, f))
+        for f in files if os.path.isfile(os.path.join(output_path, f))
+    )
+    print(f"Adapter size: {adapter_size / 1e6:.2f} MB")
+
+
+def load_lora_adapter(base_model_name: str, adapter_path: str):
+    """Load a LoRA adapter onto a base model."""
+
+    # Load base model
+    base_model = AutoModelForCausalLM.from_pretrained(
+        base_model_name,
+        device_map="auto",
+        trust_remote_code=True
+    )
+
+    # Load adapter
+    model_with_adapter = PeftModel.from_pretrained(
+        base_model,
+        adapter_path
+    )
+
+    print(f"Loaded adapter from: {adapter_path}")
+    return model_with_adapter
+
+
+def merge_and_save(model, tokenizer, output_path: str):
+    """Merge LoRA weights into base model and save."""
+
+    # Merge adapter into base model
+    merged_model = model.merge_and_unload()
+
+    # Save merged model
+    merged_model.save_pretrained(output_path)
+    tokenizer.save_pretrained(output_path)
+
+    print(f"Merged model saved to: {output_path}")
+
+    # Compare sizes
+    import os
+    merged_size = sum(
+        os.path.getsize(os.path.join(output_path, f))
+        for f in os.listdir(output_path)
+        if os.path.isfile(os.path.join(output_path, f))
+    )
+    print(f"Merged model size: {merged_size / 1e9:.2f} GB")
+
+
+def compare_adapters(base_model, adapters: dict, tokenizer, prompt: str):
+    """Compare responses from different LoRA adapters."""
+
+    print(f"Prompt: {prompt}\n")
+    print("=" * 60)
+
+    for name, adapter_path in adapters.items():
+        # Load adapter
+        model = PeftModel.from_pretrained(base_model, adapter_path)
+        model.eval()
+
+        # Generate
+        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+
+        with torch.no_grad():
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=100,
+                temperature=0.7,
+                do_sample=True
+            )
+
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        print(f"\n[{name}]:")
+        print(response[len(prompt):].strip())
+
+
+# Example usage (after training):
+# save_lora_adapter(peft_model, "./my_lora_adapter")
+# loaded_model = load_lora_adapter("microsoft/phi-2", "./my_lora_adapter")
+# merge_and_save(loaded_model, tokenizer, "./merged_model")
+
+# Compare multiple adapters:
+# adapters = {
+#     "coding": "./adapters/coding_adapter",
+#     "writing": "./adapters/writing_adapter",
+#     "analysis": "./adapters/analysis_adapter"
+# }
+# compare_adapters(base_model, adapters, tokenizer, "Explain recursion")</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>Advanced: Dynamic Adapter Switching</span>
+                    <span>+</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block" style="margin: 0;">
+                        <div class="code-content">
+                            <code>class MultiAdapterModel:
+    """Model that can dynamically switch between LoRA adapters."""
+
+    def __init__(self, base_model_name: str, adapters: dict):
+        self.base_model = AutoModelForCausalLM.from_pretrained(
+            base_model_name,
+            device_map="auto"
+        )
+        self.tokenizer = AutoTokenizer.from_pretrained(base_model_name)
+        self.adapters = adapters
+        self.current_adapter = None
+        self.model = None
+
+    def load_adapter(self, adapter_name: str):
+        """Switch to a different adapter."""
+        if adapter_name == self.current_adapter:
+            return
+
+        if adapter_name not in self.adapters:
+            raise ValueError(f"Unknown adapter: {adapter_name}")
+
+        # Reload base model with new adapter
+        self.model = PeftModel.from_pretrained(
+            self.base_model,
+            self.adapters[adapter_name]
+        )
+        self.current_adapter = adapter_name
+        print(f"Switched to adapter: {adapter_name}")
+
+    def generate(self, prompt: str, adapter_name: str = None, **kwargs):
+        """Generate with optional adapter switching."""
+        if adapter_name:
+            self.load_adapter(adapter_name)
+
+        inputs = self.tokenizer(prompt, return_tensors="pt")
+        outputs = self.model.generate(**inputs, **kwargs)
+        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+
+# Usage:
+# multi_model = MultiAdapterModel("microsoft/phi-2", {
+#     "code": "./adapters/code",
+#     "chat": "./adapters/chat"
+# })
+# response = multi_model.generate("Write a sort function", adapter_name="code")</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Evaluation Metrics</h2>
+        <div class="code-block">
+            <div class="code-header">Python: Evaluation</div>
+            <div class="code-content">
+                <code>from nltk.translate.bleu_score import sentence_bleu
+from rouge_score import rouge_scorer
+
+
+def evaluate_generation(predictions: list, references: list):
+    """Evaluate generated text quality."""
+
+    scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
+
+    metrics = {
+        'bleu': [],
+        'rouge1': [],
+        'rouge2': [],
+        'rougeL': []
+    }
+
+    for pred, ref in zip(predictions, references):
+        # BLEU score
+        bleu = sentence_bleu([ref.split()], pred.split())
+        metrics['bleu'].append(bleu)
+
+        # ROUGE scores
+        rouge = scorer.score(ref, pred)
+        metrics['rouge1'].append(rouge['rouge1'].fmeasure)
+        metrics['rouge2'].append(rouge['rouge2'].fmeasure)
+        metrics['rougeL'].append(rouge['rougeL'].fmeasure)
+
+    # Average metrics
+    return {k: sum(v) / len(v) for k, v in metrics.items()}
+
+
+# Example evaluation
+# predictions = ["The model generates text based on patterns."]
+# references = ["The model produces text by learning patterns from data."]
+# scores = evaluate_generation(predictions, references)
+# print(f"BLEU: {scores['bleu']:.3f}, ROUGE-L: {scores['rougeL']:.3f}")</code>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">🎉</div>
+            <h3>Lab Complete!</h3>
+            <p>You've learned to prepare datasets, configure LoRA adapters, fine-tune models, and manage trained adapters.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="lab-04-rag-pipeline.html" class="nav-btn">← Previous Lab</a>
+            <a href="lab-06-quantization.html" class="nav-btn">Next Lab →</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(element) {
+            const content = element.nextElementSibling;
+            content.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

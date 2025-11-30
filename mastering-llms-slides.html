@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering LLMs - Training Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a5f2a;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 60px;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide-content {
+            flex: 1;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 3px solid rgba(255,255,255,0.5);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            color: #90EE90;
+        }
+
+        h3 {
+            font-size: 1.6em;
+            margin: 20px 0 15px 0;
+            color: #98FB98;
+        }
+
+        p {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            font-size: 1.25em;
+            line-height: 1.8;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .code-table {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px 0;
+            border-collapse: collapse;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .code-table td {
+            padding: 20px;
+        }
+
+        .code-table code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            color: #00ff00;
+            white-space: pre;
+            display: block;
+            line-height: 1.5;
+        }
+
+        .code-label {
+            background-color: #2d2d44;
+            color: #90EE90;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.9em;
+            padding: 8px 20px !important;
+            border-bottom: 1px solid #444;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .highlight-box {
+            background-color: rgba(255,255,255,0.1);
+            border-left: 4px solid #90EE90;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-btn {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .nav-btn:hover {
+            background-color: white;
+            color: #1a5f2a;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5em;
+            border-bottom: none;
+            margin-bottom: 20px;
+        }
+
+        .title-slide .subtitle {
+            font-size: 1.8em;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .title-slide .course-info {
+            font-size: 1.2em;
+            opacity: 0.7;
+        }
+
+        .agenda-item {
+            background-color: rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .agenda-number {
+            background-color: #90EE90;
+            color: #1a5f2a;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .key-concept {
+            background: linear-gradient(90deg, rgba(144,238,144,0.3) 0%, transparent 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title -->
+    <div class="slide title-slide active">
+        <div class="slide-content">
+            <h1>Mastering LLMs</h1>
+            <p class="subtitle">A Comprehensive 3-Day Training Course</p>
+            <p class="course-info">70% Hands-On Labs | Enterprise-Ready Skills</p>
+            <p class="course-info" style="margin-top: 40px;">JBI Training</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()" disabled>← Previous</button>
+            <span class="slide-counter">Slide 1 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 2: Course Overview -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Course Overview</h1>
+            <div class="highlight-box">
+                <p>This intensive workshop bridges theory and implementation for enterprise LLM deployment.</p>
+            </div>
+            <div class="two-column">
+                <div>
+                    <h3>Format</h3>
+                    <ul>
+                        <li>3-day intensive workshop</li>
+                        <li>70% hands-on exercises</li>
+                        <li>Theory + Lab pattern per module</li>
+                        <li>Onsite or online delivery</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Prerequisites</h3>
+                    <ul>
+                        <li>Strong Python proficiency</li>
+                        <li>Data processing experience</li>
+                        <li>ML fundamentals</li>
+                        <li>SQL knowledge</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 2 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 3: Agenda -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Course Agenda</h1>
+            <div class="agenda-item"><span class="agenda-number">1</span>Foundations of Modern LLMs</div>
+            <div class="agenda-item"><span class="agenda-number">2</span>AI Agents and Framework Implementation</div>
+            <div class="agenda-item"><span class="agenda-number">3</span>Advanced Agent Development</div>
+            <div class="agenda-item"><span class="agenda-number">4</span>Retrieval-Augmented Generation (RAG)</div>
+            <div class="agenda-item"><span class="agenda-number">5</span>Model Fine-tuning and Adaptation</div>
+            <div class="agenda-item"><span class="agenda-number">6</span>Advanced Optimisation Techniques</div>
+            <div class="agenda-item"><span class="agenda-number">7</span>Ethical Implementation and Compliance</div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 3 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 4: Module 1 Title -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h2>Module 1</h2>
+            <h1>Foundations of Modern LLMs</h1>
+            <p class="subtitle">Understanding Transformer Architecture</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 4 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 5: Transformer Architecture -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Transformer Neural Network Architecture</h1>
+            <p>The Transformer architecture revolutionized NLP by introducing self-attention mechanisms that process all input tokens in parallel.</p>
+            <div class="two-column">
+                <div>
+                    <h3>Key Components</h3>
+                    <ul>
+                        <li>Input Embeddings</li>
+                        <li>Positional Encoding</li>
+                        <li>Multi-Head Attention</li>
+                        <li>Feed-Forward Networks</li>
+                        <li>Layer Normalization</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Advantages</h3>
+                    <ul>
+                        <li>Parallel processing</li>
+                        <li>Long-range dependencies</li>
+                        <li>Scalability</li>
+                        <li>Transfer learning capability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 5 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 6: Self-Attention Mechanism -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Self-Attention Mechanisms</h1>
+            <p>Self-attention allows the model to weigh the importance of different parts of the input when processing each token.</p>
+            <div class="highlight-box">
+                <p><strong>Attention Formula:</strong> Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>)V</p>
+            </div>
+            <h3>Key Concepts</h3>
+            <ul>
+                <li><strong>Query (Q):</strong> What am I looking for?</li>
+                <li><strong>Key (K):</strong> What do I contain?</li>
+                <li><strong>Value (V):</strong> What information do I provide?</li>
+            </ul>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Basic Attention Calculation</td></tr>
+                <tr><td><code>import torch
+import torch.nn.functional as F
+
+def scaled_dot_product_attention(Q, K, V):
+    d_k = Q.size(-1)
+    scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(d_k)
+    attention_weights = F.softmax(scores, dim=-1)
+    return torch.matmul(attention_weights, V)</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 6 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 7: Lab 1 - Attention Implementation -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Lab: Basic Attention Implementation</h1>
+            <h3>Objectives</h3>
+            <ul>
+                <li>Implement attention mechanism from scratch</li>
+                <li>Visualize attention patterns</li>
+                <li>Analyze attention head impacts</li>
+            </ul>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Multi-Head Attention</td></tr>
+                <tr><td><code>class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, num_heads):
+        super().__init__()
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads
+
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+        self.W_o = nn.Linear(d_model, d_model)
+
+    def forward(self, Q, K, V, mask=None):
+        batch_size = Q.size(0)
+        Q = self.W_q(Q).view(batch_size, -1, self.num_heads, self.d_k)
+        K = self.W_k(K).view(batch_size, -1, self.num_heads, self.d_k)
+        V = self.W_v(V).view(batch_size, -1, self.num_heads, self.d_k)
+        # ... attention computation</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 7 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 8: Module 2 Title -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h2>Module 2</h2>
+            <h1>AI Agents and Framework Implementation</h1>
+            <p class="subtitle">Building with LangChain</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 8 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 9: AI Agent Architecture -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>AI Agent Components and Architecture</h1>
+            <p>An AI agent is an autonomous system that can perceive, reason, and act to accomplish goals.</p>
+            <div class="two-column">
+                <div>
+                    <h3>Core Components</h3>
+                    <ul>
+                        <li><strong>Brain:</strong> LLM for reasoning</li>
+                        <li><strong>Memory:</strong> Context retention</li>
+                        <li><strong>Tools:</strong> External capabilities</li>
+                        <li><strong>Planning:</strong> Task decomposition</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Agent Loop</h3>
+                    <ul>
+                        <li>Observe environment</li>
+                        <li>Reason about action</li>
+                        <li>Execute tool/action</li>
+                        <li>Evaluate result</li>
+                        <li>Iterate or complete</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 9 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 10: LangChain Framework -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>LangChain Framework Architecture</h1>
+            <p>LangChain provides a modular framework for building LLM-powered applications.</p>
+            <div class="highlight-box">
+                <p>Key abstractions: Models, Prompts, Chains, Agents, Memory, Callbacks</p>
+            </div>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Basic LangChain Setup</td></tr>
+                <tr><td><code>from langchain_openai import ChatOpenAI
+from langchain.agents import AgentExecutor, create_openai_tools_agent
+from langchain_core.prompts import ChatPromptTemplate
+
+# Initialize LLM
+llm = ChatOpenAI(model="gpt-4", temperature=0)
+
+# Create prompt template
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant."),
+    ("human", "{input}"),
+    ("placeholder", "{agent_scratchpad}")
+])</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 10 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 11: Building Basic Agent -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Lab: Building a Basic LangChain Agent</h1>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Creating an Agent with Tools</td></tr>
+                <tr><td><code>from langchain.tools import Tool
+from langchain.agents import initialize_agent, AgentType
+
+# Define custom tools
+tools = [
+    Tool(
+        name="Calculator",
+        func=lambda x: eval(x),
+        description="Useful for math calculations"
+    ),
+    Tool(
+        name="Search",
+        func=search_function,
+        description="Search the web for information"
+    )
+]
+
+# Initialize agent
+agent = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent=AgentType.OPENAI_FUNCTIONS,
+    verbose=True
+)
+
+# Run agent
+result = agent.invoke({"input": "What is 25 * 4 + 10?"})</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 11 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 12: Module 3 Title -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h2>Module 3</h2>
+            <h1>Advanced Agent Development</h1>
+            <p class="subtitle">Complex Behaviors and Prompt Engineering</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 12 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 13: Complex Agent Patterns -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Complex Agent Behavior Patterns</h1>
+            <div class="two-column">
+                <div>
+                    <h3>ReAct Pattern</h3>
+                    <ul>
+                        <li>Reasoning + Acting</li>
+                        <li>Thought → Action → Observation</li>
+                        <li>Iterative refinement</li>
+                    </ul>
+                    <h3>Plan-and-Execute</h3>
+                    <ul>
+                        <li>High-level planning first</li>
+                        <li>Step-by-step execution</li>
+                        <li>Re-planning as needed</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Multi-Agent Systems</h3>
+                    <ul>
+                        <li>Specialized agents</li>
+                        <li>Agent collaboration</li>
+                        <li>Hierarchical control</li>
+                    </ul>
+                    <h3>Reflection Pattern</h3>
+                    <ul>
+                        <li>Self-critique</li>
+                        <li>Output refinement</li>
+                        <li>Quality improvement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 13 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 14: Prompt Engineering -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Prompt Engineering Best Practices</h1>
+            <div class="highlight-box">
+                <p>Effective prompts are clear, specific, and provide appropriate context for the task.</p>
+            </div>
+            <h3>Key Techniques</h3>
+            <ul>
+                <li><strong>Few-shot learning:</strong> Provide examples in the prompt</li>
+                <li><strong>Chain-of-Thought:</strong> Encourage step-by-step reasoning</li>
+                <li><strong>Role prompting:</strong> Define agent persona and expertise</li>
+                <li><strong>Output formatting:</strong> Specify desired structure</li>
+            </ul>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Chain-of-Thought Prompt</td></tr>
+                <tr><td><code>cot_prompt = """
+Solve this problem step by step:
+
+Question: {question}
+
+Let's think through this carefully:
+1. First, identify the key information
+2. Then, determine the approach
+3. Execute the solution
+4. Verify the answer
+
+Solution:
+"""</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 14 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 15: Data Analysis Agent -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Lab: Creating a Data Analysis Agent</h1>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Data Analysis Agent</td></tr>
+                <tr><td><code>from langchain_experimental.agents import create_pandas_dataframe_agent
+import pandas as pd
+
+# Load data
+df = pd.read_csv("sales_data.csv")
+
+# Create specialized agent
+agent = create_pandas_dataframe_agent(
+    llm=ChatOpenAI(model="gpt-4", temperature=0),
+    df=df,
+    verbose=True,
+    agent_type=AgentType.OPENAI_FUNCTIONS,
+    allow_dangerous_code=True
+)
+
+# Query the data
+result = agent.invoke({
+    "input": "What are the top 5 products by revenue? "
+             "Show a breakdown by quarter."
+})</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 15 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 16: Module 4 Title -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h2>Module 4</h2>
+            <h1>Retrieval-Augmented Generation (RAG)</h1>
+            <p class="subtitle">Enhancing LLMs with External Knowledge</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 16 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 17: RAG Overview -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>What is RAG?</h1>
+            <p>RAG combines the power of retrieval systems with generative models to produce more accurate, up-to-date, and verifiable responses.</p>
+            <div class="highlight-box">
+                <p><strong>RAG Pipeline:</strong> Query → Retrieve → Augment → Generate</p>
+            </div>
+            <div class="two-column">
+                <div>
+                    <h3>Benefits</h3>
+                    <ul>
+                        <li>Reduces hallucinations</li>
+                        <li>Access to current information</li>
+                        <li>Domain-specific knowledge</li>
+                        <li>Traceable sources</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Components</h3>
+                    <ul>
+                        <li>Document loader</li>
+                        <li>Text splitter</li>
+                        <li>Embedding model</li>
+                        <li>Vector store</li>
+                        <li>Retriever</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 17 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 18: Vector Databases -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Vector Database Concepts</h1>
+            <p>Vector databases store and efficiently search high-dimensional embeddings.</p>
+            <div class="two-column">
+                <div>
+                    <h3>Popular Options</h3>
+                    <ul>
+                        <li><strong>Pinecone:</strong> Managed, scalable</li>
+                        <li><strong>Chroma:</strong> Open-source, simple</li>
+                        <li><strong>Weaviate:</strong> GraphQL interface</li>
+                        <li><strong>Milvus:</strong> High performance</li>
+                        <li><strong>FAISS:</strong> Facebook's library</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Selection Criteria</h3>
+                    <ul>
+                        <li>Scale requirements</li>
+                        <li>Query latency needs</li>
+                        <li>Hosting preference</li>
+                        <li>Metadata filtering</li>
+                        <li>Cost considerations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 18 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 19: RAG Implementation -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Lab: Building a RAG Pipeline</h1>
+            <table class="code-table">
+                <tr><td class="code-label">Python: RAG with LangChain and Chroma</td></tr>
+                <tr><td><code>from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+
+# Load documents
+loader = PyPDFLoader("company_docs.pdf")
+documents = loader.load()
+
+# Split into chunks
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200
+)
+chunks = splitter.split_documents(documents)
+
+# Create embeddings and vector store
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma.from_documents(chunks, embeddings)
+
+# Create retriever
+retriever = vectorstore.as_retriever(search_kwargs={"k": 5})</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 19 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 20: RAG Chain -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Building the RAG Chain</h1>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Complete RAG Chain</td></tr>
+                <tr><td><code>from langchain.chains import RetrievalQA
+from langchain_core.prompts import PromptTemplate
+
+# Custom prompt for RAG
+rag_prompt = PromptTemplate.from_template("""
+Use the following context to answer the question.
+If you don't know the answer, say so.
+
+Context: {context}
+
+Question: {question}
+
+Answer:
+""")
+
+# Create RAG chain
+rag_chain = RetrievalQA.from_chain_type(
+    llm=ChatOpenAI(model="gpt-4"),
+    chain_type="stuff",
+    retriever=retriever,
+    chain_type_kwargs={"prompt": rag_prompt},
+    return_source_documents=True
+)
+
+# Query
+response = rag_chain.invoke({"query": "What is our refund policy?"})</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 20 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 21: Module 5 Title -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h2>Module 5</h2>
+            <h1>Model Fine-tuning and Adaptation</h1>
+            <p class="subtitle">Customizing LLMs for Your Domain</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 21 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 22: Fine-tuning Approaches -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Fine-tuning Approaches</h1>
+            <div class="two-column">
+                <div>
+                    <h3>Full Fine-tuning</h3>
+                    <ul>
+                        <li>Updates all parameters</li>
+                        <li>Highest customization</li>
+                        <li>Most resource intensive</li>
+                        <li>Risk of catastrophic forgetting</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Parameter-Efficient (PEFT)</h3>
+                    <ul>
+                        <li>LoRA / QLoRA</li>
+                        <li>Adapters</li>
+                        <li>Prefix tuning</li>
+                        <li>Prompt tuning</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <p><strong>LoRA:</strong> Low-Rank Adaptation - trains small adapter matrices instead of full weights, reducing memory by 10-100x</p>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 22 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 23: Dataset Preparation -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Dataset Preparation for Fine-tuning</h1>
+            <h3>Data Quality Checklist</h3>
+            <ul>
+                <li>Clean, consistent formatting</li>
+                <li>Diverse examples covering use cases</li>
+                <li>Balanced label distribution</li>
+                <li>Proper train/validation split</li>
+            </ul>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Preparing Training Data</td></tr>
+                <tr><td><code>from datasets import Dataset
+
+# Format for instruction tuning
+def format_instruction(example):
+    return {
+        "text": f"""### Instruction:
+{example['instruction']}
+
+### Input:
+{example['input']}
+
+### Response:
+{example['output']}"""
+    }
+
+# Load and format dataset
+dataset = Dataset.from_json("training_data.json")
+formatted_dataset = dataset.map(format_instruction)</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 23 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 24: LoRA Fine-tuning -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Lab: LoRA Fine-tuning Implementation</h1>
+            <table class="code-table">
+                <tr><td class="code-label">Python: LoRA Configuration with PEFT</td></tr>
+                <tr><td><code>from peft import LoraConfig, get_peft_model, TaskType
+from transformers import AutoModelForCausalLM, TrainingArguments
+
+# Load base model
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+
+# Configure LoRA
+lora_config = LoraConfig(
+    task_type=TaskType.CAUSAL_LM,
+    r=16,                    # Rank
+    lora_alpha=32,           # Scaling factor
+    lora_dropout=0.1,
+    target_modules=["q_proj", "v_proj", "k_proj", "o_proj"]
+)
+
+# Apply LoRA
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+# Output: trainable params: 4,194,304 || all params: 6,742,609,920</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 24 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 25: Evaluation Metrics -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Model Evaluation Metrics</h1>
+            <div class="two-column">
+                <div>
+                    <h3>Automatic Metrics</h3>
+                    <ul>
+                        <li><strong>Perplexity:</strong> Language modeling quality</li>
+                        <li><strong>BLEU:</strong> Translation/generation quality</li>
+                        <li><strong>ROUGE:</strong> Summarization quality</li>
+                        <li><strong>F1 Score:</strong> Classification tasks</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Human Evaluation</h3>
+                    <ul>
+                        <li>Relevance scoring</li>
+                        <li>Coherence assessment</li>
+                        <li>Factual accuracy</li>
+                        <li>A/B testing</li>
+                    </ul>
+                </div>
+            </div>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Computing Evaluation Metrics</td></tr>
+                <tr><td><code>from evaluate import load
+
+# Load metrics
+perplexity = load("perplexity")
+bleu = load("bleu")
+
+# Compute perplexity
+results = perplexity.compute(predictions=generated_texts,
+                              model_id="gpt2")</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 25 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 26: Module 6 Title -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h2>Module 6</h2>
+            <h1>Advanced Optimisation Techniques</h1>
+            <p class="subtitle">Quantisation and Deployment</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 26 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 27: Quantisation Overview -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Quantisation and Optimization</h1>
+            <p>Quantisation reduces model size and inference cost by using lower-precision numbers.</p>
+            <div class="two-column">
+                <div>
+                    <h3>Precision Levels</h3>
+                    <ul>
+                        <li><strong>FP32:</strong> Full precision (4 bytes)</li>
+                        <li><strong>FP16:</strong> Half precision (2 bytes)</li>
+                        <li><strong>INT8:</strong> 8-bit integer (1 byte)</li>
+                        <li><strong>INT4:</strong> 4-bit integer (0.5 bytes)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Benefits</h3>
+                    <ul>
+                        <li>2-4x memory reduction</li>
+                        <li>Faster inference</li>
+                        <li>Lower hardware requirements</li>
+                        <li>Reduced costs</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <p><strong>QLoRA:</strong> Combines 4-bit quantisation with LoRA for efficient fine-tuning on consumer hardware</p>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 27 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 28: QLoRA Implementation -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Lab: QLoRA Optimization</h1>
+            <table class="code-table">
+                <tr><td class="code-label">Python: QLoRA Setup with BitsAndBytes</td></tr>
+                <tr><td><code>from transformers import BitsAndBytesConfig
+import torch
+
+# 4-bit quantisation config
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.bfloat16,
+    bnb_4bit_use_double_quant=True
+)
+
+# Load quantised model
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-7b-hf",
+    quantization_config=bnb_config,
+    device_map="auto"
+)
+
+# Apply LoRA on top of quantised model
+model = get_peft_model(model, lora_config)
+# Now fine-tunable on a single GPU!</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 28 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 29: Performance Benchmarking -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Performance Benchmarking</h1>
+            <h3>Key Metrics to Track</h3>
+            <ul>
+                <li><strong>Latency:</strong> Time to first token, total generation time</li>
+                <li><strong>Throughput:</strong> Tokens per second</li>
+                <li><strong>Memory:</strong> Peak GPU memory usage</li>
+                <li><strong>Quality:</strong> Task-specific accuracy metrics</li>
+            </ul>
+            <table class="code-table">
+                <tr><td class="code-label">Python: Benchmarking Inference</td></tr>
+                <tr><td><code>import time
+import torch
+
+def benchmark_inference(model, tokenizer, prompt, n_runs=10):
+    times = []
+    for _ in range(n_runs):
+        inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+        torch.cuda.synchronize()
+        start = time.perf_counter()
+        outputs = model.generate(**inputs, max_new_tokens=100)
+        torch.cuda.synchronize()
+        times.append(time.perf_counter() - start)
+    return {"mean": sum(times)/len(times), "tokens/s": 100/mean}</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 29 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 30: Deployment Considerations -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Deployment Considerations</h1>
+            <div class="two-column">
+                <div>
+                    <h3>Infrastructure Options</h3>
+                    <ul>
+                        <li>Cloud APIs (OpenAI, Anthropic)</li>
+                        <li>Self-hosted (vLLM, TGI)</li>
+                        <li>Edge deployment</li>
+                        <li>Hybrid approaches</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Optimization Strategies</h3>
+                    <ul>
+                        <li>Batching requests</li>
+                        <li>Caching responses</li>
+                        <li>Model sharding</li>
+                        <li>Speculative decoding</li>
+                    </ul>
+                </div>
+            </div>
+            <table class="code-table">
+                <tr><td class="code-label">Python: vLLM Server Deployment</td></tr>
+                <tr><td><code># Start vLLM server
+# python -m vllm.entrypoints.openai.api_server \
+#     --model meta-llama/Llama-2-7b-chat-hf \
+#     --tensor-parallel-size 2
+
+from openai import OpenAI
+client = OpenAI(base_url="http://localhost:8000/v1", api_key="dummy")</code></td></tr>
+            </table>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 30 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 31: Module 7 Title -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h2>Module 7</h2>
+            <h1>Ethical Implementation and Compliance</h1>
+            <p class="subtitle">Responsible AI Deployment</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 31 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 32: Regulatory Requirements -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>UK and US Regulatory Requirements</h1>
+            <div class="two-column">
+                <div>
+                    <h3>UK Framework</h3>
+                    <ul>
+                        <li>UK AI Safety Institute</li>
+                        <li>ICO AI guidance</li>
+                        <li>UK GDPR compliance</li>
+                        <li>Algorithmic transparency</li>
+                        <li>Sector-specific rules (FCA, etc.)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>US Framework</h3>
+                    <ul>
+                        <li>Executive Order on AI Safety</li>
+                        <li>NIST AI Risk Management</li>
+                        <li>State laws (CA, CO, etc.)</li>
+                        <li>Sector regulations</li>
+                        <li>FTC guidelines</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <p><strong>EU AI Act:</strong> Also relevant for UK businesses operating in Europe - classifies AI systems by risk level</p>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 32 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 33: Ethical Considerations -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Ethical Considerations in AI Implementation</h1>
+            <div class="two-column">
+                <div>
+                    <h3>Key Principles</h3>
+                    <ul>
+                        <li><strong>Fairness:</strong> Avoid bias and discrimination</li>
+                        <li><strong>Transparency:</strong> Explainable decisions</li>
+                        <li><strong>Privacy:</strong> Data protection</li>
+                        <li><strong>Accountability:</strong> Clear responsibility</li>
+                        <li><strong>Safety:</strong> Prevent harm</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Implementation Steps</h3>
+                    <ul>
+                        <li>Bias auditing</li>
+                        <li>Impact assessments</li>
+                        <li>Human oversight</li>
+                        <li>Feedback mechanisms</li>
+                        <li>Documentation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 33 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 34: Best Practices Checklist -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>Enterprise LLM Best Practices</h1>
+            <div class="two-column">
+                <div>
+                    <h3>Technical</h3>
+                    <ul>
+                        <li>Version control for models</li>
+                        <li>Comprehensive logging</li>
+                        <li>A/B testing framework</li>
+                        <li>Fallback mechanisms</li>
+                        <li>Rate limiting</li>
+                        <li>Cost monitoring</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Organizational</h3>
+                    <ul>
+                        <li>Clear governance structure</li>
+                        <li>Training for stakeholders</li>
+                        <li>Incident response plan</li>
+                        <li>Regular audits</li>
+                        <li>User feedback loops</li>
+                        <li>Continuous improvement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 34 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Slide 35: Summary & Q&A -->
+    <div class="slide title-slide">
+        <div class="slide-content">
+            <h1>Course Complete!</h1>
+            <p class="subtitle">Summary & Questions</p>
+            <div style="text-align: left; max-width: 600px; margin: 40px auto;">
+                <h3 style="text-align: center;">Key Takeaways</h3>
+                <ul style="font-size: 1.1em;">
+                    <li>Transformer architecture powers modern LLMs</li>
+                    <li>Agents extend LLM capabilities with tools</li>
+                    <li>RAG reduces hallucinations with retrieval</li>
+                    <li>LoRA/QLoRA enable efficient fine-tuning</li>
+                    <li>Quantisation reduces deployment costs</li>
+                    <li>Ethical considerations are essential</li>
+                </ul>
+            </div>
+            <p class="course-info" style="margin-top: 40px;">Thank you for attending!</p>
+        </div>
+        <div class="navigation">
+            <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+            <span class="slide-counter">Slide 35 of 35</span>
+            <button class="nav-btn" onclick="nextSlide()" disabled>Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateNavigation();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        function updateNavigation() {
+            const navs = document.querySelectorAll('.navigation');
+            navs.forEach(nav => {
+                const prevBtn = nav.querySelector('button:first-child');
+                const nextBtn = nav.querySelector('button:last-child');
+                const counter = nav.querySelector('.slide-counter');
+
+                prevBtn.disabled = currentSlide === 0;
+                nextBtn.disabled = currentSlide === totalSlides - 1;
+                counter.textContent = `Slide ${currentSlide + 1} of ${totalSlides}`;
+            });
+        }
+
+        // Keyboard navigation (including presentation clicker support)
+        document.addEventListener('keydown', (e) => {
+            // Forward: Arrow Right, Space, Page Down, Enter
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+                e.preventDefault();
+                nextSlide();
+            // Back: Arrow Left, Page Up, Backspace
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>

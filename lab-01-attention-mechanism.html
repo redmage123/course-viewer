@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 1: Transformer Attention Implementation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin: 30px 0 15px 0;
+            color: #90EE90;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.4em;
+            margin: 25px 0 10px 0;
+            color: #98FB98;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .lab-info {
+            background-color: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .info-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #90EE90;
+        }
+
+        .objectives {
+            background-color: rgba(144, 238, 144, 0.2);
+            border-left: 4px solid #90EE90;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .objectives ul {
+            margin-left: 20px;
+        }
+
+        .objectives li {
+            margin-bottom: 8px;
+        }
+
+        .prerequisites {
+            background-color: rgba(255, 206, 86, 0.2);
+            border-left: 4px solid #FFD700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-block {
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background-color: #2d2d44;
+            padding: 10px 15px;
+            font-size: 0.9em;
+            color: #90EE90;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .code-content {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .code-content code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            color: #00ff00;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .exercise {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid rgba(144, 238, 144, 0.5);
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .exercise-number {
+            background-color: #90EE90;
+            color: #1a5f2a;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .exercise-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .task-list {
+            background-color: rgba(0,0,0,0.2);
+            padding: 15px 15px 15px 35px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .task-list li {
+            margin-bottom: 10px;
+        }
+
+        .hint {
+            background-color: rgba(54, 162, 235, 0.2);
+            border-left: 4px solid #36A2EB;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95em;
+        }
+
+        .hint-title {
+            font-weight: bold;
+            color: #36A2EB;
+            margin-bottom: 5px;
+        }
+
+        .solution {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .solution-header {
+            background-color: rgba(144, 238, 144, 0.3);
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .solution-header:hover {
+            background-color: rgba(144, 238, 144, 0.4);
+        }
+
+        .solution-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .solution-content.show {
+            display: block;
+        }
+
+        .expected-output {
+            background-color: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        .checkpoint {
+            background-color: rgba(144, 238, 144, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .checkpoint-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-btn {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: white;
+            color: #1a5f2a;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .code-content code {
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lab 1: Transformer Attention Implementation</h1>
+        <p style="font-size: 1.2em; opacity: 0.9;">Module 1 - Foundations of Modern LLMs</p>
+
+        <div class="lab-info">
+            <div class="info-item">
+                <div class="info-value">90 min</div>
+                <div class="info-label">Duration</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value">Intermediate</div>
+                <div class="info-label">Difficulty</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value">PyTorch</div>
+                <div class="info-label">Framework</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value">4</div>
+                <div class="info-label">Exercises</div>
+            </div>
+        </div>
+
+        <div class="objectives">
+            <h3 style="margin-top: 0;">Learning Objectives</h3>
+            <ul>
+                <li>Implement scaled dot-product attention from scratch</li>
+                <li>Build multi-head attention mechanism</li>
+                <li>Visualize attention patterns</li>
+                <li>Understand the role of Q, K, V matrices</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <h3 style="margin-top: 0;">Prerequisites</h3>
+            <ul>
+                <li>Python proficiency</li>
+                <li>PyTorch basics (tensors, nn.Module)</li>
+                <li>Linear algebra fundamentals</li>
+            </ul>
+        </div>
+
+        <h2>Setup</h2>
+        <p>First, install the required packages and import the necessary libraries.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span>Terminal</span>
+            </div>
+            <div class="code-content">
+                <code>pip install torch numpy matplotlib</code>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span>Python: Imports</span>
+                <span>lab1_attention.py</span>
+            </div>
+            <div class="code-content">
+                <code>import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+
+# Set random seed for reproducibility
+torch.manual_seed(42)</code>
+            </div>
+        </div>
+
+        <h2>Background</h2>
+        <p>The attention mechanism allows the model to focus on different parts of the input sequence when producing each part of the output. The key formula is:</p>
+
+        <div style="background-color: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; text-align: center; font-size: 1.2em; margin: 20px 0;">
+            Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>)V
+        </div>
+
+        <p>Where:</p>
+        <ul style="margin-left: 20px; margin-bottom: 20px;">
+            <li><strong>Q (Query):</strong> What am I looking for?</li>
+            <li><strong>K (Key):</strong> What do I contain?</li>
+            <li><strong>V (Value):</strong> What information do I provide?</li>
+            <li><strong>d<sub>k</sub>:</strong> Dimension of keys (for scaling)</li>
+        </ul>
+
+        <!-- Exercise 1 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">1</div>
+                <div class="exercise-title">Implement Scaled Dot-Product Attention</div>
+            </div>
+            <p>Implement the core attention function that computes attention weights and outputs.</p>
+
+            <div class="task-list">
+                <ol>
+                    <li>Compute attention scores: QK<sup>T</sup></li>
+                    <li>Scale by √d<sub>k</sub> to prevent gradient vanishing</li>
+                    <li>Apply softmax to get attention weights</li>
+                    <li>Multiply by V to get output</li>
+                </ol>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Python: Starter Code</span>
+                </div>
+                <div class="code-content">
+                    <code>def scaled_dot_product_attention(query, key, value, mask=None):
+    """
+    Compute scaled dot-product attention.
+
+    Args:
+        query: Tensor of shape (batch, heads, seq_len, d_k)
+        key: Tensor of shape (batch, heads, seq_len, d_k)
+        value: Tensor of shape (batch, heads, seq_len, d_v)
+        mask: Optional mask tensor
+
+    Returns:
+        output: Attention output
+        attention_weights: Attention weight matrix
+    """
+    d_k = query.size(-1)
+
+    # TODO: Compute attention scores
+    # scores = ???
+
+    # TODO: Scale the scores
+    # scores = ???
+
+    # TODO: Apply mask if provided
+    # if mask is not None:
+    #     scores = ???
+
+    # TODO: Apply softmax
+    # attention_weights = ???
+
+    # TODO: Compute output
+    # output = ???
+
+    return output, attention_weights
+
+
+# Test your implementation
+batch_size = 2
+seq_len = 4
+d_k = 8
+
+Q = torch.randn(batch_size, 1, seq_len, d_k)
+K = torch.randn(batch_size, 1, seq_len, d_k)
+V = torch.randn(batch_size, 1, seq_len, d_k)
+
+output, weights = scaled_dot_product_attention(Q, K, V)
+print(f"Output shape: {output.shape}")
+print(f"Weights shape: {weights.shape}")
+print(f"Weights sum per row: {weights.sum(dim=-1)}")</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <div class="hint-title">💡 Hint</div>
+                <p>Use <code>torch.matmul()</code> for matrix multiplication and <code>key.transpose(-2, -1)</code> to transpose the last two dimensions.</p>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>📝 Show Solution</span>
+                    <span>▼</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block">
+                        <div class="code-content">
+                            <code>def scaled_dot_product_attention(query, key, value, mask=None):
+    d_k = query.size(-1)
+
+    # Compute attention scores
+    scores = torch.matmul(query, key.transpose(-2, -1))
+
+    # Scale the scores
+    scores = scores / math.sqrt(d_k)
+
+    # Apply mask if provided
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float('-inf'))
+
+    # Apply softmax
+    attention_weights = F.softmax(scores, dim=-1)
+
+    # Compute output
+    output = torch.matmul(attention_weights, value)
+
+    return output, attention_weights</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expected-output">
+                <strong>Expected Output:</strong><br>
+                Output shape: torch.Size([2, 1, 4, 8])<br>
+                Weights shape: torch.Size([2, 1, 4, 4])<br>
+                Weights sum per row: tensor([[[1., 1., 1., 1.]], [[1., 1., 1., 1.]]])
+            </div>
+        </div>
+
+        <!-- Exercise 2 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">2</div>
+                <div class="exercise-title">Build Multi-Head Attention</div>
+            </div>
+            <p>Implement a multi-head attention layer that runs several attention operations in parallel.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Python: Starter Code</span>
+                </div>
+                <div class="code-content">
+                    <code>class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, num_heads):
+        super().__init__()
+        assert d_model % num_heads == 0, "d_model must be divisible by num_heads"
+
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads
+
+        # TODO: Create linear layers for Q, K, V projections
+        # self.W_q = ???
+        # self.W_k = ???
+        # self.W_v = ???
+        # self.W_o = ???
+
+    def forward(self, query, key, value, mask=None):
+        batch_size = query.size(0)
+
+        # TODO: Apply linear projections
+        # Q = ???
+        # K = ???
+        # V = ???
+
+        # TODO: Reshape for multi-head: (batch, seq, d_model) -> (batch, heads, seq, d_k)
+        # Q = ???
+        # K = ???
+        # V = ???
+
+        # TODO: Apply attention
+        # output, attention_weights = ???
+
+        # TODO: Concatenate heads and apply output projection
+        # output = ???
+
+        return output, attention_weights
+
+
+# Test your implementation
+d_model = 64
+num_heads = 8
+seq_len = 10
+batch_size = 2
+
+mha = MultiHeadAttention(d_model, num_heads)
+x = torch.randn(batch_size, seq_len, d_model)
+
+output, weights = mha(x, x, x)  # Self-attention
+print(f"Output shape: {output.shape}")
+print(f"Attention weights shape: {weights.shape}")</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <div class="hint-title">💡 Hint</div>
+                <p>Use <code>.view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)</code> to reshape for multi-head attention.</p>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>📝 Show Solution</span>
+                    <span>▼</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block">
+                        <div class="code-content">
+                            <code>class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, num_heads):
+        super().__init__()
+        assert d_model % num_heads == 0
+
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads
+
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+        self.W_o = nn.Linear(d_model, d_model)
+
+    def forward(self, query, key, value, mask=None):
+        batch_size = query.size(0)
+
+        # Apply linear projections
+        Q = self.W_q(query)
+        K = self.W_k(key)
+        V = self.W_v(value)
+
+        # Reshape for multi-head
+        Q = Q.view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
+        K = K.view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
+        V = V.view(batch_size, -1, self.num_heads, self.d_k).transpose(1, 2)
+
+        # Apply attention
+        output, attention_weights = scaled_dot_product_attention(Q, K, V, mask)
+
+        # Concatenate heads
+        output = output.transpose(1, 2).contiguous().view(batch_size, -1, self.d_model)
+        output = self.W_o(output)
+
+        return output, attention_weights</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 3 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">3</div>
+                <div class="exercise-title">Visualize Attention Patterns</div>
+            </div>
+            <p>Create a visualization function to display attention weights as a heatmap.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Python: Starter Code</span>
+                </div>
+                <div class="code-content">
+                    <code>def visualize_attention(attention_weights, tokens=None, head_idx=0):
+    """
+    Visualize attention weights as a heatmap.
+
+    Args:
+        attention_weights: Tensor of shape (batch, heads, seq, seq)
+        tokens: List of token strings (optional)
+        head_idx: Which attention head to visualize
+    """
+    # TODO: Extract single head attention weights
+    # weights = ???  # Shape: (seq, seq)
+
+    # TODO: Create heatmap using matplotlib
+    # plt.figure(figsize=(8, 8))
+    # plt.imshow(???, cmap='viridis')
+    # plt.colorbar()
+
+    # TODO: Add labels if tokens provided
+    # if tokens:
+    #     ???
+
+    # plt.title(f'Attention Head {head_idx}')
+    # plt.xlabel('Key Position')
+    # plt.ylabel('Query Position')
+    # plt.show()
+
+    pass
+
+
+# Test with sample data
+tokens = ["The", "cat", "sat", "on", "the", "mat"]
+d_model = 64
+num_heads = 4
+
+mha = MultiHeadAttention(d_model, num_heads)
+x = torch.randn(1, len(tokens), d_model)
+_, attention = mha(x, x, x)
+
+# Visualize different heads
+for head in range(num_heads):
+    visualize_attention(attention, tokens, head_idx=head)</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>📝 Show Solution</span>
+                    <span>▼</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block">
+                        <div class="code-content">
+                            <code>def visualize_attention(attention_weights, tokens=None, head_idx=0):
+    weights = attention_weights[0, head_idx].detach().numpy()
+
+    plt.figure(figsize=(8, 8))
+    plt.imshow(weights, cmap='viridis')
+    plt.colorbar()
+
+    if tokens:
+        plt.xticks(range(len(tokens)), tokens, rotation=45)
+        plt.yticks(range(len(tokens)), tokens)
+
+    plt.title(f'Attention Head {head_idx}')
+    plt.xlabel('Key Position')
+    plt.ylabel('Query Position')
+    plt.tight_layout()
+    plt.show()</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 4 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">4</div>
+                <div class="exercise-title">Implement Causal (Decoder) Mask</div>
+            </div>
+            <p>Create a causal mask for decoder self-attention that prevents attending to future tokens.</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Python: Starter Code</span>
+                </div>
+                <div class="code-content">
+                    <code>def create_causal_mask(seq_len):
+    """
+    Create a causal mask for decoder self-attention.
+
+    Args:
+        seq_len: Length of the sequence
+
+    Returns:
+        mask: Lower triangular mask of shape (seq_len, seq_len)
+    """
+    # TODO: Create lower triangular matrix
+    # Position (i, j) should be 1 if j <= i, else 0
+    # mask = ???
+
+    return mask
+
+
+# Test causal mask
+seq_len = 5
+mask = create_causal_mask(seq_len)
+print("Causal Mask:")
+print(mask)
+
+# Apply to attention
+Q = torch.randn(1, 1, seq_len, 8)
+K = torch.randn(1, 1, seq_len, 8)
+V = torch.randn(1, 1, seq_len, 8)
+
+output, weights = scaled_dot_product_attention(Q, K, V, mask=mask)
+print("\nAttention weights with causal mask:")
+print(weights[0, 0])</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>📝 Show Solution</span>
+                    <span>▼</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block">
+                        <div class="code-content">
+                            <code>def create_causal_mask(seq_len):
+    mask = torch.tril(torch.ones(seq_len, seq_len))
+    return mask
+
+
+# Alternative implementation
+def create_causal_mask_v2(seq_len):
+    mask = torch.ones(seq_len, seq_len)
+    mask = torch.triu(mask, diagonal=1)  # Upper triangular
+    mask = 1 - mask  # Invert to get lower triangular
+    return mask</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expected-output">
+                <strong>Expected Output:</strong><br>
+                Causal Mask:<br>
+                tensor([[1., 0., 0., 0., 0.],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1., 1., 0., 0., 0.],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1., 1., 1., 0., 0.],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1., 1., 1., 1., 0.],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1., 1., 1., 1., 1.]])<br><br>
+                Attention weights (each row sums to 1, upper triangle is 0)
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">🎉</div>
+            <h3>Lab Complete!</h3>
+            <p>You've successfully implemented the core attention mechanism used in transformers.</p>
+        </div>
+
+        <h2>Bonus Challenges</h2>
+        <ul style="margin-left: 20px;">
+            <li>Add dropout to the attention weights</li>
+            <li>Implement relative positional encoding</li>
+            <li>Build a complete transformer encoder layer</li>
+            <li>Compare attention patterns on real text using a pre-trained model</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <a href="mastering-llms-slides.html" class="nav-btn">← Back to Slides</a>
+            <a href="lab-02-langchain-agents.html" class="nav-btn">Next Lab →</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(element) {
+            const content = element.nextElementSibling;
+            content.classList.toggle('show');
+            const arrow = element.querySelector('span:last-child');
+            arrow.textContent = content.classList.contains('show') ? '▲' : '▼';
+        }
+    </script>
+</body>
+</html>

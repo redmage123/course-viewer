@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering LLMs Part 1: AI & Machine Learning Foundations</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #4a5a23 0%, #6b7d3a 100%); color: white; min-height: 100vh; }
+        .slide { min-height: 100vh; padding: 60px; display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid rgba(255,255,255,0.2); }
+        .slide-number { position: absolute; top: 20px; right: 30px; font-size: 0.9em; opacity: 0.7; }
+        h1 { font-size: 3em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 2.2em; margin-bottom: 30px; color: #c5d45a; }
+        h3 { font-size: 1.6em; margin: 20px 0; color: #b8c76f; }
+        p { font-size: 1.3em; margin-bottom: 20px; line-height: 1.6; }
+        ul { font-size: 1.2em; margin-left: 40px; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        .subtitle { font-size: 1.5em; opacity: 0.9; margin-bottom: 30px; }
+        .highlight { background: rgba(197, 212, 90, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .code-table { background: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-table-header { background: #2d2d44; padding: 10px 15px; color: #c5d45a; font-size: 0.9em; }
+        .code-table-content { padding: 20px; }
+        .code-table code { font-family: 'Courier New', monospace; color: #c5d45a; white-space: pre; line-height: 1.5; font-size: 0.95em; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .three-column { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+        .card { background: rgba(255,255,255,0.1); padding: 25px; border-radius: 10px; }
+        .card h4 { color: #c5d45a; margin-bottom: 15px; font-size: 1.3em; }
+        .day-header { background: rgba(0,0,0,0.2); padding: 15px 25px; border-radius: 8px; display: inline-block; margin-bottom: 20px; }
+        .series-badge { background: #c5d45a; color: #3a4a1a; padding: 8px 20px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .nav-buttons { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 1000; }
+        .nav-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; }
+        .nav-btn:hover { background: white; color: #4a5a23; }
+        .diagram { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 10px; text-align: center; margin: 20px 0; }
+        .formula { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; text-align: center; font-size: 1.4em; margin: 20px 0; }
+        .MathJax { font-size: 1.1em !important; }
+    </style>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide" id="slide1">
+    <span class="slide-number">1</span>
+    <div class="series-badge">PART 1 OF 3</div>
+    <h1>Mastering LLMs</h1>
+    <p class="subtitle">Part 1: AI & Machine Learning Foundations</p>
+    <p style="font-size: 1.1em; opacity: 0.8; margin-top: 40px;">A 3-Day Intensive Course</p>
+    <div style="margin-top: 40px;">
+        <p><strong>Day 1:</strong> Python for Data Science & ML Fundamentals</p>
+        <p><strong>Day 2:</strong> Neural Networks & Deep Learning</p>
+        <p><strong>Day 3:</strong> From Deep Learning to LLMs</p>
+    </div>
+</div>
+
+<!-- Slide 2: Course Series Overview -->
+<div class="slide" id="slide2">
+    <span class="slide-number">2</span>
+    <h2>The Complete Learning Path</h2>
+    <div class="three-column" style="margin-top: 30px;">
+        <div class="card" style="border: 3px solid #c5d45a;">
+            <h4>Part 1: Foundations</h4>
+            <p style="font-size: 0.9em;">(This Course)</p>
+            <ul style="font-size: 0.9em; margin-left: 20px;">
+                <li>Python for ML</li>
+                <li>ML Fundamentals</li>
+                <li>Neural Networks</li>
+                <li>Intro to LLMs</li>
+            </ul>
+        </div>
+        <div class="card" style="opacity: 0.7;">
+            <h4>Part 2: LLM Development</h4>
+            <p style="font-size: 0.9em;">(Coming Next)</p>
+            <ul style="font-size: 0.9em; margin-left: 20px;">
+                <li>Transformers Deep Dive</li>
+                <li>RAG Pipelines</li>
+                <li>AI Agents</li>
+                <li>Fine-tuning</li>
+            </ul>
+        </div>
+        <div class="card" style="opacity: 0.5;">
+            <h4>Part 3: Production</h4>
+            <p style="font-size: 0.9em;">(Advanced)</p>
+            <ul style="font-size: 0.9em; margin-left: 20px;">
+                <li>Optimization</li>
+                <li>Deployment</li>
+                <li>Ethics & Safety</li>
+                <li>Enterprise Scale</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Prerequisites -->
+<div class="slide" id="slide3">
+    <span class="slide-number">3</span>
+    <h2>What You Already Know</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Your Background</h4>
+            <ul>
+                <li>Basic Python programming</li>
+                <li>Angular / .NET development</li>
+                <li>General programming concepts</li>
+                <li>Working with APIs</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>What You'll Learn</h4>
+            <ul>
+                <li>Data science libraries</li>
+                <li>Machine learning concepts</li>
+                <li>Neural network fundamentals</li>
+                <li>How LLMs actually work</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <p><strong>No prior ML/AI experience required!</strong> We start from the fundamentals and build up.</p>
+    </div>
+</div>
+
+<!-- DAY 1 HEADER -->
+<div class="slide" id="slide4">
+    <span class="slide-number">4</span>
+    <div class="day-header">DAY 1</div>
+    <h1>Python for Data Science & ML Fundamentals</h1>
+    <div style="margin-top: 40px;">
+        <p><strong>Module 0:</strong> Python Refresher</p>
+        <p><strong>Module 1:</strong> Python Data Science Stack</p>
+        <p><strong>Module 2:</strong> Introduction to Machine Learning</p>
+        <p><strong>Module 3:</strong> Supervised Learning Basics</p>
+    </div>
+</div>
+
+<!-- Slide 5: Python Refresher - Core Concepts -->
+<div class="slide" id="slide5">
+    <span class="slide-number">5</span>
+    <h2>Module 0: Python Refresher</h2>
+    <p>Quick review of Python fundamentals for ML</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Data Types</h4>
+            <div class="code-table" style="margin-top: 10px;">
+                <div class="code-table-content">
+                    <code># Numbers
+x = 42          # int
+y = 3.14        # float
+
+# Strings
+name = "AI"
+msg = f"Hello {name}"
+
+# Boolean
+is_ready = True
+
+# None (null equivalent)
+result = None</code>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h4>Collections</h4>
+            <div class="code-table" style="margin-top: 10px;">
+                <div class="code-table-content">
+                    <code># List (mutable, ordered)
+nums = [1, 2, 3, 4, 5]
+nums.append(6)
+
+# Dictionary (key-value)
+person = {"name": "Alice", "age": 30}
+
+# Tuple (immutable)
+point = (10, 20)
+
+# Set (unique values)
+unique = {1, 2, 3}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Python Refresher - Control Flow -->
+<div class="slide" id="slide6">
+    <span class="slide-number">6</span>
+    <h2>Control Flow & Functions</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Conditionals & Loops</h4>
+            <div class="code-table" style="margin-top: 10px;">
+                <div class="code-table-content">
+                    <code># If-else
+if score > 90:
+    grade = "A"
+elif score > 80:
+    grade = "B"
+else:
+    grade = "C"
+
+# For loop
+for i in range(5):
+    print(i)
+
+# While loop
+while count < 10:
+    count += 1
+
+# List comprehension
+squares = [x**2 for x in range(10)]</code>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h4>Functions</h4>
+            <div class="code-table" style="margin-top: 10px;">
+                <div class="code-table-content">
+                    <code># Basic function
+def greet(name):
+    return f"Hello, {name}!"
+
+# Default arguments
+def power(x, n=2):
+    return x ** n
+
+# Lambda (anonymous function)
+double = lambda x: x * 2
+
+# Multiple return values
+def stats(nums):
+    return min(nums), max(nums)
+
+low, high = stats([1, 5, 3])</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Python Refresher - Classes & OOP -->
+<div class="slide" id="slide7">
+    <span class="slide-number">7</span>
+    <h2>Classes & Object-Oriented Python</h2>
+    <p>Essential for understanding PyTorch models</p>
+    <div class="code-table">
+        <div class="code-table-header">Python: Classes</div>
+        <div class="code-table-content">
+            <code>class Model:
+    def __init__(self, name, learning_rate=0.01):
+        self.name = name              # Instance attribute
+        self.lr = learning_rate
+        self.weights = []
+
+    def train(self, data):
+        """Train the model on data."""
+        print(f"Training {self.name}...")
+        # Training logic here
+
+    def predict(self, x):
+        return x * 2  # Simplified prediction
+
+# Create instance
+my_model = Model("LinearRegression", learning_rate=0.001)
+my_model.train(data)
+result = my_model.predict(5)  # Returns 10</code>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Why OOP matters:</strong> PyTorch neural networks inherit from <code>nn.Module</code> - understanding classes is key!</p>
+    </div>
+</div>
+
+<!-- Slide 8: Python Refresher - Useful Patterns -->
+<div class="slide" id="slide8">
+    <span class="slide-number">8</span>
+    <h2>Useful Python Patterns for ML</h2>
+    <div class="three-column">
+        <div class="card">
+            <h4>Unpacking</h4>
+            <div class="code-table" style="margin-top: 10px;">
+                <div class="code-table-content">
+                    <code># Tuple unpacking
+x, y = (10, 20)
+
+# Extended unpacking
+first, *rest = [1,2,3,4]
+# first=1, rest=[2,3,4]
+
+# Dict unpacking
+config = {"lr": 0.01}
+train(**config)</code>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h4>Iteration</h4>
+            <div class="code-table" style="margin-top: 10px;">
+                <div class="code-table-content">
+                    <code># enumerate
+for i, val in enumerate(lst):
+    print(f"{i}: {val}")
+
+# zip
+for a, b in zip(X, y):
+    print(a, b)
+
+# dict iteration
+for k, v in d.items():
+    print(k, v)</code>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h4>Common Ops</h4>
+            <div class="code-table" style="margin-top: 10px;">
+                <div class="code-table-content">
+                    <code># Type conversion
+int("42")    # 42
+float("3.14") # 3.14
+str(100)     # "100"
+
+# Slicing
+lst[1:4]   # items 1-3
+lst[::2]   # every 2nd
+lst[::-1]  # reverse</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Module 1 - NumPy -->
+<div class="slide" id="slide9">
+    <span class="slide-number">9</span>
+    <h2>Module 1: NumPy - The Foundation</h2>
+    <p>NumPy provides efficient array operations essential for ML</p>
+    <div class="code-table">
+        <div class="code-table-header">Python: NumPy Basics</div>
+        <div class="code-table-content">
+            <code>import numpy as np
+
+# Create arrays
+arr = np.array([1, 2, 3, 4, 5])
+matrix = np.array([[1, 2, 3], [4, 5, 6]])
+
+# Array operations (vectorized - very fast!)
+doubled = arr * 2           # [2, 4, 6, 8, 10]
+squared = arr ** 2          # [1, 4, 9, 16, 25]
+
+# Statistical operations
+mean = np.mean(arr)         # 3.0
+std = np.std(arr)           # 1.414...
+
+# Matrix multiplication (crucial for ML!)
+result = np.dot(matrix, arr[:3])  # [14, 32]</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: NumPy for ML -->
+<div class="slide" id="slide10">
+    <span class="slide-number">10</span>
+    <h2>Why NumPy Matters for ML</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Speed</h4>
+            <p>NumPy operations are 10-100x faster than Python loops because they're implemented in C.</p>
+            <div class="code-table" style="margin-top: 15px;">
+                <div class="code-table-content">
+                    <code># Slow Python loop
+result = []
+for x in data:
+    result.append(x * 2)
+
+# Fast NumPy
+result = data * 2</code>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h4>ML Operations</h4>
+            <ul>
+                <li>Matrix multiplication</li>
+                <li>Broadcasting</li>
+                <li>Random number generation</li>
+                <li>Linear algebra</li>
+            </ul>
+            <p style="margin-top: 15px;">All neural networks are fundamentally matrix operations!</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Pandas -->
+<div class="slide" id="slide11">
+    <span class="slide-number">11</span>
+    <h2>Pandas - Data Manipulation</h2>
+    <p>Pandas makes working with structured data intuitive</p>
+    <div class="code-table">
+        <div class="code-table-header">Python: Pandas DataFrames</div>
+        <div class="code-table-content">
+            <code>import pandas as pd
+
+# Create a DataFrame
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'age': [25, 30, 35],
+    'salary': [50000, 60000, 70000]
+})
+
+# Common operations
+df['age'].mean()              # Average age: 30
+df[df['salary'] > 55000]      # Filter rows
+df.groupby('age').mean()      # Group and aggregate
+
+# Load data from files
+df = pd.read_csv('data.csv')
+df = pd.read_json('data.json')</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Matplotlib -->
+<div class="slide" id="slide12">
+    <span class="slide-number">12</span>
+    <h2>Matplotlib - Visualization</h2>
+    <p>Visualizing data is crucial for understanding and debugging ML models</p>
+    <div class="code-table">
+        <div class="code-table-header">Python: Basic Plotting</div>
+        <div class="code-table-content">
+            <code>import matplotlib.pyplot as plt
+
+# Line plot
+plt.plot(x, y, label='Training Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Model Training Progress')
+plt.legend()
+plt.show()
+
+# Scatter plot (for seeing data relationships)
+plt.scatter(features, targets, alpha=0.5)
+
+# Histogram (for data distribution)
+plt.hist(data, bins=30)</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 13: What is Machine Learning? -->
+<div class="slide" id="slide13">
+    <span class="slide-number">13</span>
+    <h2>Module 2: What is Machine Learning?</h2>
+    <div class="highlight">
+        <p style="font-size: 1.4em;"><strong>Machine Learning:</strong> Teaching computers to learn patterns from data, rather than explicitly programming rules.</p>
+    </div>
+    <div class="two-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>Traditional Programming</h4>
+            <div class="diagram">
+                <p>Rules + Data → Program → Output</p>
+            </div>
+            <p>You write the rules explicitly</p>
+        </div>
+        <div class="card">
+            <h4>Machine Learning</h4>
+            <div class="diagram">
+                <p>Data + Output → ML → Rules</p>
+            </div>
+            <p>The algorithm discovers the rules</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 14: Types of Machine Learning -->
+<div class="slide" id="slide14">
+    <span class="slide-number">14</span>
+    <h2>Types of Machine Learning</h2>
+    <div class="three-column">
+        <div class="card">
+            <h4>Supervised Learning</h4>
+            <p>Learn from labeled examples</p>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Classification (spam/not spam)</li>
+                <li>Regression (price prediction)</li>
+            </ul>
+            <p style="margin-top: 10px; font-size: 0.9em;"><em>You provide: inputs + correct answers</em></p>
+        </div>
+        <div class="card">
+            <h4>Unsupervised Learning</h4>
+            <p>Find patterns in unlabeled data</p>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Clustering (customer segments)</li>
+                <li>Dimensionality reduction</li>
+            </ul>
+            <p style="margin-top: 10px; font-size: 0.9em;"><em>You provide: inputs only</em></p>
+        </div>
+        <div class="card">
+            <h4>Reinforcement Learning</h4>
+            <p>Learn through trial and error</p>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Game playing</li>
+                <li>Robotics</li>
+            </ul>
+            <p style="margin-top: 10px; font-size: 0.9em;"><em>Agent learns from rewards</em></p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 15: ML Workflow -->
+<div class="slide" id="slide15">
+    <span class="slide-number">15</span>
+    <h2>The ML Workflow</h2>
+    <div class="diagram" style="font-size: 1.2em;">
+        <p>1. Collect Data → 2. Prepare Data → 3. Choose Model → 4. Train → 5. Evaluate → 6. Deploy</p>
+    </div>
+    <div class="two-column" style="margin-top: 30px;">
+        <div>
+            <h3>Data Preparation (80% of work!)</h3>
+            <ul>
+                <li>Clean missing values</li>
+                <li>Handle outliers</li>
+                <li>Normalize/scale features</li>
+                <li>Split into train/test sets</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Model Training</h3>
+            <ul>
+                <li>Feed training data to model</li>
+                <li>Model learns patterns</li>
+                <li>Adjust parameters to minimize error</li>
+                <li>Validate on held-out data</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: Linear Regression -->
+<div class="slide" id="slide16">
+    <span class="slide-number">16</span>
+    <h2>Module 3: Linear Regression</h2>
+    <p>The simplest ML algorithm - find the best-fit line through data</p>
+    <div class="formula">
+        $$y = mx + b \quad \text{or} \quad y = w_1x_1 + w_2x_2 + \cdots + b$$
+    </div>
+    <div class="code-table">
+        <div class="code-table-header">Python: Linear Regression with scikit-learn</div>
+        <div class="code-table-content">
+            <code>from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Create and train model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions
+predictions = model.predict(X_test)
+
+# Check performance
+from sklearn.metrics import mean_squared_error
+mse = mean_squared_error(y_test, predictions)</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 17: Classification -->
+<div class="slide" id="slide17">
+    <span class="slide-number">17</span>
+    <h2>Classification</h2>
+    <p>Predict discrete categories instead of continuous values</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Binary Classification</h4>
+            <ul>
+                <li>Spam / Not Spam</li>
+                <li>Fraud / Legitimate</li>
+                <li>Cat / Dog</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Multi-class Classification</h4>
+            <ul>
+                <li>Digit recognition (0-9)</li>
+                <li>Sentiment (pos/neg/neutral)</li>
+                <li>Image categories</li>
+            </ul>
+        </div>
+    </div>
+    <div class="code-table" style="margin-top: 20px;">
+        <div class="code-table-header">Python: Logistic Regression</div>
+        <div class="code-table-content">
+            <code>from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+probabilities = model.predict_proba(X_test)  # Confidence scores</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 18: Model Evaluation -->
+<div class="slide" id="slide18">
+    <span class="slide-number">18</span>
+    <h2>Evaluating Models</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Regression Metrics</h4>
+            <ul>
+                <li><strong>MSE:</strong> Mean Squared Error</li>
+                <li><strong>RMSE:</strong> Root MSE</li>
+                <li><strong>MAE:</strong> Mean Absolute Error</li>
+                <li><strong>R²:</strong> Coefficient of determination</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Classification Metrics</h4>
+            <ul>
+                <li><strong>Accuracy:</strong> % correct predictions</li>
+                <li><strong>Precision:</strong> True positives / predicted positives</li>
+                <li><strong>Recall:</strong> True positives / actual positives</li>
+                <li><strong>F1 Score:</strong> Harmonic mean of precision & recall</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Key Concept:</strong> Always evaluate on data the model hasn't seen (test set)!</p>
+    </div>
+</div>
+
+<!-- Slide 19: Overfitting -->
+<div class="slide" id="slide19">
+    <span class="slide-number">19</span>
+    <h2>The Overfitting Problem</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Underfitting</h4>
+            <p>Model is too simple</p>
+            <ul>
+                <li>High training error</li>
+                <li>High test error</li>
+                <li>Misses patterns in data</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Overfitting</h4>
+            <p>Model is too complex</p>
+            <ul>
+                <li>Low training error</li>
+                <li>High test error</li>
+                <li>Memorizes noise</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Goal:</strong> Find the sweet spot - complex enough to capture patterns, simple enough to generalize</p>
+    </div>
+</div>
+
+<!-- DAY 2 HEADER -->
+<div class="slide" id="slide20">
+    <span class="slide-number">20</span>
+    <div class="day-header">DAY 2</div>
+    <h1>Neural Networks & Deep Learning</h1>
+    <div style="margin-top: 40px;">
+        <p><strong>Module 4:</strong> Neural Network Fundamentals</p>
+        <p><strong>Module 5:</strong> Training Neural Networks</p>
+        <p><strong>Module 6:</strong> Deep Learning with PyTorch</p>
+    </div>
+</div>
+
+<!-- Slide 21: What is a Neural Network? -->
+<div class="slide" id="slide21">
+    <span class="slide-number">21</span>
+    <h2>Module 4: What is a Neural Network?</h2>
+    <p>Inspired by biological neurons, but really just math!</p>
+    <div class="diagram">
+        <p style="font-size: 1.3em;">Input → [Weights × Inputs + Bias] → Activation Function → Output</p>
+    </div>
+    <div class="code-table">
+        <div class="code-table-header">Python: A Single Neuron</div>
+        <div class="code-table-content">
+            <code>import numpy as np
+
+def neuron(inputs, weights, bias):
+    # Weighted sum
+    z = np.dot(inputs, weights) + bias
+
+    # Activation function (sigmoid)
+    output = 1 / (1 + np.exp(-z))
+    return output
+
+# Example
+inputs = np.array([0.5, 0.3, 0.2])
+weights = np.array([0.4, 0.6, 0.8])
+bias = 0.1
+
+result = neuron(inputs, weights, bias)  # 0.64...</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 22: Activation Functions -->
+<div class="slide" id="slide22">
+    <span class="slide-number">22</span>
+    <h2>Activation Functions</h2>
+    <p>Non-linear functions that allow neural networks to learn complex patterns</p>
+    <div class="three-column">
+        <div class="card">
+            <h4>Sigmoid</h4>
+            <div class="formula" style="font-size: 1em;">$$\sigma(x) = \frac{1}{1+e^{-x}}$$</div>
+            <p style="font-size: 0.9em;">Output: 0 to 1<br>Good for: probabilities</p>
+        </div>
+        <div class="card">
+            <h4>ReLU</h4>
+            <div class="formula" style="font-size: 1em;">$$f(x) = \max(0, x)$$</div>
+            <p style="font-size: 0.9em;">Output: 0 to ∞<br>Most common today</p>
+        </div>
+        <div class="card">
+            <h4>Tanh</h4>
+            <div class="formula" style="font-size: 1em;">$$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$</div>
+            <p style="font-size: 0.9em;">Output: -1 to 1<br>Zero-centered</p>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Why non-linear?</strong> Without activation functions, stacking layers would just be linear algebra. Non-linearity enables learning complex patterns!</p>
+    </div>
+</div>
+
+<!-- Slide 23: Network Architecture -->
+<div class="slide" id="slide23">
+    <span class="slide-number">23</span>
+    <h2>Network Architecture</h2>
+    <div class="diagram" style="font-size: 1.1em;">
+        <p>Input Layer → Hidden Layer(s) → Output Layer</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">[Features] → [Learn Representations] → [Predictions]</p>
+    </div>
+    <div class="two-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>Components</h4>
+            <ul>
+                <li><strong>Layers:</strong> Groups of neurons</li>
+                <li><strong>Weights:</strong> Connection strengths</li>
+                <li><strong>Biases:</strong> Offset terms</li>
+                <li><strong>Activations:</strong> Non-linearities</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Why "Deep" Learning?</h4>
+            <ul>
+                <li>Multiple hidden layers</li>
+                <li>Each layer learns higher-level features</li>
+                <li>Layer 1: edges → Layer 2: shapes → Layer 3: objects</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 24: Training - Loss Functions -->
+<div class="slide" id="slide24">
+    <span class="slide-number">24</span>
+    <h2>Module 5: Training - Loss Functions</h2>
+    <p>Loss measures how wrong our predictions are</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Regression: Mean Squared Error</h4>
+            <div class="formula" style="font-size: 1em;">$$\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2$$</div>
+            <p>Penalizes large errors more</p>
+        </div>
+        <div class="card">
+            <h4>Classification: Cross-Entropy</h4>
+            <div class="formula" style="font-size: 1em;">$$\text{CE} = -\sum_{i} y_i \log(\hat{y}_i)$$</div>
+            <p>Measures probability difference</p>
+        </div>
+    </div>
+    <div class="code-table" style="margin-top: 20px;">
+        <div class="code-table-header">Python: Loss Functions</div>
+        <div class="code-table-content">
+            <code>import torch.nn as nn
+
+# For regression
+mse_loss = nn.MSELoss()
+
+# For classification
+ce_loss = nn.CrossEntropyLoss()
+
+# Calculate loss
+loss = mse_loss(predictions, targets)</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 25: Gradient Descent -->
+<div class="slide" id="slide25">
+    <span class="slide-number">25</span>
+    <h2>Gradient Descent</h2>
+    <p>How we minimize loss by adjusting weights</p>
+    <div class="highlight">
+        <p><strong>Intuition:</strong> Imagine you're on a mountain in fog. To get down, feel which way is steepest and step that direction. Repeat until you reach the bottom.</p>
+    </div>
+    <div class="formula">
+        $$w_{\text{new}} = w_{\text{old}} - \eta \cdot \nabla L$$
+    </div>
+    <ul style="margin-top: 20px;">
+        <li><strong>Gradient:</strong> Direction of steepest increase in loss</li>
+        <li><strong>Learning Rate:</strong> Size of steps (hyperparameter)</li>
+        <li><strong>Goal:</strong> Find weights that minimize loss</li>
+    </ul>
+</div>
+
+<!-- Slide 26: Backpropagation -->
+<div class="slide" id="slide26">
+    <span class="slide-number">26</span>
+    <h2>Backpropagation</h2>
+    <p>Algorithm to compute gradients efficiently through the network</p>
+    <div class="diagram">
+        <p>Forward Pass: Input → Predictions → Loss</p>
+        <p style="margin-top: 10px;">Backward Pass: Loss → Gradients → Update Weights</p>
+    </div>
+    <div class="code-table" style="margin-top: 20px;">
+        <div class="code-table-header">Python: Training Loop</div>
+        <div class="code-table-content">
+            <code># Training loop
+for epoch in range(num_epochs):
+    # Forward pass
+    predictions = model(inputs)
+    loss = loss_function(predictions, targets)
+
+    # Backward pass
+    optimizer.zero_grad()  # Clear old gradients
+    loss.backward()        # Compute gradients
+    optimizer.step()       # Update weights</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 27: PyTorch Introduction -->
+<div class="slide" id="slide27">
+    <span class="slide-number">27</span>
+    <h2>Module 6: PyTorch Basics</h2>
+    <p>PyTorch is the leading deep learning framework (used by OpenAI, Meta, Tesla...)</p>
+    <div class="code-table">
+        <div class="code-table-header">Python: PyTorch Tensors</div>
+        <div class="code-table-content">
+            <code>import torch
+
+# Create tensors (like NumPy arrays, but GPU-capable)
+x = torch.tensor([1.0, 2.0, 3.0])
+y = torch.randn(3, 3)  # Random 3x3 matrix
+
+# Operations
+z = x + y[0]
+product = torch.matmul(y, x)
+
+# Move to GPU (if available)
+if torch.cuda.is_available():
+    x = x.cuda()
+
+# Automatic differentiation!
+x = torch.tensor([2.0], requires_grad=True)
+y = x ** 2
+y.backward()
+print(x.grad)  # dy/dx = 2x = 4.0</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 28: Building a Neural Network in PyTorch -->
+<div class="slide" id="slide28">
+    <span class="slide-number">28</span>
+    <h2>Building Networks in PyTorch</h2>
+    <div class="code-table">
+        <div class="code-table-header">Python: Neural Network Class</div>
+        <div class="code-table-content">
+            <code>import torch.nn as nn
+
+class SimpleNetwork(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super().__init__()
+        self.layer1 = nn.Linear(input_size, hidden_size)
+        self.relu = nn.ReLU()
+        self.layer2 = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        x = self.layer1(x)
+        x = self.relu(x)
+        x = self.layer2(x)
+        return x
+
+# Create model
+model = SimpleNetwork(input_size=10, hidden_size=64, output_size=2)
+
+# Create optimizer
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 29: Complete Training Example -->
+<div class="slide" id="slide29">
+    <span class="slide-number">29</span>
+    <h2>Complete Training Example</h2>
+    <div class="code-table">
+        <div class="code-table-header">Python: Full Training Loop</div>
+        <div class="code-table-content">
+            <code>model = SimpleNetwork(10, 64, 2)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+# Training
+for epoch in range(100):
+    for batch_x, batch_y in dataloader:
+        # Forward
+        outputs = model(batch_x)
+        loss = criterion(outputs, batch_y)
+
+        # Backward
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+    if epoch % 10 == 0:
+        print(f'Epoch {epoch}, Loss: {loss.item():.4f}')</code>
+        </div>
+    </div>
+</div>
+
+<!-- DAY 3 HEADER -->
+<div class="slide" id="slide30">
+    <span class="slide-number">30</span>
+    <div class="day-header">DAY 3</div>
+    <h1>From Deep Learning to LLMs</h1>
+    <div style="margin-top: 40px;">
+        <p><strong>Module 7:</strong> Natural Language Processing Basics</p>
+        <p><strong>Module 8:</strong> Attention & Transformers</p>
+        <p><strong>Module 9:</strong> Introduction to LLMs</p>
+    </div>
+</div>
+
+<!-- Slide 31: NLP Basics -->
+<div class="slide" id="slide31">
+    <span class="slide-number">31</span>
+    <h2>Module 7: NLP Fundamentals</h2>
+    <p>How do we convert text to numbers that neural networks can process?</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Text Processing Pipeline</h4>
+            <ol style="margin-left: 20px;">
+                <li>Tokenization (split into words/pieces)</li>
+                <li>Vocabulary mapping (word → number)</li>
+                <li>Embedding (number → vector)</li>
+            </ol>
+        </div>
+        <div class="card">
+            <h4>Example</h4>
+            <p style="font-size: 0.9em;">"Hello world" →</p>
+            <p style="font-size: 0.9em;">["Hello", "world"] →</p>
+            <p style="font-size: 0.9em;">[42, 156] →</p>
+            <p style="font-size: 0.9em;">[[0.2, 0.8, ...], [0.5, 0.3, ...]]</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 32: Word Embeddings -->
+<div class="slide" id="slide32">
+    <span class="slide-number">32</span>
+    <h2>Word Embeddings</h2>
+    <p>Dense vector representations that capture meaning</p>
+    <div class="highlight">
+        <p><strong>Key Insight:</strong> Similar words have similar vectors!</p>
+        <p style="margin-top: 10px;">King - Man + Woman ≈ Queen</p>
+    </div>
+    <div class="code-table" style="margin-top: 20px;">
+        <div class="code-table-header">Python: Using Embeddings</div>
+        <div class="code-table-content">
+            <code>import torch.nn as nn
+
+# Create embedding layer
+# 10000 words in vocabulary, 256-dimensional vectors
+embedding = nn.Embedding(num_embeddings=10000, embedding_dim=256)
+
+# Convert word indices to vectors
+word_indices = torch.tensor([42, 156, 789])  # "Hello world !"
+word_vectors = embedding(word_indices)  # Shape: (3, 256)</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 33: The Attention Mechanism -->
+<div class="slide" id="slide33">
+    <span class="slide-number">33</span>
+    <h2>Module 8: The Attention Mechanism</h2>
+    <p>The breakthrough that enabled modern LLMs</p>
+    <div class="highlight">
+        <p><strong>Problem:</strong> In the sentence "The cat sat on the mat because it was tired", what does "it" refer to?</p>
+        <p style="margin-top: 10px;"><strong>Solution:</strong> Attention lets the model look at all words and decide which are relevant.</p>
+    </div>
+    <div class="formula" style="margin-top: 20px;">
+        $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+    </div>
+    <ul style="margin-top: 20px;">
+        <li><strong>Query:</strong> What am I looking for?</li>
+        <li><strong>Key:</strong> What do I contain?</li>
+        <li><strong>Value:</strong> What information do I provide?</li>
+    </ul>
+</div>
+
+<!-- Slide 34: Transformers -->
+<div class="slide" id="slide34">
+    <span class="slide-number">34</span>
+    <h2>The Transformer Architecture</h2>
+    <p>"Attention Is All You Need" (2017) - The paper that changed everything</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Key Innovations</h4>
+            <ul>
+                <li>Self-attention (each word attends to all others)</li>
+                <li>Parallel processing (not sequential)</li>
+                <li>Positional encoding (knows word order)</li>
+                <li>Multi-head attention (multiple perspectives)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Why It Matters</h4>
+            <ul>
+                <li>Handles long sequences</li>
+                <li>Trains much faster</li>
+                <li>Captures complex relationships</li>
+                <li>Foundation of ALL modern LLMs</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 35: LLM Overview -->
+<div class="slide" id="slide35">
+    <span class="slide-number">35</span>
+    <h2>Module 9: What are LLMs?</h2>
+    <p>Large Language Models are transformers trained on massive text data</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>The Scale</h4>
+            <ul>
+                <li>GPT-3: 175 billion parameters</li>
+                <li>GPT-4: ~1.7 trillion parameters</li>
+                <li>Training data: trillions of words</li>
+                <li>Training cost: millions of dollars</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>How They Work</h4>
+            <ul>
+                <li>Predict the next token</li>
+                <li>Learn patterns from text</li>
+                <li>Emergent capabilities at scale</li>
+                <li>In-context learning</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 36: Using LLM APIs -->
+<div class="slide" id="slide36">
+    <span class="slide-number">36</span>
+    <h2>Using LLM APIs</h2>
+    <div class="code-table">
+        <div class="code-table-header">Python: OpenAI API</div>
+        <div class="code-table-content">
+            <code>from openai import OpenAI
+
+client = OpenAI(api_key="your-key")
+
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Explain neural networks simply."}
+    ],
+    temperature=0.7,  # Creativity (0=deterministic, 1=creative)
+    max_tokens=150    # Response length limit
+)
+
+print(response.choices[0].message.content)</code>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 37: Prompt Engineering Basics -->
+<div class="slide" id="slide37">
+    <span class="slide-number">37</span>
+    <h2>Prompt Engineering Basics</h2>
+    <p>How you ask matters as much as what you ask</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Bad Prompt</h4>
+            <p style="font-style: italic; font-size: 0.9em;">"Summarize this"</p>
+            <p style="font-size: 0.9em;">Vague, no context, unclear format</p>
+        </div>
+        <div class="card">
+            <h4>Good Prompt</h4>
+            <p style="font-style: italic; font-size: 0.9em;">"Summarize the following article in 3 bullet points, focusing on key findings for a technical audience:"</p>
+            <p style="font-size: 0.9em;">Specific format, clear audience, defined scope</p>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <h4>Prompt Engineering Tips</h4>
+        <ul style="font-size: 0.95em;">
+            <li>Be specific about format and length</li>
+            <li>Provide context and examples</li>
+            <li>Use system prompts to set behavior</li>
+            <li>Break complex tasks into steps</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Slide 38: What's Next -->
+<div class="slide" id="slide38">
+    <span class="slide-number">38</span>
+    <h2>What's Next? Part 2 Preview</h2>
+    <p>Now that you understand the foundations, Part 2 will cover:</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Advanced LLM Techniques</h4>
+            <ul>
+                <li>Transformer deep dive</li>
+                <li>RAG (Retrieval-Augmented Generation)</li>
+                <li>AI Agents & Tools</li>
+                <li>Chain-of-Thought prompting</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Customization</h4>
+            <ul>
+                <li>Fine-tuning with LoRA</li>
+                <li>Building custom agents</li>
+                <li>Vector databases</li>
+                <li>Production deployment</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 39: Summary -->
+<div class="slide" id="slide39">
+    <span class="slide-number">39</span>
+    <h2>Course Summary</h2>
+    <div class="three-column">
+        <div class="card">
+            <h4>Day 1</h4>
+            <p>Python Data Science</p>
+            <ul style="font-size: 0.85em; margin-left: 15px;">
+                <li>NumPy, Pandas, Matplotlib</li>
+                <li>ML fundamentals</li>
+                <li>Supervised learning</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Day 2</h4>
+            <p>Deep Learning</p>
+            <ul style="font-size: 0.85em; margin-left: 15px;">
+                <li>Neural networks</li>
+                <li>Training & backprop</li>
+                <li>PyTorch basics</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Day 3</h4>
+            <p>NLP & LLMs</p>
+            <ul style="font-size: 0.85em; margin-left: 15px;">
+                <li>Text processing</li>
+                <li>Attention & Transformers</li>
+                <li>Using LLM APIs</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px; text-align: center;">
+        <p style="font-size: 1.3em;"><strong>You now have the foundation to understand and work with LLMs!</strong></p>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-buttons">
+    <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+    <button class="nav-btn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 39;
+
+    function showSlide(n) {
+        document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides) {
+            currentSlide++;
+            document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 1) {
+            currentSlide--;
+            document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Keyboard navigation (including presentation clicker support)
+    document.addEventListener('keydown', (e) => {
+        // Forward: Arrow Right, Space, Page Down, Enter
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+            e.preventDefault();
+            nextSlide();
+        // Back: Arrow Left, Page Up, Backspace
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+            e.preventDefault();
+            prevSlide();
+        }
+    });
+</script>
+
+</body>
+</html>

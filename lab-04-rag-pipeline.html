@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 4: RAG Pipeline Implementation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%); color: white; min-height: 100vh; padding: 40px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.8em; margin: 30px 0 15px 0; color: #90EE90; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 25px 0 10px 0; color: #98FB98; }
+        p { margin-bottom: 15px; }
+        .lab-info { background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .info-item { text-align: center; }
+        .info-label { font-size: 0.9em; opacity: 0.8; }
+        .info-value { font-size: 1.3em; font-weight: bold; color: #90EE90; }
+        .objectives { background-color: rgba(144, 238, 144, 0.2); border-left: 4px solid #90EE90; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .objectives ul { margin-left: 20px; }
+        .objectives li { margin-bottom: 8px; }
+        .code-block { background-color: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background-color: #2d2d44; padding: 10px 15px; font-size: 0.9em; color: #90EE90; }
+        .code-content { padding: 20px; overflow-x: auto; }
+        .code-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9em; color: #00ff00; white-space: pre; line-height: 1.5; }
+        .exercise { background-color: rgba(255,255,255,0.1); border-radius: 8px; padding: 25px; margin: 25px 0; border: 2px solid rgba(144, 238, 144, 0.5); }
+        .exercise-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .exercise-number { background-color: #90EE90; color: #1a5f2a; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; }
+        .exercise-title { font-size: 1.3em; font-weight: bold; }
+        .solution { background-color: rgba(0,0,0,0.3); border-radius: 8px; margin: 15px 0; overflow: hidden; }
+        .solution-header { background-color: rgba(144, 238, 144, 0.3); padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; }
+        .solution-content { display: none; padding: 20px; }
+        .solution-content.show { display: block; }
+        .hint { background-color: rgba(54, 162, 235, 0.2); border-left: 4px solid #36A2EB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .checkpoint { background-color: rgba(144, 238, 144, 0.2); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2); }
+        .nav-btn { background-color: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 25px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; }
+        .nav-btn:hover { background-color: white; color: #1a5f2a; }
+        .expected-output { background-color: rgba(255,215,0,0.2); border-left: 4px solid #FFD700; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lab 4: RAG Pipeline Implementation</h1>
+        <p style="font-size: 1.2em; opacity: 0.9;">Module 4 - Retrieval-Augmented Generation</p>
+
+        <div class="lab-info">
+            <div class="info-item"><div class="info-value">120 min</div><div class="info-label">Duration</div></div>
+            <div class="info-item"><div class="info-value">Advanced</div><div class="info-label">Difficulty</div></div>
+            <div class="info-item"><div class="info-value">LangChain + FAISS</div><div class="info-label">Framework</div></div>
+            <div class="info-item"><div class="info-value">4</div><div class="info-label">Exercises</div></div>
+        </div>
+
+        <div class="objectives">
+            <h3 style="margin-top: 0;">Learning Objectives</h3>
+            <ul>
+                <li>Implement document loading and text chunking strategies</li>
+                <li>Generate and store embeddings using OpenAI and FAISS</li>
+                <li>Build semantic search with similarity scoring</li>
+                <li>Create a complete RAG pipeline with context injection</li>
+            </ul>
+        </div>
+
+        <h2>Setup</h2>
+        <div class="code-block">
+            <div class="code-header">Terminal: Install Dependencies</div>
+            <div class="code-content">
+                <code>pip install langchain langchain-openai faiss-cpu tiktoken chromadb</code>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">Python: Setup</div>
+            <div class="code-content">
+                <code>import os
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain.schema import Document
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+# Set your API key
+os.environ["OPENAI_API_KEY"] = "your-api-key-here"
+
+# Initialize components
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+llm = ChatOpenAI(model="gpt-4", temperature=0)</code>
+            </div>
+        </div>
+
+        <!-- Exercise 1: Document Loading and Chunking -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">1</div>
+                <div class="exercise-title">Document Loading and Chunking</div>
+            </div>
+            <p>Implement different text chunking strategies and compare their effectiveness for RAG.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code># Sample documents (simulating loaded documents)
+documents = [
+    """Machine Learning is a subset of artificial intelligence that enables
+    systems to learn and improve from experience without being explicitly
+    programmed. It focuses on developing computer programs that can access
+    data and use it to learn for themselves.
+
+    The process begins with observations or data, such as examples, direct
+    experience, or instruction. It looks for patterns in data and makes
+    better decisions in the future based on the examples provided.
+
+    There are three main types of machine learning: supervised learning,
+    unsupervised learning, and reinforcement learning. Each type has its
+    own use cases and applications in the real world.""",
+
+    """Deep Learning is part of a broader family of machine learning methods
+    based on artificial neural networks. Learning can be supervised,
+    semi-supervised or unsupervised.
+
+    Deep learning architectures such as deep neural networks, recurrent
+    neural networks, convolutional neural networks and transformers have
+    been applied to fields including computer vision, speech recognition,
+    natural language processing, and machine translation.
+
+    Neural networks are inspired by biological neural networks, although
+    they are not identical. They consist of layers of interconnected nodes
+    or neurons that process information using connectionist approaches."""
+]
+
+
+def create_chunks(texts: list, chunk_size: int, chunk_overlap: int) -> list:
+    """Create chunks from a list of texts."""
+    # TODO: Initialize RecursiveCharacterTextSplitter
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        length_function=len,
+        separators=["\n\n", "\n", ". ", " ", ""]
+    )
+
+    # TODO: Split all documents and return chunks
+    all_chunks = []
+    for i, text in enumerate(texts):
+        chunks = splitter.split_text(text)
+        for j, chunk in enumerate(chunks):
+            all_chunks.append(Document(
+                page_content=chunk,
+                metadata={"source": f"doc_{i}", "chunk": j}
+            ))
+
+    return all_chunks
+
+
+def analyze_chunking_strategy(texts: list):
+    """Compare different chunking strategies."""
+    strategies = [
+        {"chunk_size": 100, "chunk_overlap": 20},
+        {"chunk_size": 200, "chunk_overlap": 40},
+        {"chunk_size": 500, "chunk_overlap": 50},
+    ]
+
+    for strategy in strategies:
+        chunks = create_chunks(texts, **strategy)
+        print(f"\n--- Strategy: {strategy} ---")
+        print(f"Number of chunks: {len(chunks)}")
+        print(f"Average chunk length: {sum(len(c.page_content) for c in chunks) / len(chunks):.0f}")
+        print(f"First chunk preview: {chunks[0].page_content[:100]}...")
+
+
+# Run analysis
+analyze_chunking_strategy(documents)</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <strong>Hint:</strong> The chunk_overlap parameter helps maintain context between chunks.
+                Experiment with different values to see how it affects retrieval quality.
+            </div>
+
+            <div class="expected-output">
+                <strong>Expected Output:</strong>
+                <pre style="font-family: 'Courier New', monospace; font-size: 0.9em; margin-top: 10px;">
+--- Strategy: {'chunk_size': 100, 'chunk_overlap': 20} ---
+Number of chunks: 12
+Average chunk length: 85
+
+--- Strategy: {'chunk_size': 200, 'chunk_overlap': 40} ---
+Number of chunks: 8
+Average chunk length: 165
+
+--- Strategy: {'chunk_size': 500, 'chunk_overlap': 50} ---
+Number of chunks: 4
+Average chunk length: 420</pre>
+            </div>
+        </div>
+
+        <!-- Exercise 2: Embedding Generation and Vector Store -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">2</div>
+                <div class="exercise-title">Embedding Generation and Vector Store</div>
+            </div>
+            <p>Generate embeddings for document chunks and create a FAISS vector store.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>import numpy as np
+
+
+def create_vector_store(documents: list) -> FAISS:
+    """Create a FAISS vector store from documents."""
+    # TODO: Create chunks from documents
+    chunks = create_chunks(documents, chunk_size=200, chunk_overlap=40)
+
+    # TODO: Create FAISS vector store with embeddings
+    vector_store = FAISS.from_documents(
+        documents=chunks,
+        embedding=embeddings
+    )
+
+    return vector_store
+
+
+def explore_embeddings(text: str):
+    """Explore embedding properties."""
+    # Generate embedding
+    embedding = embeddings.embed_query(text)
+
+    print(f"Text: {text[:50]}...")
+    print(f"Embedding dimension: {len(embedding)}")
+    print(f"First 5 values: {embedding[:5]}")
+    print(f"Embedding norm: {np.linalg.norm(embedding):.4f}")
+
+
+def compare_similarities(texts: list):
+    """Compare semantic similarities between texts."""
+    # TODO: Generate embeddings for all texts
+    text_embeddings = [embeddings.embed_query(t) for t in texts]
+
+    # TODO: Calculate cosine similarities
+    print("\nSimilarity Matrix:")
+    for i, emb1 in enumerate(text_embeddings):
+        similarities = []
+        for j, emb2 in enumerate(text_embeddings):
+            sim = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
+            similarities.append(f"{sim:.3f}")
+        print(f"Text {i}: {' | '.join(similarities)}")
+
+
+# Test embeddings
+explore_embeddings("Machine learning is a type of artificial intelligence")
+
+# Compare texts
+test_texts = [
+    "Machine learning uses data to make predictions",
+    "Deep learning is based on neural networks",
+    "The weather today is sunny and warm",
+    "AI systems can learn from experience"
+]
+compare_similarities(test_texts)
+
+# Create vector store
+vector_store = create_vector_store(documents)
+print(f"\nVector store created with {vector_store.index.ntotal} vectors")</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <strong>Hint:</strong> Cosine similarity ranges from -1 to 1. Values closer to 1 indicate
+                more similar texts. Notice how semantically related texts have higher similarity scores.
+            </div>
+        </div>
+
+        <!-- Exercise 3: Semantic Search Implementation -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">3</div>
+                <div class="exercise-title">Semantic Search Implementation</div>
+            </div>
+            <p>Implement semantic search with relevance scoring and filtering.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>def semantic_search(vector_store: FAISS, query: str, k: int = 3) -> list:
+    """Perform semantic search and return results with scores."""
+    # TODO: Perform similarity search with scores
+    results = vector_store.similarity_search_with_score(query, k=k)
+
+    formatted_results = []
+    for doc, score in results:
+        formatted_results.append({
+            "content": doc.page_content,
+            "metadata": doc.metadata,
+            "similarity_score": 1 - score  # Convert distance to similarity
+        })
+
+    return formatted_results
+
+
+def search_with_threshold(vector_store: FAISS, query: str,
+                          threshold: float = 0.5, k: int = 5) -> list:
+    """Search with a minimum similarity threshold."""
+    results = semantic_search(vector_store, query, k=k)
+
+    # TODO: Filter results below threshold
+    filtered = [r for r in results if r["similarity_score"] >= threshold]
+
+    return filtered
+
+
+def compare_search_methods(vector_store: FAISS, query: str):
+    """Compare different search methods."""
+    print(f"\nQuery: {query}")
+    print("=" * 60)
+
+    # Method 1: Basic similarity search
+    print("\n1. Basic Similarity Search (top 3):")
+    basic_results = vector_store.similarity_search(query, k=3)
+    for i, doc in enumerate(basic_results):
+        print(f"   Result {i+1}: {doc.page_content[:80]}...")
+
+    # Method 2: Search with scores
+    print("\n2. Search with Similarity Scores:")
+    scored_results = semantic_search(vector_store, query, k=3)
+    for i, result in enumerate(scored_results):
+        print(f"   Result {i+1} (score: {result['similarity_score']:.3f}):")
+        print(f"   {result['content'][:80]}...")
+
+    # Method 3: MMR (Maximum Marginal Relevance)
+    print("\n3. MMR Search (diverse results):")
+    mmr_results = vector_store.max_marginal_relevance_search(
+        query, k=3, fetch_k=10
+    )
+    for i, doc in enumerate(mmr_results):
+        print(f"   Result {i+1}: {doc.page_content[:80]}...")
+
+
+# Test searches
+queries = [
+    "What is machine learning?",
+    "How do neural networks work?",
+    "What are the types of learning algorithms?"
+]
+
+for query in queries:
+    compare_search_methods(vector_store, query)</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <strong>Hint:</strong> MMR (Maximum Marginal Relevance) balances relevance with diversity.
+                It's useful when you want to avoid redundant results.
+            </div>
+        </div>
+
+        <!-- Exercise 4: Complete RAG Pipeline -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">4</div>
+                <div class="exercise-title">Complete RAG Pipeline</div>
+            </div>
+            <p>Build a complete RAG pipeline that retrieves context and generates informed responses.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Starter Code</div>
+                <div class="code-content">
+                    <code>class RAGPipeline:
+    def __init__(self, vector_store: FAISS, llm, k: int = 3):
+        self.vector_store = vector_store
+        self.llm = llm
+        self.k = k
+
+        # Define the RAG prompt template
+        self.prompt = ChatPromptTemplate.from_template("""
+You are a helpful assistant. Use the following context to answer the question.
+If the context doesn't contain relevant information, say so.
+
+Context:
+{context}
+
+Question: {question}
+
+Answer:""")
+
+    def retrieve(self, query: str) -> str:
+        """Retrieve relevant documents and format as context."""
+        docs = self.vector_store.similarity_search(query, k=self.k)
+
+        context_parts = []
+        for i, doc in enumerate(docs):
+            context_parts.append(f"[{i+1}] {doc.page_content}")
+
+        return "\n\n".join(context_parts)
+
+    def generate(self, question: str, context: str) -> str:
+        """Generate response using retrieved context."""
+        chain = self.prompt | self.llm | StrOutputParser()
+        return chain.invoke({"context": context, "question": question})
+
+    def query(self, question: str) -> dict:
+        """Run the full RAG pipeline."""
+        # Step 1: Retrieve
+        context = self.retrieve(question)
+
+        # Step 2: Generate
+        answer = self.generate(question, context)
+
+        return {
+            "question": question,
+            "context": context,
+            "answer": answer
+        }
+
+
+def compare_rag_vs_vanilla(question: str, rag_pipeline: RAGPipeline):
+    """Compare RAG response with vanilla LLM response."""
+    print(f"\nQuestion: {question}")
+    print("=" * 60)
+
+    # Vanilla LLM (no context)
+    vanilla_response = llm.invoke(question).content
+    print(f"\n[Vanilla LLM Response]:\n{vanilla_response}")
+
+    # RAG response
+    rag_result = rag_pipeline.query(question)
+    print(f"\n[Retrieved Context]:\n{rag_result['context']}")
+    print(f"\n[RAG Response]:\n{rag_result['answer']}")
+
+
+# Create and test RAG pipeline
+rag = RAGPipeline(vector_store, llm, k=3)
+
+# Test questions
+test_questions = [
+    "What are the three main types of machine learning?",
+    "How are neural networks inspired by biology?",
+    "What is the relationship between deep learning and machine learning?"
+]
+
+for question in test_questions:
+    compare_rag_vs_vanilla(question, rag)</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>Advanced: RAG with Source Citations</span>
+                    <span>+</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block" style="margin: 0;">
+                        <div class="code-content">
+                            <code>class CitedRAGPipeline(RAGPipeline):
+    """RAG pipeline that includes source citations."""
+
+    def __init__(self, vector_store: FAISS, llm, k: int = 3):
+        super().__init__(vector_store, llm, k)
+
+        self.prompt = ChatPromptTemplate.from_template("""
+You are a helpful assistant. Use the following numbered context to answer the question.
+Include citations in your answer using [1], [2], etc. to reference the sources.
+
+Context:
+{context}
+
+Question: {question}
+
+Answer (with citations):""")
+
+    def retrieve_with_metadata(self, query: str) -> tuple:
+        """Retrieve documents with full metadata."""
+        docs = self.vector_store.similarity_search_with_score(query, k=self.k)
+
+        context_parts = []
+        sources = []
+
+        for i, (doc, score) in enumerate(docs):
+            context_parts.append(f"[{i+1}] {doc.page_content}")
+            sources.append({
+                "index": i + 1,
+                "source": doc.metadata.get("source", "unknown"),
+                "chunk": doc.metadata.get("chunk", 0),
+                "score": 1 - score
+            })
+
+        return "\n\n".join(context_parts), sources
+
+    def query(self, question: str) -> dict:
+        """Run RAG with source tracking."""
+        context, sources = self.retrieve_with_metadata(question)
+        answer = self.generate(question, context)
+
+        return {
+            "question": question,
+            "answer": answer,
+            "sources": sources
+        }
+
+
+# Test cited RAG
+cited_rag = CitedRAGPipeline(vector_store, llm)
+result = cited_rag.query("Explain machine learning types")
+print(f"Answer: {result['answer']}")
+print(f"\nSources used:")
+for src in result['sources']:
+    print(f"  [{src['index']}] {src['source']}, chunk {src['chunk']} "
+          f"(relevance: {src['score']:.3f})")</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Bonus Challenge: Hybrid Search</h2>
+        <div class="code-block">
+            <div class="code-header">Python: Hybrid Search (Semantic + Keyword)</div>
+            <div class="code-content">
+                <code>from rank_bm25 import BM25Okapi
+import re
+
+
+class HybridSearchPipeline:
+    """Combines semantic search with BM25 keyword search."""
+
+    def __init__(self, documents: list, embeddings, alpha: float = 0.5):
+        self.alpha = alpha  # Balance between semantic and keyword
+
+        # Create chunks
+        self.chunks = create_chunks(documents, chunk_size=200, chunk_overlap=40)
+
+        # Semantic search setup
+        self.vector_store = FAISS.from_documents(self.chunks, embeddings)
+
+        # BM25 keyword search setup
+        tokenized_chunks = [self._tokenize(c.page_content) for c in self.chunks]
+        self.bm25 = BM25Okapi(tokenized_chunks)
+
+    def _tokenize(self, text: str) -> list:
+        """Simple tokenization."""
+        return re.findall(r'\w+', text.lower())
+
+    def search(self, query: str, k: int = 5) -> list:
+        """Perform hybrid search."""
+        # Semantic search
+        semantic_results = self.vector_store.similarity_search_with_score(query, k=k*2)
+
+        # BM25 search
+        tokenized_query = self._tokenize(query)
+        bm25_scores = self.bm25.get_scores(tokenized_query)
+
+        # Combine scores
+        combined_scores = {}
+
+        for doc, distance in semantic_results:
+            content = doc.page_content
+            semantic_score = 1 - distance
+            combined_scores[content] = self.alpha * semantic_score
+
+        for i, score in enumerate(bm25_scores):
+            content = self.chunks[i].page_content
+            normalized_score = score / max(bm25_scores) if max(bm25_scores) > 0 else 0
+            if content in combined_scores:
+                combined_scores[content] += (1 - self.alpha) * normalized_score
+            else:
+                combined_scores[content] = (1 - self.alpha) * normalized_score
+
+        # Sort and return top k
+        sorted_results = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
+        return sorted_results[:k]
+
+
+# Test hybrid search
+# pip install rank_bm25  # Install if needed
+# hybrid = HybridSearchPipeline(documents, embeddings, alpha=0.7)
+# results = hybrid.search("neural network learning")
+# for content, score in results:
+#     print(f"Score: {score:.3f} | {content[:60]}...")</code>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">🎉</div>
+            <h3>Lab Complete!</h3>
+            <p>You've built a complete RAG pipeline with document chunking, embeddings, semantic search, and context-augmented generation.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="lab-03-advanced-agents.html" class="nav-btn">← Previous Lab</a>
+            <a href="lab-05-lora-finetuning.html" class="nav-btn">Next Lab →</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(element) {
+            const content = element.nextElementSibling;
+            content.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

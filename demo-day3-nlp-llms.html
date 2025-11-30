@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3 Demo: NLP & LLMs | Mastering LLMs Part 1</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a5a23 0%, #6b7d3a 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            font-size: 1em;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .tab.active {
+            background: rgba(255,255,255,0.3);
+            border-color: white;
+        }
+        .demo-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .demo-section h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 900px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .control-panel {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .control-panel h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 80px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #c5d45a;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .btn.primary {
+            background: #8a9a3a;
+            border-color: #8a9a3a;
+        }
+        .btn.primary:hover {
+            background: #9aaa4a;
+        }
+        .visualization {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 400px;
+        }
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+        .code-block {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c5d45a;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            border-left: 4px solid #c5d45a;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .token-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .token {
+            padding: 8px 12px;
+            background: rgba(0,255,0,0.2);
+            border: 2px solid #c5d45a;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            position: relative;
+        }
+        .token .token-id {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #c5d45a;
+            color: #000;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .token.special {
+            background: rgba(255,100,100,0.2);
+            border-color: #ff6464;
+        }
+        .token.special .token-id {
+            background: #ff6464;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .metric-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #c5d45a;
+            font-family: 'Courier New', monospace;
+        }
+        .metric-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            margin-top: 30px;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+        }
+        select option {
+            background: #1a5f2a;
+        }
+        .attention-matrix {
+            display: grid;
+            gap: 2px;
+            margin: 20px 0;
+        }
+        .attention-cell {
+            padding: 8px;
+            text-align: center;
+            font-size: 0.8em;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .attention-header {
+            background: rgba(255,255,255,0.2);
+            font-weight: bold;
+        }
+        .embedding-viz {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .word-vector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .word-label {
+            min-width: 80px;
+            font-weight: bold;
+        }
+        .vector-bar {
+            flex: 1;
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+        .vector-segment {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .chat-message {
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 85%;
+        }
+        .chat-message.user {
+            background: rgba(0,100,255,0.3);
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+        .chat-message.assistant {
+            background: rgba(0,255,0,0.2);
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+        .chat-message .role {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        .prompt-template {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .prompt-template h4 {
+            margin-bottom: 10px;
+            color: #c5d45a;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+        .value-display {
+            min-width: 50px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            color: #c5d45a;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Tokenization Demo
+        function TokenizationDemo() {
+            const [text, setText] = useState("Hello, how are you doing today?");
+            const [tokenizer, setTokenizer] = useState('word');
+            const [tokens, setTokens] = useState([]);
+
+            const tokenize = () => {
+                let result = [];
+                switch(tokenizer) {
+                    case 'word':
+                        result = text.split(/(\s+|[.,!?;:])/).filter(t => t.trim());
+                        break;
+                    case 'character':
+                        result = text.split('');
+                        break;
+                    case 'subword':
+                        // Simulate BPE-like tokenization
+                        result = simulateBPE(text);
+                        break;
+                }
+                setTokens(result.map((t, i) => ({
+                    text: t,
+                    id: 1000 + i + Math.floor(Math.random() * 1000),
+                    isSpecial: ['[CLS]', '[SEP]', '[PAD]', '<s>', '</s>'].includes(t)
+                })));
+            };
+
+            const simulateBPE = (text) => {
+                // Simplified BPE simulation
+                const commonSubwords = {
+                    'ing': true, 'tion': true, 'ed': true, 'ly': true,
+                    'er': true, 'est': true, 'un': true, 're': true
+                };
+                const result = ['<s>'];
+                const words = text.split(/\s+/);
+
+                words.forEach(word => {
+                    let remaining = word.toLowerCase();
+                    while (remaining.length > 0) {
+                        let found = false;
+                        for (let len = Math.min(4, remaining.length); len >= 2; len--) {
+                            const sub = remaining.slice(0, len);
+                            if (commonSubwords[sub] || len === remaining.length) {
+                                result.push(remaining.slice(0, len));
+                                remaining = remaining.slice(len);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            result.push(remaining[0]);
+                            remaining = remaining.slice(1);
+                        }
+                    }
+                    result.push('_');
+                });
+                result.pop(); // Remove last space marker
+                result.push('</s>');
+                return result;
+            };
+
+            useEffect(() => {
+                tokenize();
+            }, [text, tokenizer]);
+
+            return (
+                <div className="demo-section">
+                    <h2>Tokenization</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>Input Text</h3>
+
+                            <div className="control-group">
+                                <textarea
+                                    value={text}
+                                    onChange={e => setText(e.target.value)}
+                                    placeholder="Enter text to tokenize..."
+                                />
+                            </div>
+
+                            <div className="control-group">
+                                <label>Tokenizer Type</label>
+                                <select value={tokenizer} onChange={e => setTokenizer(e.target.value)}>
+                                    <option value="word">Word-level</option>
+                                    <option value="character">Character-level</option>
+                                    <option value="subword">Subword (BPE-like)</option>
+                                </select>
+                            </div>
+
+                            <div className="info-box">
+                                <strong>Why Tokenization Matters:</strong><br/>
+                                LLMs don't see text as we do. They process sequences of tokens (numbers).
+                                Subword tokenization balances vocabulary size with flexibility.
+                            </div>
+
+                            <div className="code-block">
+{`# Using HuggingFace Tokenizers
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(
+    "gpt2"
+)
+tokens = tokenizer.encode("${text.slice(0, 30)}...")
+# Output: [${tokens.slice(0, 5).map(t => t.id).join(', ')}...]`}
+                            </div>
+                        </div>
+
+                        <div className="visualization">
+                            <h4 style={{marginBottom: '15px'}}>Tokens ({tokens.length})</h4>
+                            <div className="token-container">
+                                {tokens.map((token, i) => (
+                                    <div key={i} className={`token ${token.isSpecial ? 'special' : ''}`}>
+                                        {token.text === ' ' ? '␣' : token.text}
+                                        <span className="token-id">{token.id}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="metrics-grid">
+                                <div className="metric-card">
+                                    <div className="metric-value">{tokens.length}</div>
+                                    <div className="metric-label">Total Tokens</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{text.length}</div>
+                                    <div className="metric-label">Characters</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{(text.length / Math.max(1, tokens.length)).toFixed(1)}</div>
+                                    <div className="metric-label">Chars/Token</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{text.split(/\s+/).length}</div>
+                                    <div className="metric-label">Words</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Word Embeddings Demo
+        function EmbeddingsDemo() {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+            const [words, setWords] = useState(['king', 'queen', 'man', 'woman', 'prince', 'princess']);
+
+            // Simulated 2D embeddings (pre-computed for demo)
+            const embeddings = {
+                'king': [0.8, 0.9],
+                'queen': [0.85, 0.3],
+                'man': [0.2, 0.8],
+                'woman': [0.25, 0.2],
+                'prince': [0.6, 0.85],
+                'princess': [0.65, 0.25],
+                'dog': [-0.5, 0.1],
+                'cat': [-0.4, 0.15],
+                'happy': [0.1, -0.6],
+                'sad': [-0.1, -0.65],
+                'computer': [-0.8, 0.7],
+                'laptop': [-0.75, 0.65]
+            };
+
+            useEffect(() => {
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
+
+                const ctx = chartRef.current.getContext('2d');
+
+                const data = words.filter(w => embeddings[w]).map(word => ({
+                    x: embeddings[word][0],
+                    y: embeddings[word][1],
+                    label: word
+                }));
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Word Embeddings',
+                            data: data,
+                            backgroundColor: '#c5d45a',
+                            pointRadius: 10,
+                            pointHoverRadius: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                min: -1,
+                                max: 1,
+                                title: { display: true, text: 'Dimension 1 (Gender?)', color: 'white' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: 'white' }
+                            },
+                            y: {
+                                min: -1,
+                                max: 1,
+                                title: { display: true, text: 'Dimension 2 (Royalty?)', color: 'white' },
+                                grid: { color: 'rgba(255,255,255,0.1)' },
+                                ticks: { color: 'white' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => data[ctx.dataIndex]?.label || ''
+                                }
+                            }
+                        }
+                    },
+                    plugins: [{
+                        afterDraw: (chart) => {
+                            const ctx = chart.ctx;
+                            ctx.fillStyle = 'white';
+                            ctx.font = '14px Segoe UI';
+                            chart.data.datasets[0].data.forEach((point, i) => {
+                                const meta = chart.getDatasetMeta(0).data[i];
+                                ctx.fillText(data[i].label, meta.x + 12, meta.y + 4);
+                            });
+                        }
+                    }]
+                });
+
+                return () => {
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, [words]);
+
+            const wordSets = {
+                'royalty': ['king', 'queen', 'man', 'woman', 'prince', 'princess'],
+                'animals': ['dog', 'cat', 'king', 'queen'],
+                'emotions': ['happy', 'sad', 'king', 'queen'],
+                'tech': ['computer', 'laptop', 'king', 'queen']
+            };
+
+            return (
+                <div className="demo-section">
+                    <h2>Word Embeddings</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>Visualize Embeddings</h3>
+
+                            <div className="control-group">
+                                <label>Word Set</label>
+                                <select onChange={e => setWords(wordSets[e.target.value])}>
+                                    <option value="royalty">Royalty & Gender</option>
+                                    <option value="animals">Animals</option>
+                                    <option value="emotions">Emotions</option>
+                                    <option value="tech">Technology</option>
+                                </select>
+                            </div>
+
+                            <div className="info-box">
+                                <strong>Word Embeddings:</strong><br/>
+                                Words are converted to dense vectors that capture semantic meaning.
+                                Similar words cluster together in vector space.
+                            </div>
+
+                            <div className="info-box">
+                                <strong>Famous Example:</strong><br/>
+                                king - man + woman ≈ queen<br/>
+                                <small>Vector arithmetic captures relationships!</small>
+                            </div>
+
+                            <div className="code-block">
+{`# Word2Vec / GloVe embeddings
+from gensim.models import KeyedVectors
+
+model = KeyedVectors.load_word2vec_format(
+    'GoogleNews-vectors.bin', binary=True
+)
+
+# Find similar words
+model.most_similar('king')
+# [('queen', 0.65), ('prince', 0.62)...]
+
+# Vector arithmetic
+result = model['king'] - model['man'] + model['woman']
+model.similar_by_vector(result)
+# [('queen', 0.71)...]`}
+                            </div>
+                        </div>
+
+                        <div className="visualization">
+                            <h4 style={{marginBottom: '15px'}}>2D Projection of Word Vectors</h4>
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Attention Mechanism Demo
+        function AttentionDemo() {
+            const [sentence, setSentence] = useState("The cat sat on the mat");
+            const [queryWord, setQueryWord] = useState(0);
+            const [attentionWeights, setAttentionWeights] = useState([]);
+
+            const words = sentence.split(' ');
+
+            useEffect(() => {
+                // Simulate attention weights
+                const weights = words.map((_, i) => {
+                    // Higher weight for nearby words and semantically related
+                    const distance = Math.abs(i - queryWord);
+                    const base = Math.exp(-distance * 0.5);
+                    const noise = Math.random() * 0.1;
+                    return base + noise;
+                });
+
+                // Softmax normalization
+                const sum = weights.reduce((a, b) => a + b, 0);
+                setAttentionWeights(weights.map(w => w / sum));
+            }, [sentence, queryWord]);
+
+            const getColor = (weight) => {
+                const intensity = Math.floor(weight * 255 * 2);
+                return `rgba(0, ${Math.min(255, intensity)}, 0, ${0.3 + weight * 0.7})`;
+            };
+
+            return (
+                <div className="demo-section">
+                    <h2>Attention Mechanism</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>Self-Attention Visualization</h3>
+
+                            <div className="control-group">
+                                <label>Input Sentence</label>
+                                <textarea
+                                    value={sentence}
+                                    onChange={e => {
+                                        setSentence(e.target.value);
+                                        setQueryWord(0);
+                                    }}
+                                    style={{minHeight: '60px'}}
+                                />
+                            </div>
+
+                            <div className="control-group">
+                                <label>Query Word (click to select)</label>
+                                <div className="token-container">
+                                    {words.map((word, i) => (
+                                        <div
+                                            key={i}
+                                            className={`token ${i === queryWord ? 'special' : ''}`}
+                                            style={{cursor: 'pointer'}}
+                                            onClick={() => setQueryWord(i)}
+                                        >
+                                            {word}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="info-box">
+                                <strong>Attention Formula:</strong>
+                                <div style={{margin: '10px 0', fontSize: '1.1em'}}>
+                                    {`$$\\text{Attention}(Q,K,V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$`}
+                                </div>
+                                <small>{`Q=Query, K=Key, V=Value, $d_k$=dimension`}</small>
+                            </div>
+
+                            <div className="code-block">
+{`# PyTorch Attention
+import torch.nn.functional as F
+
+# Scaled dot-product attention
+def attention(Q, K, V):
+    d_k = K.size(-1)
+    scores = Q @ K.transpose(-2, -1)
+    scores = scores / math.sqrt(d_k)
+    weights = F.softmax(scores, dim=-1)
+    return weights @ V`}
+                            </div>
+                        </div>
+
+                        <div className="visualization">
+                            <h4 style={{marginBottom: '15px'}}>
+                                Attention from "{words[queryWord]}" to all words
+                            </h4>
+
+                            <div style={{marginBottom: '30px'}}>
+                                {words.map((word, i) => (
+                                    <div key={i} className="word-vector" style={{marginBottom: '10px'}}>
+                                        <span className="word-label">{word}</span>
+                                        <div className="vector-bar">
+                                            <div
+                                                className="vector-segment"
+                                                style={{
+                                                    width: `${(attentionWeights[i] || 0) * 100}%`,
+                                                    background: getColor(attentionWeights[i] || 0)
+                                                }}
+                                            />
+                                        </div>
+                                        <span className="value-display">
+                                            {((attentionWeights[i] || 0) * 100).toFixed(1)}%
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <h4 style={{marginBottom: '15px'}}>Attention Matrix</h4>
+                            <div
+                                className="attention-matrix"
+                                style={{
+                                    gridTemplateColumns: `80px repeat(${words.length}, 1fr)`
+                                }}
+                            >
+                                <div className="attention-cell attention-header"></div>
+                                {words.map((w, i) => (
+                                    <div key={i} className="attention-cell attention-header">{w}</div>
+                                ))}
+                                {words.map((rowWord, row) => (
+                                    <React.Fragment key={row}>
+                                        <div className="attention-cell attention-header">{rowWord}</div>
+                                        {words.map((_, col) => {
+                                            const weight = row === queryWord ? attentionWeights[col] : Math.random() * 0.3;
+                                            return (
+                                                <div
+                                                    key={col}
+                                                    className="attention-cell"
+                                                    style={{background: getColor(weight)}}
+                                                >
+                                                    {(weight * 100).toFixed(0)}
+                                                </div>
+                                            );
+                                        })}
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // LLM API Demo
+        function LLMApiDemo() {
+            const [prompt, setPrompt] = useState("Explain machine learning in simple terms.");
+            const [systemPrompt, setSystemPrompt] = useState("You are a helpful AI assistant.");
+            const [temperature, setTemperature] = useState(0.7);
+            const [maxTokens, setMaxTokens] = useState(150);
+            const [messages, setMessages] = useState([]);
+            const [isLoading, setIsLoading] = useState(false);
+
+            const simulateResponse = () => {
+                setIsLoading(true);
+                setMessages([
+                    ...messages,
+                    { role: 'user', content: prompt }
+                ]);
+
+                // Simulated responses based on prompt
+                setTimeout(() => {
+                    const responses = {
+                        'machine learning': "Machine learning is like teaching a computer to learn from examples, similar to how you learn from experience. Instead of programming exact rules, we show the computer many examples and let it figure out patterns on its own!",
+                        'neural network': "A neural network is inspired by how your brain works! It's made of layers of connected 'neurons' that process information. Data flows through these layers, getting transformed at each step until we get an answer.",
+                        'default': "I'd be happy to help explain that concept! Machine learning and AI are fascinating fields that are transforming how we interact with technology. The key idea is that computers can learn patterns from data rather than following explicit programming rules."
+                    };
+
+                    let response = responses.default;
+                    for (const [key, val] of Object.entries(responses)) {
+                        if (prompt.toLowerCase().includes(key)) {
+                            response = val;
+                            break;
+                        }
+                    }
+
+                    setMessages(prev => [
+                        ...prev,
+                        { role: 'assistant', content: response }
+                    ]);
+                    setIsLoading(false);
+                }, 1000 + Math.random() * 1000);
+
+                setPrompt('');
+            };
+
+            return (
+                <div className="demo-section">
+                    <h2>LLM API Usage</h2>
+                    <div className="demo-grid">
+                        <div className="control-panel">
+                            <h3>API Parameters</h3>
+
+                            <div className="control-group">
+                                <label>System Prompt</label>
+                                <textarea
+                                    value={systemPrompt}
+                                    onChange={e => setSystemPrompt(e.target.value)}
+                                    style={{minHeight: '60px'}}
+                                />
+                            </div>
+
+                            <div className="control-group">
+                                <label>Temperature: {temperature.toFixed(1)}</label>
+                                <div className="slider-container">
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="2"
+                                        step="0.1"
+                                        value={temperature}
+                                        onChange={e => setTemperature(parseFloat(e.target.value))}
+                                    />
+                                </div>
+                                <small style={{opacity: 0.7}}>
+                                    Lower = more focused, Higher = more creative
+                                </small>
+                            </div>
+
+                            <div className="control-group">
+                                <label>Max Tokens: {maxTokens}</label>
+                                <div className="slider-container">
+                                    <input
+                                        type="range"
+                                        min="50"
+                                        max="500"
+                                        step="50"
+                                        value={maxTokens}
+                                        onChange={e => setMaxTokens(parseInt(e.target.value))}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="code-block">
+{`from openai import OpenAI
+client = OpenAI()
+
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system",
+         "content": "${systemPrompt.slice(0, 30)}..."},
+        {"role": "user",
+         "content": "${prompt.slice(0, 30) || 'Your message'}..."}
+    ],
+    temperature=${temperature},
+    max_tokens=${maxTokens}
+)
+
+print(response.choices[0].message.content)`}
+                            </div>
+
+                            <div className="prompt-template">
+                                <h4>Common Prompt Patterns</h4>
+                                <small>Click to try:</small>
+                                <div style={{marginTop: '10px'}}>
+                                    <button className="btn" onClick={() => setPrompt("Explain neural networks like I'm 5 years old.")}>
+                                        ELI5
+                                    </button>
+                                    <button className="btn" onClick={() => setPrompt("List 3 pros and 3 cons of using machine learning.")}>
+                                        Pros/Cons
+                                    </button>
+                                    <button className="btn" onClick={() => setPrompt("Compare supervised vs unsupervised learning in a table format.")}>
+                                        Compare
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="visualization" style={{display: 'flex', flexDirection: 'column'}}>
+                            <h4 style={{marginBottom: '15px'}}>Chat Interface (Simulated)</h4>
+
+                            <div className="chat-container" style={{flex: 1, marginBottom: '15px'}}>
+                                {messages.length === 0 && (
+                                    <div style={{textAlign: 'center', opacity: 0.5, padding: '40px'}}>
+                                        Start a conversation...
+                                    </div>
+                                )}
+                                {messages.map((msg, i) => (
+                                    <div key={i} className={`chat-message ${msg.role}`}>
+                                        <div className="role">{msg.role === 'user' ? 'You' : 'Assistant'}</div>
+                                        {msg.content}
+                                    </div>
+                                ))}
+                                {isLoading && (
+                                    <div className="chat-message assistant">
+                                        <div className="role">Assistant</div>
+                                        Thinking...
+                                    </div>
+                                )}
+                            </div>
+
+                            <div style={{display: 'flex', gap: '10px'}}>
+                                <textarea
+                                    value={prompt}
+                                    onChange={e => setPrompt(e.target.value)}
+                                    placeholder="Type your message..."
+                                    style={{flex: 1, minHeight: '50px'}}
+                                    onKeyPress={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), simulateResponse())}
+                                />
+                                <button
+                                    className="btn primary"
+                                    onClick={simulateResponse}
+                                    disabled={!prompt.trim() || isLoading}
+                                    style={{alignSelf: 'flex-end'}}
+                                >
+                                    Send
+                                </button>
+                            </div>
+
+                            <button
+                                className="btn"
+                                onClick={() => setMessages([])}
+                                style={{marginTop: '10px', width: 'fit-content'}}
+                            >
+                                Clear Chat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App
+        function App() {
+            const [activeTab, setActiveTab] = useState('tokenization');
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>Day 3: NLP & LLMs</h1>
+                        <div className="subtitle">From Text Processing to Large Language Models</div>
+                        <div className="badge">PART 1 OF 3 | MASTERING LLMs</div>
+                    </div>
+
+                    <div className="tabs">
+                        <button
+                            className={`tab ${activeTab === 'tokenization' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('tokenization')}
+                        >
+                            Tokenization
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'embeddings' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('embeddings')}
+                        >
+                            Word Embeddings
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'attention' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('attention')}
+                        >
+                            Attention
+                        </button>
+                        <button
+                            className={`tab ${activeTab === 'llm' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('llm')}
+                        >
+                            LLM APIs
+                        </button>
+                    </div>
+
+                    {activeTab === 'tokenization' && <TokenizationDemo />}
+                    {activeTab === 'embeddings' && <EmbeddingsDemo />}
+                    {activeTab === 'attention' && <AttentionDemo />}
+                    {activeTab === 'llm' && <LLMApiDemo />}
+
+                    <div className="nav-buttons">
+                        <a href="demo-day2-neural-networks.html" className="nav-btn">&larr; Day 2 Demo</a>
+                        <a href="mastering-llms-part1-slides.html" className="nav-btn">Back to Slides</a>
+                        <a href="student-notes-part1.html" className="nav-btn">Student Notes &rarr;</a>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

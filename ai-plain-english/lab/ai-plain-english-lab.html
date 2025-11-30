@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Plain English - Take-Home Lab</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
+
+        :root {
+            --primary: #2c5282;
+            --primary-light: #4299e1;
+            --accent: #48bb78;
+            --text: #2d3748;
+            --text-light: #718096;
+            --bg: #ffffff;
+            --bg-alt: #f7fafc;
+            --border: #e2e8f0;
+        }
+
+        @page {
+            size: A4;
+            margin: 2cm 2.5cm;
+        }
+
+        @media print {
+            body {
+                font-size: 11pt;
+                line-height: 1.5;
+            }
+            .page-break { page-break-before: always; }
+            .no-print { display: none !important; }
+            .exercise { page-break-inside: avoid; }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.7;
+            font-size: 14px;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Header Styles */
+        .document-header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+        .logo-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+        .document-type {
+            background: var(--primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .document-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .document-subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .meta-info {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        .meta-info span { display: flex; align-items: center; gap: 6px; }
+
+        /* Section Styles */
+        h2 {
+            font-size: 20px;
+            color: var(--primary);
+            margin: 32px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+        h3 {
+            font-size: 16px;
+            color: var(--text);
+            margin: 24px 0 12px;
+        }
+        h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin: 16px 0 8px;
+        }
+        p { margin-bottom: 12px; }
+        ul, ol { margin: 12px 0 12px 24px; }
+        li { margin-bottom: 8px; }
+
+        /* Box Styles */
+        .intro-box {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+        }
+        .intro-box h3 { color: white; margin-top: 0; }
+        .intro-box p { margin-bottom: 0; }
+
+        .info-box {
+            background: var(--bg-alt);
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .info-box.tip {
+            border-left-color: var(--accent);
+            background: #f0fff4;
+        }
+        .info-box.warning {
+            border-left-color: #ed8936;
+            background: #fffaf0;
+        }
+        .info-box-title {
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        .info-box.tip .info-box-title { color: #276749; }
+        .info-box.warning .info-box-title { color: #c05621; }
+
+        /* Exercise Styles */
+        .exercise {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            margin: 24px 0;
+            overflow: hidden;
+        }
+        .exercise-header {
+            background: var(--bg-alt);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .exercise-number {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .exercise-title {
+            font-weight: 600;
+            font-size: 16px;
+            flex: 1;
+            margin-left: 12px;
+        }
+        .exercise-time {
+            font-size: 13px;
+            color: var(--text-light);
+            background: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .exercise-body { padding: 20px; }
+        .exercise-objective {
+            background: #ebf8ff;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .exercise-objective strong { color: var(--primary); }
+
+        /* Code & Input Styles */
+        .prompt-box {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 13px;
+            margin: 12px 0;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .prompt-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .response-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 120px;
+            margin: 12px 0;
+            background: var(--bg-alt);
+        }
+        .response-area p {
+            color: var(--text-light);
+            font-style: italic;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-alt);
+            border-radius: 6px;
+            margin: 8px 0;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .checkbox-label { flex: 1; }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+        th {
+            background: var(--bg-alt);
+            font-weight: 600;
+            color: var(--primary);
+        }
+        tr:nth-child(even) { background: var(--bg-alt); }
+
+        /* Rating Scale */
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            margin: 16px 0;
+        }
+        .rating-item {
+            text-align: center;
+            flex: 1;
+        }
+        .rating-circle {
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        .rating-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        /* Footer */
+        .document-footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Steps */
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            margin-left: 0;
+        }
+        .steps li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 16px;
+        }
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Learning Objectives */
+        .objectives {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .objective {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            background: var(--bg-alt);
+            border-radius: 8px;
+        }
+        .objective-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .objective-text { font-size: 13px; }
+
+        /* Completion Section */
+        .completion-section {
+            background: linear-gradient(135deg, #f6f9fc 0%, #e9f1f7 100%);
+            padding: 24px;
+            border-radius: 12px;
+            margin: 32px 0;
+            text-align: center;
+        }
+        .completion-section h3 {
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Document Header -->
+<header class="document-header">
+    <div class="logo-row">
+        <div class="logo">ITAG SKILLNET AI ADVANTAGE</div>
+        <div class="document-type">Take-Home Lab</div>
+    </div>
+    <h1 class="document-title">AI in Plain English</h1>
+    <p class="document-subtitle">Hands-On Lab: Your First Steps with AI</p>
+    <div class="meta-info">
+        <span>⏱️ Estimated Time: 45-60 minutes</span>
+        <span>📚 Difficulty: Beginner</span>
+        <span>🎯 6 Practical Exercises</span>
+    </div>
+</header>
+
+<!-- Introduction -->
+<div class="intro-box">
+    <h3>Welcome to Your AI Lab!</h3>
+    <p>This hands-on lab will guide you through practical exercises using AI tools. By the end, you'll have real experience with AI capabilities and a clear understanding of how to apply them in your work. No coding required - just curiosity and a willingness to experiment!</p>
+</div>
+
+<!-- Learning Objectives -->
+<h2>🎯 Learning Objectives</h2>
+<div class="objectives">
+    <div class="objective">
+        <div class="objective-icon">✓</div>
+        <div class="objective-text">Use AI chat interfaces effectively to get useful responses</div>
+    </div>
+    <div class="objective">
+        <div class="objective-icon">✓</div>
+        <div class="objective-text">Write better prompts using proven techniques</div>
+    </div>
+    <div class="objective">
+        <div class="objective-icon">✓</div>
+        <div class="objective-text">Identify tasks where AI can save you time</div>
+    </div>
+    <div class="objective">
+        <div class="objective-icon">✓</div>
+        <div class="objective-text">Understand AI limitations and when human oversight is needed</div>
+    </div>
+</div>
+
+<!-- Getting Started -->
+<h2>🚀 Getting Started</h2>
+<p>Before beginning the exercises, make sure you have access to at least one AI chat tool:</p>
+
+<table>
+    <tr>
+        <th>Tool</th>
+        <th>URL</th>
+        <th>Free Tier</th>
+        <th>Best For</th>
+    </tr>
+    <tr>
+        <td><strong>ChatGPT</strong></td>
+        <td>chat.openai.com</td>
+        <td>Yes (GPT-3.5)</td>
+        <td>General purpose, widely used</td>
+    </tr>
+    <tr>
+        <td><strong>Claude</strong></td>
+        <td>claude.ai</td>
+        <td>Yes</td>
+        <td>Analysis, coding, long documents</td>
+    </tr>
+    <tr>
+        <td><strong>Microsoft Copilot</strong></td>
+        <td>copilot.microsoft.com</td>
+        <td>Yes</td>
+        <td>Web search integration</td>
+    </tr>
+    <tr>
+        <td><strong>Google Gemini</strong></td>
+        <td>gemini.google.com</td>
+        <td>Yes</td>
+        <td>Google ecosystem integration</td>
+    </tr>
+</table>
+
+<div class="info-box tip">
+    <div class="info-box-title">💡 Pro Tip</div>
+    Try the same exercise with different AI tools to see how responses vary. Each has strengths and weaknesses!
+</div>
+
+<div class="page-break"></div>
+
+<!-- Exercise 1 -->
+<div class="exercise">
+    <div class="exercise-header">
+        <div style="display: flex; align-items: center;">
+            <div class="exercise-number">1</div>
+            <div class="exercise-title">Your First AI Conversation</div>
+        </div>
+        <div class="exercise-time">⏱️ 5 min</div>
+    </div>
+    <div class="exercise-body">
+        <div class="exercise-objective">
+            <strong>Objective:</strong> Get comfortable with AI chat interfaces and see how AI responds to different types of questions.
+        </div>
+
+        <h4>Instructions</h4>
+        <ol class="steps">
+            <li>Open your chosen AI tool (ChatGPT, Claude, etc.)</li>
+            <li>Start a new conversation and type the prompt below</li>
+            <li>Read the response and then ask a follow-up question</li>
+            <li>Record your observations</li>
+        </ol>
+
+        <div class="prompt-label">Sample Prompt</div>
+        <div class="prompt-box">Explain artificial intelligence to me as if I were a curious 10-year-old. Use simple words and fun examples.</div>
+
+        <h4>Your Response Summary</h4>
+        <div class="response-area">
+            <p>Write 2-3 key points from the AI's response here...</p>
+        </div>
+
+        <h4>Follow-up Questions to Try</h4>
+        <ul>
+            <li>"Can you give me a real-world example I might see every day?"</li>
+            <li>"What's the difference between AI and a regular computer program?"</li>
+            <li>"How does this relate to ChatGPT itself?"</li>
+        </ul>
+
+        <h4>Reflection</h4>
+        <div class="checkbox-item">
+            <div class="checkbox"></div>
+            <div class="checkbox-label">The AI understood my question and gave a relevant response</div>
+        </div>
+        <div class="checkbox-item">
+            <div class="checkbox"></div>
+            <div class="checkbox-label">The explanation was at the right level (not too technical)</div>
+        </div>
+        <div class="checkbox-item">
+            <div class="checkbox"></div>
+            <div class="checkbox-label">I was surprised by something in the response</div>
+        </div>
+    </div>
+</div>
+
+<!-- Exercise 2 -->
+<div class="exercise">
+    <div class="exercise-header">
+        <div style="display: flex; align-items: center;">
+            <div class="exercise-number">2</div>
+            <div class="exercise-title">The Power of Better Prompts</div>
+        </div>
+        <div class="exercise-time">⏱️ 10 min</div>
+    </div>
+    <div class="exercise-body">
+        <div class="exercise-objective">
+            <strong>Objective:</strong> Learn how prompt quality dramatically affects output quality by comparing vague vs. specific prompts.
+        </div>
+
+        <h4>Part A: The Vague Prompt</h4>
+        <div class="prompt-label">Weak Prompt</div>
+        <div class="prompt-box">Write a marketing email.</div>
+
+        <p>Send this prompt and note the result. It will likely be generic and not very useful.</p>
+
+        <h4>Part B: The Specific Prompt</h4>
+        <div class="prompt-label">Strong Prompt (CRAFT Method)</div>
+        <div class="prompt-box">Context: I run a small accounting firm launching a new service for small business tax planning.
+
+Role: Act as an experienced B2B email copywriter.
+
+Action: Write a marketing email to small business owners (10-50 employees) announcing our new quarterly tax planning service.
+
+Format:
+- Subject line (compelling, under 50 characters)
+- Email body (150-200 words)
+- Clear call-to-action for a free consultation
+
+Tone: Professional but approachable, emphasising value and expertise without being pushy.</div>
+
+        <h4>Compare the Results</h4>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>Vague Prompt Result</th>
+                <th>Specific Prompt Result</th>
+            </tr>
+            <tr>
+                <td>Relevance to your needs</td>
+                <td style="min-width: 150px;"></td>
+                <td style="min-width: 150px;"></td>
+            </tr>
+            <tr>
+                <td>Ready to use as-is?</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Tone appropriateness</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Time to get useful output</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+
+        <div class="info-box">
+            <div class="info-box-title">The CRAFT Framework</div>
+            <p><strong>C</strong>ontext - Background information<br>
+            <strong>R</strong>ole - Who the AI should act as<br>
+            <strong>A</strong>ction - What you want done<br>
+            <strong>F</strong>ormat - How to structure the output<br>
+            <strong>T</strong>one - Voice and style</p>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- Exercise 3 -->
+<div class="exercise">
+    <div class="exercise-header">
+        <div style="display: flex; align-items: center;">
+            <div class="exercise-number">3</div>
+            <div class="exercise-title">AI as Your Research Assistant</div>
+        </div>
+        <div class="exercise-time">⏱️ 10 min</div>
+    </div>
+    <div class="exercise-body">
+        <div class="exercise-objective">
+            <strong>Objective:</strong> Use AI to quickly understand complex topics and get actionable summaries.
+        </div>
+
+        <h4>Choose a Topic Relevant to Your Work</h4>
+        <p>Select one of these prompts or create your own about a topic you need to understand:</p>
+
+        <div class="prompt-label">Option A: Regulatory Understanding</div>
+        <div class="prompt-box">Explain the key points of the EU AI Act that will affect businesses. Focus on:
+1. What types of AI systems are regulated
+2. Key compliance requirements
+3. Timeline for implementation
+4. What businesses should do now to prepare
+
+Keep it practical and avoid legal jargon.</div>
+
+        <div class="prompt-label">Option B: Technology Concept</div>
+        <div class="prompt-box">Explain RAG (Retrieval-Augmented Generation) in AI to a business manager.
+- What problem does it solve?
+- How does it work (simple explanation)?
+- What are practical business applications?
+- What are the benefits over basic ChatGPT?</div>
+
+        <div class="prompt-label">Option C: Your Own Topic</div>
+        <div class="response-area" style="min-height: 80px;">
+            <p>Write your own research question here...</p>
+        </div>
+
+        <h4>Evaluate the Response</h4>
+        <div class="rating-scale">
+            <div class="rating-item">
+                <div class="rating-circle">1</div>
+                <div class="rating-label">Not helpful</div>
+            </div>
+            <div class="rating-item">
+                <div class="rating-circle">2</div>
+                <div class="rating-label">Somewhat</div>
+            </div>
+            <div class="rating-item">
+                <div class="rating-circle">3</div>
+                <div class="rating-label">Helpful</div>
+            </div>
+            <div class="rating-item">
+                <div class="rating-circle">4</div>
+                <div class="rating-label">Very helpful</div>
+            </div>
+            <div class="rating-item">
+                <div class="rating-circle">5</div>
+                <div class="rating-label">Excellent</div>
+            </div>
+        </div>
+
+        <div class="info-box warning">
+            <div class="info-box-title">⚠️ Important Reminder</div>
+            AI can provide general information but may not be current or accurate for critical decisions. Always verify important facts from authoritative sources, especially for legal or regulatory matters.
+        </div>
+    </div>
+</div>
+
+<!-- Exercise 4 -->
+<div class="exercise">
+    <div class="exercise-header">
+        <div style="display: flex; align-items: center;">
+            <div class="exercise-number">4</div>
+            <div class="exercise-title">Practical Task: Meeting Summary</div>
+        </div>
+        <div class="exercise-time">⏱️ 10 min</div>
+    </div>
+    <div class="exercise-body">
+        <div class="exercise-objective">
+            <strong>Objective:</strong> Practice using AI for a common workplace task - turning messy notes into structured outputs.
+        </div>
+
+        <h4>The Scenario</h4>
+        <p>You've just finished a project status meeting and have these rough notes:</p>
+
+        <div class="prompt-box" style="background: #f7fafc; color: var(--text); border: 1px solid var(--border);">meeting notes - project alpha status
+- john said dev team behind by 2 weeks
+- budget issue - need €15k more for testing tools
+- mary presents client feedback next thurs
+- API integration done but needs testing
+- launch date might slip to march 15 instead of march 1
+- need decision on additional contractor by friday
+- sarah handling vendor contract renewal
+- security audit scheduled feb 20
+- tom raised concerns about documentation gaps</div>
+
+        <h4>Your Task</h4>
+        <p>Create a prompt that transforms these notes into a professional meeting summary with:</p>
+        <ul>
+            <li>Key decisions and their owners</li>
+            <li>Action items with deadlines</li>
+            <li>Risks or concerns flagged</li>
+            <li>Next steps</li>
+        </ul>
+
+        <div class="prompt-label">Write Your Prompt Here</div>
+        <div class="response-area" style="min-height: 100px;">
+            <p>Your prompt...</p>
+        </div>
+
+        <h4>Rate the AI-Generated Summary</h4>
+        <div class="checkbox-item">
+            <div class="checkbox"></div>
+            <div class="checkbox-label">All key points were captured</div>
+        </div>
+        <div class="checkbox-item">
+            <div class="checkbox"></div>
+            <div class="checkbox-label">Format is professional and clear</div>
+        </div>
+        <div class="checkbox-item">
+            <div class="checkbox"></div>
+            <div class="checkbox-label">Action items have clear owners</div>
+        </div>
+        <div class="checkbox-item">
+            <div class="checkbox"></div>
+            <div class="checkbox-label">I could send this to stakeholders with minor edits</div>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- Exercise 5 -->
+<div class="exercise">
+    <div class="exercise-header">
+        <div style="display: flex; align-items: center;">
+            <div class="exercise-number">5</div>
+            <div class="exercise-title">Testing AI Limitations</div>
+        </div>
+        <div class="exercise-time">⏱️ 8 min</div>
+    </div>
+    <div class="exercise-body">
+        <div class="exercise-objective">
+            <strong>Objective:</strong> Understand AI limitations by testing scenarios where it may struggle or fail.
+        </div>
+
+        <h4>Test 1: Very Recent Events</h4>
+        <p>Ask about something that happened very recently (last few weeks):</p>
+        <div class="prompt-box">What major tech announcements were made at [recent conference/event]?</div>
+        <p><strong>Did it know?</strong> □ Yes □ No □ Partially (admitted uncertainty)</p>
+
+        <h4>Test 2: Ask for Sources</h4>
+        <p>Ask AI to provide citations for a claim:</p>
+        <div class="prompt-box">What studies show that AI improves workplace productivity? Please provide specific citations with authors and publication dates.</div>
+        <p><strong>Observation:</strong> Did it provide real sources, or generic/made-up ones?</p>
+        <div class="response-area" style="min-height: 60px;">
+            <p>Your observation...</p>
+        </div>
+
+        <h4>Test 3: Logical Reasoning</h4>
+        <p>Try this tricky question:</p>
+        <div class="prompt-box">I have a 3-gallon jug and a 5-gallon jug. How can I measure exactly 4 gallons of water?</div>
+        <p><strong>Did it solve correctly?</strong> □ Yes □ No □ Partially</p>
+
+        <h4>Key Learnings About AI Limitations</h4>
+        <div class="response-area">
+            <p>Write 3 things you learned about what AI cannot do reliably...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Exercise 6 -->
+<div class="exercise">
+    <div class="exercise-header">
+        <div style="display: flex; align-items: center;">
+            <div class="exercise-number">6</div>
+            <div class="exercise-title">Your AI Action Plan</div>
+        </div>
+        <div class="exercise-time">⏱️ 10 min</div>
+    </div>
+    <div class="exercise-body">
+        <div class="exercise-objective">
+            <strong>Objective:</strong> Create a concrete plan for how you'll use AI in your work starting tomorrow.
+        </div>
+
+        <h4>Part A: Identify Your AI Opportunities</h4>
+        <p>Think about your typical work week. List 3-5 tasks that could benefit from AI assistance:</p>
+
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>How Often?</th>
+                <th>Time Currently</th>
+                <th>AI Application</th>
+            </tr>
+            <tr>
+                <td style="height: 40px;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="height: 40px;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="height: 40px;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="height: 40px;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="height: 40px;"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+
+        <h4>Part B: Your First Week Challenge</h4>
+        <p>Commit to using AI for at least one task each day this week:</p>
+
+        <table>
+            <tr>
+                <th>Day</th>
+                <th>Task I'll Try with AI</th>
+                <th>Completed? ✓</th>
+            </tr>
+            <tr><td>Monday</td><td style="min-width: 250px;"></td><td style="width: 80px;"></td></tr>
+            <tr><td>Tuesday</td><td></td><td></td></tr>
+            <tr><td>Wednesday</td><td></td><td></td></tr>
+            <tr><td>Thursday</td><td></td><td></td></tr>
+            <tr><td>Friday</td><td></td><td></td></tr>
+        </table>
+
+        <h4>Part C: Success Metrics</h4>
+        <p>How will you know if AI is helping? Define your success measures:</p>
+        <div class="response-area">
+            <p>E.g., "Time saved per task", "Quality improvement", "Number of tasks completed"...</p>
+        </div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- Bonus Tips -->
+<h2>🎁 Bonus: Advanced Prompting Techniques</h2>
+
+<div class="info-box">
+    <div class="info-box-title">Chain of Thought Prompting</div>
+    <p>Ask AI to "think step by step" for complex problems:</p>
+    <div class="prompt-box" style="margin-top: 8px;">"Let's think through this step by step: [your complex question]"</div>
+</div>
+
+<div class="info-box">
+    <div class="info-box-title">Role-Based Prompting</div>
+    <p>Assign a specific expert role for better domain responses:</p>
+    <div class="prompt-box" style="margin-top: 8px;">"Act as an experienced [role] with 20 years of experience. [Your question]"</div>
+</div>
+
+<div class="info-box">
+    <div class="info-box-title">Iterative Refinement</div>
+    <p>Don't accept the first response - refine it:</p>
+    <div class="prompt-box" style="margin-top: 8px;">"Good start. Now make it more concise / add specific examples / adjust the tone to be more [X]"</div>
+</div>
+
+<div class="info-box">
+    <div class="info-box-title">Output Format Control</div>
+    <p>Specify exactly how you want the output structured:</p>
+    <div class="prompt-box" style="margin-top: 8px;">"Format your response as:
+- A one-sentence summary
+- Three bullet points with key details
+- A recommended next step"</div>
+</div>
+
+<!-- Completion Section -->
+<div class="completion-section">
+    <h3>🎉 Congratulations!</h3>
+    <p>You've completed the AI in Plain English Take-Home Lab!</p>
+    <p style="margin-top: 16px;">You now have hands-on experience with AI tools and practical techniques to apply in your work.</p>
+    <p style="margin-top: 16px; font-style: italic; color: var(--text-light);">Remember: The best way to learn AI is to use it. Keep experimenting!</p>
+</div>
+
+<!-- Quick Reference Card -->
+<h2>📋 Quick Reference Card</h2>
+<p>Cut this out and keep at your desk:</p>
+
+<div style="border: 2px dashed var(--border); padding: 20px; border-radius: 8px; background: var(--bg-alt);">
+    <h4 style="text-align: center; margin-bottom: 16px;">AI Prompting Cheat Sheet</h4>
+    <table style="font-size: 12px;">
+        <tr>
+            <td style="width: 30%;"><strong>Be Specific</strong></td>
+            <td>Include context, audience, format, length, tone</td>
+        </tr>
+        <tr>
+            <td><strong>Give Examples</strong></td>
+            <td>"Like this: [example]" or "Similar to [reference]"</td>
+        </tr>
+        <tr>
+            <td><strong>Set Constraints</strong></td>
+            <td>"In 200 words or less" / "Without technical jargon"</td>
+        </tr>
+        <tr>
+            <td><strong>Assign Roles</strong></td>
+            <td>"Act as a [expert type]" / "You are a [professional]"</td>
+        </tr>
+        <tr>
+            <td><strong>Iterate</strong></td>
+            <td>"Make it shorter" / "Add more detail on X" / "Change tone to Y"</td>
+        </tr>
+        <tr>
+            <td><strong>Verify</strong></td>
+            <td>Always check facts, especially for important decisions</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Footer -->
+<footer class="document-footer">
+    <div>ITAG Skillnet AI Advantage Programme</div>
+    <div>AI in Plain English - Take-Home Lab</div>
+    <div>© 2024</div>
+</footer>
+
+</body>
+</html>

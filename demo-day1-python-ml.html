@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1 Demo: Python for ML & Data Exploration</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #4a5a23 0%, #6b7d3a 100%); color: white; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px; }
+        h1 { font-size: 2.2em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1em; opacity: 0.9; margin-bottom: 30px; }
+        .demo-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 24px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer; font-size: 1em; transition: all 0.3s; }
+        .tab-btn:hover { background: rgba(255,255,255,0.2); }
+        .tab-btn.active { background: rgba(197, 212, 90, 0.3); border-color: #c5d45a; }
+        .demo-panel { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+        .demo-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .code-area { background: #1a1a2e; border-radius: 8px; padding: 20px; }
+        .code-area h3 { color: #c5d45a; margin-bottom: 15px; font-size: 1.1em; }
+        .code-area pre { color: #c5d45a; font-family: 'Courier New', monospace; font-size: 0.9em; white-space: pre-wrap; line-height: 1.5; }
+        .output-area { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; }
+        .output-area h3 { color: #c5d45a; margin-bottom: 15px; font-size: 1.1em; }
+        .chart-container { height: 300px; background: white; border-radius: 8px; padding: 15px; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .data-table th, .data-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.2); font-size: 0.9em; }
+        .data-table th { background: rgba(197, 212, 90, 0.2); }
+        .controls { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        .control-group label { font-size: 0.9em; opacity: 0.9; }
+        .control-group input, .control-group select { padding: 8px 12px; border-radius: 5px; border: none; font-size: 1em; }
+        .btn { padding: 10px 20px; background: #c5d45a; color: #3a4a1a; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        .btn:hover { background: #b8c76f; }
+        .explanation { background: rgba(54, 162, 235, 0.2); border-left: 4px solid #36A2EB; padding: 15px; border-radius: 0 8px 8px 0; margin: 15px 0; }
+        .explanation h4 { margin-bottom: 10px; color: #c5d45a; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2); }
+        .nav-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 25px; border-radius: 5px; text-decoration: none; transition: all 0.3s; }
+        .nav-btn:hover { background: white; color: #4a5a23; }
+        .metric-card { background: rgba(197, 212, 90, 0.2); padding: 15px; border-radius: 8px; text-align: center; }
+        .metric-value { font-size: 2em; font-weight: bold; color: #c5d45a; }
+        .metric-label { font-size: 0.9em; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Demo 1: NumPy Operations Visualizer
+        function NumpyDemo() {
+            const [array1, setArray1] = useState([1, 2, 3, 4, 5]);
+            const [operation, setOperation] = useState('multiply');
+            const [scalar, setScalar] = useState(2);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            const operations = {
+                multiply: (arr, s) => arr.map(x => x * s),
+                add: (arr, s) => arr.map(x => x + s),
+                square: (arr) => arr.map(x => x * x),
+                sqrt: (arr) => arr.map(x => Math.sqrt(x)),
+            };
+
+            const result = operations[operation](array1, scalar);
+
+            useEffect(() => {
+                if (chartInstance.current) chartInstance.current.destroy();
+
+                const ctx = chartRef.current.getContext('2d');
+                chartInstance.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: array1.map((_, i) => `[${i}]`),
+                        datasets: [
+                            { label: 'Original', data: array1, backgroundColor: 'rgba(54, 162, 235, 0.7)' },
+                            { label: 'Result', data: result, backgroundColor: 'rgba(144, 238, 144, 0.7)' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Array Transformation' } }
+                    }
+                });
+            }, [array1, operation, scalar]);
+
+            const getCodeExample = () => {
+                const ops = {
+                    multiply: `result = arr * ${scalar}`,
+                    add: `result = arr + ${scalar}`,
+                    square: `result = arr ** 2`,
+                    sqrt: `result = np.sqrt(arr)`,
+                };
+                return `import numpy as np
+
+arr = np.array([${array1.join(', ')}])
+${ops[operation]}
+print(result)  # [${result.map(x => x.toFixed(2)).join(', ')}]`;
+            };
+
+            return (
+                <div className="demo-panel">
+                    <h2 style={{marginBottom: '20px', color: '#90EE90'}}>NumPy Array Operations</h2>
+
+                    <div className="controls">
+                        <div className="control-group">
+                            <label>Operation</label>
+                            <select value={operation} onChange={e => setOperation(e.target.value)}>
+                                <option value="multiply">Multiply by scalar</option>
+                                <option value="add">Add scalar</option>
+                                <option value="square">Square all elements</option>
+                                <option value="sqrt">Square root</option>
+                            </select>
+                        </div>
+                        {(operation === 'multiply' || operation === 'add') && (
+                            <div className="control-group">
+                                <label>Scalar Value</label>
+                                <input type="number" value={scalar} onChange={e => setScalar(Number(e.target.value))} style={{width: '80px'}} />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="demo-section">
+                        <div className="code-area">
+                            <h3>Python Code</h3>
+                            <pre>{getCodeExample()}</pre>
+                        </div>
+                        <div className="output-area">
+                            <h3>Visualization</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="explanation">
+                        <h4>Why This Matters</h4>
+                        <p>NumPy operations are <strong>vectorized</strong> - they operate on entire arrays at once, making them 10-100x faster than Python loops. All neural network computations use these operations!</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Demo 2: Linear Regression Visualizer
+        function LinearRegressionDemo() {
+            const [points, setPoints] = useState([
+                {x: 1, y: 2.1}, {x: 2, y: 4.2}, {x: 3, y: 5.8}, {x: 4, y: 8.1}, {x: 5, y: 9.9}
+            ]);
+            const [slope, setSlope] = useState(2);
+            const [intercept, setIntercept] = useState(0);
+            const [autoFit, setAutoFit] = useState(false);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            // Calculate best fit line
+            const calculateBestFit = () => {
+                const n = points.length;
+                const sumX = points.reduce((a, p) => a + p.x, 0);
+                const sumY = points.reduce((a, p) => a + p.y, 0);
+                const sumXY = points.reduce((a, p) => a + p.x * p.y, 0);
+                const sumXX = points.reduce((a, p) => a + p.x * p.x, 0);
+
+                const m = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+                const b = (sumY - m * sumX) / n;
+                return { slope: m, intercept: b };
+            };
+
+            const bestFit = calculateBestFit();
+
+            // Calculate MSE
+            const currentSlope = autoFit ? bestFit.slope : slope;
+            const currentIntercept = autoFit ? bestFit.intercept : intercept;
+
+            const predictions = points.map(p => currentSlope * p.x + currentIntercept);
+            const mse = points.reduce((sum, p, i) => sum + Math.pow(p.y - predictions[i], 2), 0) / points.length;
+
+            useEffect(() => {
+                if (chartInstance.current) chartInstance.current.destroy();
+
+                const ctx = chartRef.current.getContext('2d');
+                const linePoints = [{x: 0, y: currentIntercept}, {x: 6, y: currentSlope * 6 + currentIntercept}];
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            { label: 'Data Points', data: points, backgroundColor: 'rgba(54, 162, 235, 0.8)', pointRadius: 8 },
+                            { label: 'Regression Line', data: linePoints, type: 'line', borderColor: '#90EE90', borderWidth: 3, pointRadius: 0, fill: false }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { min: 0, max: 6 }, y: { min: 0, max: 12 } },
+                        plugins: { title: { display: true, text: 'Linear Regression' } }
+                    }
+                });
+            }, [points, currentSlope, currentIntercept]);
+
+            return (
+                <div className="demo-panel">
+                    <h2 style={{marginBottom: '20px', color: '#90EE90'}}>Linear Regression Interactive</h2>
+
+                    <div className="controls">
+                        <div className="control-group">
+                            <label>Slope (m)</label>
+                            <input type="range" min="0" max="4" step="0.1" value={autoFit ? bestFit.slope : slope}
+                                   onChange={e => {setSlope(Number(e.target.value)); setAutoFit(false);}} style={{width: '150px'}} />
+                            <span>{(autoFit ? bestFit.slope : slope).toFixed(2)}</span>
+                        </div>
+                        <div className="control-group">
+                            <label>Intercept (b)</label>
+                            <input type="range" min="-2" max="4" step="0.1" value={autoFit ? bestFit.intercept : intercept}
+                                   onChange={e => {setIntercept(Number(e.target.value)); setAutoFit(false);}} style={{width: '150px'}} />
+                            <span>{(autoFit ? bestFit.intercept : intercept).toFixed(2)}</span>
+                        </div>
+                        <button className="btn" onClick={() => setAutoFit(true)}>Auto-Fit (Find Best Line)</button>
+                    </div>
+
+                    <div className="demo-section">
+                        <div className="output-area">
+                            <h3>Visualization</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="code-area" style={{marginBottom: '15px'}}>
+                                <h3>The Model</h3>
+                                <pre>{`y = ${currentSlope.toFixed(2)}x + ${currentIntercept.toFixed(2)}`}</pre>
+                            </div>
+                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+                                <div className="metric-card">
+                                    <div className="metric-value">{mse.toFixed(3)}</div>
+                                    <div className="metric-label">Mean Squared Error</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{autoFit ? '✓' : '✗'}</div>
+                                    <div className="metric-label">Best Fit?</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="explanation">
+                        <h4>What's Happening</h4>
+                        <p>Adjust the slope and intercept to minimize the Mean Squared Error (MSE). The <strong>Auto-Fit</strong> button calculates the mathematically optimal line. This is exactly what ML algorithms do - find parameters that minimize error!</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Demo 3: Classification Demo
+        function ClassificationDemo() {
+            const [threshold, setThreshold] = useState(0.5);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            // Simulated data points with features and labels
+            const data = [
+                {x: 1, y: 2, label: 0}, {x: 2, y: 3, label: 0}, {x: 1.5, y: 1, label: 0},
+                {x: 2.5, y: 2.5, label: 0}, {x: 3, y: 1.5, label: 0},
+                {x: 5, y: 5, label: 1}, {x: 6, y: 4, label: 1}, {x: 5.5, y: 6, label: 1},
+                {x: 6.5, y: 5.5, label: 1}, {x: 4.5, y: 5, label: 1},
+            ];
+
+            // Simple logistic-like prediction based on distance from center
+            const predict = (point) => {
+                const score = (point.x + point.y) / 12; // Simplified
+                return score;
+            };
+
+            const predictions = data.map(p => ({
+                ...p,
+                score: predict(p),
+                predicted: predict(p) > threshold ? 1 : 0
+            }));
+
+            const tp = predictions.filter(p => p.label === 1 && p.predicted === 1).length;
+            const fp = predictions.filter(p => p.label === 0 && p.predicted === 1).length;
+            const tn = predictions.filter(p => p.label === 0 && p.predicted === 0).length;
+            const fn = predictions.filter(p => p.label === 1 && p.predicted === 0).length;
+
+            const accuracy = (tp + tn) / data.length;
+            const precision = tp / (tp + fp) || 0;
+            const recall = tp / (tp + fn) || 0;
+
+            useEffect(() => {
+                if (chartInstance.current) chartInstance.current.destroy();
+
+                const ctx = chartRef.current.getContext('2d');
+                const class0 = data.filter(p => p.label === 0);
+                const class1 = data.filter(p => p.label === 1);
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            { label: 'Class 0 (Negative)', data: class0, backgroundColor: 'rgba(255, 99, 132, 0.7)', pointRadius: 10 },
+                            { label: 'Class 1 (Positive)', data: class1, backgroundColor: 'rgba(54, 162, 235, 0.7)', pointRadius: 10 },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { min: 0, max: 8 }, y: { min: 0, max: 8 } },
+                        plugins: { title: { display: true, text: 'Binary Classification' } }
+                    }
+                });
+            }, [threshold]);
+
+            return (
+                <div className="demo-panel">
+                    <h2 style={{marginBottom: '20px', color: '#90EE90'}}>Classification & Metrics</h2>
+
+                    <div className="controls">
+                        <div className="control-group">
+                            <label>Decision Threshold</label>
+                            <input type="range" min="0.1" max="0.9" step="0.05" value={threshold}
+                                   onChange={e => setThreshold(Number(e.target.value))} style={{width: '200px'}} />
+                            <span>{threshold.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <div className="demo-section">
+                        <div className="output-area">
+                            <h3>Data Visualization</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style={{color: '#90EE90', marginBottom: '15px'}}>Classification Metrics</h3>
+                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+                                <div className="metric-card">
+                                    <div className="metric-value">{(accuracy * 100).toFixed(0)}%</div>
+                                    <div className="metric-label">Accuracy</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{(precision * 100).toFixed(0)}%</div>
+                                    <div className="metric-label">Precision</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{(recall * 100).toFixed(0)}%</div>
+                                    <div className="metric-label">Recall</div>
+                                </div>
+                                <div className="metric-card">
+                                    <div className="metric-value">{tp}/{tp+fn}</div>
+                                    <div className="metric-label">True Positives</div>
+                                </div>
+                            </div>
+                            <div className="code-area" style={{marginTop: '15px'}}>
+                                <h3>Confusion Matrix</h3>
+                                <pre>{`           Predicted
+            0    1
+Actual 0 [ ${tn}    ${fp} ]  (TN, FP)
+       1 [ ${fn}    ${tp} ]  (FN, TP)`}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="explanation">
+                        <h4>Understanding the Metrics</h4>
+                        <p><strong>Accuracy</strong> = correct predictions / total. <strong>Precision</strong> = how many predicted positives are actually positive. <strong>Recall</strong> = how many actual positives did we find. Adjusting the threshold changes the trade-off!</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App
+        function App() {
+            const [activeTab, setActiveTab] = useState('numpy');
+
+            return (
+                <div className="container">
+                    <h1>Day 1 Demo: Python for ML</h1>
+                    <p className="subtitle">Interactive exploration of NumPy, Linear Regression, and Classification</p>
+
+                    <div className="demo-tabs">
+                        <button className={`tab-btn ${activeTab === 'numpy' ? 'active' : ''}`} onClick={() => setActiveTab('numpy')}>
+                            NumPy Operations
+                        </button>
+                        <button className={`tab-btn ${activeTab === 'regression' ? 'active' : ''}`} onClick={() => setActiveTab('regression')}>
+                            Linear Regression
+                        </button>
+                        <button className={`tab-btn ${activeTab === 'classification' ? 'active' : ''}`} onClick={() => setActiveTab('classification')}>
+                            Classification
+                        </button>
+                    </div>
+
+                    {activeTab === 'numpy' && <NumpyDemo />}
+                    {activeTab === 'regression' && <LinearRegressionDemo />}
+                    {activeTab === 'classification' && <ClassificationDemo />}
+
+                    <div className="nav-buttons">
+                        <a href="mastering-llms-part1-slides.html" className="nav-btn">← Back to Slides</a>
+                        <a href="demo-day2-neural-networks.html" className="nav-btn">Day 2 Demo →</a>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

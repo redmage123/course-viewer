@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Notes | Mastering LLMs Part 1: Foundations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a5a23 0%, #6b7d3a 100%);
+            min-height: 100vh;
+            color: white;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .toc {
+            background: rgba(0,0,0,0.3);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .toc h2 {
+            margin-bottom: 15px;
+        }
+        .toc ul {
+            list-style: none;
+            columns: 2;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            color: #c5d45a;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .day-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .day-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+        .topic {
+            margin-bottom: 25px;
+        }
+        .topic h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #c5d45a;
+        }
+        .topic h4 {
+            font-size: 1.1em;
+            margin: 15px 0 10px 0;
+            color: #b8c76f;
+        }
+        p {
+            margin-bottom: 12px;
+        }
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        .code-block {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c5d45a;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+        .note {
+            background: rgba(255,255,255,0.1);
+            border-left: 4px solid #c5d45a;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .note strong {
+            color: #c5d45a;
+        }
+        .warning {
+            background: rgba(255,100,100,0.2);
+            border-left: 4px solid #ff6464;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .formula {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        th {
+            background: rgba(255,255,255,0.1);
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            margin-top: 30px;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .code-block {
+                background: #f5f5f5;
+                color: #333;
+                border: 1px solid #ddd;
+            }
+            .day-section, .toc {
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+            }
+        }
+        .MathJax { font-size: 1.1em !important; }
+    </style>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mastering LLMs: Part 1</h1>
+            <p>AI & Machine Learning Foundations</p>
+            <div class="badge">STUDENT NOTES</div>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#day1">Day 1: Python for Data Science & ML Basics</a></li>
+                <li><a href="#numpy">NumPy Arrays</a></li>
+                <li><a href="#pandas">Pandas DataFrames</a></li>
+                <li><a href="#ml-basics">Machine Learning Fundamentals</a></li>
+                <li><a href="#regression">Linear Regression</a></li>
+                <li><a href="#classification">Classification</a></li>
+                <li><a href="#day2">Day 2: Neural Networks & Deep Learning</a></li>
+                <li><a href="#neurons">Neurons & Layers</a></li>
+                <li><a href="#activations">Activation Functions</a></li>
+                <li><a href="#training">Training Neural Networks</a></li>
+                <li><a href="#pytorch">PyTorch Fundamentals</a></li>
+                <li><a href="#day3">Day 3: NLP & Large Language Models</a></li>
+                <li><a href="#tokenization">Tokenization</a></li>
+                <li><a href="#embeddings">Word Embeddings</a></li>
+                <li><a href="#attention">Attention Mechanism</a></li>
+                <li><a href="#llm-apis">LLM APIs</a></li>
+            </ul>
+        </div>
+
+        <!-- DAY 1 -->
+        <div class="day-section" id="day1">
+            <h2>Day 1: Python for Data Science & ML Basics</h2>
+
+            <div class="topic" id="numpy">
+                <h3>NumPy Arrays</h3>
+                <p>NumPy is the foundation of scientific computing in Python. All ML libraries use NumPy arrays (called ndarrays) for numerical operations.</p>
+
+                <h4>Creating Arrays</h4>
+                <div class="code-block">import numpy as np
+
+# From list
+arr = np.array([1, 2, 3, 4, 5])
+
+# Special arrays
+zeros = np.zeros((3, 3))      # 3x3 matrix of zeros
+ones = np.ones((3, 3))        # 3x3 matrix of ones
+identity = np.eye(3)          # 3x3 identity matrix
+range_arr = np.arange(10)     # [0, 1, 2, ..., 9]
+random = np.random.randn(3, 3) # Random normal distribution</div>
+
+                <h4>Key Operations</h4>
+                <div class="code-block"># Statistics
+arr.mean()      # Average
+arr.std()       # Standard deviation
+arr.max()       # Maximum value
+arr.min()       # Minimum value
+np.argmax(arr)  # Index of maximum
+
+# Reshaping
+arr.reshape(5, 1)    # Reshape to 5 rows, 1 column
+arr.flatten()        # Flatten to 1D
+
+# Slicing (same as Python lists, but works on multiple dimensions)
+matrix[0, :]         # First row
+matrix[:, -1]        # Last column
+matrix[:2, :2]       # Top-left 2x2 submatrix</div>
+
+                <div class="note">
+                    <strong>Key Insight:</strong> NumPy operations are vectorized - they operate on entire arrays at once, making them much faster than Python loops.
+                </div>
+            </div>
+
+            <div class="topic" id="pandas">
+                <h3>Pandas DataFrames</h3>
+                <p>Pandas provides DataFrame - a 2D labeled data structure perfect for data manipulation and analysis.</p>
+
+                <div class="code-block">import pandas as pd
+
+# Create DataFrame
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'age': [25, 30, 35],
+    'salary': [50000, 60000, 70000]
+})
+
+# Explore data
+df.head()          # First 5 rows
+df.describe()      # Statistics for numeric columns
+df.info()          # Data types and null counts
+df.shape           # (rows, columns)
+
+# Filter and select
+df[df['age'] > 25]                    # Filter rows
+df[['name', 'salary']]                # Select columns
+df.loc[0:2, ['name', 'age']]          # Select by label
+df.iloc[0:2, 0:2]                     # Select by position
+
+# Group and aggregate
+df.groupby('department')['salary'].mean()
+df.groupby('department').agg({'salary': ['mean', 'max']})</div>
+            </div>
+
+            <div class="topic" id="ml-basics">
+                <h3>Machine Learning Fundamentals</h3>
+
+                <h4>Types of Machine Learning</h4>
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Examples</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Supervised</strong></td>
+                        <td>Learn from labeled data (input + output pairs)</td>
+                        <td>Spam detection, price prediction</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Unsupervised</strong></td>
+                        <td>Find patterns in unlabeled data</td>
+                        <td>Customer segmentation, anomaly detection</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reinforcement</strong></td>
+                        <td>Learn through trial and error with rewards</td>
+                        <td>Game AI, robotics</td>
+                    </tr>
+                </table>
+
+                <h4>The ML Workflow</h4>
+                <ol>
+                    <li><strong>Collect Data</strong> - Gather relevant data</li>
+                    <li><strong>Preprocess</strong> - Clean, normalize, encode</li>
+                    <li><strong>Split</strong> - Train/validation/test sets (typically 70/15/15)</li>
+                    <li><strong>Train</strong> - Fit model to training data</li>
+                    <li><strong>Evaluate</strong> - Measure performance on test set</li>
+                    <li><strong>Iterate</strong> - Tune hyperparameters, try different models</li>
+                </ol>
+
+                <div class="code-block">from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,      # 20% for testing
+    random_state=42     # For reproducibility
+)</div>
+            </div>
+
+            <div class="topic" id="regression">
+                <h3>Linear Regression</h3>
+                <p>Linear regression finds the best line through data points.</p>
+
+                <div class="formula">$$y = mx + b$$</div>
+                <p>Where $m$ is the slope and $b$ is the intercept.</p>
+
+                <h4>Least Squares Solution</h4>
+                <div class="formula">
+                    $$m = \frac{\sum_{i}(x_i - \bar{x})(y_i - \bar{y})}{\sum_{i}(x_i - \bar{x})^2}$$
+                    $$b = \bar{y} - m\bar{x}$$
+                </div>
+
+                <div class="code-block">from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions
+predictions = model.predict(X_test)
+
+# Access parameters
+print(f"Slope: {model.coef_}")
+print(f"Intercept: {model.intercept_}")</div>
+
+                <h4>Evaluation Metrics</h4>
+                <ul>
+                    <li><strong>MSE</strong> (Mean Squared Error): Average of squared differences</li>
+                    <li><strong>RMSE</strong>: Square root of MSE (same units as target)</li>
+                    <li><strong>MAE</strong> (Mean Absolute Error): Average of absolute differences</li>
+                    <li><strong>R²</strong>: Proportion of variance explained (0 to 1)</li>
+                </ul>
+            </div>
+
+            <div class="topic" id="classification">
+                <h3>Classification</h3>
+                <p>Classification predicts categorical labels (e.g., spam/not spam).</p>
+
+                <div class="code-block">from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Predictions
+predictions = model.predict(X_test)           # Class labels
+probabilities = model.predict_proba(X_test)   # Class probabilities</div>
+
+                <h4>Evaluation Metrics</h4>
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Formula</th>
+                        <th>Use When</th>
+                    </tr>
+                    <tr>
+                        <td>Accuracy</td>
+                        <td>Correct / Total</td>
+                        <td>Balanced classes</td>
+                    </tr>
+                    <tr>
+                        <td>Precision</td>
+                        <td>TP / (TP + FP)</td>
+                        <td>False positives are costly</td>
+                    </tr>
+                    <tr>
+                        <td>Recall</td>
+                        <td>TP / (TP + FN)</td>
+                        <td>False negatives are costly</td>
+                    </tr>
+                    <tr>
+                        <td>F1 Score</td>
+                        <td>2 × (P × R) / (P + R)</td>
+                        <td>Balance precision & recall</td>
+                    </tr>
+                </table>
+
+                <div class="warning">
+                    <strong>Overfitting Warning:</strong> A model that performs great on training data but poorly on test data has memorized rather than learned. Use cross-validation and regularization to prevent this.
+                </div>
+            </div>
+        </div>
+
+        <!-- DAY 2 -->
+        <div class="day-section" id="day2">
+            <h2>Day 2: Neural Networks & Deep Learning</h2>
+
+            <div class="topic" id="neurons">
+                <h3>Neurons & Layers</h3>
+                <p>A neuron computes a weighted sum of inputs, adds a bias, then applies an activation function.</p>
+
+                <div class="formula">$$\text{output} = \text{activation}\left(\sum_{i} w_i \cdot x_i + b\right)$$</div>
+
+                <h4>Layer Types</h4>
+                <ul>
+                    <li><strong>Input Layer:</strong> Receives the raw data</li>
+                    <li><strong>Hidden Layers:</strong> Learn features and patterns</li>
+                    <li><strong>Output Layer:</strong> Produces final predictions</li>
+                </ul>
+
+                <div class="code-block"># PyTorch layer definition
+import torch.nn as nn
+
+layer = nn.Linear(in_features=10, out_features=5)
+# Creates a layer: 10 inputs → 5 outputs
+# Parameters: 10×5 weights + 5 biases = 55 parameters</div>
+            </div>
+
+            <div class="topic" id="activations">
+                <h3>Activation Functions</h3>
+                <p>Activation functions introduce non-linearity, allowing networks to learn complex patterns.</p>
+
+                <table>
+                    <tr>
+                        <th>Function</th>
+                        <th>Formula</th>
+                        <th>Output Range</th>
+                        <th>Use Case</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Sigmoid</strong></td>
+                        <td>$\sigma(x) = \frac{1}{1 + e^{-x}}$</td>
+                        <td>(0, 1)</td>
+                        <td>Binary classification output</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tanh</strong></td>
+                        <td>$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$</td>
+                        <td>(-1, 1)</td>
+                        <td>Hidden layers (centered)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ReLU</strong></td>
+                        <td>$f(x) = \max(0, x)$</td>
+                        <td>$[0, \infty)$</td>
+                        <td>Most common for hidden layers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Softmax</strong></td>
+                        <td>$\sigma(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}$</td>
+                        <td>(0, 1), sums to 1</td>
+                        <td>Multi-class output</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    <strong>Why ReLU?</strong> ReLU is computationally efficient and helps prevent the vanishing gradient problem that affects sigmoid/tanh in deep networks.
+                </div>
+            </div>
+
+            <div class="topic" id="training">
+                <h3>Training Neural Networks</h3>
+
+                <h4>The Training Loop</h4>
+                <ol>
+                    <li><strong>Forward Pass:</strong> Compute predictions from inputs</li>
+                    <li><strong>Compute Loss:</strong> Measure prediction error</li>
+                    <li><strong>Backward Pass:</strong> Compute gradients (how to adjust weights)</li>
+                    <li><strong>Update Weights:</strong> Adjust weights using gradients</li>
+                </ol>
+
+                <h4>Gradient Descent</h4>
+                <div class="formula">$$w_{\text{new}} = w_{\text{old}} - \eta \cdot \nabla L$$</div>
+
+                <p>The <strong>learning rate</strong> controls step size:</p>
+                <ul>
+                    <li>Too large: May overshoot the minimum</li>
+                    <li>Too small: Very slow convergence</li>
+                    <li>Typical values: 0.001 to 0.1</li>
+                </ul>
+
+                <h4>Loss Functions</h4>
+                <ul>
+                    <li><strong>MSE Loss:</strong> For regression - $\text{MSE} = \frac{1}{n}\sum_{i}(y_i - \hat{y}_i)^2$</li>
+                    <li><strong>Cross-Entropy:</strong> For classification - $\text{CE} = -\sum_{i} y_i \log(\hat{y}_i)$</li>
+                </ul>
+
+                <div class="code-block"># Training loop in PyTorch
+for epoch in range(num_epochs):
+    # Forward pass
+    predictions = model(X)
+    loss = criterion(predictions, y)
+
+    # Backward pass
+    optimizer.zero_grad()  # Reset gradients
+    loss.backward()        # Compute gradients
+    optimizer.step()       # Update weights</div>
+            </div>
+
+            <div class="topic" id="pytorch">
+                <h3>PyTorch Fundamentals</h3>
+
+                <h4>Tensors</h4>
+                <p>Tensors are like NumPy arrays but can run on GPUs and track gradients for automatic differentiation.</p>
+
+                <div class="code-block">import torch
+
+# Create tensors
+x = torch.tensor([1, 2, 3])
+x = torch.zeros(3, 3)
+x = torch.randn(3, 3)  # Random normal
+
+# Gradient tracking
+x = torch.tensor([2.0], requires_grad=True)
+y = x ** 2
+y.backward()  # Compute dy/dx
+print(x.grad)  # tensor([4.0]) - derivative of x² at x=2</div>
+
+                <h4>Building Models with nn.Module</h4>
+                <div class="code-block">import torch.nn as nn
+
+class MyNetwork(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = nn.Linear(10, 64)
+        self.layer2 = nn.Linear(64, 1)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.relu(self.layer1(x))
+        x = self.layer2(x)
+        return x
+
+# Or use nn.Sequential for simple models
+model = nn.Sequential(
+    nn.Linear(10, 64),
+    nn.ReLU(),
+    nn.Linear(64, 1)
+)</div>
+
+                <h4>Common Optimizers</h4>
+                <ul>
+                    <li><strong>SGD:</strong> Basic gradient descent</li>
+                    <li><strong>Adam:</strong> Adaptive learning rate (most common)</li>
+                    <li><strong>AdamW:</strong> Adam with weight decay</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- DAY 3 -->
+        <div class="day-section" id="day3">
+            <h2>Day 3: NLP & Large Language Models</h2>
+
+            <div class="topic" id="tokenization">
+                <h3>Tokenization</h3>
+                <p>Tokenization converts text into sequences of tokens (numbers) that models can process.</p>
+
+                <h4>Tokenization Types</h4>
+                <ul>
+                    <li><strong>Word-level:</strong> Split on spaces/punctuation ("hello world" → ["hello", "world"])</li>
+                    <li><strong>Character-level:</strong> Each character is a token ("hello" → ["h", "e", "l", "l", "o"])</li>
+                    <li><strong>Subword (BPE):</strong> Balance between word and character ("playing" → ["play", "ing"])</li>
+                </ul>
+
+                <div class="code-block"># HuggingFace tokenizers
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+
+# Encode text
+tokens = tokenizer.encode("Hello, world!")
+# [15496, 11, 995, 0]
+
+# Decode back
+text = tokenizer.decode(tokens)
+# "Hello, world!"</div>
+
+                <div class="note">
+                    <strong>Why Subword?</strong> Subword tokenization handles rare words by breaking them into known pieces, balancing vocabulary size with coverage.
+                </div>
+            </div>
+
+            <div class="topic" id="embeddings">
+                <h3>Word Embeddings</h3>
+                <p>Embeddings convert discrete tokens into continuous vectors that capture semantic meaning.</p>
+
+                <h4>Key Properties</h4>
+                <ul>
+                    <li>Similar words have similar vectors</li>
+                    <li>Relationships are captured: king - man + woman ≈ queen</li>
+                    <li>Typical dimensions: 128-1024</li>
+                </ul>
+
+                <div class="code-block"># PyTorch embedding layer
+embedding = nn.Embedding(
+    num_embeddings=10000,  # Vocabulary size
+    embedding_dim=256       # Vector dimension
+)
+
+# Input: token indices, Output: embedding vectors
+tokens = torch.tensor([5, 23, 100])  # Shape: (3,)
+vectors = embedding(tokens)           # Shape: (3, 256)</div>
+            </div>
+
+            <div class="topic" id="attention">
+                <h3>Attention Mechanism</h3>
+                <p>Attention allows models to focus on relevant parts of the input when making predictions.</p>
+
+                <div class="formula">$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$</div>
+
+                <h4>Components</h4>
+                <ul>
+                    <li><strong>Query (Q):</strong> What we're looking for</li>
+                    <li><strong>Key (K):</strong> What we're looking at</li>
+                    <li><strong>Value (V):</strong> What we return</li>
+                    <li><strong>√d_k:</strong> Scaling factor for stability</li>
+                </ul>
+
+                <h4>Self-Attention</h4>
+                <p>In self-attention, Q, K, and V all come from the same sequence. Each position attends to all other positions.</p>
+
+                <div class="code-block">def attention(Q, K, V):
+    d_k = K.shape[-1]
+    scores = Q @ K.T / np.sqrt(d_k)  # Scaled dot product
+    weights = softmax(scores)         # Attention weights
+    output = weights @ V              # Weighted sum of values
+    return output, weights</div>
+            </div>
+
+            <div class="topic" id="transformers">
+                <h3>Transformer Architecture</h3>
+                <p>Transformers use self-attention as their core building block. They power all modern LLMs.</p>
+
+                <h4>Transformer Block</h4>
+                <ol>
+                    <li>Multi-Head Self-Attention</li>
+                    <li>Add & Normalize (residual connection)</li>
+                    <li>Feed-Forward Network</li>
+                    <li>Add & Normalize</li>
+                </ol>
+
+                <div class="note">
+                    <strong>Why Transformers?</strong> Unlike RNNs, transformers process all positions in parallel and can capture long-range dependencies effectively.
+                </div>
+            </div>
+
+            <div class="topic" id="llm-apis">
+                <h3>LLM APIs</h3>
+                <p>Modern LLMs are typically accessed through APIs rather than run locally.</p>
+
+                <h4>OpenAI Chat Completions API</h4>
+                <div class="code-block">from openai import OpenAI
+client = OpenAI()
+
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "What is machine learning?"}
+    ],
+    temperature=0.7,    # Randomness (0-2)
+    max_tokens=500      # Maximum response length
+)
+
+print(response.choices[0].message.content)</div>
+
+                <h4>Key Parameters</h4>
+                <table>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Effect</th>
+                        <th>Typical Values</th>
+                    </tr>
+                    <tr>
+                        <td>temperature</td>
+                        <td>Randomness/creativity</td>
+                        <td>0 (deterministic) to 2 (creative)</td>
+                    </tr>
+                    <tr>
+                        <td>max_tokens</td>
+                        <td>Response length limit</td>
+                        <td>100-4000 depending on use</td>
+                    </tr>
+                    <tr>
+                        <td>top_p</td>
+                        <td>Nucleus sampling</td>
+                        <td>0.9-1.0 (alternative to temp)</td>
+                    </tr>
+                </table>
+
+                <h4>Prompt Engineering Tips</h4>
+                <ul>
+                    <li><strong>Be specific:</strong> Clear instructions yield better results</li>
+                    <li><strong>Use examples:</strong> Few-shot prompting improves accuracy</li>
+                    <li><strong>Chain of thought:</strong> Ask to "think step by step" for reasoning</li>
+                    <li><strong>System prompts:</strong> Set persona and constraints</li>
+                </ul>
+
+                <div class="code-block"># Few-shot example
+prompt = """
+Classify the sentiment:
+
+Text: "I love this product!"
+Sentiment: positive
+
+Text: "Terrible experience."
+Sentiment: negative
+
+Text: "The new update is amazing!"
+Sentiment:"""</div>
+            </div>
+        </div>
+
+        <div class="day-section">
+            <h2>Quick Reference: Key Formulas</h2>
+
+            <h4>Linear Regression</h4>
+            <div class="formula">$$y = Wx + b$$</div>
+            <div class="formula">$$\text{MSE} = \frac{1}{n} \sum_{i=1}^{n}(y_i - \hat{y}_i)^2$$</div>
+
+            <h4>Neural Network</h4>
+            <div class="formula">$$\text{output} = \text{activation}(W \cdot \text{input} + b)$$</div>
+            <div class="formula">$$w_{\text{new}} = w_{\text{old}} - \eta \cdot \nabla L$$</div>
+
+            <h4>Attention</h4>
+            <div class="formula">$$\text{Attention}(Q,K,V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$</div>
+
+            <h4>Classification Metrics</h4>
+            <div class="formula">$$\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}$$</div>
+            <div class="formula">$$\text{Precision} = \frac{TP}{TP + FP}$$</div>
+            <div class="formula">$$\text{Recall} = \frac{TP}{TP + FN}$$</div>
+        </div>
+
+        <div class="day-section">
+            <h2>What's Next: Part 2 Preview</h2>
+            <p>In Part 2 of Mastering LLMs, you'll learn:</p>
+            <ul>
+                <li><strong>RAG (Retrieval-Augmented Generation):</strong> Combine LLMs with your own data</li>
+                <li><strong>Fine-tuning:</strong> Adapt models to specific tasks with LoRA and QLoRA</li>
+                <li><strong>Agents:</strong> Build autonomous AI systems that can use tools</li>
+                <li><strong>Evaluation:</strong> Measure and improve LLM performance</li>
+                <li><strong>Deployment:</strong> Put models into production safely</li>
+            </ul>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="demo-day3-nlp-llms.html" class="nav-btn">&larr; Day 3 Demo</a>
+            <a href="mastering-llms-part1-slides.html" class="nav-btn">Back to Slides</a>
+        </div>
+    </div>
+</body>
+</html>

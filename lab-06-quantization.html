@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 6: Quantization & Optimization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%); color: white; min-height: 100vh; padding: 40px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.8em; margin: 30px 0 15px 0; color: #90EE90; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 25px 0 10px 0; color: #98FB98; }
+        p { margin-bottom: 15px; }
+        .lab-info { background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .info-item { text-align: center; }
+        .info-label { font-size: 0.9em; opacity: 0.8; }
+        .info-value { font-size: 1.3em; font-weight: bold; color: #90EE90; }
+        .objectives { background-color: rgba(144, 238, 144, 0.2); border-left: 4px solid #90EE90; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .objectives ul { margin-left: 20px; }
+        .objectives li { margin-bottom: 8px; }
+        .code-block { background-color: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background-color: #2d2d44; padding: 10px 15px; font-size: 0.9em; color: #90EE90; }
+        .code-content { padding: 20px; overflow-x: auto; }
+        .code-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9em; color: #00ff00; white-space: pre; line-height: 1.5; }
+        .exercise { background-color: rgba(255,255,255,0.1); border-radius: 8px; padding: 25px; margin: 25px 0; border: 2px solid rgba(144, 238, 144, 0.5); }
+        .exercise-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .exercise-number { background-color: #90EE90; color: #1a5f2a; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; }
+        .exercise-title { font-size: 1.3em; font-weight: bold; }
+        .solution { background-color: rgba(0,0,0,0.3); border-radius: 8px; margin: 15px 0; overflow: hidden; }
+        .solution-header { background-color: rgba(144, 238, 144, 0.3); padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; }
+        .solution-content { display: none; padding: 20px; }
+        .solution-content.show { display: block; }
+        .hint { background-color: rgba(54, 162, 235, 0.2); border-left: 4px solid #36A2EB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .warning { background-color: rgba(255, 99, 71, 0.2); border-left: 4px solid #FF6347; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .checkpoint { background-color: rgba(144, 238, 144, 0.2); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2); }
+        .nav-btn { background-color: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 25px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; }
+        .nav-btn:hover { background-color: white; color: #1a5f2a; }
+        .concept-box { background-color: rgba(147, 112, 219, 0.2); border-left: 4px solid #9370DB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .comparison-table th, .comparison-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .comparison-table th { background-color: rgba(144, 238, 144, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lab 6: Quantization & Optimization</h1>
+        <p style="font-size: 1.2em; opacity: 0.9;">Module 6 - Advanced Optimization Techniques</p>
+
+        <div class="lab-info">
+            <div class="info-item"><div class="info-value">120 min</div><div class="info-label">Duration</div></div>
+            <div class="info-item"><div class="info-value">Advanced</div><div class="info-label">Difficulty</div></div>
+            <div class="info-item"><div class="info-value">BitsAndBytes</div><div class="info-label">Framework</div></div>
+            <div class="info-item"><div class="info-value">4</div><div class="info-label">Exercises</div></div>
+        </div>
+
+        <div class="objectives">
+            <h3 style="margin-top: 0;">Learning Objectives</h3>
+            <ul>
+                <li>Understand quantization theory and trade-offs</li>
+                <li>Implement INT8 and INT4 quantization</li>
+                <li>Apply QLoRA for memory-efficient fine-tuning</li>
+                <li>Benchmark and compare model performance</li>
+            </ul>
+        </div>
+
+        <!-- Concept Box -->
+        <div class="concept-box">
+            <h3 style="margin-top: 0;">Quantization Overview</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>Precision</th>
+                    <th>Bits/Param</th>
+                    <th>7B Model Size</th>
+                    <th>Quality Impact</th>
+                </tr>
+                <tr>
+                    <td>FP32</td>
+                    <td>32</td>
+                    <td>~28 GB</td>
+                    <td>Baseline</td>
+                </tr>
+                <tr>
+                    <td>FP16/BF16</td>
+                    <td>16</td>
+                    <td>~14 GB</td>
+                    <td>Minimal</td>
+                </tr>
+                <tr>
+                    <td>INT8</td>
+                    <td>8</td>
+                    <td>~7 GB</td>
+                    <td>~1% degradation</td>
+                </tr>
+                <tr>
+                    <td>INT4 (NF4)</td>
+                    <td>4</td>
+                    <td>~3.5 GB</td>
+                    <td>~2-3% degradation</td>
+                </tr>
+            </table>
+        </div>
+
+        <h2>Setup</h2>
+        <div class="code-block">
+            <div class="code-header">Terminal: Install Dependencies</div>
+            <div class="code-content">
+                <code>pip install transformers accelerate bitsandbytes scipy</code>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">Python: Setup</div>
+            <div class="code-content">
+                <code>import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+import time
+import gc
+
+def get_model_size(model) -> float:
+    """Calculate model size in GB."""
+    param_size = sum(p.numel() * p.element_size() for p in model.parameters())
+    return param_size / (1024 ** 3)
+
+def get_memory_usage() -> dict:
+    """Get current GPU memory usage."""
+    if torch.cuda.is_available():
+        return {
+            "allocated": torch.cuda.memory_allocated() / 1e9,
+            "reserved": torch.cuda.memory_reserved() / 1e9,
+            "max_allocated": torch.cuda.max_memory_allocated() / 1e9
+        }
+    return {"allocated": 0, "reserved": 0, "max_allocated": 0}
+
+def clear_memory():
+    """Clear GPU memory."""
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
+
+MODEL_NAME = "microsoft/phi-2"  # 2.7B params for testing</code>
+            </div>
+        </div>
+
+        <!-- Exercise 1: Basic Quantization -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">1</div>
+                <div class="exercise-title">Understanding Quantization Mechanics</div>
+            </div>
+            <p>Explore how quantization works at the tensor level.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: Quantization Basics</div>
+                <div class="code-content">
+                    <code>import numpy as np
+
+
+def manual_quantize_int8(tensor: torch.Tensor) -> tuple:
+    """Manually quantize a tensor to INT8."""
+    # Find scale factor
+    abs_max = torch.max(torch.abs(tensor))
+    scale = abs_max / 127.0
+
+    # Quantize
+    quantized = torch.round(tensor / scale).to(torch.int8)
+
+    return quantized, scale
+
+
+def manual_dequantize(quantized: torch.Tensor, scale: float) -> torch.Tensor:
+    """Dequantize INT8 back to float."""
+    return quantized.float() * scale
+
+
+def analyze_quantization_error(original: torch.Tensor, bits: int = 8):
+    """Analyze quantization error for different bit widths."""
+    max_val = 2 ** (bits - 1) - 1
+
+    abs_max = torch.max(torch.abs(original))
+    scale = abs_max / max_val
+
+    # Quantize and dequantize
+    quantized = torch.round(original / scale).clamp(-max_val, max_val)
+    reconstructed = quantized * scale
+
+    # Calculate error
+    error = torch.abs(original - reconstructed)
+    mse = torch.mean(error ** 2)
+    max_error = torch.max(error)
+
+    return {
+        "bits": bits,
+        "mse": mse.item(),
+        "max_error": max_error.item(),
+        "relative_error": (mse.sqrt() / torch.std(original)).item()
+    }
+
+
+# Create sample tensor (simulating model weights)
+original_weights = torch.randn(1000, 1000)
+
+print("Quantization Error Analysis:")
+print("=" * 50)
+
+for bits in [8, 4, 2]:
+    result = analyze_quantization_error(original_weights, bits)
+    print(f"\n{bits}-bit quantization:")
+    print(f"  MSE: {result['mse']:.6f}")
+    print(f"  Max Error: {result['max_error']:.6f}")
+    print(f"  Relative Error: {result['relative_error']:.4%}")
+
+# Demonstrate quantization
+print("\n\nDemonstration:")
+sample = torch.tensor([0.5, -0.3, 1.2, -0.8, 0.0])
+quantized, scale = manual_quantize_int8(sample)
+reconstructed = manual_dequantize(quantized, scale)
+
+print(f"Original:     {sample.tolist()}")
+print(f"Quantized:    {quantized.tolist()}")
+print(f"Reconstructed: {reconstructed.tolist()}")
+print(f"Scale factor: {scale:.6f}")</code>
+                </div>
+            </div>
+
+            <div class="hint">
+                <strong>Hint:</strong> The key insight is that quantization error increases with lower bit width,
+                but modern techniques like NF4 minimize this impact on model quality.
+            </div>
+        </div>
+
+        <!-- Exercise 2: INT8 Quantization -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">2</div>
+                <div class="exercise-title">Load Models with INT8 Quantization</div>
+            </div>
+            <p>Load and compare models with different quantization settings.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: INT8 Loading</div>
+                <div class="code-content">
+                    <code>def load_model_fp16():
+    """Load model in FP16 (half precision)."""
+    clear_memory()
+
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_NAME,
+        torch_dtype=torch.float16,
+        device_map="auto",
+        trust_remote_code=True
+    )
+
+    return model
+
+
+def load_model_int8():
+    """Load model with INT8 quantization."""
+    clear_memory()
+
+    quantization_config = BitsAndBytesConfig(
+        load_in_8bit=True,
+        llm_int8_threshold=6.0,  # Outlier threshold
+        llm_int8_has_fp16_weight=False
+    )
+
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_NAME,
+        quantization_config=quantization_config,
+        device_map="auto",
+        trust_remote_code=True
+    )
+
+    return model
+
+
+def compare_loading():
+    """Compare FP16 vs INT8 loading."""
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+
+    results = {}
+
+    # FP16
+    print("Loading FP16 model...")
+    start = time.time()
+    model_fp16 = load_model_fp16()
+    results['fp16'] = {
+        'load_time': time.time() - start,
+        'memory': get_memory_usage()
+    }
+    del model_fp16
+
+    # INT8
+    print("Loading INT8 model...")
+    start = time.time()
+    model_int8 = load_model_int8()
+    results['int8'] = {
+        'load_time': time.time() - start,
+        'memory': get_memory_usage()
+    }
+    del model_int8
+
+    # Print comparison
+    print("\n" + "=" * 50)
+    print("Memory Comparison:")
+    print(f"FP16 - Allocated: {results['fp16']['memory']['allocated']:.2f} GB")
+    print(f"INT8 - Allocated: {results['int8']['memory']['allocated']:.2f} GB")
+    print(f"Savings: {(1 - results['int8']['memory']['allocated'] / results['fp16']['memory']['allocated']) * 100:.1f}%")
+
+    return results
+
+
+# Run comparison (requires GPU)
+# results = compare_loading()</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 3: INT4 and NF4 Quantization -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">3</div>
+                <div class="exercise-title">INT4 and NF4 Quantization</div>
+            </div>
+            <p>Implement 4-bit quantization with NormalFloat4 (NF4) for optimal quality.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: 4-bit Quantization</div>
+                <div class="code-content">
+                    <code>def load_model_int4():
+    """Load model with standard INT4 quantization."""
+    clear_memory()
+
+    quantization_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="fp4",  # Standard 4-bit
+        bnb_4bit_compute_dtype=torch.float16
+    )
+
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_NAME,
+        quantization_config=quantization_config,
+        device_map="auto",
+        trust_remote_code=True
+    )
+
+    return model
+
+
+def load_model_nf4():
+    """Load model with NF4 (NormalFloat4) quantization."""
+    clear_memory()
+
+    quantization_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",  # NormalFloat4 - optimized for normally distributed weights
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True  # Double quantization for extra savings
+    )
+
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_NAME,
+        quantization_config=quantization_config,
+        device_map="auto",
+        trust_remote_code=True
+    )
+
+    return model
+
+
+def benchmark_generation(model, tokenizer, prompts: list, max_tokens: int = 100):
+    """Benchmark generation speed and quality."""
+    model.eval()
+
+    results = []
+    total_tokens = 0
+    total_time = 0
+
+    for prompt in prompts:
+        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+
+        start = time.time()
+        with torch.no_grad():
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=max_tokens,
+                do_sample=False,  # Greedy for consistency
+                pad_token_id=tokenizer.eos_token_id
+            )
+        elapsed = time.time() - start
+
+        generated_tokens = outputs.shape[1] - inputs.input_ids.shape[1]
+        total_tokens += generated_tokens
+        total_time += elapsed
+
+        text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        results.append({
+            'prompt': prompt,
+            'response': text[len(prompt):],
+            'tokens': generated_tokens,
+            'time': elapsed,
+            'tokens_per_sec': generated_tokens / elapsed
+        })
+
+    return {
+        'results': results,
+        'total_tokens': total_tokens,
+        'total_time': total_time,
+        'avg_tokens_per_sec': total_tokens / total_time
+    }
+
+
+def full_quantization_comparison():
+    """Full comparison of all quantization methods."""
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+    tokenizer.pad_token = tokenizer.eos_token
+
+    test_prompts = [
+        "Explain machine learning in simple terms:",
+        "Write a Python function to sort a list:",
+        "What is the capital of France and why is it important?"
+    ]
+
+    configs = [
+        ("FP16", load_model_fp16),
+        ("INT8", load_model_int8),
+        ("INT4", load_model_int4),
+        ("NF4", load_model_nf4),
+    ]
+
+    all_results = {}
+
+    for name, loader in configs:
+        print(f"\n{'='*50}")
+        print(f"Testing {name}...")
+
+        model = loader()
+        memory = get_memory_usage()
+        benchmark = benchmark_generation(model, tokenizer, test_prompts)
+
+        all_results[name] = {
+            'memory_gb': memory['allocated'],
+            'tokens_per_sec': benchmark['avg_tokens_per_sec'],
+            'sample_output': benchmark['results'][0]['response'][:200]
+        }
+
+        del model
+        clear_memory()
+
+    # Print summary
+    print("\n" + "=" * 60)
+    print("SUMMARY")
+    print("=" * 60)
+    print(f"{'Config':<10} {'Memory (GB)':<15} {'Tokens/sec':<15}")
+    print("-" * 40)
+    for name, data in all_results.items():
+        print(f"{name:<10} {data['memory_gb']:<15.2f} {data['tokens_per_sec']:<15.1f}")
+
+    return all_results
+
+
+# Run full comparison (requires GPU)
+# results = full_quantization_comparison()</code>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3 style="margin-top: 0;">Why NF4?</h3>
+                <p>NormalFloat4 (NF4) is optimized for the normal distribution of neural network weights.
+                Unlike uniform INT4, NF4 places more quantization levels near zero where most weights cluster,
+                resulting in lower quantization error for the same bit width.</p>
+            </div>
+        </div>
+
+        <!-- Exercise 4: QLoRA Implementation -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">4</div>
+                <div class="exercise-title">QLoRA: Quantized LoRA Fine-tuning</div>
+            </div>
+            <p>Combine 4-bit quantization with LoRA for memory-efficient fine-tuning.</p>
+
+            <div class="code-block">
+                <div class="code-header">Python: QLoRA Setup</div>
+                <div class="code-content">
+                    <code>from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from transformers import TrainingArguments
+from trl import SFTTrainer
+from datasets import Dataset
+
+
+def setup_qlora_model():
+    """Set up a model for QLoRA fine-tuning."""
+
+    # 4-bit quantization config
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True
+    )
+
+    # Load quantized model
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_NAME,
+        quantization_config=bnb_config,
+        device_map="auto",
+        trust_remote_code=True
+    )
+
+    # Prepare for k-bit training (important!)
+    model = prepare_model_for_kbit_training(model)
+
+    # LoRA config
+    lora_config = LoraConfig(
+        r=16,
+        lora_alpha=32,
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "fc1", "fc2"],
+        lora_dropout=0.05,
+        bias="none",
+        task_type="CAUSAL_LM"
+    )
+
+    # Apply LoRA
+    model = get_peft_model(model, lora_config)
+
+    return model
+
+
+def analyze_qlora_efficiency(model):
+    """Analyze QLoRA parameter efficiency."""
+
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    total = sum(p.numel() for p in model.parameters())
+
+    print("QLoRA Efficiency Analysis:")
+    print("=" * 50)
+    print(f"Total parameters: {total:,}")
+    print(f"Trainable parameters: {trainable:,}")
+    print(f"Trainable %: {100 * trainable / total:.4f}%")
+    print(f"Memory for training: ~{get_memory_usage()['allocated']:.2f} GB")
+
+    # Estimate VRAM needed for training
+    # Roughly: model + gradients + optimizer states
+    estimated_training_vram = get_memory_usage()['allocated'] * 1.5
+    print(f"Estimated training VRAM: ~{estimated_training_vram:.2f} GB")
+
+
+def create_qlora_trainer(model, tokenizer, dataset):
+    """Create trainer for QLoRA fine-tuning."""
+
+    training_args = TrainingArguments(
+        output_dir="./qlora_output",
+        num_train_epochs=3,
+        per_device_train_batch_size=4,
+        gradient_accumulation_steps=4,
+        learning_rate=2e-4,
+        weight_decay=0.001,
+        warmup_ratio=0.03,
+        lr_scheduler_type="cosine",
+        logging_steps=10,
+        save_strategy="epoch",
+        fp16=True,
+        optim="paged_adamw_8bit",  # Memory-efficient optimizer
+        gradient_checkpointing=True,  # Trade compute for memory
+        report_to="none",
+    )
+
+    trainer = SFTTrainer(
+        model=model,
+        train_dataset=dataset,
+        args=training_args,
+        tokenizer=tokenizer,
+        dataset_text_field="text",
+        max_seq_length=512,
+    )
+
+    return trainer
+
+
+# Example usage:
+# tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+# tokenizer.pad_token = tokenizer.eos_token
+#
+# model = setup_qlora_model()
+# analyze_qlora_efficiency(model)
+#
+# # Create sample dataset
+# data = [{"text": "### Instruction:\\nExplain AI\\n\\n### Response:\\nAI is..."}]
+# dataset = Dataset.from_list(data)
+#
+# trainer = create_qlora_trainer(model, tokenizer, dataset)
+# trainer.train()</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>Advanced: Gradient Checkpointing Deep Dive</span>
+                    <span>+</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block" style="margin: 0;">
+                        <div class="code-content">
+                            <code># Gradient checkpointing trades compute for memory
+# Instead of storing all activations, it recomputes them during backward pass
+
+def demonstrate_gradient_checkpointing():
+    """Show memory difference with gradient checkpointing."""
+
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+
+    # Without gradient checkpointing
+    clear_memory()
+    model_no_gc = setup_qlora_model()
+    model_no_gc.gradient_checkpointing_disable()
+    mem_no_gc = get_memory_usage()['allocated']
+
+    # With gradient checkpointing
+    clear_memory()
+    model_gc = setup_qlora_model()
+    model_gc.gradient_checkpointing_enable()
+    mem_gc = get_memory_usage()['allocated']
+
+    print(f"Memory without gradient checkpointing: {mem_no_gc:.2f} GB")
+    print(f"Memory with gradient checkpointing: {mem_gc:.2f} GB")
+    print(f"Savings: {(1 - mem_gc/mem_no_gc)*100:.1f}%")
+    print(f"\nTrade-off: ~20-30% slower training for significant memory savings")</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Performance Profiling</h2>
+        <div class="code-block">
+            <div class="code-header">Python: Profiling Tools</div>
+            <div class="code-content">
+                <code>def profile_inference(model, tokenizer, prompt: str, runs: int = 5):
+    """Profile inference performance."""
+    import statistics
+
+    model.eval()
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+
+    # Warmup
+    with torch.no_grad():
+        _ = model.generate(**inputs, max_new_tokens=50)
+
+    # Profile
+    times = []
+    for _ in range(runs):
+        torch.cuda.synchronize()
+        start = time.time()
+
+        with torch.no_grad():
+            outputs = model.generate(**inputs, max_new_tokens=50)
+
+        torch.cuda.synchronize()
+        times.append(time.time() - start)
+
+    return {
+        'mean': statistics.mean(times),
+        'std': statistics.stdev(times) if len(times) > 1 else 0,
+        'min': min(times),
+        'max': max(times),
+        'tokens_per_sec': 50 / statistics.mean(times)
+    }
+
+
+def create_performance_report(results: dict):
+    """Create a performance comparison report."""
+    print("\n" + "=" * 70)
+    print("PERFORMANCE REPORT")
+    print("=" * 70)
+
+    print(f"\n{'Config':<12} {'Memory (GB)':<12} {'Tok/sec':<12} {'Latency (ms)':<15}")
+    print("-" * 55)
+
+    for config, data in results.items():
+        print(f"{config:<12} {data['memory']:<12.2f} {data['tokens_per_sec']:<12.1f} {data['latency_ms']:<15.1f}")
+
+    # Recommendations
+    print("\n" + "-" * 55)
+    print("RECOMMENDATIONS:")
+
+    min_memory = min(results.items(), key=lambda x: x[1]['memory'])
+    max_speed = max(results.items(), key=lambda x: x[1]['tokens_per_sec'])
+
+    print(f"  - For lowest memory: Use {min_memory[0]} ({min_memory[1]['memory']:.2f} GB)")
+    print(f"  - For highest speed: Use {max_speed[0]} ({max_speed[1]['tokens_per_sec']:.1f} tok/s)")</code>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">🎉</div>
+            <h3>Lab Complete!</h3>
+            <p>You've mastered quantization techniques from INT8 to NF4 and learned to implement QLoRA for efficient fine-tuning.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="lab-05-lora-finetuning.html" class="nav-btn">← Previous Lab</a>
+            <a href="lab-07-ethics-guardrails.html" class="nav-btn">Next Lab →</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(element) {
+            const content = element.nextElementSibling;
+            content.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

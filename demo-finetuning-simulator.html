@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo: Fine-tuning & LoRA Simulator</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 30px 50px;
+            flex-direction: column;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        h1 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.4em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 3px solid rgba(255,255,255,0.5);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #90EE90;
+        }
+
+        h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.4em;
+            margin: 15px 0 10px 0;
+            color: #98FB98;
+        }
+
+        p {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        ul {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-left: 25px;
+            line-height: 1.8;
+        }
+
+        .demo-container {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .chart-container {
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group.wide {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95em;
+            color: #90EE90;
+        }
+
+        select, input, textarea {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1em;
+            background-color: rgba(255,255,255,0.9);
+            color: #1a5f2a;
+        }
+
+        input[type="password"] {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            width: 100%;
+        }
+
+        .btn {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #90EE90;
+            color: #1a5f2a;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .api-key-section {
+            background-color: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: 15px;
+        }
+
+        .api-status.connected {
+            background-color: rgba(144, 238, 144, 0.3);
+            color: #90EE90;
+        }
+
+        .api-status.disconnected {
+            background-color: rgba(255, 99, 132, 0.3);
+            color: #ff6b6b;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .connected .status-dot {
+            background-color: #90EE90;
+        }
+
+        .disconnected .status-dot {
+            background-color: #ff6b6b;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .highlight-box {
+            background-color: rgba(255,255,255,0.15);
+            border-left: 4px solid #90EE90;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-table {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-table td {
+            padding: 15px;
+        }
+
+        .code-table code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85em;
+            color: #00ff00;
+            white-space: pre;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .code-label {
+            background-color: #2d2d44;
+            color: #90EE90;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.85em;
+            padding: 8px 15px !important;
+            border-bottom: 1px solid #444;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-btn {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: white;
+            color: #1a5f2a;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background-color: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #90EE90;
+        }
+
+        .stat-label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            background-color: rgba(255, 99, 132, 0.2);
+            border: 1px solid rgba(255, 99, 132, 0.5);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #90EE90, #32CD32);
+            transition: width 0.3s ease;
+        }
+
+        .training-log {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dataset-item {
+            background-color: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #90EE90;
+        }
+
+        .dataset-item .instruction {
+            color: #90EE90;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .dataset-item .response {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .comparison-card {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .comparison-tag {
+            background-color: rgba(144,238,144,0.3);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .response-box {
+            background-color: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Sample fine-tuning dataset
+        const SAMPLE_DATASET = [
+            {
+                instruction: "Summarize the following email in one sentence",
+                input: "Hi team, I wanted to remind everyone about the quarterly review meeting scheduled for next Tuesday at 2 PM in Conference Room B. Please bring your progress reports and be prepared to discuss Q3 targets. Refreshments will be provided.",
+                output: "Quarterly review meeting is scheduled for next Tuesday at 2 PM in Conference Room B; bring progress reports."
+            },
+            {
+                instruction: "Convert this casual message to professional tone",
+                input: "hey boss, gonna be late today, traffic is crazy!",
+                output: "Good morning, I wanted to inform you that I will be arriving late today due to heavy traffic conditions. I apologize for any inconvenience."
+            },
+            {
+                instruction: "Extract the key action items from this message",
+                input: "After our discussion, please update the documentation by Friday, send the budget proposal to finance, and schedule a follow-up meeting for next week.",
+                output: "1. Update documentation by Friday\n2. Send budget proposal to finance\n3. Schedule follow-up meeting for next week"
+            },
+            {
+                instruction: "Classify the sentiment of this customer feedback",
+                input: "The product arrived on time and works exactly as described. Very happy with my purchase!",
+                output: "Positive - Customer expresses satisfaction with delivery timing and product functionality."
+            }
+        ];
+
+        // Slide 1: Title
+        function TitleSlide({ apiKey, setApiKey, isConnected, setIsConnected }) {
+            const [testing, setTesting] = useState(false);
+            const [error, setError] = useState('');
+
+            const testConnection = async () => {
+                if (!apiKey.trim()) {
+                    setError('Please enter an API key');
+                    return;
+                }
+                setTesting(true);
+                setError('');
+                try {
+                    const res = await fetch('https://api.openai.com/v1/models', {
+                        headers: { 'Authorization': `Bearer ${apiKey}` }
+                    });
+                    setIsConnected(res.ok);
+                    if (!res.ok) setError('Invalid API key');
+                } catch (err) {
+                    setError('Connection failed');
+                    setIsConnected(false);
+                }
+                setTesting(false);
+            };
+
+            return (
+                <div className="slide-content">
+                    <div style={{textAlign: 'center', marginBottom: '30px'}}>
+                        <h2>Interactive Demo</h2>
+                        <h1 style={{fontSize: '2.8em', borderBottom: 'none'}}>Fine-tuning & LoRA Simulator</h1>
+                        <p style={{fontSize: '1.2em', opacity: 0.9}}>Understanding Model Adaptation Techniques</p>
+                    </div>
+
+                    <div className="api-key-section">
+                        <h3>
+                            OpenAI API Connection
+                            <span className={`api-status ${isConnected ? 'connected' : 'disconnected'}`}>
+                                <span className="status-dot"></span>
+                                {isConnected ? 'Connected' : 'Not Connected'}
+                            </span>
+                        </h3>
+                        <div className="controls">
+                            <div className="control-group wide">
+                                <label>API Key:</label>
+                                <input
+                                    type="password"
+                                    value={apiKey}
+                                    onChange={(e) => setApiKey(e.target.value)}
+                                    placeholder="sk-..."
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>&nbsp;</label>
+                                <button className="btn" onClick={testConnection} disabled={testing}>
+                                    {testing ? 'Testing...' : 'Test Connection'}
+                                </button>
+                            </div>
+                        </div>
+                        {error && <div className="error-message">{error}</div>}
+                    </div>
+
+                    <div className="highlight-box">
+                        <h3>What This Demo Covers</h3>
+                        <ul>
+                            <li>Dataset preparation for fine-tuning</li>
+                            <li>LoRA parameter configuration</li>
+                            <li>Simulated training progress</li>
+                            <li>Before/after model comparison</li>
+                            <li>Memory and compute requirements</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 2: Dataset Preparation
+        function DatasetSlide() {
+            const [viewFormat, setViewFormat] = useState('pretty');
+
+            const jsonlFormat = SAMPLE_DATASET.map(item => JSON.stringify({
+                messages: [
+                    { role: "system", content: "You are a helpful assistant." },
+                    { role: "user", content: `${item.instruction}\n\n${item.input}` },
+                    { role: "assistant", content: item.output }
+                ]
+            })).join('\n');
+
+            return (
+                <div className="slide-content">
+                    <h1>Dataset Preparation</h1>
+                    <p>Fine-tuning requires properly formatted training data with instruction-response pairs.</p>
+
+                    <div className="demo-container">
+                        <div className="controls">
+                            <div className="control-group">
+                                <label>View Format:</label>
+                                <select value={viewFormat} onChange={(e) => setViewFormat(e.target.value)}>
+                                    <option value="pretty">Pretty View</option>
+                                    <option value="jsonl">JSONL Format</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-value">{SAMPLE_DATASET.length}</div>
+                                <div className="stat-label">Training Examples</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">~500</div>
+                                <div className="stat-label">Avg Tokens/Example</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">Chat</div>
+                                <div className="stat-label">Format Type</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">~$2</div>
+                                <div className="stat-label">Est. Training Cost</div>
+                            </div>
+                        </div>
+
+                        {viewFormat === 'pretty' ? (
+                            <div style={{maxHeight: '300px', overflowY: 'auto'}}>
+                                {SAMPLE_DATASET.map((item, i) => (
+                                    <div key={i} className="dataset-item">
+                                        <div className="instruction">{item.instruction}</div>
+                                        <div style={{opacity: 0.7, fontSize: '0.9em', marginBottom: '5px'}}>
+                                            Input: {item.input.slice(0, 100)}...
+                                        </div>
+                                        <div className="response">Response: {item.output}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="training-log" style={{maxHeight: '300px'}}>
+                                <code style={{color: '#00ff00', whiteSpace: 'pre-wrap', fontSize: '0.8em'}}>
+                                    {jsonlFormat}
+                                </code>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="highlight-box">
+                        <p><strong>Data Quality Tips:</strong> Use diverse examples, ensure consistent formatting, include edge cases, and validate output quality before training.</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 3: LoRA Configuration
+        function LoRAConfigSlide() {
+            const [rank, setRank] = useState(16);
+            const [alpha, setAlpha] = useState(32);
+            const [dropout, setDropout] = useState(0.1);
+            const [targetModules, setTargetModules] = useState(['q_proj', 'v_proj']);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            const baseParams = 7000000000; // 7B model
+            const loraParams = rank * 4096 * 4 * targetModules.length; // Approximation
+            const reduction = ((baseParams - loraParams) / baseParams * 100).toFixed(4);
+
+            const toggleModule = (mod) => {
+                if (targetModules.includes(mod)) {
+                    setTargetModules(targetModules.filter(m => m !== mod));
+                } else {
+                    setTargetModules([...targetModules, mod]);
+                }
+            };
+
+            useEffect(() => {
+                if (chartInstance.current) chartInstance.current.destroy();
+                if (!chartRef.current) return;
+
+                const ctx = chartRef.current.getContext('2d');
+                chartInstance.current = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Frozen Parameters', 'LoRA Trainable'],
+                        datasets: [{
+                            data: [baseParams - loraParams, loraParams],
+                            backgroundColor: ['rgba(100, 100, 100, 0.6)', 'rgba(144, 238, 144, 0.8)'],
+                            borderColor: ['rgba(100, 100, 100, 1)', 'rgba(26, 95, 42, 1)'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartInstance.current) chartInstance.current.destroy();
+                };
+            }, [rank, targetModules]);
+
+            return (
+                <div className="slide-content">
+                    <h1>LoRA Configuration</h1>
+                    <p>Low-Rank Adaptation trains small adapter matrices instead of full model weights.</p>
+
+                    <div className="demo-container">
+                        <div className="two-column">
+                            <div>
+                                <h3>Parameters</h3>
+                                <div className="control-group" style={{marginBottom: '15px'}}>
+                                    <label>Rank (r): {rank}</label>
+                                    <input
+                                        type="range"
+                                        min="4"
+                                        max="64"
+                                        value={rank}
+                                        onChange={(e) => setRank(Number(e.target.value))}
+                                        style={{width: '100%'}}
+                                    />
+                                    <small style={{opacity: 0.7}}>Higher = more capacity, more memory</small>
+                                </div>
+
+                                <div className="control-group" style={{marginBottom: '15px'}}>
+                                    <label>Alpha (α): {alpha}</label>
+                                    <input
+                                        type="range"
+                                        min="8"
+                                        max="128"
+                                        value={alpha}
+                                        onChange={(e) => setAlpha(Number(e.target.value))}
+                                        style={{width: '100%'}}
+                                    />
+                                    <small style={{opacity: 0.7}}>Scaling factor for updates</small>
+                                </div>
+
+                                <div className="control-group" style={{marginBottom: '15px'}}>
+                                    <label>Dropout: {dropout}</label>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="0.5"
+                                        step="0.05"
+                                        value={dropout}
+                                        onChange={(e) => setDropout(Number(e.target.value))}
+                                        style={{width: '100%'}}
+                                    />
+                                </div>
+
+                                <div className="control-group">
+                                    <label>Target Modules:</label>
+                                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '5px'}}>
+                                        {['q_proj', 'k_proj', 'v_proj', 'o_proj'].map(mod => (
+                                            <button
+                                                key={mod}
+                                                className={`btn ${targetModules.includes(mod) ? '' : 'btn-secondary'}`}
+                                                onClick={() => toggleModule(mod)}
+                                                style={{padding: '5px 15px', fontSize: '0.9em'}}
+                                            >
+                                                {mod}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3>Parameter Distribution</h3>
+                                <div className="chart-container" style={{height: '250px'}}>
+                                    <canvas ref={chartRef}></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="stats-grid" style={{marginTop: '20px'}}>
+                            <div className="stat-card">
+                                <div className="stat-value">{(loraParams / 1000000).toFixed(2)}M</div>
+                                <div className="stat-label">Trainable Params</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{reduction}%</div>
+                                <div className="stat-label">Reduction</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">~8GB</div>
+                                <div className="stat-label">VRAM Required</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{alpha / rank}x</div>
+                                <div className="stat-label">Effective Scale</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 4: Training Simulation
+        function TrainingSimSlide() {
+            const [isTraining, setIsTraining] = useState(false);
+            const [epoch, setEpoch] = useState(0);
+            const [step, setStep] = useState(0);
+            const [loss, setLoss] = useState(2.5);
+            const [logs, setLogs] = useState([]);
+            const [progress, setProgress] = useState(0);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+            const lossHistory = useRef([]);
+
+            const totalEpochs = 3;
+            const stepsPerEpoch = 100;
+
+            const startTraining = () => {
+                setIsTraining(true);
+                setEpoch(0);
+                setStep(0);
+                setLoss(2.5);
+                setLogs([]);
+                setProgress(0);
+                lossHistory.current = [];
+            };
+
+            useEffect(() => {
+                if (!isTraining) return;
+
+                const interval = setInterval(() => {
+                    setStep(prev => {
+                        const newStep = prev + 1;
+                        const totalSteps = totalEpochs * stepsPerEpoch;
+                        const currentProgress = (newStep / totalSteps) * 100;
+
+                        setProgress(currentProgress);
+
+                        // Update epoch
+                        const currentEpoch = Math.floor(newStep / stepsPerEpoch);
+                        setEpoch(currentEpoch);
+
+                        // Simulate loss decrease with some noise
+                        const baseLoss = 2.5 * Math.exp(-newStep / 100);
+                        const noise = (Math.random() - 0.5) * 0.1;
+                        const newLoss = Math.max(0.1, baseLoss + noise);
+                        setLoss(newLoss);
+
+                        lossHistory.current.push({ step: newStep, loss: newLoss });
+
+                        // Add log entry
+                        if (newStep % 20 === 0 || newStep === 1) {
+                            setLogs(prev => [...prev, {
+                                step: newStep,
+                                epoch: currentEpoch,
+                                loss: newLoss.toFixed(4),
+                                lr: (0.0001 * Math.pow(0.95, currentEpoch)).toFixed(6)
+                            }]);
+                        }
+
+                        // Update chart
+                        updateChart();
+
+                        if (newStep >= totalSteps) {
+                            setIsTraining(false);
+                            return prev;
+                        }
+
+                        return newStep;
+                    });
+                }, 100);
+
+                return () => clearInterval(interval);
+            }, [isTraining]);
+
+            const updateChart = () => {
+                if (!chartRef.current) return;
+
+                if (chartInstance.current) {
+                    chartInstance.current.data.labels = lossHistory.current.map(h => h.step);
+                    chartInstance.current.data.datasets[0].data = lossHistory.current.map(h => h.loss);
+                    chartInstance.current.update('none');
+                } else {
+                    const ctx = chartRef.current.getContext('2d');
+                    chartInstance.current = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'Training Loss',
+                                data: [],
+                                borderColor: 'rgba(144, 238, 144, 1)',
+                                backgroundColor: 'rgba(144, 238, 144, 0.2)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: { display: true, text: 'Loss' }
+                                },
+                                x: {
+                                    title: { display: true, text: 'Step' }
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+
+            useEffect(() => {
+                return () => {
+                    if (chartInstance.current) chartInstance.current.destroy();
+                };
+            }, []);
+
+            return (
+                <div className="slide-content">
+                    <h1>Training Simulation</h1>
+                    <p>Watch a simulated fine-tuning run with live loss tracking.</p>
+
+                    <div className="demo-container">
+                        <button className="btn" onClick={startTraining} disabled={isTraining}>
+                            {isTraining ? 'Training...' : 'Start Training'}
+                        </button>
+
+                        <div className="progress-bar" style={{marginTop: '20px'}}>
+                            <div className="progress-fill" style={{width: `${progress}%`}}></div>
+                        </div>
+                        <div style={{textAlign: 'center', marginBottom: '15px'}}>
+                            {progress.toFixed(1)}% Complete
+                        </div>
+
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-value">{epoch + 1}/{totalEpochs}</div>
+                                <div className="stat-label">Epoch</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{step}</div>
+                                <div className="stat-label">Step</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{loss.toFixed(4)}</div>
+                                <div className="stat-label">Loss</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{isTraining ? '🔥' : step > 0 ? '✅' : '⏸️'}</div>
+                                <div className="stat-label">Status</div>
+                            </div>
+                        </div>
+
+                        <div className="two-column">
+                            <div className="chart-container" style={{height: '250px'}}>
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                            <div>
+                                <h3>Training Log</h3>
+                                <div className="training-log">
+                                    {logs.length === 0 ? (
+                                        <div style={{opacity: 0.5}}>Training log will appear here...</div>
+                                    ) : (
+                                        logs.slice(-8).map((log, i) => (
+                                            <div key={i} className="log-entry">
+                                                [Epoch {log.epoch + 1}] Step {log.step}: loss={log.loss}, lr={log.lr}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 5: Before/After Comparison
+        function ComparisonSlide({ apiKey, isConnected }) {
+            const [prompt, setPrompt] = useState('Summarize this email: "Hey team, dont forget the meeting tmrw at 3pm. bring ur laptops and the Q3 reports. pizza will be there!"');
+            const [baseResponse, setBaseResponse] = useState('');
+            const [finetuneResponse, setFinetuneResponse] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            const runComparison = async () => {
+                if (!isConnected || !apiKey) return;
+
+                setLoading(true);
+                setBaseResponse('');
+                setFinetuneResponse('');
+
+                try {
+                    // Base model response
+                    const baseRes = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-3.5-turbo',
+                            messages: [{ role: 'user', content: prompt }],
+                            temperature: 0.7
+                        })
+                    });
+                    const baseData = await baseRes.json();
+                    setBaseResponse(baseData.choices[0].message.content);
+
+                    // "Fine-tuned" response (using system prompt to simulate)
+                    const ftRes = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-3.5-turbo',
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'You are a professional business communication assistant. Always convert casual messages to formal, professional language. Keep summaries concise and include all key action items.'
+                                },
+                                { role: 'user', content: prompt }
+                            ],
+                            temperature: 0.3
+                        })
+                    });
+                    const ftData = await ftRes.json();
+                    setFinetuneResponse(ftData.choices[0].message.content);
+
+                } catch (err) {
+                    console.error(err);
+                }
+
+                setLoading(false);
+            };
+
+            return (
+                <div className="slide-content">
+                    <h1>Before/After Comparison</h1>
+                    <p>Compare base model responses with fine-tuned model responses.</p>
+
+                    <div className="demo-container">
+                        <div className="control-group" style={{marginBottom: '15px'}}>
+                            <label>Test Prompt:</label>
+                            <textarea
+                                value={prompt}
+                                onChange={(e) => setPrompt(e.target.value)}
+                            />
+                        </div>
+
+                        <button className="btn" onClick={runComparison} disabled={loading || !isConnected}>
+                            {loading ? 'Generating...' : 'Compare Models'}
+                        </button>
+
+                        <div className="two-column" style={{marginTop: '20px'}}>
+                            <div className="comparison-card">
+                                <div className="comparison-header">
+                                    <h3 style={{margin: 0}}>Base Model</h3>
+                                    <span className="comparison-tag">GPT-3.5-turbo</span>
+                                </div>
+                                <div className="response-box">
+                                    {baseResponse || <span style={{opacity: 0.5}}>Response will appear here...</span>}
+                                </div>
+                            </div>
+
+                            <div className="comparison-card" style={{borderLeft: '4px solid #90EE90'}}>
+                                <div className="comparison-header">
+                                    <h3 style={{margin: 0, color: '#90EE90'}}>Fine-tuned Model</h3>
+                                    <span className="comparison-tag" style={{backgroundColor: 'rgba(144,238,144,0.5)'}}>
+                                        Custom Trained
+                                    </span>
+                                </div>
+                                <div className="response-box">
+                                    {finetuneResponse || <span style={{opacity: 0.5}}>Response will appear here...</span>}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="highlight-box" style={{marginTop: '20px'}}>
+                            <p><strong>Note:</strong> This demo simulates fine-tuning effects using system prompts. Real fine-tuning would show even more consistent domain-specific behavior.</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 6: Code & Summary
+        function CodeSlide() {
+            return (
+                <div className="slide-content">
+                    <h1>Fine-tuning Implementation</h1>
+
+                    <table className="code-table">
+                        <tbody>
+                            <tr><td className="code-label">Python: LoRA Fine-tuning with PEFT</td></tr>
+                            <tr><td><code>{`from peft import LoraConfig, get_peft_model, TaskType
+from transformers import AutoModelForCausalLM, TrainingArguments
+from trl import SFTTrainer
+
+# Load base model
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-7b-hf",
+    load_in_4bit=True  # QLoRA
+)
+
+# Configure LoRA
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.1,
+    target_modules=["q_proj", "v_proj"],
+    task_type=TaskType.CAUSAL_LM
+)
+
+# Apply LoRA adapters
+model = get_peft_model(model, lora_config)
+
+# Training arguments
+training_args = TrainingArguments(
+    output_dir="./results",
+    num_train_epochs=3,
+    per_device_train_batch_size=4,
+    learning_rate=2e-4,
+    warmup_steps=100
+)
+
+# Train
+trainer = SFTTrainer(model=model, args=training_args,
+                     train_dataset=dataset)
+trainer.train()`}</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div className="highlight-box">
+                        <h3>Key Considerations</h3>
+                        <ul>
+                            <li>Start with r=16, increase if underfitting</li>
+                            <li>QLoRA enables 7B models on consumer GPUs</li>
+                            <li>Monitor validation loss for overfitting</li>
+                            <li>Save checkpoints regularly</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 7: Summary
+        function SummarySlide() {
+            return (
+                <div className="slide-content" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', textAlign: 'center'}}>
+                    <h1 style={{borderBottom: 'none'}}>Demo Complete!</h1>
+                    <h3 style={{marginTop: '30px'}}>Key Takeaways</h3>
+                    <div style={{textAlign: 'left', maxWidth: '600px', margin: '20px auto'}}>
+                        <ul style={{fontSize: '1.1em', lineHeight: '1.8'}}>
+                            <li>LoRA reduces trainable parameters by 99%+</li>
+                            <li>Data quality matters more than quantity</li>
+                            <li>Rank (r) controls adapter capacity</li>
+                            <li>QLoRA enables training on consumer hardware</li>
+                            <li>Always compare before/after to validate</li>
+                            <li>Fine-tuning is best for style/format, not new knowledge</li>
+                        </ul>
+                    </div>
+                    <p style={{marginTop: '30px', opacity: 0.7}}>Continue to Module 6: Optimization</p>
+                </div>
+            );
+        }
+
+        // Main App
+        function App() {
+            const [currentSlide, setCurrentSlide] = useState(0);
+            const [apiKey, setApiKey] = useState('');
+            const [isConnected, setIsConnected] = useState(false);
+
+            const slides = [
+                (props) => <TitleSlide {...props} />,
+                () => <DatasetSlide />,
+                () => <LoRAConfigSlide />,
+                () => <TrainingSimSlide />,
+                (props) => <ComparisonSlide {...props} />,
+                () => <CodeSlide />,
+                () => <SummarySlide />
+            ];
+            const totalSlides = slides.length;
+
+            const nextSlide = () => {
+                if (currentSlide < totalSlides - 1) setCurrentSlide(currentSlide + 1);
+            };
+
+            const prevSlide = () => {
+                if (currentSlide > 0) setCurrentSlide(currentSlide - 1);
+            };
+
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    if (e.key === 'ArrowRight' || e.key === ' ') {
+                        e.preventDefault();
+                        nextSlide();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        prevSlide();
+                    }
+                };
+                document.addEventListener('keydown', handleKeyDown);
+                return () => document.removeEventListener('keydown', handleKeyDown);
+            }, [currentSlide]);
+
+            const CurrentSlideComponent = slides[currentSlide];
+
+            return (
+                <div className="slide active">
+                    <CurrentSlideComponent
+                        apiKey={apiKey}
+                        setApiKey={setApiKey}
+                        isConnected={isConnected}
+                        setIsConnected={setIsConnected}
+                    />
+                    <div className="navigation">
+                        <button className="nav-btn" onClick={prevSlide} disabled={currentSlide === 0}>
+                            ← Previous
+                        </button>
+                        <span className="slide-counter">Slide {currentSlide + 1} of {totalSlides}</span>
+                        <button className="nav-btn" onClick={nextSlide} disabled={currentSlide === totalSlides - 1}>
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

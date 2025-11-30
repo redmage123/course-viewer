@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo: Live Model Comparison Dashboard</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 30px 50px;
+            flex-direction: column;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        h1 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.4em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 3px solid rgba(255,255,255,0.5);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #90EE90;
+        }
+
+        h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.4em;
+            margin: 15px 0 10px 0;
+            color: #98FB98;
+        }
+
+        p {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        ul {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-left: 25px;
+            line-height: 1.8;
+        }
+
+        .demo-container {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .chart-container {
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group.wide {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95em;
+            color: #90EE90;
+        }
+
+        select, input, textarea {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1em;
+            background-color: rgba(255,255,255,0.9);
+            color: #1a5f2a;
+        }
+
+        input[type="password"] {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            width: 100%;
+        }
+
+        .btn {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #90EE90;
+            color: #1a5f2a;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .api-key-section {
+            background-color: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: 15px;
+        }
+
+        .api-status.connected {
+            background-color: rgba(144, 238, 144, 0.3);
+            color: #90EE90;
+        }
+
+        .api-status.disconnected {
+            background-color: rgba(255, 99, 132, 0.3);
+            color: #ff6b6b;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .connected .status-dot {
+            background-color: #90EE90;
+        }
+
+        .disconnected .status-dot {
+            background-color: #ff6b6b;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .highlight-box {
+            background-color: rgba(255,255,255,0.15);
+            border-left: 4px solid #90EE90;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-table {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-table td {
+            padding: 15px;
+        }
+
+        .code-table code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85em;
+            color: #00ff00;
+            white-space: pre;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .code-label {
+            background-color: #2d2d44;
+            color: #90EE90;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.85em;
+            padding: 8px 15px !important;
+            border-bottom: 1px solid #444;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-btn {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: white;
+            color: #1a5f2a;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background-color: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #90EE90;
+        }
+
+        .stat-label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            background-color: rgba(255, 99, 132, 0.2);
+            border: 1px solid rgba(255, 99, 132, 0.5);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .model-card {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .model-card.winner {
+            border-color: #90EE90;
+            background-color: rgba(144, 238, 144, 0.2);
+        }
+
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .model-name {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .model-badge {
+            background-color: rgba(144,238,144,0.3);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+
+        .model-response {
+            background-color: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .metrics-row {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #90EE90;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #90EE90;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .leaderboard {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 100px 100px 100px;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            align-items: center;
+        }
+
+        .leaderboard-row.header {
+            background-color: rgba(144,238,144,0.2);
+            font-weight: bold;
+        }
+
+        .rank {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .rank-1 { color: #FFD700; }
+        .rank-2 { color: #C0C0C0; }
+        .rank-3 { color: #CD7F32; }
+
+        @media (max-width: 900px) {
+            .two-column, .three-column {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const MODELS = [
+            { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI', costPer1k: 0.002 },
+            { id: 'gpt-4', name: 'GPT-4', provider: 'OpenAI', costPer1k: 0.06 },
+            { id: 'gpt-4-turbo-preview', name: 'GPT-4 Turbo', provider: 'OpenAI', costPer1k: 0.03 }
+        ];
+
+        // Slide 1: Title & API Setup
+        function TitleSlide({ apiKey, setApiKey, isConnected, setIsConnected }) {
+            const [testing, setTesting] = useState(false);
+            const [error, setError] = useState('');
+
+            const testConnection = async () => {
+                if (!apiKey.trim()) {
+                    setError('Please enter an API key');
+                    return;
+                }
+                setTesting(true);
+                setError('');
+                try {
+                    const res = await fetch('https://api.openai.com/v1/models', {
+                        headers: { 'Authorization': `Bearer ${apiKey}` }
+                    });
+                    setIsConnected(res.ok);
+                    if (!res.ok) setError('Invalid API key');
+                } catch (err) {
+                    setError('Connection failed');
+                    setIsConnected(false);
+                }
+                setTesting(false);
+            };
+
+            return (
+                <div className="slide-content">
+                    <div style={{textAlign: 'center', marginBottom: '30px'}}>
+                        <h2>Interactive Demo</h2>
+                        <h1 style={{fontSize: '2.8em', borderBottom: 'none'}}>Live Model Comparison</h1>
+                        <p style={{fontSize: '1.2em', opacity: 0.9}}>Benchmarking LLMs in Real-Time</p>
+                    </div>
+
+                    <div className="api-key-section">
+                        <h3>
+                            OpenAI API Connection
+                            <span className={`api-status ${isConnected ? 'connected' : 'disconnected'}`}>
+                                <span className="status-dot"></span>
+                                {isConnected ? 'Connected' : 'Not Connected'}
+                            </span>
+                        </h3>
+                        <div className="controls">
+                            <div className="control-group wide">
+                                <label>API Key:</label>
+                                <input
+                                    type="password"
+                                    value={apiKey}
+                                    onChange={(e) => setApiKey(e.target.value)}
+                                    placeholder="sk-..."
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>&nbsp;</label>
+                                <button className="btn" onClick={testConnection} disabled={testing}>
+                                    {testing ? 'Testing...' : 'Test Connection'}
+                                </button>
+                            </div>
+                        </div>
+                        {error && <div className="error-message">{error}</div>}
+                    </div>
+
+                    <div className="highlight-box">
+                        <h3>What This Demo Covers</h3>
+                        <ul>
+                            <li>Side-by-side model response comparison</li>
+                            <li>Latency and throughput benchmarking</li>
+                            <li>Cost analysis per query</li>
+                            <li>Quality scoring and evaluation</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 2: Side-by-Side Comparison
+        function SideBySideSlide({ apiKey, isConnected }) {
+            const [prompt, setPrompt] = useState('Explain quantum computing in simple terms that a 10-year-old could understand.');
+            const [selectedModels, setSelectedModels] = useState(['gpt-3.5-turbo', 'gpt-4']);
+            const [results, setResults] = useState({});
+            const [loading, setLoading] = useState({});
+
+            const runComparison = async () => {
+                if (!isConnected || !apiKey) return;
+
+                const newLoading = {};
+                const newResults = {};
+                selectedModels.forEach(m => {
+                    newLoading[m] = true;
+                    newResults[m] = null;
+                });
+                setLoading(newLoading);
+                setResults(newResults);
+
+                await Promise.all(selectedModels.map(async (modelId) => {
+                    const startTime = performance.now();
+                    try {
+                        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: modelId,
+                                messages: [{ role: 'user', content: prompt }],
+                                temperature: 0.7,
+                                max_tokens: 300
+                            })
+                        });
+
+                        const data = await res.json();
+                        const endTime = performance.now();
+
+                        const model = MODELS.find(m => m.id === modelId);
+                        const totalTokens = data.usage?.total_tokens || 0;
+
+                        setResults(prev => ({
+                            ...prev,
+                            [modelId]: {
+                                response: data.choices[0].message.content,
+                                latency: Math.round(endTime - startTime),
+                                tokens: totalTokens,
+                                cost: (totalTokens / 1000 * model.costPer1k).toFixed(6)
+                            }
+                        }));
+                    } catch (err) {
+                        setResults(prev => ({
+                            ...prev,
+                            [modelId]: { error: err.message }
+                        }));
+                    }
+
+                    setLoading(prev => ({ ...prev, [modelId]: false }));
+                }));
+            };
+
+            const toggleModel = (modelId) => {
+                if (selectedModels.includes(modelId)) {
+                    if (selectedModels.length > 1) {
+                        setSelectedModels(selectedModels.filter(m => m !== modelId));
+                    }
+                } else {
+                    setSelectedModels([...selectedModels, modelId]);
+                }
+            };
+
+            const findWinner = () => {
+                if (Object.keys(results).length < 2) return null;
+                let fastest = null;
+                let fastestTime = Infinity;
+                Object.entries(results).forEach(([modelId, result]) => {
+                    if (result && result.latency && result.latency < fastestTime) {
+                        fastestTime = result.latency;
+                        fastest = modelId;
+                    }
+                });
+                return fastest;
+            };
+
+            const winner = findWinner();
+
+            return (
+                <div className="slide-content">
+                    <h1>Side-by-Side Comparison</h1>
+                    <p>Compare responses from different models on the same prompt.</p>
+
+                    <div className="demo-container">
+                        <div className="controls">
+                            <div className="control-group wide">
+                                <label>Test Prompt:</label>
+                                <textarea
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="controls">
+                            <div className="control-group">
+                                <label>Select Models:</label>
+                                <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                    {MODELS.map(model => (
+                                        <button
+                                            key={model.id}
+                                            className={`btn ${selectedModels.includes(model.id) ? '' : 'btn-secondary'}`}
+                                            onClick={() => toggleModel(model.id)}
+                                            style={{padding: '8px 15px', fontSize: '0.9em', backgroundColor: selectedModels.includes(model.id) ? '#90EE90' : 'transparent', color: selectedModels.includes(model.id) ? '#1a5f2a' : 'white', border: '2px solid white'}}
+                                        >
+                                            {model.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="control-group">
+                                <label>&nbsp;</label>
+                                <button className="btn" onClick={runComparison} disabled={!isConnected || Object.values(loading).some(l => l)}>
+                                    {Object.values(loading).some(l => l) ? 'Running...' : 'Run Comparison'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="three-column">
+                            {selectedModels.map(modelId => {
+                                const model = MODELS.find(m => m.id === modelId);
+                                const result = results[modelId];
+                                const isLoading = loading[modelId];
+                                const isWinner = winner === modelId;
+
+                                return (
+                                    <div key={modelId} className={`model-card ${isWinner ? 'winner' : ''}`}>
+                                        <div className="model-header">
+                                            <span className="model-name">{model.name}</span>
+                                            {isWinner && <span className="model-badge">⚡ Fastest</span>}
+                                        </div>
+
+                                        {isLoading ? (
+                                            <div style={{textAlign: 'center', padding: '30px'}}>
+                                                <span className="spinner"></span>
+                                                <p style={{marginTop: '10px', opacity: 0.7}}>Generating...</p>
+                                            </div>
+                                        ) : result ? (
+                                            <>
+                                                <div className="model-response">
+                                                    {result.error || result.response}
+                                                </div>
+                                                {!result.error && (
+                                                    <div className="metrics-row">
+                                                        <div className="metric">
+                                                            <span>⏱️</span>
+                                                            <span className="metric-value">{result.latency}ms</span>
+                                                        </div>
+                                                        <div className="metric">
+                                                            <span>📊</span>
+                                                            <span className="metric-value">{result.tokens} tokens</span>
+                                                        </div>
+                                                        <div className="metric">
+                                                            <span>💰</span>
+                                                            <span className="metric-value">${result.cost}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <div style={{opacity: 0.5, textAlign: 'center', padding: '30px'}}>
+                                                Click "Run Comparison" to test
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 3: Benchmark Dashboard
+        function BenchmarkSlide({ apiKey, isConnected }) {
+            const [benchmarkResults, setBenchmarkResults] = useState([]);
+            const [running, setRunning] = useState(false);
+            const [currentModel, setCurrentModel] = useState('');
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            const prompts = [
+                "Write a haiku about programming",
+                "Explain recursion simply",
+                "List 3 benefits of cloud computing"
+            ];
+
+            const runBenchmark = async () => {
+                if (!isConnected || !apiKey) return;
+
+                setRunning(true);
+                setBenchmarkResults([]);
+
+                const results = [];
+
+                for (const model of MODELS) {
+                    setCurrentModel(model.name);
+                    const modelResults = [];
+
+                    for (const prompt of prompts) {
+                        const startTime = performance.now();
+                        try {
+                            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${apiKey}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    model: model.id,
+                                    messages: [{ role: 'user', content: prompt }],
+                                    temperature: 0.7,
+                                    max_tokens: 100
+                                })
+                            });
+
+                            const data = await res.json();
+                            const endTime = performance.now();
+
+                            modelResults.push({
+                                latency: endTime - startTime,
+                                tokens: data.usage?.total_tokens || 0
+                            });
+                        } catch (err) {
+                            modelResults.push({ latency: 0, tokens: 0, error: true });
+                        }
+                    }
+
+                    const avgLatency = modelResults.reduce((a, b) => a + b.latency, 0) / modelResults.length;
+                    const avgTokens = modelResults.reduce((a, b) => a + b.tokens, 0) / modelResults.length;
+                    const tokensPerSec = avgTokens / (avgLatency / 1000);
+
+                    results.push({
+                        model: model.name,
+                        modelId: model.id,
+                        avgLatency: Math.round(avgLatency),
+                        avgTokens: Math.round(avgTokens),
+                        tokensPerSec: tokensPerSec.toFixed(1),
+                        costPer1k: model.costPer1k
+                    });
+
+                    setBenchmarkResults([...results]);
+                }
+
+                setCurrentModel('');
+                setRunning(false);
+                updateChart(results);
+            };
+
+            const updateChart = (results) => {
+                if (chartInstance.current) chartInstance.current.destroy();
+                if (!chartRef.current) return;
+
+                const ctx = chartRef.current.getContext('2d');
+                chartInstance.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: results.map(r => r.model),
+                        datasets: [
+                            {
+                                label: 'Avg Latency (ms)',
+                                data: results.map(r => r.avgLatency),
+                                backgroundColor: 'rgba(144, 238, 144, 0.8)',
+                                borderColor: 'rgba(26, 95, 42, 1)',
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'Tokens/sec',
+                                data: results.map(r => parseFloat(r.tokensPerSec)),
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            };
+
+            useEffect(() => {
+                return () => {
+                    if (chartInstance.current) chartInstance.current.destroy();
+                };
+            }, []);
+
+            const sortedResults = [...benchmarkResults].sort((a, b) => a.avgLatency - b.avgLatency);
+
+            return (
+                <div className="slide-content">
+                    <h1>Benchmark Dashboard</h1>
+                    <p>Run standardized benchmarks across multiple models.</p>
+
+                    <div className="demo-container">
+                        <div className="controls">
+                            <button className="btn" onClick={runBenchmark} disabled={running || !isConnected}>
+                                {running ? `Testing ${currentModel}...` : 'Run Full Benchmark'}
+                            </button>
+                        </div>
+
+                        <div className="two-column">
+                            <div>
+                                <h3>Leaderboard</h3>
+                                <div className="leaderboard">
+                                    <div className="leaderboard-row header">
+                                        <span>#</span>
+                                        <span>Model</span>
+                                        <span>Latency</span>
+                                        <span>Tok/sec</span>
+                                        <span>Cost/1k</span>
+                                    </div>
+                                    {sortedResults.length === 0 ? (
+                                        <div style={{padding: '20px', textAlign: 'center', opacity: 0.5}}>
+                                            Run benchmark to see results
+                                        </div>
+                                    ) : (
+                                        sortedResults.map((result, i) => (
+                                            <div key={result.modelId} className="leaderboard-row">
+                                                <span className={`rank rank-${i + 1}`}>
+                                                    {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                                                </span>
+                                                <span>{result.model}</span>
+                                                <span>{result.avgLatency}ms</span>
+                                                <span>{result.tokensPerSec}</span>
+                                                <span>${result.costPer1k}</span>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="chart-container" style={{height: '300px'}}>
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 4: Cost Calculator
+        function CostSlide() {
+            const [tokensPerRequest, setTokensPerRequest] = useState(500);
+            const [requestsPerDay, setRequestsPerDay] = useState(1000);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            const calculateCosts = () => {
+                return MODELS.map(model => ({
+                    ...model,
+                    dailyCost: (tokensPerRequest * requestsPerDay / 1000 * model.costPer1k),
+                    monthlyCost: (tokensPerRequest * requestsPerDay / 1000 * model.costPer1k * 30)
+                }));
+            };
+
+            useEffect(() => {
+                if (chartInstance.current) chartInstance.current.destroy();
+                if (!chartRef.current) return;
+
+                const costs = calculateCosts();
+                const ctx = chartRef.current.getContext('2d');
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: costs.map(c => c.name),
+                        datasets: [
+                            {
+                                label: 'Daily Cost ($)',
+                                data: costs.map(c => c.dailyCost.toFixed(2)),
+                                backgroundColor: 'rgba(144, 238, 144, 0.8)',
+                                borderColor: 'rgba(26, 95, 42, 1)',
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'Monthly Cost ($)',
+                                data: costs.map(c => c.monthlyCost.toFixed(2)),
+                                backgroundColor: 'rgba(255, 206, 86, 0.8)',
+                                borderColor: 'rgba(255, 206, 86, 1)',
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+
+                return () => {
+                    if (chartInstance.current) chartInstance.current.destroy();
+                };
+            }, [tokensPerRequest, requestsPerDay]);
+
+            const costs = calculateCosts();
+
+            return (
+                <div className="slide-content">
+                    <h1>Cost Calculator</h1>
+                    <p>Estimate API costs based on your usage patterns.</p>
+
+                    <div className="demo-container">
+                        <div className="controls">
+                            <div className="control-group">
+                                <label>Tokens per Request: {tokensPerRequest}</label>
+                                <input
+                                    type="range"
+                                    min="100"
+                                    max="4000"
+                                    step="100"
+                                    value={tokensPerRequest}
+                                    onChange={(e) => setTokensPerRequest(Number(e.target.value))}
+                                    style={{width: '200px'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>Requests per Day: {requestsPerDay.toLocaleString()}</label>
+                                <input
+                                    type="range"
+                                    min="100"
+                                    max="100000"
+                                    step="100"
+                                    value={requestsPerDay}
+                                    onChange={(e) => setRequestsPerDay(Number(e.target.value))}
+                                    style={{width: '200px'}}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="stats-grid">
+                            {costs.map(cost => (
+                                <div key={cost.id} className="stat-card">
+                                    <div className="stat-value">${cost.monthlyCost.toFixed(2)}</div>
+                                    <div className="stat-label">{cost.name} /month</div>
+                                </div>
+                            ))}
+                            <div className="stat-card">
+                                <div className="stat-value">{(tokensPerRequest * requestsPerDay / 1000000).toFixed(2)}M</div>
+                                <div className="stat-label">Tokens/Day</div>
+                            </div>
+                        </div>
+
+                        <div className="chart-container" style={{height: '300px'}}>
+                            <canvas ref={chartRef}></canvas>
+                        </div>
+                    </div>
+
+                    <div className="highlight-box">
+                        <p><strong>Cost Optimization Tips:</strong> Use GPT-3.5 for simple tasks, GPT-4 for complex reasoning. Implement caching for repeated queries. Consider batching requests.</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 5: Summary
+        function SummarySlide() {
+            return (
+                <div className="slide-content" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', textAlign: 'center'}}>
+                    <h1 style={{borderBottom: 'none'}}>Demo Complete!</h1>
+                    <h3 style={{marginTop: '30px'}}>Key Takeaways</h3>
+                    <div style={{textAlign: 'left', maxWidth: '600px', margin: '20px auto'}}>
+                        <ul style={{fontSize: '1.1em', lineHeight: '1.8'}}>
+                            <li>GPT-4 offers better quality but higher latency/cost</li>
+                            <li>GPT-3.5 Turbo is 20-30x cheaper than GPT-4</li>
+                            <li>Match model to task complexity</li>
+                            <li>Monitor tokens/second for throughput planning</li>
+                            <li>Implement model routing for cost optimization</li>
+                            <li>Always benchmark on your specific use case</li>
+                        </ul>
+                    </div>
+                    <p style={{marginTop: '30px', opacity: 0.7}}>Continue to Ethical Implementation</p>
+                </div>
+            );
+        }
+
+        // Main App
+        function App() {
+            const [currentSlide, setCurrentSlide] = useState(0);
+            const [apiKey, setApiKey] = useState('');
+            const [isConnected, setIsConnected] = useState(false);
+
+            const slides = [
+                (props) => <TitleSlide {...props} />,
+                (props) => <SideBySideSlide {...props} />,
+                (props) => <BenchmarkSlide {...props} />,
+                () => <CostSlide />,
+                () => <SummarySlide />
+            ];
+            const totalSlides = slides.length;
+
+            const nextSlide = () => {
+                if (currentSlide < totalSlides - 1) setCurrentSlide(currentSlide + 1);
+            };
+
+            const prevSlide = () => {
+                if (currentSlide > 0) setCurrentSlide(currentSlide - 1);
+            };
+
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    if (e.key === 'ArrowRight' || e.key === ' ') {
+                        e.preventDefault();
+                        nextSlide();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        prevSlide();
+                    }
+                };
+                document.addEventListener('keydown', handleKeyDown);
+                return () => document.removeEventListener('keydown', handleKeyDown);
+            }, [currentSlide]);
+
+            const CurrentSlideComponent = slides[currentSlide];
+
+            return (
+                <div className="slide active">
+                    <CurrentSlideComponent
+                        apiKey={apiKey}
+                        setApiKey={setApiKey}
+                        isConnected={isConnected}
+                        setIsConnected={setIsConnected}
+                    />
+                    <div className="navigation">
+                        <button className="nav-btn" onClick={prevSlide} disabled={currentSlide === 0}>
+                            ← Previous
+                        </button>
+                        <span className="slide-counter">Slide {currentSlide + 1} of {totalSlides}</span>
+                        <button className="nav-btn" onClick={nextSlide} disabled={currentSlide === totalSlides - 1}>
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering LLMs - Student Notes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%); color: white; min-height: 100vh; padding: 40px; line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.8em; margin: 40px 0 20px 0; color: #90EE90; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 25px 0 10px 0; color: #98FB98; }
+        h4 { font-size: 1.2em; margin: 20px 0 10px 0; color: #B0FFB0; }
+        p { margin-bottom: 15px; }
+        .toc { background-color: rgba(255,255,255,0.1); padding: 25px; border-radius: 8px; margin: 30px 0; }
+        .toc ul { list-style: none; margin-left: 0; }
+        .toc li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .toc a { color: #90EE90; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        .code-block { background-color: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background-color: #2d2d44; padding: 10px 15px; font-size: 0.9em; color: #90EE90; }
+        .code-content { padding: 20px; overflow-x: auto; }
+        .code-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9em; color: #00ff00; white-space: pre; line-height: 1.5; }
+        .concept-box { background-color: rgba(147, 112, 219, 0.2); border-left: 4px solid #9370DB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .key-point { background-color: rgba(144, 238, 144, 0.2); border-left: 4px solid #90EE90; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .warning { background-color: rgba(255, 99, 71, 0.2); border-left: 4px solid #FF6347; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .formula { background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center; font-family: 'Courier New', monospace; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        th { background-color: rgba(144, 238, 144, 0.3); }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2); }
+        .nav-btn { background-color: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 25px; border-radius: 5px; text-decoration: none; transition: all 0.3s ease; }
+        .nav-btn:hover { background-color: white; color: #1a5f2a; }
+        @media print { body { background: white; color: black; } h1, h2, h3 { color: #1a5f2a; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mastering LLMs</h1>
+        <p style="font-size: 1.3em; opacity: 0.9;">Comprehensive Student Reference Guide</p>
+        <p style="opacity: 0.7;">3-Day Intensive Course | Version 1.0</p>
+
+        <div class="toc">
+            <h3 style="margin-top: 0; color: white;">Table of Contents</h3>
+            <ul>
+                <li><a href="#module1">Module 1: Foundations of Modern LLMs</a></li>
+                <li><a href="#module2">Module 2: AI Agents and Frameworks</a></li>
+                <li><a href="#module3">Module 3: Advanced Agent Development</a></li>
+                <li><a href="#module4">Module 4: Retrieval-Augmented Generation (RAG)</a></li>
+                <li><a href="#module5">Module 5: Model Fine-tuning</a></li>
+                <li><a href="#module6">Module 6: Advanced Optimization</a></li>
+                <li><a href="#module7">Module 7: Ethical Implementation</a></li>
+                <li><a href="#reference">Quick Reference & Cheat Sheets</a></li>
+            </ul>
+        </div>
+
+        <!-- MODULE 1 -->
+        <h2 id="module1">Module 1: Foundations of Modern LLMs</h2>
+
+        <h3>The Transformer Architecture</h3>
+        <p>Transformers, introduced in "Attention Is All You Need" (2017), revolutionized NLP by replacing recurrence with attention mechanisms.</p>
+
+        <div class="concept-box">
+            <h4 style="margin-top: 0;">Key Components</h4>
+            <ul>
+                <li><strong>Self-Attention:</strong> Allows each token to attend to all other tokens</li>
+                <li><strong>Multi-Head Attention:</strong> Multiple attention patterns in parallel</li>
+                <li><strong>Feed-Forward Networks:</strong> Position-wise transformations</li>
+                <li><strong>Layer Normalization:</strong> Stabilizes training</li>
+                <li><strong>Positional Encoding:</strong> Injects position information</li>
+            </ul>
+        </div>
+
+        <h4>Self-Attention Formula</h4>
+        <div class="formula">
+            Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>) × V
+        </div>
+
+        <p>Where:</p>
+        <ul>
+            <li><strong>Q</strong> (Query): What am I looking for?</li>
+            <li><strong>K</strong> (Key): What do I contain?</li>
+            <li><strong>V</strong> (Value): What information do I provide?</li>
+            <li><strong>d<sub>k</sub></strong>: Dimension of keys (scaling factor)</li>
+        </ul>
+
+        <div class="code-block">
+            <div class="code-header">Python: Scaled Dot-Product Attention</div>
+            <div class="code-content">
+                <code>import torch
+import torch.nn.functional as F
+
+def scaled_dot_product_attention(Q, K, V, mask=None):
+    d_k = Q.size(-1)
+    scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(d_k)
+
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float('-inf'))
+
+    attention_weights = F.softmax(scores, dim=-1)
+    output = torch.matmul(attention_weights, V)
+
+    return output, attention_weights</code>
+            </div>
+        </div>
+
+        <h3>Multi-Head Attention</h3>
+        <p>Instead of single attention, use multiple "heads" to capture different relationship types:</p>
+
+        <div class="formula">
+            MultiHead(Q, K, V) = Concat(head<sub>1</sub>, ..., head<sub>h</sub>)W<sup>O</sup>
+        </div>
+
+        <div class="key-point">
+            <strong>Key Insight:</strong> Multi-head attention allows the model to jointly attend to information from different representation subspaces. Each head can learn different patterns (syntax, semantics, coreference, etc.).
+        </div>
+
+        <h3>GPT vs BERT Architecture</h3>
+        <table>
+            <tr>
+                <th>Aspect</th>
+                <th>GPT (Decoder-only)</th>
+                <th>BERT (Encoder-only)</th>
+            </tr>
+            <tr>
+                <td>Attention Type</td>
+                <td>Causal (unidirectional)</td>
+                <td>Bidirectional</td>
+            </tr>
+            <tr>
+                <td>Training Objective</td>
+                <td>Next token prediction</td>
+                <td>Masked language modeling</td>
+            </tr>
+            <tr>
+                <td>Best For</td>
+                <td>Text generation</td>
+                <td>Understanding/classification</td>
+            </tr>
+            <tr>
+                <td>Can See Future?</td>
+                <td>No (masked)</td>
+                <td>Yes</td>
+            </tr>
+        </table>
+
+        <!-- MODULE 2 -->
+        <h2 id="module2">Module 2: AI Agents and Frameworks</h2>
+
+        <h3>What is an AI Agent?</h3>
+        <p>An AI agent is an LLM augmented with tools and the ability to take actions in an environment to accomplish goals.</p>
+
+        <div class="concept-box">
+            <h4 style="margin-top: 0;">Agent Components</h4>
+            <ol>
+                <li><strong>Brain (LLM):</strong> Reasoning and decision-making</li>
+                <li><strong>Tools:</strong> APIs, databases, calculators, web search</li>
+                <li><strong>Memory:</strong> Short-term (context) and long-term (vector stores)</li>
+                <li><strong>Planning:</strong> Breaking tasks into steps</li>
+            </ol>
+        </div>
+
+        <h3>ReAct Pattern (Reasoning + Acting)</h3>
+        <p>The ReAct pattern interleaves reasoning and action in a loop:</p>
+
+        <div class="code-block">
+            <div class="code-header">ReAct Loop</div>
+            <div class="code-content">
+                <code>Thought: I need to find the current weather in London
+Action: weather_api(location="London")
+Observation: Temperature: 15°C, Conditions: Cloudy
+
+Thought: Now I have the weather, I can answer the user
+Action: respond("The weather in London is 15°C and cloudy")
+Observation: [Response sent]
+
+Thought: Task complete
+Action: finish()</code>
+            </div>
+        </div>
+
+        <h3>LangChain Framework</h3>
+
+        <div class="code-block">
+            <div class="code-header">Python: Creating a LangChain Agent</div>
+            <div class="code-content">
+                <code>from langchain_openai import ChatOpenAI
+from langchain.agents import create_react_agent, AgentExecutor
+from langchain.tools import Tool
+
+# Define tools
+tools = [
+    Tool(
+        name="Calculator",
+        func=lambda x: eval(x),
+        description="Useful for math calculations"
+    ),
+    Tool(
+        name="Search",
+        func=search_function,
+        description="Search the web for information"
+    )
+]
+
+# Create agent
+llm = ChatOpenAI(model="gpt-4", temperature=0)
+agent = create_react_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+# Run
+result = executor.invoke({"input": "What is 25 * 4 + 100?"})</code>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <h2 id="module3">Module 3: Advanced Agent Development</h2>
+
+        <h3>Chain-of-Thought (CoT) Prompting</h3>
+        <p>Encourage step-by-step reasoning by showing examples or using trigger phrases:</p>
+
+        <div class="code-block">
+            <div class="code-header">CoT Prompt Template</div>
+            <div class="code-content">
+                <code>Question: A store has 45 apples. They sell 12 in the morning
+and receive 30 more. How many apples do they have?
+
+Let's solve this step by step:
+
+Step 1: Start with initial count
+  - Initial apples: 45
+
+Step 2: Subtract what was sold
+  - 45 - 12 = 33 apples
+
+Step 3: Add the new shipment
+  - 33 + 30 = 63 apples
+
+Final Answer: 63 apples</code>
+            </div>
+        </div>
+
+        <div class="key-point">
+            <strong>CoT Benefits:</strong>
+            <ul>
+                <li>Improves accuracy on complex reasoning tasks</li>
+                <li>Makes the reasoning process transparent and auditable</li>
+                <li>Helps identify where errors occur</li>
+            </ul>
+        </div>
+
+        <h3>Plan-and-Execute Pattern</h3>
+        <p>Separates planning from execution for complex, multi-step tasks:</p>
+
+        <div class="code-block">
+            <div class="code-header">Python: Plan-and-Execute</div>
+            <div class="code-content">
+                <code>class PlanAndExecuteAgent:
+    def run(self, task: str):
+        # Phase 1: Create plan
+        plan = self.create_plan(task)
+        # Returns: ["Step 1: ...", "Step 2: ...", ...]
+
+        # Phase 2: Execute each step
+        context = ""
+        for step in plan:
+            result = self.execute_step(step, context)
+            context += f"\n{step}: {result}"
+
+        return self.synthesize_final_answer(context)</code>
+            </div>
+        </div>
+
+        <h3>Self-Reflection Pattern</h3>
+        <p>Agent critiques and improves its own output iteratively:</p>
+
+        <ol>
+            <li><strong>Generate:</strong> Create initial response</li>
+            <li><strong>Critique:</strong> Evaluate quality (score 1-10)</li>
+            <li><strong>Improve:</strong> Refine based on critique</li>
+            <li><strong>Repeat:</strong> Until quality threshold met</li>
+        </ol>
+
+        <!-- MODULE 4 -->
+        <h2 id="module4">Module 4: Retrieval-Augmented Generation (RAG)</h2>
+
+        <h3>What is RAG?</h3>
+        <p>RAG combines retrieval of relevant documents with LLM generation to produce grounded, factual responses.</p>
+
+        <div class="concept-box">
+            <h4 style="margin-top: 0;">RAG Pipeline Steps</h4>
+            <ol>
+                <li><strong>Document Loading:</strong> Ingest source documents</li>
+                <li><strong>Chunking:</strong> Split into manageable pieces</li>
+                <li><strong>Embedding:</strong> Convert chunks to vectors</li>
+                <li><strong>Storage:</strong> Store in vector database</li>
+                <li><strong>Retrieval:</strong> Find relevant chunks for query</li>
+                <li><strong>Generation:</strong> LLM generates answer using context</li>
+            </ol>
+        </div>
+
+        <h3>Chunking Strategies</h3>
+        <table>
+            <tr>
+                <th>Strategy</th>
+                <th>Chunk Size</th>
+                <th>Best For</th>
+            </tr>
+            <tr>
+                <td>Small chunks</td>
+                <td>100-200 tokens</td>
+                <td>Precise retrieval, Q&A</td>
+            </tr>
+            <tr>
+                <td>Medium chunks</td>
+                <td>300-500 tokens</td>
+                <td>General purpose</td>
+            </tr>
+            <tr>
+                <td>Large chunks</td>
+                <td>500-1000 tokens</td>
+                <td>Context-heavy tasks</td>
+            </tr>
+        </table>
+
+        <div class="code-block">
+            <div class="code-header">Python: RAG Implementation</div>
+            <div class="code-content">
+                <code>from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+
+# 1. Chunk documents
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500,
+    chunk_overlap=50
+)
+chunks = splitter.split_documents(documents)
+
+# 2. Create embeddings and store
+embeddings = OpenAIEmbeddings()
+vectorstore = FAISS.from_documents(chunks, embeddings)
+
+# 3. Retrieve and generate
+def rag_query(question: str) -> str:
+    # Retrieve relevant chunks
+    docs = vectorstore.similarity_search(question, k=3)
+    context = "\n".join([d.page_content for d in docs])
+
+    # Generate with context
+    prompt = f"Context:\n{context}\n\nQuestion: {question}\nAnswer:"
+    return llm.invoke(prompt)</code>
+            </div>
+        </div>
+
+        <h3>Embedding Models</h3>
+        <table>
+            <tr>
+                <th>Model</th>
+                <th>Dimensions</th>
+                <th>Best For</th>
+            </tr>
+            <tr>
+                <td>text-embedding-3-small</td>
+                <td>1536</td>
+                <td>Cost-effective, general use</td>
+            </tr>
+            <tr>
+                <td>text-embedding-3-large</td>
+                <td>3072</td>
+                <td>Highest quality</td>
+            </tr>
+            <tr>
+                <td>all-MiniLM-L6-v2</td>
+                <td>384</td>
+                <td>Open source, fast</td>
+            </tr>
+        </table>
+
+        <!-- MODULE 5 -->
+        <h2 id="module5">Module 5: Model Fine-tuning</h2>
+
+        <h3>LoRA (Low-Rank Adaptation)</h3>
+        <p>LoRA freezes pretrained weights and injects trainable low-rank matrices:</p>
+
+        <div class="formula">
+            W' = W + BA<br>
+            where B ∈ R<sup>d×r</sup>, A ∈ R<sup>r×k</sup>, r << min(d, k)
+        </div>
+
+        <div class="key-point">
+            <strong>LoRA Benefits:</strong>
+            <ul>
+                <li>Train ~0.1% of parameters (e.g., 7M instead of 7B)</li>
+                <li>Swap adapters for different tasks</li>
+                <li>Reduce catastrophic forgetting</li>
+                <li>Lower GPU memory requirements</li>
+            </ul>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">Python: LoRA Configuration</div>
+            <div class="code-content">
+                <code>from peft import LoraConfig, get_peft_model
+
+lora_config = LoraConfig(
+    r=8,                    # Rank (start with 8-16)
+    lora_alpha=16,          # Scaling factor (usually 2×r)
+    target_modules=[        # Layers to adapt
+        "q_proj", "k_proj", "v_proj", "o_proj"
+    ],
+    lora_dropout=0.05,      # Regularization
+    bias="none",
+    task_type="CAUSAL_LM"
+)
+
+model = get_peft_model(base_model, lora_config)
+print(f"Trainable params: {model.num_parameters(only_trainable=True):,}")</code>
+            </div>
+        </div>
+
+        <h3>Dataset Format for Instruction Tuning</h3>
+        <div class="code-block">
+            <div class="code-header">Alpaca Format</div>
+            <div class="code-content">
+                <code>### Instruction:
+Explain machine learning in simple terms.
+
+### Input:
+(optional additional context)
+
+### Response:
+Machine learning is a type of AI where computers
+learn patterns from data instead of being explicitly
+programmed.</code>
+            </div>
+        </div>
+
+        <h3>LoRA Hyperparameters</h3>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Typical Values</th>
+                <th>Effect</th>
+            </tr>
+            <tr>
+                <td>r (rank)</td>
+                <td>4, 8, 16, 32</td>
+                <td>Higher = more capacity, more params</td>
+            </tr>
+            <tr>
+                <td>alpha</td>
+                <td>16, 32 (usually 2×r)</td>
+                <td>Scales the adapter contribution</td>
+            </tr>
+            <tr>
+                <td>dropout</td>
+                <td>0.05 - 0.1</td>
+                <td>Regularization</td>
+            </tr>
+            <tr>
+                <td>learning_rate</td>
+                <td>1e-4 to 3e-4</td>
+                <td>Higher than full fine-tuning</td>
+            </tr>
+        </table>
+
+        <!-- MODULE 6 -->
+        <h2 id="module6">Module 6: Advanced Optimization</h2>
+
+        <h3>Quantization Overview</h3>
+        <p>Reduce model size and inference cost by using lower precision:</p>
+
+        <table>
+            <tr>
+                <th>Precision</th>
+                <th>Bits</th>
+                <th>7B Model Size</th>
+                <th>Quality Loss</th>
+            </tr>
+            <tr>
+                <td>FP32</td>
+                <td>32</td>
+                <td>~28 GB</td>
+                <td>Baseline</td>
+            </tr>
+            <tr>
+                <td>FP16</td>
+                <td>16</td>
+                <td>~14 GB</td>
+                <td>Minimal</td>
+            </tr>
+            <tr>
+                <td>INT8</td>
+                <td>8</td>
+                <td>~7 GB</td>
+                <td>~1%</td>
+            </tr>
+            <tr>
+                <td>INT4/NF4</td>
+                <td>4</td>
+                <td>~3.5 GB</td>
+                <td>~2-3%</td>
+            </tr>
+        </table>
+
+        <div class="code-block">
+            <div class="code-header">Python: 4-bit Quantization</div>
+            <div class="code-content">
+                <code>from transformers import BitsAndBytesConfig
+
+# NF4 quantization (best for normal distributions)
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True  # Extra compression
+)
+
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-7b",
+    quantization_config=bnb_config,
+    device_map="auto"
+)</code>
+            </div>
+        </div>
+
+        <h3>QLoRA: Quantization + LoRA</h3>
+        <p>Combine 4-bit quantization with LoRA for extreme efficiency:</p>
+
+        <div class="concept-box">
+            <h4 style="margin-top: 0;">QLoRA Memory Savings</h4>
+            <ul>
+                <li>7B model: ~4GB VRAM (instead of 28GB)</li>
+                <li>13B model: ~8GB VRAM (instead of 52GB)</li>
+                <li>Trainable on consumer GPUs (RTX 3090, 4090)</li>
+            </ul>
+        </div>
+
+        <!-- MODULE 7 -->
+        <h2 id="module7">Module 7: Ethical Implementation</h2>
+
+        <h3>Content Moderation</h3>
+        <div class="code-block">
+            <div class="code-header">Python: OpenAI Moderation API</div>
+            <div class="code-content">
+                <code>from openai import OpenAI
+
+client = OpenAI()
+
+def check_content(text: str) -> dict:
+    response = client.moderations.create(input=text)
+    result = response.results[0]
+
+    return {
+        "flagged": result.flagged,
+        "categories": {
+            "hate": result.categories.hate,
+            "violence": result.categories.violence,
+            "sexual": result.categories.sexual,
+            "self_harm": result.categories.self_harm,
+            # ... more categories
+        }
+    }</code>
+            </div>
+        </div>
+
+        <h3>Input Guardrails Checklist</h3>
+        <div class="key-point">
+            <ul>
+                <li>Length validation (min/max)</li>
+                <li>PII detection (email, phone, SSN, credit cards)</li>
+                <li>Prompt injection detection</li>
+                <li>Content moderation</li>
+                <li>Rate limiting</li>
+                <li>Input sanitization</li>
+            </ul>
+        </div>
+
+        <h3>Output Guardrails Checklist</h3>
+        <div class="key-point">
+            <ul>
+                <li>Content moderation (toxicity, hate speech)</li>
+                <li>PII redaction before returning</li>
+                <li>Hallucination marker detection</li>
+                <li>Refusal bypass detection</li>
+                <li>Output length limits</li>
+                <li>Format validation</li>
+            </ul>
+        </div>
+
+        <h3>Audit Logging Requirements</h3>
+        <p>For compliance (GDPR, AI Act), log:</p>
+        <ul>
+            <li>Request ID and timestamp</li>
+            <li>User identifier (pseudonymized)</li>
+            <li>Input hash (for integrity)</li>
+            <li>Output hash</li>
+            <li>Guardrail results</li>
+            <li>Model version used</li>
+            <li>Latency and token usage</li>
+        </ul>
+
+        <!-- QUICK REFERENCE -->
+        <h2 id="reference">Quick Reference & Cheat Sheets</h2>
+
+        <h3>Essential pip Packages</h3>
+        <div class="code-block">
+            <div class="code-header">Terminal</div>
+            <div class="code-content">
+                <code># Core
+pip install transformers torch accelerate
+
+# LangChain
+pip install langchain langchain-openai langchain-community
+
+# RAG
+pip install faiss-cpu chromadb tiktoken
+
+# Fine-tuning
+pip install peft bitsandbytes trl datasets
+
+# Evaluation
+pip install rouge-score nltk</code>
+            </div>
+        </div>
+
+        <h3>Common Model IDs</h3>
+        <table>
+            <tr>
+                <th>Model</th>
+                <th>HuggingFace ID</th>
+                <th>Size</th>
+            </tr>
+            <tr>
+                <td>Llama 2 7B</td>
+                <td>meta-llama/Llama-2-7b-hf</td>
+                <td>7B</td>
+            </tr>
+            <tr>
+                <td>Mistral 7B</td>
+                <td>mistralai/Mistral-7B-v0.1</td>
+                <td>7B</td>
+            </tr>
+            <tr>
+                <td>Phi-2</td>
+                <td>microsoft/phi-2</td>
+                <td>2.7B</td>
+            </tr>
+            <tr>
+                <td>Gemma 7B</td>
+                <td>google/gemma-7b</td>
+                <td>7B</td>
+            </tr>
+        </table>
+
+        <h3>OpenAI API Models</h3>
+        <table>
+            <tr>
+                <th>Model</th>
+                <th>Context</th>
+                <th>Best For</th>
+            </tr>
+            <tr>
+                <td>gpt-4-turbo</td>
+                <td>128K</td>
+                <td>Complex reasoning</td>
+            </tr>
+            <tr>
+                <td>gpt-4</td>
+                <td>8K</td>
+                <td>Quality-critical tasks</td>
+            </tr>
+            <tr>
+                <td>gpt-3.5-turbo</td>
+                <td>16K</td>
+                <td>Fast, cost-effective</td>
+            </tr>
+            <tr>
+                <td>text-embedding-3-small</td>
+                <td>-</td>
+                <td>Embeddings (1536d)</td>
+            </tr>
+        </table>
+
+        <h3>GPU Memory Requirements</h3>
+        <table>
+            <tr>
+                <th>Model Size</th>
+                <th>FP16</th>
+                <th>INT8</th>
+                <th>INT4</th>
+            </tr>
+            <tr>
+                <td>7B</td>
+                <td>14 GB</td>
+                <td>7 GB</td>
+                <td>4 GB</td>
+            </tr>
+            <tr>
+                <td>13B</td>
+                <td>26 GB</td>
+                <td>13 GB</td>
+                <td>7 GB</td>
+            </tr>
+            <tr>
+                <td>70B</td>
+                <td>140 GB</td>
+                <td>70 GB</td>
+                <td>35 GB</td>
+            </tr>
+        </table>
+
+        <div class="warning">
+            <h4 style="margin-top: 0;">Common Pitfalls to Avoid</h4>
+            <ul>
+                <li>Not setting pad_token = eos_token for generation</li>
+                <li>Forgetting to call model.eval() for inference</li>
+                <li>Using high temperature (>1) for factual tasks</li>
+                <li>Not clearing CUDA cache between experiments</li>
+                <li>Skipping input validation in production</li>
+                <li>Fine-tuning on too little data (<100 examples)</li>
+            </ul>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="lab-07-ethics-guardrails.html" class="nav-btn">← Lab 7</a>
+            <a href="mastering-llms-slides.html" class="nav-btn">View Slides →</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Plain English: Demystify & Decide | ITAG Skillnet AI Advantage</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #4a5a23 0%, #6b7d3a 100%); color: white; min-height: 100vh; }
+        .slide { min-height: 100vh; padding: 60px; display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid rgba(255,255,255,0.2); position: relative; }
+        .slide-number { position: absolute; top: 20px; right: 30px; font-size: 0.9em; opacity: 0.7; }
+        h1 { font-size: 3em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 2.2em; margin-bottom: 30px; color: #c5d45a; }
+        h3 { font-size: 1.6em; margin: 20px 0; color: #b8c76f; }
+        p { font-size: 1.3em; margin-bottom: 20px; line-height: 1.6; }
+        ul, ol { font-size: 1.2em; margin-left: 40px; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        .subtitle { font-size: 1.5em; opacity: 0.9; margin-bottom: 30px; }
+        .highlight { background: rgba(197, 212, 90, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .warning { background: rgba(255, 107, 107, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .success { background: rgba(78, 205, 196, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .three-column { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+        .four-column { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; }
+        .card { background: rgba(255,255,255,0.1); padding: 25px; border-radius: 10px; }
+        .card h4 { color: #c5d45a; margin-bottom: 15px; font-size: 1.3em; }
+        .badge { background: #c5d45a; color: #3a4a1a; padding: 8px 20px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .itag-badge { background: linear-gradient(135deg, #2c5282 0%, #4299e1 100%); color: white; }
+        .nav-buttons { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 1000; }
+        .nav-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; }
+        .nav-btn:hover { background: white; color: #4a5a23; }
+        .diagram { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 10px; text-align: center; margin: 20px 0; }
+        .big-number { font-size: 4em; font-weight: bold; color: #c5d45a; }
+        .stat-card { background: rgba(0,0,0,0.2); padding: 30px; border-radius: 12px; text-align: center; }
+        .stat-label { font-size: 1em; opacity: 0.8; margin-top: 10px; }
+        .timeline { display: flex; justify-content: space-between; align-items: center; margin: 30px 0; }
+        .timeline-item { text-align: center; flex: 1; position: relative; }
+        .timeline-item::after { content: '→'; position: absolute; right: -15px; top: 50%; transform: translateY(-50%); font-size: 2em; opacity: 0.5; }
+        .timeline-item:last-child::after { display: none; }
+        .emoji-large { font-size: 3em; margin-bottom: 15px; display: block; }
+        .quote { font-style: italic; font-size: 1.4em; border-left: 4px solid #c5d45a; padding-left: 20px; margin: 20px 0; }
+        .logo-placeholder { font-size: 1.2em; opacity: 0.7; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        th { background: rgba(0,0,0,0.2); color: #c5d45a; }
+        .checklist { list-style: none; margin-left: 0; }
+        .checklist li::before { content: '✓ '; color: #c5d45a; font-weight: bold; }
+        .xlist { list-style: none; margin-left: 0; }
+        .xlist li::before { content: '✗ '; color: #ff6b6b; font-weight: bold; }
+        .section-header { background: rgba(0,0,0,0.3); padding: 15px 25px; border-radius: 8px; display: inline-block; margin-bottom: 20px; font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide" id="slide1">
+    <span class="slide-number">1</span>
+    <div class="badge itag-badge">ITAG SKILLNET AI ADVANTAGE</div>
+    <h1>AI in Plain English</h1>
+    <p class="subtitle">Demystify & Decide</p>
+    <p style="font-size: 1.1em; opacity: 0.8; margin-top: 40px;">A practical guide to understanding AI and making informed decisions for your business</p>
+    <div style="margin-top: 50px; opacity: 0.7;">
+        <p>90-Minute Interactive Workshop</p>
+    </div>
+</div>
+
+<!-- Slide 2: Agenda -->
+<div class="slide" id="slide2">
+    <span class="slide-number">2</span>
+    <h2>Today's Journey</h2>
+    <div class="two-column">
+        <div>
+            <h3>Part 1: Demystify (45 min)</h3>
+            <ul>
+                <li>What AI actually is (and isn't)</li>
+                <li>The AI landscape explained</li>
+                <li>How modern AI works</li>
+                <li>What AI can do today</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Part 2: Decide (45 min)</h3>
+            <ul>
+                <li>AI opportunities for your business</li>
+                <li>Build vs. Buy decisions</li>
+                <li>Risks and considerations</li>
+                <li>Getting started - practical steps</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <p><strong>Interactive Demo:</strong> We'll use a live AI demo throughout - ask questions anytime!</p>
+    </div>
+</div>
+
+<!-- Slide 3: The AI Moment -->
+<div class="slide" id="slide3">
+    <span class="slide-number">3</span>
+    <div class="section-header">Part 1: Demystify</div>
+    <h2>We're at an Inflection Point</h2>
+    <div class="three-column" style="margin-top: 30px;">
+        <div class="stat-card">
+            <div class="big-number">$15.7T</div>
+            <div class="stat-label">Projected AI contribution to global economy by 2030</div>
+        </div>
+        <div class="stat-card">
+            <div class="big-number">77%</div>
+            <div class="stat-label">of companies using or exploring AI in 2024</div>
+        </div>
+        <div class="stat-card">
+            <div class="big-number">100M</div>
+            <div class="stat-label">ChatGPT users in first 2 months (fastest adoption ever)</div>
+        </div>
+    </div>
+    <div class="quote" style="margin-top: 30px;">
+        "AI is the most profound technology humanity is working on. More profound than fire or electricity."
+        <br><span style="font-size: 0.8em; opacity: 0.8;">— Sundar Pichai, CEO of Google</span>
+    </div>
+</div>
+
+<!-- Slide 4: What is AI Really? -->
+<div class="slide" id="slide4">
+    <span class="slide-number">4</span>
+    <h2>What is AI, Really?</h2>
+    <div class="highlight">
+        <p style="font-size: 1.4em;"><strong>Artificial Intelligence:</strong> Software that can perform tasks that typically require human intelligence</p>
+    </div>
+    <div class="two-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>AI IS:</h4>
+            <ul class="checklist">
+                <li>Pattern recognition at scale</li>
+                <li>Statistical prediction</li>
+                <li>Automation of cognitive tasks</li>
+                <li>A tool that amplifies human capability</li>
+                <li>Trained on data (learns from examples)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>AI IS NOT:</h4>
+            <ul class="xlist">
+                <li>Conscious or sentient</li>
+                <li>Magic or unpredictable</li>
+                <li>Going to replace all jobs</li>
+                <li>Always right or unbiased</li>
+                <li>The robot apocalypse</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: AI Through the Ages -->
+<div class="slide" id="slide5">
+    <span class="slide-number">5</span>
+    <h2>AI Through the Ages</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <span class="emoji-large">🎯</span>
+            <h4>1950s-80s</h4>
+            <p style="font-size: 0.9em;">Rule-Based AI</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">If-then rules written by humans</p>
+        </div>
+        <div class="timeline-item">
+            <span class="emoji-large">📊</span>
+            <h4>1990s-2010s</h4>
+            <p style="font-size: 0.9em;">Machine Learning</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">Systems learn from data</p>
+        </div>
+        <div class="timeline-item">
+            <span class="emoji-large">🧠</span>
+            <h4>2010s</h4>
+            <p style="font-size: 0.9em;">Deep Learning</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">Neural networks at scale</p>
+        </div>
+        <div class="timeline-item">
+            <span class="emoji-large">💬</span>
+            <h4>2020s</h4>
+            <p style="font-size: 0.9em;">Generative AI</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">AI that creates content</p>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Key Insight:</strong> Each wave didn't replace the previous - they built upon each other. Today's AI uses all of these approaches.</p>
+    </div>
+</div>
+
+<!-- Slide 6: The AI Landscape -->
+<div class="slide" id="slide6">
+    <span class="slide-number">6</span>
+    <h2>The AI Landscape - A Simple Map</h2>
+    <div class="diagram" style="padding: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: rgba(197, 212, 90, 0.4); padding: 20px; border-radius: 10px;">
+                <h3 style="margin: 0;">Artificial Intelligence</h3>
+                <p style="margin: 5px 0; font-size: 0.9em;">The broad field - any machine that mimics human intelligence</p>
+            </div>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <div style="background: rgba(78, 205, 196, 0.4); padding: 20px; border-radius: 10px; flex: 1;">
+                    <h4 style="margin: 0; color: white;">Machine Learning</h4>
+                    <p style="margin: 5px 0; font-size: 0.85em;">AI that learns from data</p>
+                </div>
+                <div style="background: rgba(255, 107, 107, 0.4); padding: 20px; border-radius: 10px; flex: 1;">
+                    <h4 style="margin: 0; color: white;">Deep Learning</h4>
+                    <p style="margin: 5px 0; font-size: 0.85em;">ML with neural networks</p>
+                </div>
+                <div style="background: rgba(255, 202, 87, 0.4); padding: 20px; border-radius: 10px; flex: 1;">
+                    <h4 style="margin: 0; color: white;">Generative AI</h4>
+                    <p style="margin: 5px 0; font-size: 0.85em;">AI that creates new content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Types of AI Today -->
+<div class="slide" id="slide7">
+    <span class="slide-number">7</span>
+    <h2>Types of AI You'll Encounter</h2>
+    <div class="three-column">
+        <div class="card">
+            <span class="emoji-large">📝</span>
+            <h4>Large Language Models (LLMs)</h4>
+            <p style="font-size: 0.9em;">ChatGPT, Claude, Gemini</p>
+            <ul style="font-size: 0.85em; margin-left: 20px;">
+                <li>Text generation</li>
+                <li>Conversation</li>
+                <li>Code writing</li>
+                <li>Analysis</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">🎨</span>
+            <h4>Image Generation</h4>
+            <p style="font-size: 0.9em;">DALL-E, Midjourney, Stable Diffusion</p>
+            <ul style="font-size: 0.85em; margin-left: 20px;">
+                <li>Create images from text</li>
+                <li>Edit photos</li>
+                <li>Design assets</li>
+                <li>Product mockups</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">🔮</span>
+            <h4>Predictive AI</h4>
+            <p style="font-size: 0.9em;">Traditional ML in business</p>
+            <ul style="font-size: 0.85em; margin-left: 20px;">
+                <li>Forecasting</li>
+                <li>Recommendations</li>
+                <li>Fraud detection</li>
+                <li>Churn prediction</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: How LLMs Work - Simple -->
+<div class="slide" id="slide8">
+    <span class="slide-number">8</span>
+    <h2>How ChatGPT Actually Works</h2>
+    <p>In plain English - no PhD required!</p>
+    <div class="diagram" style="margin-top: 20px;">
+        <p style="font-size: 1.3em;">"The cat sat on the ___"</p>
+        <p style="margin-top: 20px; font-size: 1.1em;">↓ AI predicts the most likely next word ↓</p>
+        <p style="margin-top: 20px; font-size: 1.3em; color: #c5d45a;">"mat" (92%) | "floor" (5%) | "couch" (2%) | ...</p>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <p><strong>That's it!</strong> LLMs are sophisticated "autocomplete" systems trained on massive amounts of text to predict what comes next. They don't "understand" - they're incredibly good at patterns.</p>
+    </div>
+    <div class="two-column" style="margin-top: 20px;">
+        <div class="card">
+            <h4>Training</h4>
+            <p style="font-size: 0.9em;">Read most of the internet, books, code, and documents. Learn patterns of human language.</p>
+        </div>
+        <div class="card">
+            <h4>Inference</h4>
+            <p style="font-size: 0.9em;">Given your prompt, predict the most likely helpful response based on patterns learned.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: The Magic of Scale -->
+<div class="slide" id="slide9">
+    <span class="slide-number">9</span>
+    <h2>The Magic of Scale</h2>
+    <p>Simple concept + massive data + huge compute = emergent abilities</p>
+    <div class="three-column" style="margin-top: 30px;">
+        <div class="stat-card">
+            <div class="big-number">175B</div>
+            <div class="stat-label">Parameters in GPT-3 (numbers the model learned)</div>
+        </div>
+        <div class="stat-card">
+            <div class="big-number">45TB</div>
+            <div class="stat-label">Training data (books, websites, code)</div>
+        </div>
+        <div class="stat-card">
+            <div class="big-number">$100M+</div>
+            <div class="stat-label">Cost to train a frontier model</div>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <p><strong>Emergent Abilities:</strong> At scale, LLMs developed capabilities nobody programmed:</p>
+        <ul style="margin-top: 10px; margin-left: 30px;">
+            <li>Reasoning and problem-solving</li>
+            <li>Following complex instructions</li>
+            <li>Translating between languages</li>
+            <li>Writing code in any programming language</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Slide 10: What AI Can Do - Categories -->
+<div class="slide" id="slide10">
+    <span class="slide-number">10</span>
+    <h2>What AI Can Do Today</h2>
+    <div class="four-column">
+        <div class="card">
+            <span class="emoji-large">✍️</span>
+            <h4>Generate</h4>
+            <ul style="font-size: 0.8em; margin-left: 15px;">
+                <li>Write content</li>
+                <li>Create images</li>
+                <li>Generate code</li>
+                <li>Compose emails</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">🔍</span>
+            <h4>Analyze</h4>
+            <ul style="font-size: 0.8em; margin-left: 15px;">
+                <li>Summarize documents</li>
+                <li>Extract insights</li>
+                <li>Sentiment analysis</li>
+                <li>Pattern detection</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">🔄</span>
+            <h4>Transform</h4>
+            <ul style="font-size: 0.8em; margin-left: 15px;">
+                <li>Translate languages</li>
+                <li>Reformat data</li>
+                <li>Convert formats</li>
+                <li>Simplify/expand</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">💡</span>
+            <h4>Assist</h4>
+            <ul style="font-size: 0.8em; margin-left: 15px;">
+                <li>Answer questions</li>
+                <li>Brainstorm ideas</li>
+                <li>Debug problems</li>
+                <li>Provide explanations</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Real Business Use Cases -->
+<div class="slide" id="slide11">
+    <span class="slide-number">11</span>
+    <h2>Real Business Use Cases</h2>
+    <table>
+        <tr>
+            <th>Department</th>
+            <th>Use Case</th>
+            <th>Impact</th>
+        </tr>
+        <tr>
+            <td><strong>Customer Service</strong></td>
+            <td>AI chatbots, ticket routing, response suggestions</td>
+            <td>40-60% reduction in response time</td>
+        </tr>
+        <tr>
+            <td><strong>Marketing</strong></td>
+            <td>Content generation, personalization, ad copy</td>
+            <td>3-5x content output increase</td>
+        </tr>
+        <tr>
+            <td><strong>Sales</strong></td>
+            <td>Lead scoring, email personalization, call analysis</td>
+            <td>20-30% conversion improvement</td>
+        </tr>
+        <tr>
+            <td><strong>Operations</strong></td>
+            <td>Document processing, data extraction, reporting</td>
+            <td>70-80% time savings on manual tasks</td>
+        </tr>
+        <tr>
+            <td><strong>Development</strong></td>
+            <td>Code generation, debugging, documentation</td>
+            <td>30-50% developer productivity gain</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Slide 12: What AI Cannot Do -->
+<div class="slide" id="slide12">
+    <span class="slide-number">12</span>
+    <h2>What AI Cannot Do (Yet)</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Limitations</h4>
+            <ul class="xlist">
+                <li>Truly understand or have consciousness</li>
+                <li>Access real-time information (without tools)</li>
+                <li>Learn from your conversation long-term</li>
+                <li>Guarantee factual accuracy</li>
+                <li>Make ethical judgments</li>
+                <li>Replace human creativity and intuition</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Common Pitfalls</h4>
+            <ul>
+                <li><strong>Hallucinations:</strong> AI confidently states false information</li>
+                <li><strong>Bias:</strong> Reflects biases in training data</li>
+                <li><strong>Context limits:</strong> Can't process unlimited text</li>
+                <li><strong>Stale knowledge:</strong> Training data has a cutoff date</li>
+            </ul>
+        </div>
+    </div>
+    <div class="warning" style="margin-top: 20px;">
+        <p><strong>Golden Rule:</strong> AI is a powerful assistant, not an infallible oracle. Always verify important outputs!</p>
+    </div>
+</div>
+
+<!-- Slide 13: The AI Players -->
+<div class="slide" id="slide13">
+    <span class="slide-number">13</span>
+    <h2>The Major AI Players</h2>
+    <div class="three-column">
+        <div class="card">
+            <h4>OpenAI</h4>
+            <p style="font-size: 0.9em;">GPT-4, ChatGPT, DALL-E</p>
+            <p style="font-size: 0.85em; opacity: 0.8;">Market leader, most advanced models, Microsoft partnership</p>
+        </div>
+        <div class="card">
+            <h4>Anthropic</h4>
+            <p style="font-size: 0.9em;">Claude</p>
+            <p style="font-size: 0.85em; opacity: 0.8;">Safety-focused, excellent for analysis and coding</p>
+        </div>
+        <div class="card">
+            <h4>Google</h4>
+            <p style="font-size: 0.9em;">Gemini (formerly Bard)</p>
+            <p style="font-size: 0.85em; opacity: 0.8;">Integrated with Google ecosystem</p>
+        </div>
+    </div>
+    <div class="three-column" style="margin-top: 20px;">
+        <div class="card">
+            <h4>Meta</h4>
+            <p style="font-size: 0.9em;">Llama (Open Source)</p>
+            <p style="font-size: 0.85em; opacity: 0.8;">Free to use, run locally, customize</p>
+        </div>
+        <div class="card">
+            <h4>Microsoft</h4>
+            <p style="font-size: 0.9em;">Copilot (powered by OpenAI)</p>
+            <p style="font-size: 0.85em; opacity: 0.8;">Integrated in Office, GitHub, Azure</p>
+        </div>
+        <div class="card">
+            <h4>Amazon</h4>
+            <p style="font-size: 0.9em;">Bedrock, Q</p>
+            <p style="font-size: 0.85em; opacity: 0.8;">AWS integration, enterprise focus</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 14: Part 2 Intro -->
+<div class="slide" id="slide14">
+    <span class="slide-number">14</span>
+    <div class="section-header">Part 2: Decide</div>
+    <h1>Making AI Decisions for Your Business</h1>
+    <p class="subtitle">From understanding to action</p>
+    <div class="highlight" style="margin-top: 40px;">
+        <p style="font-size: 1.2em;">Now that you understand what AI is and can do, let's talk about how to evaluate and implement it in your organization.</p>
+    </div>
+</div>
+
+<!-- Slide 15: The AI Opportunity Assessment -->
+<div class="slide" id="slide15">
+    <span class="slide-number">15</span>
+    <h2>Finding AI Opportunities</h2>
+    <p>Ask these questions about your processes:</p>
+    <div class="two-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>Good AI Candidates</h4>
+            <ul class="checklist">
+                <li>Repetitive tasks with clear patterns</li>
+                <li>High volume, low complexity work</li>
+                <li>Text or document processing</li>
+                <li>Customer interactions (FAQ, support)</li>
+                <li>Data analysis and reporting</li>
+                <li>Content creation at scale</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Poor AI Candidates</h4>
+            <ul class="xlist">
+                <li>Requires real-time accuracy (medical, legal)</li>
+                <li>Highly creative/strategic decisions</li>
+                <li>Emotionally sensitive situations</li>
+                <li>Novel problems with no training data</li>
+                <li>Tasks requiring physical presence</li>
+                <li>Decisions with major consequences</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: Build vs Buy -->
+<div class="slide" id="slide16">
+    <span class="slide-number">16</span>
+    <h2>Build vs. Buy: Your Options</h2>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Description</th>
+            <th>Best For</th>
+            <th>Cost</th>
+        </tr>
+        <tr>
+            <td><strong>Use Existing AI</strong></td>
+            <td>ChatGPT, Copilot, Claude directly</td>
+            <td>Quick wins, individual productivity</td>
+            <td>€20-30/user/month</td>
+        </tr>
+        <tr>
+            <td><strong>Buy AI-Powered Software</strong></td>
+            <td>Tools with AI built-in (Salesforce Einstein, etc.)</td>
+            <td>Specific business processes</td>
+            <td>Varies by vendor</td>
+        </tr>
+        <tr>
+            <td><strong>Build on AI APIs</strong></td>
+            <td>Custom solutions using OpenAI/Claude APIs</td>
+            <td>Unique workflows, integration needs</td>
+            <td>Dev time + API costs</td>
+        </tr>
+        <tr>
+            <td><strong>Build Custom Models</strong></td>
+            <td>Train your own AI models</td>
+            <td>Proprietary data advantages</td>
+            <td>High (specialists needed)</td>
+        </tr>
+    </table>
+    <div class="success" style="margin-top: 20px;">
+        <p><strong>Recommendation:</strong> Start with using existing AI tools, prove value, then build custom solutions for competitive advantage.</p>
+    </div>
+</div>
+
+<!-- Slide 17: ROI Framework -->
+<div class="slide" id="slide17">
+    <span class="slide-number">17</span>
+    <h2>Calculating AI ROI</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Costs to Consider</h4>
+            <ul>
+                <li>Subscription/license fees</li>
+                <li>API usage costs</li>
+                <li>Integration development</li>
+                <li>Training and change management</li>
+                <li>Ongoing maintenance</li>
+                <li>Data preparation</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Benefits to Measure</h4>
+            <ul>
+                <li>Time saved (× hourly cost)</li>
+                <li>Increased output/throughput</li>
+                <li>Error reduction</li>
+                <li>Customer satisfaction improvements</li>
+                <li>Revenue from new capabilities</li>
+                <li>Competitive advantage value</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Quick ROI Example:</strong></p>
+        <p style="font-size: 0.95em;">10 employees × 5 hours saved/week × €50/hour × 50 weeks = <strong>€125,000/year</strong></p>
+        <p style="font-size: 0.95em;">Cost: 10 × €30/month × 12 = <strong>€3,600/year</strong> → ROI: <strong>35x</strong></p>
+    </div>
+</div>
+
+<!-- Slide 18: Risk Assessment -->
+<div class="slide" id="slide18">
+    <span class="slide-number">18</span>
+    <h2>AI Risks to Consider</h2>
+    <div class="three-column">
+        <div class="card">
+            <span class="emoji-large">🔒</span>
+            <h4>Security & Privacy</h4>
+            <ul style="font-size: 0.85em; margin-left: 15px;">
+                <li>Data sent to third parties</li>
+                <li>Training data concerns</li>
+                <li>GDPR compliance</li>
+                <li>Confidential info leakage</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">⚖️</span>
+            <h4>Legal & Compliance</h4>
+            <ul style="font-size: 0.85em; margin-left: 15px;">
+                <li>IP and copyright questions</li>
+                <li>Liability for AI errors</li>
+                <li>Industry regulations</li>
+                <li>EU AI Act requirements</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">👥</span>
+            <h4>Organizational</h4>
+            <ul style="font-size: 0.85em; margin-left: 15px;">
+                <li>Employee concerns</li>
+                <li>Skill gaps</li>
+                <li>Change resistance</li>
+                <li>Over-reliance on AI</li>
+            </ul>
+        </div>
+    </div>
+    <div class="warning" style="margin-top: 20px;">
+        <p><strong>EU AI Act:</strong> New regulations coming into force - AI systems will be categorized by risk level with compliance requirements. Plan ahead!</p>
+    </div>
+</div>
+
+<!-- Slide 19: Data Considerations -->
+<div class="slide" id="slide19">
+    <span class="slide-number">19</span>
+    <h2>Data: The Foundation of AI Success</h2>
+    <div class="highlight">
+        <p style="font-size: 1.3em;"><strong>Garbage In = Garbage Out</strong></p>
+        <p>AI is only as good as the data it's trained on or given access to.</p>
+    </div>
+    <div class="two-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>Data Questions to Ask</h4>
+            <ul>
+                <li>Do we have relevant data for this use case?</li>
+                <li>Is our data clean and well-organized?</li>
+                <li>Can we legally use this data for AI?</li>
+                <li>How will we keep data current?</li>
+                <li>Where does our data go when using AI tools?</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Data Best Practices</h4>
+            <ul class="checklist">
+                <li>Audit your data assets</li>
+                <li>Clean and standardize formats</li>
+                <li>Establish data governance</li>
+                <li>Document data sources and lineage</li>
+                <li>Use enterprise AI tiers (data stays private)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 20: Getting Started Framework -->
+<div class="slide" id="slide20">
+    <span class="slide-number">20</span>
+    <h2>Getting Started: A Practical Framework</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <span class="emoji-large">1️⃣</span>
+            <h4>Experiment</h4>
+            <p style="font-size: 0.85em;">Week 1-2</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">Try ChatGPT/Claude personally</p>
+        </div>
+        <div class="timeline-item">
+            <span class="emoji-large">2️⃣</span>
+            <h4>Identify</h4>
+            <p style="font-size: 0.85em;">Week 2-4</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">Find 3-5 quick win use cases</p>
+        </div>
+        <div class="timeline-item">
+            <span class="emoji-large">3️⃣</span>
+            <h4>Pilot</h4>
+            <p style="font-size: 0.85em;">Month 2-3</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">Small team, one use case</p>
+        </div>
+        <div class="timeline-item">
+            <span class="emoji-large">4️⃣</span>
+            <h4>Scale</h4>
+            <p style="font-size: 0.85em;">Month 4+</p>
+            <p style="font-size: 0.8em; opacity: 0.7;">Expand what works</p>
+        </div>
+    </div>
+    <div class="success" style="margin-top: 30px;">
+        <p><strong>Start Small, Learn Fast:</strong> Don't try to transform everything at once. Pick one process, prove value, iterate.</p>
+    </div>
+</div>
+
+<!-- Slide 21: Quick Wins -->
+<div class="slide" id="slide21">
+    <span class="slide-number">21</span>
+    <h2>Quick Wins You Can Start Tomorrow</h2>
+    <div class="three-column">
+        <div class="card">
+            <span class="emoji-large">📧</span>
+            <h4>Email Drafting</h4>
+            <p style="font-size: 0.9em;">Use AI to draft professional emails, then edit for your voice.</p>
+            <p style="font-size: 0.85em; color: #c5d45a;">Time saved: 50%</p>
+        </div>
+        <div class="card">
+            <span class="emoji-large">📋</span>
+            <h4>Meeting Notes</h4>
+            <p style="font-size: 0.9em;">Summarize meeting recordings or notes into action items.</p>
+            <p style="font-size: 0.85em; color: #c5d45a;">Time saved: 70%</p>
+        </div>
+        <div class="card">
+            <span class="emoji-large">📊</span>
+            <h4>Data Analysis</h4>
+            <p style="font-size: 0.9em;">Upload spreadsheets and ask questions in plain English.</p>
+            <p style="font-size: 0.85em; color: #c5d45a;">Time saved: 60%</p>
+        </div>
+    </div>
+    <div class="three-column" style="margin-top: 20px;">
+        <div class="card">
+            <span class="emoji-large">📝</span>
+            <h4>Document Review</h4>
+            <p style="font-size: 0.9em;">Summarize long documents, extract key points.</p>
+            <p style="font-size: 0.85em; color: #c5d45a;">Time saved: 80%</p>
+        </div>
+        <div class="card">
+            <span class="emoji-large">💻</span>
+            <h4>Code Assistance</h4>
+            <p style="font-size: 0.9em;">Generate, explain, debug, and document code.</p>
+            <p style="font-size: 0.85em; color: #c5d45a;">Productivity: +40%</p>
+        </div>
+        <div class="card">
+            <span class="emoji-large">🎯</span>
+            <h4>Research</h4>
+            <p style="font-size: 0.9em;">Quick market research, competitor analysis, brainstorming.</p>
+            <p style="font-size: 0.85em; color: #c5d45a;">Time saved: 65%</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 22: Prompt Engineering Basics -->
+<div class="slide" id="slide22">
+    <span class="slide-number">22</span>
+    <h2>Getting Better Results: Prompt Engineering</h2>
+    <p>How you ask determines what you get</p>
+    <div class="two-column" style="margin-top: 20px;">
+        <div class="card" style="border: 2px solid #ff6b6b;">
+            <h4 style="color: #ff6b6b;">❌ Weak Prompt</h4>
+            <p style="font-style: italic; font-size: 0.95em; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">"Write a marketing email"</p>
+            <p style="font-size: 0.85em; margin-top: 10px;">Result: Generic, unusable content</p>
+        </div>
+        <div class="card" style="border: 2px solid #c5d45a;">
+            <h4 style="color: #c5d45a;">✓ Strong Prompt</h4>
+            <p style="font-style: italic; font-size: 0.95em; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">"Write a 150-word marketing email for our SaaS product launch. Target audience: IT managers in mid-size companies. Tone: professional but friendly. Include: one compelling benefit, social proof mention, clear CTA for a free trial."</p>
+            <p style="font-size: 0.85em; margin-top: 10px;">Result: Targeted, usable content</p>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <h4>The CRAFT Framework:</h4>
+        <p><strong>C</strong>ontext (background info) + <strong>R</strong>ole (who AI should be) + <strong>A</strong>ction (what to do) + <strong>F</strong>ormat (how to structure) + <strong>T</strong>one (voice/style)</p>
+    </div>
+</div>
+
+<!-- Slide 23: AI Policy Template -->
+<div class="slide" id="slide23">
+    <span class="slide-number">23</span>
+    <h2>Creating Your AI Policy</h2>
+    <p>Every organization should have clear guidelines</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>What to Include</h4>
+            <ul class="checklist">
+                <li>Approved tools and platforms</li>
+                <li>Data classification rules (what can/can't be shared)</li>
+                <li>Review requirements for AI outputs</li>
+                <li>Attribution and transparency requirements</li>
+                <li>Training and competency expectations</li>
+                <li>Incident reporting procedures</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Key Principles</h4>
+            <ul>
+                <li><strong>Human oversight:</strong> AI assists, humans decide</li>
+                <li><strong>Transparency:</strong> Disclose AI use when appropriate</li>
+                <li><strong>Privacy first:</strong> Never share sensitive data</li>
+                <li><strong>Quality control:</strong> Verify AI outputs</li>
+                <li><strong>Continuous learning:</strong> Update as AI evolves</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 24: Team Enablement -->
+<div class="slide" id="slide24">
+    <span class="slide-number">24</span>
+    <h2>Enabling Your Team</h2>
+    <div class="three-column">
+        <div class="card">
+            <span class="emoji-large">📚</span>
+            <h4>Training</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Basic AI literacy for all</li>
+                <li>Tool-specific training</li>
+                <li>Prompt engineering workshops</li>
+                <li>Security awareness</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">🏆</span>
+            <h4>Champions</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Identify early adopters</li>
+                <li>Create AI champions network</li>
+                <li>Share success stories</li>
+                <li>Peer support system</li>
+            </ul>
+        </div>
+        <div class="card">
+            <span class="emoji-large">📏</span>
+            <h4>Governance</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Clear policies</li>
+                <li>Feedback mechanisms</li>
+                <li>Usage monitoring</li>
+                <li>Regular reviews</li>
+            </ul>
+        </div>
+    </div>
+    <div class="success" style="margin-top: 30px;">
+        <p><strong>Culture Matters:</strong> The organizations winning with AI are those that create safe environments to experiment and learn.</p>
+    </div>
+</div>
+
+<!-- Slide 25: Future Outlook -->
+<div class="slide" id="slide25">
+    <span class="slide-number">25</span>
+    <h2>What's Coming Next</h2>
+    <div class="two-column">
+        <div class="card">
+            <h4>Near-term (2024-2025)</h4>
+            <ul>
+                <li>AI agents that can take actions</li>
+                <li>Better reasoning capabilities</li>
+                <li>Multimodal (text + image + voice)</li>
+                <li>More specialized industry models</li>
+                <li>Lower costs, faster responses</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Medium-term (2025-2027)</h4>
+            <ul>
+                <li>AI workflows replacing manual processes</li>
+                <li>Personal AI assistants</li>
+                <li>AI-first software design</li>
+                <li>Autonomous coding agents</li>
+                <li>Enhanced creativity tools</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <p><strong>The Competitive Imperative:</strong> Companies not exploring AI now will find it increasingly difficult to catch up. The best time to start was yesterday. The second best time is today.</p>
+    </div>
+</div>
+
+<!-- Slide 26: Live Demo Introduction -->
+<div class="slide" id="slide26">
+    <span class="slide-number">26</span>
+    <h2>Live Demo Time!</h2>
+    <p class="subtitle">Let's see AI in action</p>
+    <div class="diagram" style="margin-top: 30px;">
+        <span class="emoji-large">🚀</span>
+        <h3>Interactive AI Assistant Demo</h3>
+        <p>We'll demonstrate real AI capabilities with live examples</p>
+    </div>
+    <div class="two-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>What We'll Show</h4>
+            <ul>
+                <li>Conversation with ChatGPT</li>
+                <li>Real-time data analysis</li>
+                <li>Content generation</li>
+                <li>Problem-solving assistance</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Your Questions</h4>
+            <p style="font-size: 0.95em;">Bring your own challenges! We can try:</p>
+            <ul style="font-size: 0.9em; margin-left: 20px;">
+                <li>Drafting a specific email</li>
+                <li>Analyzing sample data</li>
+                <li>Brainstorming solutions</li>
+                <li>Explaining complex topics</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 27: Key Takeaways -->
+<div class="slide" id="slide27">
+    <span class="slide-number">27</span>
+    <h2>Key Takeaways</h2>
+    <div class="two-column">
+        <div>
+            <h3>Demystified</h3>
+            <ul class="checklist">
+                <li>AI is pattern recognition at scale, not magic</li>
+                <li>LLMs predict likely responses based on training</li>
+                <li>AI has real limitations - it hallucinates and can be wrong</li>
+                <li>It's a powerful tool, not a replacement for thinking</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Decision Framework</h3>
+            <ul class="checklist">
+                <li>Start with existing tools, prove value first</li>
+                <li>Focus on repetitive, high-volume tasks</li>
+                <li>Always verify AI outputs for important work</li>
+                <li>Create clear policies before scaling</li>
+            </ul>
+        </div>
+    </div>
+    <div class="success" style="margin-top: 30px; text-align: center;">
+        <p style="font-size: 1.3em;"><strong>AI is not about replacing humans. It's about augmenting human capabilities to achieve more.</strong></p>
+    </div>
+</div>
+
+<!-- Slide 28: Resources -->
+<div class="slide" id="slide28">
+    <span class="slide-number">28</span>
+    <h2>Resources to Continue Learning</h2>
+    <div class="three-column">
+        <div class="card">
+            <h4>Try These Tools</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li><strong>ChatGPT:</strong> chat.openai.com</li>
+                <li><strong>Claude:</strong> claude.ai</li>
+                <li><strong>Microsoft Copilot:</strong> copilot.microsoft.com</li>
+                <li><strong>Google Gemini:</strong> gemini.google.com</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Learn More</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Coursera: AI for Everyone</li>
+                <li>LinkedIn Learning: AI Courses</li>
+                <li>OpenAI Documentation</li>
+                <li>Anthropic's Claude Guides</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Stay Updated</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>The AI Daily Brief (newsletter)</li>
+                <li>TLDR AI (newsletter)</li>
+                <li>Lex Fridman Podcast</li>
+                <li>AI-focused LinkedIn groups</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <p><strong>Take-Home Lab:</strong> Don't forget your hands-on lab exercise! Practice makes perfect.</p>
+    </div>
+</div>
+
+<!-- Slide 29: Q&A -->
+<div class="slide" id="slide29">
+    <span class="slide-number">29</span>
+    <h2>Questions & Discussion</h2>
+    <div class="diagram" style="padding: 60px;">
+        <span style="font-size: 5em;">🙋‍♀️ 🙋‍♂️</span>
+        <h3 style="margin-top: 30px;">What questions do you have?</h3>
+        <p style="margin-top: 20px; opacity: 0.8;">No question is too basic - if you're wondering, others probably are too!</p>
+    </div>
+    <div class="two-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>Common Questions</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Will AI take my job?</li>
+                <li>How do I convince my boss?</li>
+                <li>What about data privacy?</li>
+                <li>Where should we start?</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Deep Dives Welcome</h4>
+            <ul style="font-size: 0.9em; margin-left: 15px;">
+                <li>Specific use cases</li>
+                <li>Technical questions</li>
+                <li>Industry-specific concerns</li>
+                <li>Implementation challenges</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 30: Thank You -->
+<div class="slide" id="slide30">
+    <span class="slide-number">30</span>
+    <div class="badge itag-badge">ITAG SKILLNET AI ADVANTAGE</div>
+    <h1>Thank You!</h1>
+    <p class="subtitle">Go forth and experiment with AI</p>
+    <div class="highlight" style="margin-top: 40px;">
+        <h3>Remember:</h3>
+        <p style="font-size: 1.2em;">The best way to understand AI is to use it. Start small, stay curious, and keep learning.</p>
+    </div>
+    <div style="margin-top: 50px; text-align: center;">
+        <p>Complete your take-home lab to solidify today's learning</p>
+        <p style="margin-top: 20px; opacity: 0.7;">Questions after today? Reach out!</p>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-buttons">
+    <button class="nav-btn" onclick="prevSlide()">← Previous</button>
+    <button class="nav-btn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 30;
+
+    function showSlide(n) {
+        document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides) {
+            currentSlide++;
+            document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 1) {
+            currentSlide--;
+            document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Keyboard navigation (including presentation clicker support)
+    document.addEventListener('keydown', (e) => {
+        // Forward: Arrow Right, Space, Page Down, Enter
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+            e.preventDefault();
+            nextSlide();
+        // Back: Arrow Left, Page Up, Backspace
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+            e.preventDefault();
+            prevSlide();
+        }
+    });
+
+    // Track current slide on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                currentSlide = parseInt(entry.target.id.replace('slide', ''));
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.slide').forEach(slide => observer.observe(slide));
+</script>
+
+</body>
+</html>

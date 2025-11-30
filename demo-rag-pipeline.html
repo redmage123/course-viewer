@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo: Live RAG Pipeline</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 30px 50px;
+            flex-direction: column;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        h1 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.4em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            border-bottom: 3px solid rgba(255,255,255,0.5);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #90EE90;
+        }
+
+        h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.4em;
+            margin: 15px 0 10px 0;
+            color: #98FB98;
+        }
+
+        p {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.1em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        ul {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-left: 25px;
+            line-height: 1.8;
+        }
+
+        .demo-container {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .chart-container {
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group.wide {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95em;
+            color: #90EE90;
+        }
+
+        select, input, textarea {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1em;
+            background-color: rgba(255,255,255,0.9);
+            color: #1a5f2a;
+        }
+
+        input[type="password"] {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            width: 100%;
+        }
+
+        .btn {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #90EE90;
+            color: #1a5f2a;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .api-key-section {
+            background-color: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .api-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: 15px;
+        }
+
+        .api-status.connected {
+            background-color: rgba(144, 238, 144, 0.3);
+            color: #90EE90;
+        }
+
+        .api-status.disconnected {
+            background-color: rgba(255, 99, 132, 0.3);
+            color: #ff6b6b;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .connected .status-dot {
+            background-color: #90EE90;
+        }
+
+        .disconnected .status-dot {
+            background-color: #ff6b6b;
+        }
+
+        .response-box {
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            min-height: 100px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .response-box.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: #90EE90;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .chunk-display {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .chunk {
+            background-color: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #90EE90;
+        }
+
+        .chunk.relevant {
+            border-left-color: #FFD700;
+            background-color: rgba(255,215,0,0.1);
+        }
+
+        .chunk-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .chunk-score {
+            background-color: rgba(144,238,144,0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .highlight-box {
+            background-color: rgba(255,255,255,0.15);
+            border-left: 4px solid #90EE90;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .code-table {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-table td {
+            padding: 15px;
+        }
+
+        .code-table code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85em;
+            color: #00ff00;
+            white-space: pre;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .code-label {
+            background-color: #2d2d44;
+            color: #90EE90;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.85em;
+            padding: 8px 15px !important;
+            border-bottom: 1px solid #444;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-btn {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: white;
+            color: #1a5f2a;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background-color: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #90EE90;
+        }
+
+        .stat-label {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            background-color: rgba(255, 99, 132, 0.2);
+            border: 1px solid rgba(255, 99, 132, 0.5);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .step-number {
+            background-color: #90EE90;
+            color: #1a5f2a;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-active {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .step-done {
+            background-color: #32CD32;
+        }
+
+        .embedding-viz {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            max-height: 80px;
+            overflow: hidden;
+        }
+
+        .embedding-cell {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 900px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Sample knowledge base documents
+        const SAMPLE_DOCUMENTS = [
+            {
+                id: 1,
+                title: "Transformer Architecture",
+                content: "The Transformer architecture was introduced in the paper 'Attention Is All You Need' by Vaswani et al. in 2017. It relies entirely on self-attention mechanisms, dispensing with recurrence and convolutions. The model consists of an encoder-decoder structure, where both components are stacks of identical layers. Each encoder layer has two sub-layers: multi-head self-attention and a feed-forward network."
+            },
+            {
+                id: 2,
+                title: "Self-Attention Mechanism",
+                content: "Self-attention allows the model to weigh the importance of different positions in the input sequence when computing a representation. It computes attention scores using queries, keys, and values. The attention function is computed as softmax(QK^T/√d_k)V. Multi-head attention allows the model to jointly attend to information from different representation subspaces."
+            },
+            {
+                id: 3,
+                title: "BERT Model",
+                content: "BERT (Bidirectional Encoder Representations from Transformers) is a transformer-based model pre-trained on large corpus using masked language modeling and next sentence prediction. Unlike GPT which is unidirectional, BERT considers context from both directions. BERT has been fine-tuned for various NLP tasks including question answering and sentiment analysis."
+            },
+            {
+                id: 4,
+                title: "GPT Models",
+                content: "GPT (Generative Pre-trained Transformer) models are decoder-only transformers trained with causal language modeling. GPT-3 has 175 billion parameters and demonstrates strong few-shot learning capabilities. GPT-4 is multimodal, accepting both text and image inputs. These models use autoregressive generation, predicting one token at a time."
+            },
+            {
+                id: 5,
+                title: "RAG Systems",
+                content: "Retrieval-Augmented Generation (RAG) combines retrieval systems with generative models. When a query comes in, relevant documents are retrieved from a knowledge base using semantic search. These documents are then provided as context to the LLM for generating responses. RAG helps reduce hallucinations and allows access to up-to-date information."
+            },
+            {
+                id: 6,
+                title: "Vector Databases",
+                content: "Vector databases store high-dimensional embeddings and enable efficient similarity search. Popular options include Pinecone, Chroma, Weaviate, and Milvus. They use algorithms like HNSW and IVF for approximate nearest neighbor search. Vector databases are essential for RAG systems as they enable fast retrieval of semantically similar documents."
+            },
+            {
+                id: 7,
+                title: "Fine-tuning LLMs",
+                content: "Fine-tuning adapts pre-trained models for specific tasks or domains. Full fine-tuning updates all parameters but requires significant compute. Parameter-efficient methods like LoRA and QLoRA train small adapter layers. LoRA uses low-rank decomposition to reduce trainable parameters by 10-100x while maintaining performance."
+            },
+            {
+                id: 8,
+                title: "Prompt Engineering",
+                content: "Prompt engineering involves designing effective inputs for LLMs. Key techniques include few-shot learning (providing examples), chain-of-thought (encouraging step-by-step reasoning), and role prompting (defining the AI's persona). Good prompts are specific, provide context, and clearly specify the desired output format."
+            }
+        ];
+
+        // Slide 1: Title & API Setup
+        function TitleSlide({ apiKey, setApiKey, isConnected, setIsConnected }) {
+            const [testingConnection, setTestingConnection] = useState(false);
+            const [error, setError] = useState('');
+
+            const testConnection = async () => {
+                if (!apiKey.trim()) {
+                    setError('Please enter an API key');
+                    return;
+                }
+
+                setTestingConnection(true);
+                setError('');
+
+                try {
+                    const response = await fetch('https://api.openai.com/v1/models', {
+                        headers: { 'Authorization': `Bearer ${apiKey}` }
+                    });
+
+                    if (response.ok) {
+                        setIsConnected(true);
+                    } else {
+                        const data = await response.json();
+                        setError(data.error?.message || 'Invalid API key');
+                        setIsConnected(false);
+                    }
+                } catch (err) {
+                    setError('Connection failed');
+                    setIsConnected(false);
+                }
+                setTestingConnection(false);
+            };
+
+            return (
+                <div className="slide-content">
+                    <div style={{textAlign: 'center', marginBottom: '30px'}}>
+                        <h2 style={{marginBottom: '10px'}}>Interactive Demo</h2>
+                        <h1 style={{fontSize: '2.8em', borderBottom: 'none'}}>Live RAG Pipeline</h1>
+                        <p style={{fontSize: '1.2em', opacity: 0.9}}>Retrieval-Augmented Generation in Action</p>
+                    </div>
+
+                    <div className="api-key-section">
+                        <h3>
+                            OpenAI API Connection
+                            <span className={`api-status ${isConnected ? 'connected' : 'disconnected'}`}>
+                                <span className="status-dot"></span>
+                                {isConnected ? 'Connected' : 'Not Connected'}
+                            </span>
+                        </h3>
+                        <p style={{opacity: 0.8, marginBottom: '15px'}}>
+                            Enter your OpenAI API key for live embeddings and completions.
+                        </p>
+                        <div className="controls">
+                            <div className="control-group wide">
+                                <label>API Key:</label>
+                                <input
+                                    type="password"
+                                    value={apiKey}
+                                    onChange={(e) => setApiKey(e.target.value)}
+                                    placeholder="sk-..."
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>&nbsp;</label>
+                                <button className="btn" onClick={testConnection} disabled={testingConnection}>
+                                    {testingConnection ? 'Testing...' : 'Test Connection'}
+                                </button>
+                            </div>
+                        </div>
+                        {error && <div className="error-message">{error}</div>}
+                    </div>
+
+                    <div className="highlight-box">
+                        <h3>What This Demo Covers</h3>
+                        <ul>
+                            <li>Document chunking and embedding generation</li>
+                            <li>Semantic similarity search</li>
+                            <li>Context-augmented LLM responses</li>
+                            <li>RAG vs vanilla LLM comparison</li>
+                            <li>Retrieval quality metrics</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 2: Document Chunking & Embeddings
+        function ChunkingSlide({ apiKey, isConnected }) {
+            const [chunks, setChunks] = useState([]);
+            const [embeddings, setEmbeddings] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [chunkSize, setChunkSize] = useState(200);
+            const [overlap, setOverlap] = useState(50);
+
+            const chunkDocuments = () => {
+                const allChunks = [];
+                SAMPLE_DOCUMENTS.forEach((doc, docIdx) => {
+                    const words = doc.content.split(' ');
+                    let chunkIdx = 0;
+                    for (let i = 0; i < words.length; i += (chunkSize - overlap) / 10) {
+                        const chunkWords = words.slice(i, i + chunkSize / 10);
+                        if (chunkWords.length > 5) {
+                            allChunks.push({
+                                id: `${docIdx}-${chunkIdx}`,
+                                docTitle: doc.title,
+                                content: chunkWords.join(' '),
+                                wordCount: chunkWords.length
+                            });
+                            chunkIdx++;
+                        }
+                    }
+                });
+                setChunks(allChunks);
+                return allChunks;
+            };
+
+            const generateEmbeddings = async () => {
+                setLoading(true);
+                const chunkedDocs = chunkDocuments();
+
+                if (isConnected && apiKey) {
+                    try {
+                        const response = await fetch('https://api.openai.com/v1/embeddings', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: 'text-embedding-3-small',
+                                input: chunkedDocs.slice(0, 5).map(c => c.content)
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            setEmbeddings(data.data.map(d => d.embedding));
+                        }
+                    } catch (err) {
+                        console.error('Embedding error:', err);
+                    }
+                }
+
+                setLoading(false);
+            };
+
+            const renderEmbeddingViz = (embedding) => {
+                if (!embedding) return null;
+                return (
+                    <div className="embedding-viz">
+                        {embedding.slice(0, 100).map((val, i) => (
+                            <div
+                                key={i}
+                                className="embedding-cell"
+                                style={{
+                                    backgroundColor: `hsl(${120 + val * 60}, 70%, ${50 + val * 30}%)`
+                                }}
+                            />
+                        ))}
+                    </div>
+                );
+            };
+
+            return (
+                <div className="slide-content">
+                    <h1>Document Chunking & Embeddings</h1>
+                    <p>The first step in RAG: break documents into chunks and convert to vector embeddings.</p>
+
+                    <div className="demo-container">
+                        <div className="controls">
+                            <div className="control-group">
+                                <label>Chunk Size (chars): {chunkSize}</label>
+                                <input
+                                    type="range"
+                                    min="100"
+                                    max="500"
+                                    value={chunkSize}
+                                    onChange={(e) => setChunkSize(Number(e.target.value))}
+                                    style={{width: '150px'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>Overlap (chars): {overlap}</label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={overlap}
+                                    onChange={(e) => setOverlap(Number(e.target.value))}
+                                    style={{width: '150px'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>&nbsp;</label>
+                                <button className="btn" onClick={generateEmbeddings} disabled={loading}>
+                                    {loading ? 'Processing...' : 'Chunk & Embed'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-value">{SAMPLE_DOCUMENTS.length}</div>
+                                <div className="stat-label">Documents</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{chunks.length}</div>
+                                <div className="stat-label">Chunks</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{embeddings.length > 0 ? '1536' : '-'}</div>
+                                <div className="stat-label">Embedding Dims</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{embeddings.length}</div>
+                                <div className="stat-label">Vectors Generated</div>
+                            </div>
+                        </div>
+
+                        <div className="two-column">
+                            <div>
+                                <h3>Chunks Preview</h3>
+                                <div className="chunk-display">
+                                    {chunks.slice(0, 4).map((chunk, i) => (
+                                        <div key={chunk.id} className="chunk">
+                                            <div className="chunk-header">
+                                                <span>{chunk.docTitle}</span>
+                                                <span>{chunk.wordCount} words</span>
+                                            </div>
+                                            {chunk.content.slice(0, 100)}...
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <h3>Embedding Visualization</h3>
+                                {embeddings.length > 0 ? (
+                                    embeddings.slice(0, 3).map((emb, i) => (
+                                        <div key={i} style={{marginBottom: '10px'}}>
+                                            <div style={{fontSize: '0.9em', opacity: 0.8, marginBottom: '5px'}}>
+                                                Chunk {i + 1} (first 100 of 1536 dims)
+                                            </div>
+                                            {renderEmbeddingViz(emb)}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{opacity: 0.5}}>Click "Chunk & Embed" to generate</div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 3: Semantic Search
+        function SemanticSearchSlide({ apiKey, isConnected }) {
+            const [query, setQuery] = useState('How does attention work in transformers?');
+            const [results, setResults] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [searchTime, setSearchTime] = useState(0);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            const cosineSimilarity = (a, b) => {
+                let dot = 0, normA = 0, normB = 0;
+                for (let i = 0; i < a.length; i++) {
+                    dot += a[i] * b[i];
+                    normA += a[i] * a[i];
+                    normB += b[i] * b[i];
+                }
+                return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+            };
+
+            const search = async () => {
+                if (!isConnected || !apiKey) return;
+
+                setLoading(true);
+                const startTime = performance.now();
+
+                try {
+                    // Get query embedding
+                    const queryRes = await fetch('https://api.openai.com/v1/embeddings', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'text-embedding-3-small',
+                            input: query
+                        })
+                    });
+
+                    const queryData = await queryRes.json();
+                    const queryEmbedding = queryData.data[0].embedding;
+
+                    // Get document embeddings
+                    const docsRes = await fetch('https://api.openai.com/v1/embeddings', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'text-embedding-3-small',
+                            input: SAMPLE_DOCUMENTS.map(d => d.content)
+                        })
+                    });
+
+                    const docsData = await docsRes.json();
+
+                    // Calculate similarities
+                    const similarities = SAMPLE_DOCUMENTS.map((doc, i) => ({
+                        ...doc,
+                        score: cosineSimilarity(queryEmbedding, docsData.data[i].embedding)
+                    })).sort((a, b) => b.score - a.score);
+
+                    setResults(similarities);
+                    setSearchTime(Math.round(performance.now() - startTime));
+
+                    // Update chart
+                    updateChart(similarities);
+
+                } catch (err) {
+                    console.error('Search error:', err);
+                }
+
+                setLoading(false);
+            };
+
+            const updateChart = (similarities) => {
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
+
+                if (!chartRef.current) return;
+
+                const ctx = chartRef.current.getContext('2d');
+                chartInstance.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: similarities.map(s => s.title.slice(0, 15) + '...'),
+                        datasets: [{
+                            label: 'Similarity Score',
+                            data: similarities.map(s => (s.score * 100).toFixed(1)),
+                            backgroundColor: similarities.map((s, i) =>
+                                i < 3 ? 'rgba(144, 238, 144, 0.8)' : 'rgba(100, 100, 100, 0.5)'
+                            ),
+                            borderColor: 'rgba(26, 95, 42, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: { display: true, text: 'Similarity %' }
+                            }
+                        }
+                    }
+                });
+            };
+
+            useEffect(() => {
+                return () => {
+                    if (chartInstance.current) chartInstance.current.destroy();
+                };
+            }, []);
+
+            return (
+                <div className="slide-content">
+                    <h1>Semantic Search</h1>
+                    <p>Find the most relevant documents using embedding similarity.</p>
+
+                    <div className="demo-container">
+                        <div className="controls">
+                            <div className="control-group wide">
+                                <label>Search Query:</label>
+                                <input
+                                    type="text"
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder="Enter your question..."
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>&nbsp;</label>
+                                <button className="btn" onClick={search} disabled={loading || !isConnected}>
+                                    {loading ? 'Searching...' : 'Search'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {searchTime > 0 && (
+                            <div className="stats-grid">
+                                <div className="stat-card">
+                                    <div className="stat-value">{searchTime}ms</div>
+                                    <div className="stat-label">Search Time</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{SAMPLE_DOCUMENTS.length}</div>
+                                    <div className="stat-label">Docs Searched</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{results[0] ? (results[0].score * 100).toFixed(1) + '%' : '-'}</div>
+                                    <div className="stat-label">Best Match</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">3</div>
+                                    <div className="stat-label">Top-K Retrieved</div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="two-column">
+                            <div className="chart-container" style={{height: '300px'}}>
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                            <div>
+                                <h3>Top Retrieved Documents</h3>
+                                <div className="chunk-display">
+                                    {results.slice(0, 3).map((result, i) => (
+                                        <div key={result.id} className={`chunk ${i === 0 ? 'relevant' : ''}`}>
+                                            <div className="chunk-header">
+                                                <span><strong>#{i + 1}</strong> {result.title}</span>
+                                                <span className="chunk-score">{(result.score * 100).toFixed(1)}%</span>
+                                            </div>
+                                            {result.content.slice(0, 150)}...
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {!isConnected && (
+                            <div className="error-message">
+                                Connect API key on first slide to enable search.
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 4: Full RAG Pipeline
+        function FullRAGSlide({ apiKey, isConnected }) {
+            const [query, setQuery] = useState('What is the difference between BERT and GPT?');
+            const [ragResponse, setRagResponse] = useState('');
+            const [vanillaResponse, setVanillaResponse] = useState('');
+            const [retrievedDocs, setRetrievedDocs] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [currentStep, setCurrentStep] = useState(0);
+            const [metrics, setMetrics] = useState({});
+
+            const cosineSimilarity = (a, b) => {
+                let dot = 0, normA = 0, normB = 0;
+                for (let i = 0; i < a.length; i++) {
+                    dot += a[i] * b[i];
+                    normA += a[i] * a[i];
+                    normB += b[i] * b[i];
+                }
+                return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+            };
+
+            const runRAG = async () => {
+                if (!isConnected || !apiKey) return;
+
+                setLoading(true);
+                setRagResponse('');
+                setVanillaResponse('');
+                setRetrievedDocs([]);
+                setCurrentStep(1);
+
+                const startTime = performance.now();
+
+                try {
+                    // Step 1: Embed query
+                    const queryRes = await fetch('https://api.openai.com/v1/embeddings', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'text-embedding-3-small',
+                            input: query
+                        })
+                    });
+                    const queryData = await queryRes.json();
+                    const queryEmbedding = queryData.data[0].embedding;
+
+                    setCurrentStep(2);
+
+                    // Step 2: Get doc embeddings and search
+                    const docsRes = await fetch('https://api.openai.com/v1/embeddings', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'text-embedding-3-small',
+                            input: SAMPLE_DOCUMENTS.map(d => d.content)
+                        })
+                    });
+                    const docsData = await docsRes.json();
+
+                    const similarities = SAMPLE_DOCUMENTS.map((doc, i) => ({
+                        ...doc,
+                        score: cosineSimilarity(queryEmbedding, docsData.data[i].embedding)
+                    })).sort((a, b) => b.score - a.score);
+
+                    const topDocs = similarities.slice(0, 3);
+                    setRetrievedDocs(topDocs);
+
+                    setCurrentStep(3);
+
+                    // Step 3: Generate RAG response
+                    const context = topDocs.map(d => d.content).join('\n\n');
+                    const ragPrompt = `Use the following context to answer the question. If the context doesn't contain the answer, say so.
+
+Context:
+${context}
+
+Question: ${query}
+
+Answer:`;
+
+                    const [ragRes, vanillaRes] = await Promise.all([
+                        fetch('https://api.openai.com/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: 'gpt-3.5-turbo',
+                                messages: [{ role: 'user', content: ragPrompt }],
+                                temperature: 0.3
+                            })
+                        }),
+                        fetch('https://api.openai.com/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${apiKey}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: 'gpt-3.5-turbo',
+                                messages: [{ role: 'user', content: query }],
+                                temperature: 0.3
+                            })
+                        })
+                    ]);
+
+                    const ragData = await ragRes.json();
+                    const vanillaData = await vanillaRes.json();
+
+                    setRagResponse(ragData.choices[0].message.content);
+                    setVanillaResponse(vanillaData.choices[0].message.content);
+
+                    setCurrentStep(4);
+                    setMetrics({
+                        totalTime: Math.round(performance.now() - startTime),
+                        docsRetrieved: topDocs.length,
+                        topScore: (topDocs[0].score * 100).toFixed(1)
+                    });
+
+                } catch (err) {
+                    console.error('RAG error:', err);
+                }
+
+                setLoading(false);
+            };
+
+            const steps = [
+                { num: 1, title: 'Embed Query', desc: 'Convert question to vector' },
+                { num: 2, title: 'Retrieve Documents', desc: 'Find similar content' },
+                { num: 3, title: 'Generate Response', desc: 'LLM with context' },
+                { num: 4, title: 'Complete', desc: 'Response ready' }
+            ];
+
+            return (
+                <div className="slide-content">
+                    <h1>Full RAG Pipeline</h1>
+                    <p>Watch the complete retrieval-augmented generation process.</p>
+
+                    <div className="demo-container">
+                        <div className="controls">
+                            <div className="control-group wide">
+                                <label>Question:</label>
+                                <input
+                                    type="text"
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    style={{width: '100%'}}
+                                />
+                            </div>
+                            <div className="control-group">
+                                <label>&nbsp;</label>
+                                <button className="btn" onClick={runRAG} disabled={loading || !isConnected}>
+                                    {loading ? 'Running...' : 'Run RAG Pipeline'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style={{display: 'flex', gap: '10px', marginBottom: '20px'}}>
+                            {steps.map((step) => (
+                                <div
+                                    key={step.num}
+                                    className="pipeline-step"
+                                    style={{flex: 1, opacity: currentStep >= step.num ? 1 : 0.4}}
+                                >
+                                    <div className={`step-number ${currentStep === step.num && loading ? 'step-active' : ''} ${currentStep > step.num ? 'step-done' : ''}`}>
+                                        {step.num}
+                                    </div>
+                                    <div>
+                                        <div style={{fontWeight: 'bold'}}>{step.title}</div>
+                                        <div style={{fontSize: '0.85em', opacity: 0.8}}>{step.desc}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {metrics.totalTime && (
+                            <div className="stats-grid">
+                                <div className="stat-card">
+                                    <div className="stat-value">{metrics.totalTime}ms</div>
+                                    <div className="stat-label">Total Time</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{metrics.docsRetrieved}</div>
+                                    <div className="stat-label">Docs Retrieved</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{metrics.topScore}%</div>
+                                    <div className="stat-label">Best Match</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">GPT-3.5</div>
+                                    <div className="stat-label">Model</div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="two-column">
+                            <div>
+                                <h3 style={{color: '#90EE90'}}>RAG Response (with context)</h3>
+                                <div className="response-box">
+                                    {ragResponse || <span style={{opacity: 0.5}}>Response will appear here...</span>}
+                                </div>
+                                <h3>Retrieved Context</h3>
+                                <div className="chunk-display" style={{maxHeight: '150px'}}>
+                                    {retrievedDocs.map((doc, i) => (
+                                        <div key={doc.id} className="chunk relevant">
+                                            <div className="chunk-header">
+                                                <span>{doc.title}</span>
+                                                <span className="chunk-score">{(doc.score * 100).toFixed(0)}%</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <h3 style={{color: '#FF6384'}}>Vanilla LLM (no context)</h3>
+                                <div className="response-box">
+                                    {vanillaResponse || <span style={{opacity: 0.5}}>Response will appear here...</span>}
+                                </div>
+                                <div className="highlight-box">
+                                    <p><strong>Compare:</strong> Notice how RAG provides more specific, grounded answers using the retrieved context.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 5: Code Implementation
+        function CodeSlide() {
+            return (
+                <div className="slide-content">
+                    <h1>RAG Implementation Code</h1>
+
+                    <table className="code-table">
+                        <tbody>
+                            <tr><td className="code-label">Python: Complete RAG Pipeline</td></tr>
+                            <tr><td><code>{`from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain.chains import RetrievalQA
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# 1. Load and chunk documents
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500, chunk_overlap=50
+)
+chunks = splitter.split_documents(documents)
+
+# 2. Create embeddings and vector store
+embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+vectorstore = Chroma.from_documents(chunks, embeddings)
+
+# 3. Create retriever
+retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+
+# 4. Build RAG chain
+rag_chain = RetrievalQA.from_chain_type(
+    llm=ChatOpenAI(model="gpt-4"),
+    retriever=retriever,
+    return_source_documents=True
+)
+
+# 5. Query
+result = rag_chain.invoke({"query": "How does attention work?"})`}</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div className="highlight-box">
+                        <h3>Key Parameters to Tune</h3>
+                        <ul>
+                            <li><strong>chunk_size:</strong> Balance between context and specificity (300-1000)</li>
+                            <li><strong>chunk_overlap:</strong> Prevent losing context at boundaries (50-200)</li>
+                            <li><strong>k (top-k):</strong> Number of documents to retrieve (3-5 typical)</li>
+                            <li><strong>embedding model:</strong> Trade-off between speed and quality</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        // Slide 6: Summary
+        function SummarySlide() {
+            return (
+                <div className="slide-content" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', textAlign: 'center'}}>
+                    <h1 style={{borderBottom: 'none'}}>Demo Complete!</h1>
+                    <h3 style={{marginTop: '30px'}}>Key Takeaways</h3>
+                    <div style={{textAlign: 'left', maxWidth: '600px', margin: '20px auto'}}>
+                        <ul style={{fontSize: '1.1em', lineHeight: '1.8'}}>
+                            <li>RAG reduces hallucinations with grounded context</li>
+                            <li>Chunk size affects retrieval precision vs recall</li>
+                            <li>Embedding quality impacts search accuracy</li>
+                            <li>Top-K selection balances context vs noise</li>
+                            <li>RAG enables access to proprietary/current data</li>
+                            <li>Compare RAG vs vanilla to validate improvement</li>
+                        </ul>
+                    </div>
+                    <p style={{marginTop: '30px', opacity: 0.7}}>Continue to Module 5: Fine-tuning</p>
+                </div>
+            );
+        }
+
+        // Main App
+        function App() {
+            const [currentSlide, setCurrentSlide] = useState(0);
+            const [apiKey, setApiKey] = useState('');
+            const [isConnected, setIsConnected] = useState(false);
+
+            const slides = [
+                (props) => <TitleSlide {...props} />,
+                (props) => <ChunkingSlide {...props} />,
+                (props) => <SemanticSearchSlide {...props} />,
+                (props) => <FullRAGSlide {...props} />,
+                () => <CodeSlide />,
+                () => <SummarySlide />
+            ];
+            const totalSlides = slides.length;
+
+            const nextSlide = () => {
+                if (currentSlide < totalSlides - 1) setCurrentSlide(currentSlide + 1);
+            };
+
+            const prevSlide = () => {
+                if (currentSlide > 0) setCurrentSlide(currentSlide - 1);
+            };
+
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    if (e.key === 'ArrowRight' || e.key === ' ') {
+                        e.preventDefault();
+                        nextSlide();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        prevSlide();
+                    }
+                };
+                document.addEventListener('keydown', handleKeyDown);
+                return () => document.removeEventListener('keydown', handleKeyDown);
+            }, [currentSlide]);
+
+            const CurrentSlideComponent = slides[currentSlide];
+
+            return (
+                <div className="slide active">
+                    <CurrentSlideComponent
+                        apiKey={apiKey}
+                        setApiKey={setApiKey}
+                        isConnected={isConnected}
+                        setIsConnected={setIsConnected}
+                    />
+                    <div className="navigation">
+                        <button className="nav-btn" onClick={prevSlide} disabled={currentSlide === 0}>
+                            ← Previous
+                        </button>
+                        <span className="slide-counter">Slide {currentSlide + 1} of {totalSlides}</span>
+                        <button className="nav-btn" onClick={nextSlide} disabled={currentSlide === totalSlides - 1}>
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

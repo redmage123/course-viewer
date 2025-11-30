@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 2: Building LangChain Agents</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f2a 0%, #2d8a4a 100%);
+            color: white; min-height: 100vh; padding: 40px; line-height: 1.6;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.8em; margin: 30px 0 15px 0; color: #90EE90; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        h3 { font-size: 1.4em; margin: 25px 0 10px 0; color: #98FB98; }
+        p { margin-bottom: 15px; }
+        .lab-info { background-color: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .info-item { text-align: center; }
+        .info-label { font-size: 0.9em; opacity: 0.8; }
+        .info-value { font-size: 1.3em; font-weight: bold; color: #90EE90; }
+        .objectives { background-color: rgba(144, 238, 144, 0.2); border-left: 4px solid #90EE90; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .objectives ul, .prerequisites ul { margin-left: 20px; }
+        .objectives li, .prerequisites li { margin-bottom: 8px; }
+        .prerequisites { background-color: rgba(255, 206, 86, 0.2); border-left: 4px solid #FFD700; padding: 20px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .code-block { background-color: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background-color: #2d2d44; padding: 10px 15px; font-size: 0.9em; color: #90EE90; display: flex; justify-content: space-between; }
+        .code-content { padding: 20px; overflow-x: auto; }
+        .code-content code { font-family: 'Courier New', Courier, monospace; font-size: 0.9em; color: #00ff00; white-space: pre; line-height: 1.5; }
+        .exercise { background-color: rgba(255,255,255,0.1); border-radius: 8px; padding: 25px; margin: 25px 0; border: 2px solid rgba(144, 238, 144, 0.5); }
+        .exercise-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .exercise-number { background-color: #90EE90; color: #1a5f2a; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; }
+        .exercise-title { font-size: 1.3em; font-weight: bold; }
+        .task-list { background-color: rgba(0,0,0,0.2); padding: 15px 15px 15px 35px; border-radius: 8px; margin: 15px 0; }
+        .task-list li { margin-bottom: 10px; }
+        .hint { background-color: rgba(54, 162, 235, 0.2); border-left: 4px solid #36A2EB; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; font-size: 0.95em; }
+        .hint-title { font-weight: bold; color: #36A2EB; margin-bottom: 5px; }
+        .solution { background-color: rgba(0,0,0,0.3); border-radius: 8px; margin: 15px 0; overflow: hidden; }
+        .solution-header { background-color: rgba(144, 238, 144, 0.3); padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .solution-header:hover { background-color: rgba(144, 238, 144, 0.4); }
+        .solution-content { display: none; padding: 20px; }
+        .solution-content.show { display: block; }
+        .expected-output { background-color: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin: 15px 0; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; }
+        .checkpoint { background-color: rgba(144, 238, 144, 0.2); padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }
+        .checkpoint-icon { font-size: 2em; margin-bottom: 10px; }
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2); }
+        .nav-btn { background-color: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 1em; text-decoration: none; transition: all 0.3s ease; }
+        .nav-btn:hover { background-color: white; color: #1a5f2a; }
+        .warning { background-color: rgba(255, 99, 132, 0.2); border-left: 4px solid #ff6b6b; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lab 2: Building LangChain Agents</h1>
+        <p style="font-size: 1.2em; opacity: 0.9;">Module 2 - AI Agents and Framework Implementation</p>
+
+        <div class="lab-info">
+            <div class="info-item"><div class="info-value">90 min</div><div class="info-label">Duration</div></div>
+            <div class="info-item"><div class="info-value">Intermediate</div><div class="info-label">Difficulty</div></div>
+            <div class="info-item"><div class="info-value">LangChain</div><div class="info-label">Framework</div></div>
+            <div class="info-item"><div class="info-value">4</div><div class="info-label">Exercises</div></div>
+        </div>
+
+        <div class="objectives">
+            <h3 style="margin-top: 0;">Learning Objectives</h3>
+            <ul>
+                <li>Set up a LangChain development environment</li>
+                <li>Create custom tools for agents</li>
+                <li>Build a ReAct agent with multiple tools</li>
+                <li>Debug and trace agent execution</li>
+            </ul>
+        </div>
+
+        <div class="prerequisites">
+            <h3 style="margin-top: 0;">Prerequisites</h3>
+            <ul>
+                <li>OpenAI API key</li>
+                <li>Python 3.9+</li>
+                <li>Basic understanding of LLM APIs</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ API Key Required:</strong> This lab requires an OpenAI API key. Set it as an environment variable: <code>export OPENAI_API_KEY="sk-..."</code>
+        </div>
+
+        <h2>Setup</h2>
+        <div class="code-block">
+            <div class="code-header"><span>Terminal</span></div>
+            <div class="code-content">
+                <code>pip install langchain langchain-openai python-dotenv</code>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span>Python: Imports & Setup</span><span>lab2_agents.py</span></div>
+            <div class="code-content">
+                <code>import os
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain.agents import AgentExecutor, create_openai_tools_agent
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.tools import Tool, StructuredTool
+from langchain_core.messages import HumanMessage, AIMessage
+
+load_dotenv()
+
+# Initialize LLM
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)</code>
+            </div>
+        </div>
+
+        <!-- Exercise 1 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">1</div>
+                <div class="exercise-title">Create Your First Tool</div>
+            </div>
+            <p>Create a simple calculator tool that the agent can use for math operations.</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>Python: Starter Code</span></div>
+                <div class="code-content">
+                    <code>def calculator(expression: str) -> str:
+    """
+    Evaluate a mathematical expression.
+
+    Args:
+        expression: A mathematical expression like "2 + 2" or "15 * 7"
+
+    Returns:
+        The result as a string
+    """
+    # TODO: Safely evaluate the expression
+    # Hint: Use eval() but be careful about security!
+    try:
+        # Only allow safe characters
+        allowed = set('0123456789+-*/().^ ')
+        if not all(c in allowed for c in expression):
+            return "Error: Invalid characters in expression"
+
+        # TODO: Evaluate and return result
+        result = ???
+        return str(result)
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+# Create the tool
+calculator_tool = Tool(
+    name="Calculator",
+    func=calculator,
+    description="Useful for mathematical calculations. Input should be a math expression like '2 + 2' or '15 * 7'"
+)
+
+# Test the tool
+print(calculator_tool.invoke("25 * 4"))
+print(calculator_tool.invoke("(100 + 50) / 3"))</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>📝 Show Solution</span><span>▼</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block">
+                        <div class="code-content">
+                            <code>def calculator(expression: str) -> str:
+    try:
+        allowed = set('0123456789+-*/().^ ')
+        if not all(c in allowed for c in expression):
+            return "Error: Invalid characters"
+
+        # Replace ^ with ** for exponents
+        expression = expression.replace('^', '**')
+        result = eval(expression)
+        return str(result)
+    except Exception as e:
+        return f"Error: {str(e)}"</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 2 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">2</div>
+                <div class="exercise-title">Create a Weather Tool (Simulated)</div>
+            </div>
+            <p>Create a simulated weather tool to demonstrate multi-tool agents.</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>Python: Starter Code</span></div>
+                <div class="code-content">
+                    <code>import random
+
+def get_weather(location: str) -> str:
+    """
+    Get the current weather for a location (simulated).
+
+    Args:
+        location: City name like "London" or "New York"
+
+    Returns:
+        Weather description
+    """
+    # TODO: Simulate weather data
+    conditions = ["sunny", "cloudy", "rainy", "partly cloudy", "windy"]
+    temp_celsius = random.randint(5, 30)
+    condition = random.choice(conditions)
+
+    # TODO: Return formatted weather string
+    return f"???"
+
+
+weather_tool = Tool(
+    name="Weather",
+    func=get_weather,
+    description="Get current weather for a city. Input should be a city name."
+)
+
+# Test
+print(weather_tool.invoke("London"))
+print(weather_tool.invoke("Tokyo"))</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>📝 Show Solution</span><span>▼</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block">
+                        <div class="code-content">
+                            <code>def get_weather(location: str) -> str:
+    conditions = ["sunny", "cloudy", "rainy", "partly cloudy", "windy"]
+    temp_celsius = random.randint(5, 30)
+    condition = random.choice(conditions)
+
+    return f"Weather in {location}: {condition}, {temp_celsius}°C ({int(temp_celsius * 9/5 + 32)}°F)"</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 3 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">3</div>
+                <div class="exercise-title">Build a Multi-Tool Agent</div>
+            </div>
+            <p>Combine your tools into a working agent that can reason and use tools.</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>Python: Starter Code</span></div>
+                <div class="code-content">
+                    <code># Combine tools
+tools = [calculator_tool, weather_tool]
+
+# Create prompt template
+prompt = ChatPromptTemplate.from_messages([
+    ("system", """You are a helpful assistant with access to tools.
+Use the tools when needed to answer questions accurately.
+Always explain your reasoning."""),
+    ("human", "{input}"),
+    MessagesPlaceholder(variable_name="agent_scratchpad")
+])
+
+# TODO: Create the agent
+# agent = create_openai_tools_agent(???)
+
+# TODO: Create the executor
+# agent_executor = AgentExecutor(???, verbose=True)
+
+# Test the agent
+questions = [
+    "What is 156 * 23?",
+    "What's the weather like in Paris?",
+    "If it's 25°C in London, what is that in Fahrenheit? Calculate it."
+]
+
+for q in questions:
+    print(f"\n{'='*50}")
+    print(f"Question: {q}")
+    # result = agent_executor.invoke({"input": q})
+    # print(f"Answer: {result['output']}")</code>
+                </div>
+            </div>
+
+            <div class="solution">
+                <div class="solution-header" onclick="toggleSolution(this)">
+                    <span>📝 Show Solution</span><span>▼</span>
+                </div>
+                <div class="solution-content">
+                    <div class="code-block">
+                        <div class="code-content">
+                            <code>tools = [calculator_tool, weather_tool]
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", """You are a helpful assistant with access to tools.
+Use the tools when needed to answer questions accurately.
+Always explain your reasoning."""),
+    ("human", "{input}"),
+    MessagesPlaceholder(variable_name="agent_scratchpad")
+])
+
+# Create agent
+agent = create_openai_tools_agent(llm, tools, prompt)
+
+# Create executor with verbose output
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=tools,
+    verbose=True,
+    max_iterations=5,
+    handle_parsing_errors=True
+)
+
+# Run queries
+for q in questions:
+    print(f"\n{'='*50}")
+    print(f"Question: {q}")
+    result = agent_executor.invoke({"input": q})
+    print(f"Answer: {result['output']}")</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise 4 -->
+        <div class="exercise">
+            <div class="exercise-header">
+                <div class="exercise-number">4</div>
+                <div class="exercise-title">Add Custom Callbacks for Tracing</div>
+            </div>
+            <p>Implement a callback handler to trace agent actions.</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>Python: Starter Code</span></div>
+                <div class="code-content">
+                    <code>from langchain_core.callbacks import BaseCallbackHandler
+from typing import Any, Dict, List
+
+class AgentTracer(BaseCallbackHandler):
+    """Custom callback to trace agent execution."""
+
+    def __init__(self):
+        self.steps = []
+
+    def on_tool_start(self, serialized: Dict[str, Any], input_str: str, **kwargs):
+        # TODO: Log when a tool starts
+        tool_name = serialized.get("name", "unknown")
+        print(f"🔧 Tool Started: {tool_name}")
+        print(f"   Input: {input_str}")
+        self.steps.append({"type": "tool_start", "tool": tool_name, "input": input_str})
+
+    def on_tool_end(self, output: str, **kwargs):
+        # TODO: Log tool output
+        print(f"✅ Tool Output: {output}")
+        self.steps.append({"type": "tool_end", "output": output})
+
+    def on_agent_action(self, action, **kwargs):
+        # TODO: Log agent decisions
+        print(f"🤔 Agent Action: {action.tool}")
+        self.steps.append({"type": "action", "tool": action.tool})
+
+    def get_trace(self):
+        return self.steps
+
+
+# Use the tracer
+tracer = AgentTracer()
+
+# TODO: Run agent with callback
+# result = agent_executor.invoke(
+#     {"input": "What's 100 divided by 4, and what's the weather in Berlin?"},
+#     config={"callbacks": [tracer]}
+# )
+
+# print("\n📊 Execution Trace:")
+# for step in tracer.get_trace():
+#     print(f"  {step}")</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkpoint">
+            <div class="checkpoint-icon">🎉</div>
+            <h3>Lab Complete!</h3>
+            <p>You've built a working LangChain agent with custom tools and tracing.</p>
+        </div>
+
+        <h2>Bonus Challenges</h2>
+        <ul style="margin-left: 20px;">
+            <li>Add a web search tool using a real API</li>
+            <li>Implement conversation memory</li>
+            <li>Create a tool that reads from a database</li>
+            <li>Build an agent that can generate and execute Python code</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <a href="lab-01-attention-mechanism.html" class="nav-btn">← Previous Lab</a>
+            <a href="lab-03-advanced-agents.html" class="nav-btn">Next Lab →</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(element) {
+            const content = element.nextElementSibling;
+            content.classList.toggle('show');
+            element.querySelector('span:last-child').textContent = content.classList.contains('show') ? '▲' : '▼';
+        }
+    </script>
+</body>
+</html>

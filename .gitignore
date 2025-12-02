@@ -13,3 +13,6 @@ venv/
 
 # OS
 .DS_Store
+
+# User workspaces (generated data)
+src/workspaces/

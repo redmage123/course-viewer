@@ -29,6 +29,170 @@ WORKSPACES_DIR = os.path.join(BASE_DIR, 'workspaces')
 os.makedirs(WORKSPACES_DIR, exist_ok=True)
 
 # ============================================================================
+# Sandbox Security Utilities
+# ============================================================================
+
+class SandboxError(Exception):
+    """Raised when a sandbox violation is detected"""
+    pass
+
+def sanitize_path_component(component):
+    """
+    Sanitize a single path component to prevent directory traversal.
+    Removes any dangerous characters and path separators.
+    """
+    if not component:
+        raise SandboxError("Empty path component")
+
+    # Remove any path separators
+    component = component.replace('/', '').replace('\\', '')
+
+    # Remove null bytes
+    component = component.replace('\x00', '')
+
+    # Reject path traversal attempts
+    if component in ('.', '..'):
+        raise SandboxError(f"Invalid path component: {component}")
+
+    # Only allow alphanumeric, dash, underscore, and dot
+    import re
+    if not re.match(r'^[\w\-\.]+$', component):
+        raise SandboxError(f"Invalid characters in path component: {component}")
+
+    return component
+
+def get_safe_user_workspace(user_id):
+    """
+    Get a user's workspace directory with strict validation.
+    Creates the workspace if it doesn't exist.
+    Returns the absolute, resolved path.
+    """
+    if not isinstance(user_id, int) or user_id <= 0:
+        raise SandboxError(f"Invalid user_id: {user_id}")
+
+    # Create workspace path using only the numeric user_id
+    workspace = os.path.join(WORKSPACES_DIR, str(user_id))
+
+    # Resolve to absolute path
+    workspace = os.path.realpath(workspace)
+
+    # Verify it's under WORKSPACES_DIR
+    workspaces_real = os.path.realpath(WORKSPACES_DIR)
+    if not workspace.startswith(workspaces_real + os.sep):
+        raise SandboxError("Workspace path escape detected")
+
+    # Create if doesn't exist
+    os.makedirs(workspace, exist_ok=True)
+
+    return workspace
+
+def get_safe_path_in_workspace(workspace, relative_path):
+    """
+    Safely resolve a relative path within a workspace.
+    Prevents directory traversal and symlink attacks.
+    Returns the absolute, resolved path.
+    """
+    if not relative_path:
+        raise SandboxError("Empty relative path")
+
+    # Normalize the path (handles .. and .)
+    normalized = os.path.normpath(relative_path)
+
+    # Reject absolute paths
+    if os.path.isabs(normalized):
+        raise SandboxError("Absolute paths not allowed")
+
+    # Reject paths that try to escape
+    if normalized.startswith('..'):
+        raise SandboxError("Path traversal detected")
+
+    # Join with workspace
+    full_path = os.path.join(workspace, normalized)
+
+    # Resolve to real path (follows symlinks)
+    real_path = os.path.realpath(full_path)
+
+    # Verify the resolved path is still within workspace
+    workspace_real = os.path.realpath(workspace)
+    if not real_path.startswith(workspace_real + os.sep) and real_path != workspace_real:
+        raise SandboxError(f"Path escape detected: {relative_path}")
+
+    return real_path
+
+def get_safe_path_in_materials(relative_path):
+    """
+    Safely resolve a relative path within the materials directory.
+    Prevents directory traversal and symlink attacks.
+    Returns the absolute, resolved path.
+    """
+    if not relative_path:
+        raise SandboxError("Empty relative path")
+
+    # Normalize the path
+    normalized = os.path.normpath(relative_path)
+
+    # Reject absolute paths
+    if os.path.isabs(normalized):
+        raise SandboxError("Absolute paths not allowed")
+
+    # Reject paths that try to escape
+    if normalized.startswith('..'):
+        raise SandboxError("Path traversal detected")
+
+    # Join with materials dir
+    full_path = os.path.join(MATERIALS_DIR, normalized)
+
+    # Resolve to real path
+    real_path = os.path.realpath(full_path)
+
+    # Verify the resolved path is still within materials
+    materials_real = os.path.realpath(MATERIALS_DIR)
+    if not real_path.startswith(materials_real + os.sep) and real_path != materials_real:
+        raise SandboxError(f"Path escape detected: {relative_path}")
+
+    return real_path
+
+def validate_lab_id(lab_id):
+    """
+    Validate a lab ID to ensure it's safe.
+    Lab IDs should only contain alphanumeric characters, dashes, and underscores.
+    """
+    if not lab_id:
+        raise SandboxError("Empty lab_id")
+
+    import re
+    if not re.match(r'^[\w\-]+$', lab_id):
+        raise SandboxError(f"Invalid lab_id format: {lab_id}")
+
+    if len(lab_id) > 100:
+        raise SandboxError("Lab ID too long")
+
+    return lab_id
+
+def safe_copy_file(src, dst, max_size_mb=50):
+    """
+    Safely copy a file with size limits.
+    Prevents copying excessively large files.
+    """
+    # Check source exists and is a regular file
+    if not os.path.isfile(src):
+        raise SandboxError(f"Source is not a file: {src}")
+
+    # Check file size
+    file_size = os.path.getsize(src)
+    max_size = max_size_mb * 1024 * 1024
+    if file_size > max_size:
+        raise SandboxError(f"File too large: {file_size} bytes (max {max_size} bytes)")
+
+    # Ensure destination directory exists
+    dst_dir = os.path.dirname(dst)
+    if dst_dir:
+        os.makedirs(dst_dir, exist_ok=True)
+
+    # Copy the file
+    shutil.copy2(src, dst)
+
+# ============================================================================
 # Database Setup
 # ============================================================================
 
@@ -184,11 +348,20 @@ COURSES = {
         "name": "Python Fundamentals",
         "description": "Introduction to Python programming for beginners",
         "icon": "🐍",
+        "duration": "4 hours",
         "sections": {
-            "basics": {
-                "title": "Python Basics",
+            "materials": {
+                "title": "Course Materials",
                 "items": [
-                    {"id": "py-intro", "name": "Introduction to Python", "file": "python-intro.html", "type": "slides"},
+                    {"id": "py-slides", "name": "Python Fundamentals Slides", "file": "python-fundamentals/python-fundamentals-slides.html", "type": "slides"},
+                    {"id": "py-demo", "name": "Interactive Python Demo", "file": "python-fundamentals/demo-python-basics.html", "type": "demo"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "py-lab", "name": "Python Basics Lab", "file": "python-fundamentals/lab-python-basics.ipynb", "type": "lab", "runnable": True},
+                    {"id": "py-lab-solution", "name": "Python Basics Lab (Solution)", "file": "python-fundamentals/lab-python-basics-solution.ipynb", "type": "lab", "runnable": True},
                 ]
             }
         }
@@ -397,7 +570,12 @@ def get_my_enrollments():
 
 @app.route('/api/course/<course_id>/download')
 def download_course_materials(course_id):
-    """Download all course materials as a zip file"""
+    """Download all course materials as a zip file (sandboxed)"""
+    # Validate course_id format
+    import re
+    if not re.match(r'^[\w\-]+$', course_id):
+        return jsonify({"error": "Invalid course ID"}), 400
+
     if course_id not in COURSES:
         return jsonify({"error": "Course not found"}), 404
 
@@ -406,46 +584,56 @@ def download_course_materials(course_id):
     # Create zip file in memory
     zip_buffer = io.BytesIO()
 
-    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-        files_added = set()
+    # Limit zip size (max 100MB)
+    max_zip_size = 100 * 1024 * 1024
+    total_size = 0
 
-        for section_id, section in course['sections'].items():
-            for item in section['items']:
-                file_path = item['file']
-                full_path = os.path.join(MATERIALS_DIR, file_path)
+    try:
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            files_added = set()
 
-                # Skip if already added or file doesn't exist
-                if file_path in files_added:
-                    continue
+            for section_id, section in course['sections'].items():
+                for item in section['items']:
+                    file_path = item['file']
 
-                if os.path.isfile(full_path):
-                    # Add individual file
-                    zip_file.write(full_path, file_path)
-                    files_added.add(file_path)
-                elif os.path.isdir(os.path.dirname(full_path)):
-                    # If it's in a subdirectory, try to add the whole directory
-                    dir_path = os.path.dirname(full_path)
-                    if os.path.exists(dir_path):
-                        for root, dirs, files in os.walk(dir_path):
-                            for file in files:
-                                abs_path = os.path.join(root, file)
-                                rel_path = os.path.relpath(abs_path, MATERIALS_DIR)
-                                if rel_path not in files_added:
-                                    zip_file.write(abs_path, rel_path)
-                                    files_added.add(rel_path)
+                    # Skip if already added
+                    if file_path in files_added:
+                        continue
 
-    zip_buffer.seek(0)
+                    try:
+                        # Get safe path within materials
+                        safe_path = get_safe_path_in_materials(file_path)
 
-    # Create safe filename
-    safe_name = course_id.replace(' ', '-').lower()
-    filename = f"{safe_name}-materials.zip"
+                        if os.path.isfile(safe_path):
+                            # Check file size
+                            file_size = os.path.getsize(safe_path)
+                            total_size += file_size
+                            if total_size > max_zip_size:
+                                return jsonify({"error": "Download too large"}), 413
 
-    return send_file(
-        zip_buffer,
-        mimetype='application/zip',
-        as_attachment=True,
-        download_name=filename
-    )
+                            # Add individual file
+                            zip_file.write(safe_path, file_path)
+                            files_added.add(file_path)
+
+                    except SandboxError:
+                        # Skip files that fail validation
+                        continue
+
+        zip_buffer.seek(0)
+
+        # Create safe filename
+        safe_name = re.sub(r'[^\w\-]', '-', course_id).lower()
+        filename = f"{safe_name}-materials.zip"
+
+        return send_file(
+            zip_buffer,
+            mimetype='application/zip',
+            as_attachment=True,
+            download_name=filename
+        )
+
+    except Exception as e:
+        return jsonify({"error": "Failed to create download"}), 500
 
 # ============================================================================
 # Lab Routes - Jupyter Integration
@@ -454,8 +642,14 @@ def download_course_materials(course_id):
 @app.route('/api/lab/<lab_id>/start', methods=['POST'])
 @login_required
 def start_lab(lab_id):
-    """Start a lab session for the current user"""
-    # Find the lab in courses
+    """Start a lab session for the current user (sandboxed)"""
+    try:
+        # Validate lab_id to prevent injection
+        validate_lab_id(lab_id)
+    except SandboxError as e:
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
+
+    # Find the lab in courses (only allow labs defined in config)
     lab_info = None
     for course in COURSES.values():
         for section in course['sections'].values():
@@ -467,44 +661,55 @@ def start_lab(lab_id):
     if not lab_info:
         return jsonify({'error': 'Lab not found or not runnable'}), 404
 
-    user_id = session['user_id']
-    user_workspace = os.path.join(WORKSPACES_DIR, str(user_id))
-    os.makedirs(user_workspace, exist_ok=True)
+    try:
+        user_id = session['user_id']
 
-    # Copy notebook to user workspace if not exists
-    source_notebook = os.path.join(MATERIALS_DIR, lab_info['file'])
-    user_notebook = os.path.join(user_workspace, lab_info['file'])
+        # Get sandboxed user workspace
+        user_workspace = get_safe_user_workspace(user_id)
 
-    if not os.path.exists(user_notebook) and os.path.exists(source_notebook):
-        # Ensure parent directory exists (for paths like out/lab-01.ipynb)
-        os.makedirs(os.path.dirname(user_notebook), exist_ok=True)
-        shutil.copy2(source_notebook, user_notebook)
+        # Get safe paths for source and destination
+        source_notebook = get_safe_path_in_materials(lab_info['file'])
+        user_notebook = get_safe_path_in_workspace(user_workspace, lab_info['file'])
 
-    # Record lab session
-    db = get_db()
-    db.execute(
-        'INSERT INTO lab_sessions (user_id, lab_id, notebook_path, last_activity) VALUES (?, ?, ?, ?)',
-        (user_id, lab_id, user_notebook, datetime.now())
-    )
-    db.commit()
-    session_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
-    db.close()
+        # Copy notebook to user workspace if not exists
+        if not os.path.exists(user_notebook) and os.path.exists(source_notebook):
+            # Ensure parent directory exists (for paths like out/lab-01.ipynb)
+            notebook_dir = os.path.dirname(user_notebook)
+            if notebook_dir:
+                os.makedirs(notebook_dir, exist_ok=True)
+            safe_copy_file(source_notebook, user_notebook)
 
-    return jsonify({
-        'session_id': session_id,
-        'lab_id': lab_id,
-        'notebook_path': f'/api/lab/{lab_id}/notebook',
-        'message': 'Lab session started'
-    })
+        # Record lab session (store relative path, not absolute)
+        db = get_db()
+        db.execute(
+            'INSERT INTO lab_sessions (user_id, lab_id, notebook_path, last_activity) VALUES (?, ?, ?, ?)',
+            (user_id, lab_id, lab_info['file'], datetime.now())  # Store relative path
+        )
+        db.commit()
+        session_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
+        db.close()
+
+        return jsonify({
+            'session_id': session_id,
+            'lab_id': lab_id,
+            'notebook_path': f'/api/lab/{lab_id}/notebook',
+            'message': 'Lab session started'
+        })
+
+    except SandboxError as e:
+        return jsonify({'error': f'Security error: {str(e)}'}), 403
 
 @app.route('/api/lab/<lab_id>/notebook')
 @login_required
 def get_lab_notebook(lab_id):
-    """Get the notebook content for a lab"""
-    user_id = session['user_id']
-    user_workspace = os.path.join(WORKSPACES_DIR, str(user_id))
+    """Get the notebook content for a lab (sandboxed)"""
+    try:
+        # Validate lab_id
+        validate_lab_id(lab_id)
+    except SandboxError as e:
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
-    # Find lab file
+    # Find lab file (only allow labs defined in config)
     lab_file = None
     for course in COURSES.values():
         for section in course['sections'].values():
@@ -516,28 +721,48 @@ def get_lab_notebook(lab_id):
     if not lab_file:
         return jsonify({'error': 'Lab not found'}), 404
 
-    # Try user workspace first, then materials dir
-    notebook_path = os.path.join(user_workspace, lab_file)
-    if not os.path.exists(notebook_path):
-        notebook_path = os.path.join(MATERIALS_DIR, lab_file)
+    try:
+        user_id = session['user_id']
 
-    if not os.path.exists(notebook_path):
-        return jsonify({'error': 'Notebook file not found'}), 404
+        # Get sandboxed user workspace
+        user_workspace = get_safe_user_workspace(user_id)
 
-    with open(notebook_path, 'r') as f:
-        notebook = json.load(f)
+        # Try user workspace first (sandboxed path)
+        try:
+            notebook_path = get_safe_path_in_workspace(user_workspace, lab_file)
+            if not os.path.exists(notebook_path):
+                raise FileNotFoundError()
+        except (SandboxError, FileNotFoundError):
+            # Fall back to materials dir (sandboxed path)
+            notebook_path = get_safe_path_in_materials(lab_file)
 
-    return jsonify(notebook)
+        if not os.path.exists(notebook_path):
+            return jsonify({'error': 'Notebook file not found'}), 404
+
+        # Read with size limit (max 10MB)
+        file_size = os.path.getsize(notebook_path)
+        if file_size > 10 * 1024 * 1024:
+            return jsonify({'error': 'Notebook file too large'}), 413
+
+        with open(notebook_path, 'r') as f:
+            notebook = json.load(f)
+
+        return jsonify(notebook)
+
+    except SandboxError as e:
+        return jsonify({'error': f'Security error: {str(e)}'}), 403
 
 @app.route('/api/lab/<lab_id>/save', methods=['POST'])
 @login_required
 def save_lab_notebook(lab_id):
-    """Save the notebook content for a lab"""
-    user_id = session['user_id']
-    user_workspace = os.path.join(WORKSPACES_DIR, str(user_id))
-    os.makedirs(user_workspace, exist_ok=True)
+    """Save the notebook content for a lab (sandboxed)"""
+    try:
+        # Validate lab_id
+        validate_lab_id(lab_id)
+    except SandboxError as e:
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
-    # Find lab file
+    # Find lab file (only allow labs defined in config)
     lab_file = None
     for course in COURSES.values():
         for section in course['sections'].values():
@@ -549,27 +774,75 @@ def save_lab_notebook(lab_id):
     if not lab_file:
         return jsonify({'error': 'Lab not found'}), 404
 
-    notebook_path = os.path.join(user_workspace, lab_file)
-    notebook_data = request.get_json()
+    try:
+        user_id = session['user_id']
 
-    with open(notebook_path, 'w') as f:
-        json.dump(notebook_data, f, indent=2)
+        # Get sandboxed user workspace
+        user_workspace = get_safe_user_workspace(user_id)
 
-    return jsonify({'message': 'Notebook saved successfully'})
+        # Get safe path for the notebook (within user's sandbox)
+        notebook_path = get_safe_path_in_workspace(user_workspace, lab_file)
+
+        # Ensure parent directory exists
+        notebook_dir = os.path.dirname(notebook_path)
+        if notebook_dir:
+            os.makedirs(notebook_dir, exist_ok=True)
+
+        # Get and validate notebook data
+        notebook_data = request.get_json()
+        if not notebook_data:
+            return jsonify({'error': 'No notebook data provided'}), 400
+
+        # Validate it's a proper notebook structure
+        if not isinstance(notebook_data, dict):
+            return jsonify({'error': 'Invalid notebook format'}), 400
+
+        # Check size limit (max 10MB when serialized)
+        notebook_json = json.dumps(notebook_data, indent=2)
+        if len(notebook_json) > 10 * 1024 * 1024:
+            return jsonify({'error': 'Notebook too large to save'}), 413
+
+        # Write atomically using temp file
+        temp_path = notebook_path + '.tmp'
+        with open(temp_path, 'w') as f:
+            f.write(notebook_json)
+
+        # Atomic rename
+        os.replace(temp_path, notebook_path)
+
+        return jsonify({'message': 'Notebook saved successfully'})
+
+    except SandboxError as e:
+        return jsonify({'error': f'Security error: {str(e)}'}), 403
 
 @app.route('/api/lab/<lab_id>/progress', methods=['GET', 'POST'])
 @login_required
 def lab_progress(lab_id):
-    """Get or save progress for a lab"""
+    """Get or save progress for a lab (with input validation)"""
+    try:
+        # Validate lab_id
+        validate_lab_id(lab_id)
+    except SandboxError as e:
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
+
     if request.method == 'POST':
         data = request.get_json()
         cell_index = data.get('cell_index')
         output = data.get('output', '')
 
+        # Validate cell_index
+        if not isinstance(cell_index, int) or cell_index < 0 or cell_index > 1000:
+            return jsonify({'error': 'Invalid cell index'}), 400
+
+        # Limit output size (max 1MB)
+        output_json = json.dumps(output)
+        if len(output_json) > 1024 * 1024:
+            return jsonify({'error': 'Output too large'}), 413
+
         db = get_db()
         db.execute(
             'INSERT INTO lab_progress (user_id, lab_id, cell_index, output) VALUES (?, ?, ?, ?)',
-            (session['user_id'], lab_id, cell_index, json.dumps(output))
+            (session['user_id'], lab_id, cell_index, output_json)
         )
         db.commit()
         db.close()
@@ -591,7 +864,7 @@ def lab_progress(lab_id):
         } for p in progress])
 
 # ============================================================================
-# Content Serving
+# Content Serving (Sandboxed)
 # ============================================================================
 
 @app.route('/api/materials')
@@ -601,8 +874,27 @@ def get_materials():
 
 @app.route('/content/<path:filename>')
 def serve_content(filename):
-    """Serve course HTML files"""
-    return send_from_directory(MATERIALS_DIR, filename)
+    """Serve course HTML files (sandboxed to materials directory)"""
+    try:
+        # Validate and resolve path within materials directory
+        safe_path = get_safe_path_in_materials(filename)
+
+        # Only serve allowed file types
+        allowed_extensions = {'.html', '.css', '.js', '.png', '.jpg', '.jpeg',
+                             '.gif', '.svg', '.ico', '.pdf', '.ipynb', '.json'}
+        _, ext = os.path.splitext(safe_path)
+        if ext.lower() not in allowed_extensions:
+            return jsonify({'error': 'File type not allowed'}), 403
+
+        if not os.path.isfile(safe_path):
+            return jsonify({'error': 'File not found'}), 404
+
+        # Get the relative path from materials dir
+        rel_path = os.path.relpath(safe_path, MATERIALS_DIR)
+        return send_from_directory(MATERIALS_DIR, rel_path)
+
+    except SandboxError as e:
+        return jsonify({'error': f'Access denied: {str(e)}'}), 403
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

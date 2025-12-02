@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Fundamentals: From Zero to Programmer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #306998 0%, #FFD43B 100%); color: white; min-height: 100vh; }
+        .slide { min-height: 100vh; padding: 60px; display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid rgba(255,255,255,0.2); position: relative; }
+        .slide-number { position: absolute; top: 20px; right: 30px; font-size: 0.9em; opacity: 0.7; }
+        h1 { font-size: 3em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { font-size: 2.2em; margin-bottom: 30px; color: #FFD43B; }
+        h3 { font-size: 1.6em; margin: 20px 0; color: #FFE873; }
+        p { font-size: 1.3em; margin-bottom: 20px; line-height: 1.6; }
+        ul { font-size: 1.2em; margin-left: 40px; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        .subtitle { font-size: 1.5em; opacity: 0.9; margin-bottom: 30px; }
+        .highlight { background: rgba(255, 212, 59, 0.3); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .code-block { background: #1a1a2e; border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .code-header { background: #2d2d44; padding: 10px 15px; color: #FFD43B; font-size: 0.9em; }
+        .code-content { padding: 20px; }
+        .code-content code { font-family: 'Courier New', monospace; color: #FFD43B; white-space: pre; line-height: 1.5; font-size: 0.95em; display: block; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .three-column { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+        .card { background: rgba(255,255,255,0.1); padding: 25px; border-radius: 10px; }
+        .card h4 { color: #FFD43B; margin-bottom: 15px; font-size: 1.3em; }
+        .series-badge { background: #FFD43B; color: #306998; padding: 8px 20px; border-radius: 20px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .nav-buttons { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 1000; }
+        .nav-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; }
+        .nav-btn:hover { background: white; color: #306998; }
+        .emoji-large { font-size: 3em; margin-bottom: 15px; }
+        .tip-box { background: rgba(76, 175, 80, 0.3); border-left: 4px solid #4CAF50; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 15px 0; }
+        .warning-box { background: rgba(255, 152, 0, 0.3); border-left: 4px solid #FF9800; padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 15px 0; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .comparison-table th, .comparison-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .comparison-table th { background: rgba(255, 212, 59, 0.2); }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide" id="slide1">
+    <span class="slide-number">1</span>
+    <div class="series-badge">BEGINNER FRIENDLY</div>
+    <h1>Python Fundamentals</h1>
+    <p class="subtitle">From Zero to Programmer</p>
+    <p style="font-size: 1.1em; opacity: 0.8; margin-top: 40px;">Learn the world's most popular programming language</p>
+    <div style="margin-top: 40px;">
+        <p><strong>Module 1:</strong> Getting Started with Python</p>
+        <p><strong>Module 2:</strong> Data Types & Variables</p>
+        <p><strong>Module 3:</strong> Control Flow & Functions</p>
+        <p><strong>Module 4:</strong> Collections & Loops</p>
+    </div>
+</div>
+
+<!-- Slide 2: Why Python? -->
+<div class="slide" id="slide2">
+    <span class="slide-number">2</span>
+    <h2>Why Learn Python?</h2>
+    <div class="three-column" style="margin-top: 30px;">
+        <div class="card">
+            <div class="emoji-large">&#128640;</div>
+            <h4>Easy to Learn</h4>
+            <p style="font-size: 0.95em;">Clean, readable syntax that reads like English. Perfect for beginners!</p>
+        </div>
+        <div class="card">
+            <div class="emoji-large">&#127758;</div>
+            <h4>Most Popular</h4>
+            <p style="font-size: 0.95em;">#1 programming language. Used by Google, Netflix, Instagram, and NASA.</p>
+        </div>
+        <div class="card">
+            <div class="emoji-large">&#128176;</div>
+            <h4>High Demand</h4>
+            <p style="font-size: 0.95em;">Top-paying skill in tech. Average salary $120k+ in the US.</p>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <p><strong>Python is used for:</strong> Web Development, Data Science, AI/ML, Automation, Game Development, and more!</p>
+    </div>
+</div>
+
+<!-- Slide 3: Your First Program -->
+<div class="slide" id="slide3">
+    <span class="slide-number">3</span>
+    <h2>Your First Python Program</h2>
+    <p>The classic "Hello, World!" - every programmer's first step:</p>
+    <div class="code-block">
+        <div class="code-header">hello.py</div>
+        <div class="code-content">
+            <code>print("Hello, World!")</code>
+        </div>
+    </div>
+    <p style="margin-top: 20px;">That's it! One line of code. In other languages, this could be 5-10 lines.</p>
+    <div class="tip-box">
+        <strong>Try it yourself:</strong> Open Python and type this command. Watch the magic happen!
+    </div>
+</div>
+
+<!-- Slide 4: Variables -->
+<div class="slide" id="slide4">
+    <span class="slide-number">4</span>
+    <h2>Variables: Storing Information</h2>
+    <p>Variables are like labeled boxes that store data:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Creating Variables</div>
+            <div class="code-content">
+                <code># Storing different types of data
+name = "Alice"
+age = 25
+height = 5.6
+is_student = True
+
+# Using variables
+print(f"Hi, I'm {name}!")
+print(f"I'm {age} years old")</code>
+            </div>
+        </div>
+        <div>
+            <h3>Key Points:</h3>
+            <ul>
+                <li>No need to declare types</li>
+                <li>Use descriptive names</li>
+                <li>snake_case is preferred</li>
+                <li>Case sensitive (Name != name)</li>
+            </ul>
+            <div class="tip-box" style="margin-top: 20px;">
+                <strong>Naming tip:</strong> Choose names that describe what the variable holds!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Data Types -->
+<div class="slide" id="slide5">
+    <span class="slide-number">5</span>
+    <h2>Python Data Types</h2>
+    <div class="three-column">
+        <div class="card">
+            <h4>Strings (str)</h4>
+            <div class="code-block" style="margin: 10px 0;">
+                <div class="code-content" style="padding: 10px;">
+                    <code>"Hello World"
+'Python is fun'
+"""Multi-line
+string"""</code>
+                </div>
+            </div>
+            <p style="font-size: 0.9em;">Text data in quotes</p>
+        </div>
+        <div class="card">
+            <h4>Numbers</h4>
+            <div class="code-block" style="margin: 10px 0;">
+                <div class="code-content" style="padding: 10px;">
+                    <code># Integer
+age = 25
+
+# Float (decimal)
+price = 19.99</code>
+                </div>
+            </div>
+            <p style="font-size: 0.9em;">Whole & decimal numbers</p>
+        </div>
+        <div class="card">
+            <h4>Boolean (bool)</h4>
+            <div class="code-block" style="margin: 10px 0;">
+                <div class="code-content" style="padding: 10px;">
+                    <code>is_active = True
+is_admin = False
+
+# Comparisons
+5 > 3  # True</code>
+                </div>
+            </div>
+            <p style="font-size: 0.9em;">True or False values</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Operators -->
+<div class="slide" id="slide6">
+    <span class="slide-number">6</span>
+    <h2>Operators: Doing Math & More</h2>
+    <div class="two-column">
+        <div>
+            <h3>Arithmetic Operators</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>a = 10
+b = 3
+
+print(a + b)   # 13 (addition)
+print(a - b)   # 7  (subtraction)
+print(a * b)   # 30 (multiplication)
+print(a / b)   # 3.33 (division)
+print(a // b)  # 3  (floor division)
+print(a % b)   # 1  (modulo/remainder)
+print(a ** b)  # 1000 (power)</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Comparison Operators</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>x = 5
+y = 10
+
+print(x == y)  # False (equal?)
+print(x != y)  # True  (not equal?)
+print(x < y)   # True  (less than?)
+print(x > y)   # False (greater?)
+print(x <= y)  # True  (less or equal?)
+print(x >= y)  # False (greater or equal?)</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Strings -->
+<div class="slide" id="slide7">
+    <span class="slide-number">7</span>
+    <h2>Working with Strings</h2>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">String Operations</div>
+            <div class="code-content">
+                <code>name = "Python"
+
+# Length
+len(name)  # 6
+
+# Indexing (starts at 0!)
+name[0]    # 'P'
+name[-1]   # 'n' (last char)
+
+# Slicing
+name[0:3]  # 'Pyt'
+name[2:]   # 'thon'
+
+# Methods
+name.upper()   # 'PYTHON'
+name.lower()   # 'python'
+name.replace('P', 'J')  # 'Jython'</code>
+            </div>
+        </div>
+        <div>
+            <h3>String Formatting (f-strings)</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>name = "Alice"
+age = 30
+
+# Modern f-string (recommended!)
+msg = f"Hi {name}, you are {age}"
+
+# Math in f-strings
+print(f"Next year: {age + 1}")
+
+# Formatting numbers
+price = 49.99
+print(f"Price: ${price:.2f}")</code>
+                </div>
+            </div>
+            <div class="tip-box" style="margin-top: 15px;">
+                <strong>f-strings</strong> are the modern way to format strings. The 'f' stands for "formatted"!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Lists -->
+<div class="slide" id="slide8">
+    <span class="slide-number">8</span>
+    <h2>Lists: Ordered Collections</h2>
+    <p>Lists store multiple items in a single variable:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Creating & Using Lists</div>
+            <div class="code-content">
+                <code># Creating lists
+fruits = ["apple", "banana", "cherry"]
+numbers = [1, 2, 3, 4, 5]
+mixed = [1, "hello", True, 3.14]
+
+# Accessing items
+print(fruits[0])   # 'apple'
+print(fruits[-1])  # 'cherry'
+
+# Modifying
+fruits[1] = "blueberry"
+fruits.append("orange")
+fruits.remove("apple")
+
+# List length
+len(fruits)  # 3</code>
+            </div>
+        </div>
+        <div>
+            <h3>Common List Methods</h3>
+            <table class="comparison-table">
+                <tr><th>Method</th><th>Description</th></tr>
+                <tr><td><code>append(x)</code></td><td>Add item to end</td></tr>
+                <tr><td><code>insert(i, x)</code></td><td>Insert at position</td></tr>
+                <tr><td><code>remove(x)</code></td><td>Remove first match</td></tr>
+                <tr><td><code>pop()</code></td><td>Remove last item</td></tr>
+                <tr><td><code>sort()</code></td><td>Sort the list</td></tr>
+                <tr><td><code>reverse()</code></td><td>Reverse order</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Dictionaries -->
+<div class="slide" id="slide9">
+    <span class="slide-number">9</span>
+    <h2>Dictionaries: Key-Value Pairs</h2>
+    <p>Dictionaries store data as key-value pairs (like a real dictionary!):</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Working with Dictionaries</div>
+            <div class="code-content">
+                <code># Creating a dictionary
+person = {
+    "name": "Alice",
+    "age": 30,
+    "city": "New York",
+    "is_student": False
+}
+
+# Accessing values
+print(person["name"])      # 'Alice'
+print(person.get("age"))   # 30
+
+# Adding/updating
+person["email"] = "alice@example.com"
+person["age"] = 31
+
+# Removing
+del person["is_student"]</code>
+            </div>
+        </div>
+        <div>
+            <h3>When to Use Dictionaries?</h3>
+            <ul>
+                <li>Storing related information</li>
+                <li>Looking up values by name</li>
+                <li>Representing real-world objects</li>
+                <li>Configuration settings</li>
+            </ul>
+            <div class="highlight" style="margin-top: 20px;">
+                <p><strong>Pro tip:</strong> Use <code>.get(key)</code> to avoid errors if key doesn't exist!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: Conditionals -->
+<div class="slide" id="slide10">
+    <span class="slide-number">10</span>
+    <h2>Conditionals: Making Decisions</h2>
+    <p>Use if/elif/else to control program flow:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">If Statements</div>
+            <div class="code-content">
+                <code>age = 18
+
+if age < 13:
+    print("Child")
+elif age < 20:
+    print("Teenager")
+else:
+    print("Adult")
+
+# Multiple conditions
+temperature = 75
+is_sunny = True
+
+if temperature > 70 and is_sunny:
+    print("Perfect beach day!")
+
+if temperature < 32 or temperature > 100:
+    print("Extreme weather!")</code>
+            </div>
+        </div>
+        <div>
+            <h3>Logical Operators</h3>
+            <table class="comparison-table">
+                <tr><th>Operator</th><th>Meaning</th></tr>
+                <tr><td><code>and</code></td><td>Both must be True</td></tr>
+                <tr><td><code>or</code></td><td>At least one True</td></tr>
+                <tr><td><code>not</code></td><td>Inverts the value</td></tr>
+            </table>
+            <div class="warning-box" style="margin-top: 20px;">
+                <strong>Indentation matters!</strong> Python uses indentation (4 spaces) to define code blocks.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Loops -->
+<div class="slide" id="slide11">
+    <span class="slide-number">11</span>
+    <h2>Loops: Repeating Actions</h2>
+    <div class="two-column">
+        <div>
+            <h3>For Loops</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Loop through a list
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    print(f"I love {fruit}!")
+
+# Loop with range
+for i in range(5):
+    print(i)  # 0, 1, 2, 3, 4
+
+# Loop with index
+for i, fruit in enumerate(fruits):
+    print(f"{i}: {fruit}")</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>While Loops</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># While loop
+count = 0
+while count < 5:
+    print(count)
+    count += 1
+
+# Break and Continue
+for i in range(10):
+    if i == 3:
+        continue  # skip 3
+    if i == 7:
+        break     # stop at 7
+    print(i)</code>
+                </div>
+            </div>
+            <div class="tip-box" style="margin-top: 15px;">
+                Use <strong>for</strong> when you know the iterations. Use <strong>while</strong> when you don't!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Functions -->
+<div class="slide" id="slide12">
+    <span class="slide-number">12</span>
+    <h2>Functions: Reusable Code</h2>
+    <p>Functions let you write code once and use it many times:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Defining Functions</div>
+            <div class="code-content">
+                <code># Simple function
+def greet(name):
+    return f"Hello, {name}!"
+
+print(greet("Alice"))  # Hello, Alice!
+
+# Default parameters
+def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+print(greet("Bob"))           # Hello, Bob!
+print(greet("Bob", "Hi"))     # Hi, Bob!
+
+# Multiple return values
+def get_stats(numbers):
+    return min(numbers), max(numbers)
+
+low, high = get_stats([1, 5, 3, 9, 2])</code>
+            </div>
+        </div>
+        <div>
+            <h3>Why Use Functions?</h3>
+            <ul>
+                <li><strong>DRY:</strong> Don't Repeat Yourself</li>
+                <li><strong>Organize:</strong> Break code into logical pieces</li>
+                <li><strong>Reuse:</strong> Write once, use many times</li>
+                <li><strong>Test:</strong> Easier to test small functions</li>
+            </ul>
+            <div class="highlight" style="margin-top: 20px;">
+                <p><strong>Good function names</strong> describe what the function does: <code>calculate_total()</code>, <code>send_email()</code>, <code>get_user()</code></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 13: Error Handling -->
+<div class="slide" id="slide13">
+    <span class="slide-number">13</span>
+    <h2>Error Handling: Try/Except</h2>
+    <p>Gracefully handle errors instead of crashing:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Try/Except Blocks</div>
+            <div class="code-content">
+                <code># Basic error handling
+try:
+    number = int(input("Enter a number: "))
+    result = 10 / number
+    print(f"Result: {result}")
+except ValueError:
+    print("That's not a valid number!")
+except ZeroDivisionError:
+    print("Can't divide by zero!")
+except Exception as e:
+    print(f"Something went wrong: {e}")
+finally:
+    print("This always runs!")</code>
+            </div>
+        </div>
+        <div>
+            <h3>Common Exceptions</h3>
+            <table class="comparison-table">
+                <tr><th>Exception</th><th>When it happens</th></tr>
+                <tr><td><code>ValueError</code></td><td>Wrong type of value</td></tr>
+                <tr><td><code>TypeError</code></td><td>Wrong type operation</td></tr>
+                <tr><td><code>KeyError</code></td><td>Dict key not found</td></tr>
+                <tr><td><code>IndexError</code></td><td>List index out of range</td></tr>
+                <tr><td><code>FileNotFoundError</code></td><td>File doesn't exist</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 14: File I/O -->
+<div class="slide" id="slide14">
+    <span class="slide-number">14</span>
+    <h2>Working with Files</h2>
+    <div class="two-column">
+        <div>
+            <h3>Reading Files</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Reading entire file
+with open("data.txt", "r") as file:
+    content = file.read()
+    print(content)
+
+# Reading line by line
+with open("data.txt", "r") as file:
+    for line in file:
+        print(line.strip())</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Writing Files</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Writing to a file
+with open("output.txt", "w") as file:
+    file.write("Hello, File!\n")
+    file.write("Second line")
+
+# Appending to a file
+with open("log.txt", "a") as file:
+    file.write("New log entry\n")</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tip-box" style="margin-top: 20px;">
+        <strong>Always use <code>with</code> statement!</strong> It automatically closes the file when done, even if an error occurs.
+    </div>
+</div>
+
+<!-- Slide 15: Modules & Imports -->
+<div class="slide" id="slide15">
+    <span class="slide-number">15</span>
+    <h2>Modules: Extending Python</h2>
+    <p>Import pre-built functionality to supercharge your code:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Using Modules</div>
+            <div class="code-content">
+                <code># Import entire module
+import math
+print(math.sqrt(16))  # 4.0
+print(math.pi)        # 3.14159...
+
+# Import specific functions
+from random import randint, choice
+print(randint(1, 100))
+print(choice(["a", "b", "c"]))
+
+# Import with alias
+import datetime as dt
+today = dt.date.today()
+print(today)</code>
+            </div>
+        </div>
+        <div>
+            <h3>Popular Built-in Modules</h3>
+            <table class="comparison-table">
+                <tr><th>Module</th><th>Purpose</th></tr>
+                <tr><td><code>math</code></td><td>Mathematical functions</td></tr>
+                <tr><td><code>random</code></td><td>Random numbers</td></tr>
+                <tr><td><code>datetime</code></td><td>Date & time</td></tr>
+                <tr><td><code>os</code></td><td>Operating system</td></tr>
+                <tr><td><code>json</code></td><td>JSON parsing</td></tr>
+                <tr><td><code>re</code></td><td>Regular expressions</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: List Comprehensions -->
+<div class="slide" id="slide16">
+    <span class="slide-number">16</span>
+    <h2>List Comprehensions: Python Magic</h2>
+    <p>A concise way to create lists:</p>
+    <div class="two-column">
+        <div>
+            <h3>Traditional Way</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Create list of squares
+squares = []
+for x in range(10):
+    squares.append(x ** 2)
+
+# Filter even numbers
+evens = []
+for x in range(20):
+    if x % 2 == 0:
+        evens.append(x)</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>With List Comprehension</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Create list of squares
+squares = [x ** 2 for x in range(10)]
+
+# Filter even numbers
+evens = [x for x in range(20) if x % 2 == 0]
+
+# Transform data
+names = ["alice", "bob", "charlie"]
+upper = [name.upper() for name in names]
+# ['ALICE', 'BOB', 'CHARLIE']</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Pattern:</strong> <code>[expression for item in iterable if condition]</code></p>
+    </div>
+</div>
+
+<!-- Slide 17: Summary & Next Steps -->
+<div class="slide" id="slide17">
+    <span class="slide-number">17</span>
+    <h2>What You've Learned</h2>
+    <div class="three-column">
+        <div class="card">
+            <h4>Basics</h4>
+            <ul style="font-size: 0.9em; margin-left: 20px;">
+                <li>Variables & data types</li>
+                <li>Operators</li>
+                <li>String manipulation</li>
+                <li>Print & input</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Data Structures</h4>
+            <ul style="font-size: 0.9em; margin-left: 20px;">
+                <li>Lists</li>
+                <li>Dictionaries</li>
+                <li>List comprehensions</li>
+                <li>Slicing</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Control Flow</h4>
+            <ul style="font-size: 0.9em; margin-left: 20px;">
+                <li>If/elif/else</li>
+                <li>For & while loops</li>
+                <li>Functions</li>
+                <li>Error handling</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 30px;">
+        <h3>Next Steps:</h3>
+        <ul>
+            <li>Complete the hands-on labs</li>
+            <li>Build small projects (calculator, to-do app, quiz game)</li>
+            <li>Explore: Web dev (Flask/Django), Data Science (Pandas), or Automation</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-buttons">
+    <button class="nav-btn" onclick="previousSlide()">&#9664; Prev</button>
+    <button class="nav-btn" onclick="nextSlide()">Next &#9654;</button>
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 17;
+
+    function showSlide(n) {
+        if (n < 1) n = totalSlides;
+        if (n > totalSlides) n = 1;
+        currentSlide = n;
+        document.getElementById('slide' + n).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function previousSlide() { showSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+            e.preventDefault();
+            nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+            e.preventDefault();
+            previousSlide();
+        }
+    });
+</script>
+
+</body>
+</html>

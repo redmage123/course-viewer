@@ -14,6 +14,7 @@ import io
 from datetime import datetime, timedelta
 from functools import wraps
 import secrets
+from kernel_manager import kernel_pool
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = secrets.token_hex(32)
@@ -317,18 +318,12 @@ COURSES = {
             "part1-labs": {
                 "title": "Part 1: Hands-on Labs",
                 "items": [
-                    {"id": "lab-01-python", "name": "Lab 1: Python Data Science", "file": "out/lab-01-python-data-science.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-01-python-solution", "name": "Lab 1: Python Data Science (Solution)", "file": "out/lab-01-python-data-science-solution.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-02-ml", "name": "Lab 2: ML Basics", "file": "out/lab-02-ml-basics.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-02-ml-solution", "name": "Lab 2: ML Basics (Solution)", "file": "out/lab-02-ml-basics-solution.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-03-nn", "name": "Lab 3: Neural Networks", "file": "out/lab-03-neural-networks.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-03-nn-solution", "name": "Lab 3: Neural Networks (Solution)", "file": "out/lab-03-neural-networks-solution.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-04-pytorch", "name": "Lab 4: PyTorch Fundamentals", "file": "out/lab-04-pytorch-fundamentals.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-04-pytorch-solution", "name": "Lab 4: PyTorch Fundamentals (Solution)", "file": "out/lab-04-pytorch-fundamentals-solution.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-05-nlp", "name": "Lab 5: NLP Basics", "file": "out/lab-05-nlp-basics.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-05-nlp-solution", "name": "Lab 5: NLP Basics (Solution)", "file": "out/lab-05-nlp-basics-solution.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-06-llm", "name": "Lab 6: LLM APIs", "file": "out/lab-06-llm-apis.ipynb", "type": "lab", "runnable": True},
-                    {"id": "lab-06-llm-solution", "name": "Lab 6: LLM APIs (Solution)", "file": "out/lab-06-llm-apis-solution.ipynb", "type": "lab", "runnable": True},
+                    {"id": "lab-01-python", "name": "Lab 1: Python for Data Science", "file": "out/lab-01-python-data-science.ipynb", "type": "lab", "runnable": True},
+                    {"id": "lab-01-python-solution", "name": "Lab 1: Python for Data Science (Solutions)", "file": "out/lab-01-python-data-science-solutions.ipynb", "type": "lab", "runnable": True},
+                    {"id": "lab-02-ml", "name": "Lab 2: Machine Learning with PyTorch", "file": "out/lab-02-ml-pytorch.ipynb", "type": "lab", "runnable": True},
+                    {"id": "lab-02-ml-solution", "name": "Lab 2: Machine Learning (Solutions)", "file": "out/lab-02-ml-pytorch-solutions.ipynb", "type": "lab", "runnable": True},
+                    {"id": "lab-03-genai", "name": "Lab 3: Generative AI with Ollama", "file": "out/lab-03-generative-ai.ipynb", "type": "lab", "runnable": True},
+                    {"id": "lab-03-genai-solution", "name": "Lab 3: Generative AI (Solutions)", "file": "out/lab-03-generative-ai-solutions.ipynb", "type": "lab", "runnable": True},
                 ]
             },
             "part2": {
@@ -595,6 +590,25 @@ def download_course_materials(course_id):
             for section_id, section in course['sections'].items():
                 for item in section['items']:
                     file_path = item['file']
+                    item_type = item.get('type', '')
+
+                    # For slides, use PDF version instead of HTML source
+                    if item_type == 'slides' and file_path.endswith('.html'):
+                        pdf_path = file_path.replace('.html', '.pdf')
+                        try:
+                            safe_pdf_path = get_safe_path_in_materials(pdf_path)
+                            if os.path.isfile(safe_pdf_path):
+                                # Use PDF instead of HTML for slides
+                                if pdf_path not in files_added:
+                                    file_size = os.path.getsize(safe_pdf_path)
+                                    total_size += file_size
+                                    if total_size > max_zip_size:
+                                        return jsonify({"error": "Download too large"}), 413
+                                    zip_file.write(safe_pdf_path, pdf_path)
+                                    files_added.add(pdf_path)
+                                continue  # Skip the HTML source file
+                        except SandboxError:
+                            pass  # Fall through to try original file
 
                     # Skip if already added
                     if file_path in files_added:
@@ -864,6 +878,161 @@ def lab_progress(lab_id):
         } for p in progress])
 
 # ============================================================================
+# Server-Side Kernel API (for PyTorch and other libraries not in Pyodide)
+# ============================================================================
+
+@app.route('/api/kernel/start', methods=['POST'])
+@login_required
+def start_kernel():
+    """Start or get a kernel for a lab"""
+    data = request.get_json() or {}
+    lab_id = data.get('lab_id')
+
+    if not lab_id:
+        return jsonify({'error': 'lab_id required'}), 400
+
+    try:
+        validate_lab_id(lab_id)
+    except SandboxError as e:
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
+
+    result = kernel_pool.get_or_create_kernel(session['user_id'], lab_id)
+
+    if result['status'] == 'error':
+        return jsonify({'error': result['message']}), 503
+
+    return jsonify(result)
+
+@app.route('/api/kernel/execute', methods=['POST'])
+@login_required
+def execute_code():
+    """Execute code in the user's kernel"""
+    data = request.get_json() or {}
+    lab_id = data.get('lab_id')
+    code = data.get('code', '')
+
+    if not lab_id:
+        return jsonify({'error': 'lab_id required'}), 400
+
+    if not code.strip():
+        return jsonify({'status': 'ok', 'outputs': [], 'execution_count': 0})
+
+    try:
+        validate_lab_id(lab_id)
+    except SandboxError as e:
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
+
+    # Limit code size (max 100KB)
+    if len(code) > 100 * 1024:
+        return jsonify({'error': 'Code too large'}), 413
+
+    result = kernel_pool.execute_code(session['user_id'], lab_id, code)
+    return jsonify(result)
+
+@app.route('/api/kernel/interrupt', methods=['POST'])
+@login_required
+def interrupt_kernel():
+    """Interrupt a running kernel"""
+    data = request.get_json() or {}
+    lab_id = data.get('lab_id')
+
+    if not lab_id:
+        return jsonify({'error': 'lab_id required'}), 400
+
+    result = kernel_pool.interrupt_kernel(session['user_id'], lab_id)
+    return jsonify(result)
+
+@app.route('/api/kernel/restart', methods=['POST'])
+@login_required
+def restart_kernel():
+    """Restart a kernel"""
+    data = request.get_json() or {}
+    lab_id = data.get('lab_id')
+
+    if not lab_id:
+        return jsonify({'error': 'lab_id required'}), 400
+
+    result = kernel_pool.restart_kernel(session['user_id'], lab_id)
+    return jsonify(result)
+
+@app.route('/api/kernel/stop', methods=['POST'])
+@login_required
+def stop_kernel():
+    """Stop a kernel"""
+    data = request.get_json() or {}
+    lab_id = data.get('lab_id')
+
+    if not lab_id:
+        return jsonify({'error': 'lab_id required'}), 400
+
+    result = kernel_pool.shutdown_kernel(session['user_id'], lab_id)
+    return jsonify(result)
+
+@app.route('/api/kernel/status')
+@login_required
+def kernel_status():
+    """Get kernel status for a lab"""
+    lab_id = request.args.get('lab_id')
+
+    if not lab_id:
+        return jsonify({'error': 'lab_id required'}), 400
+
+    result = kernel_pool.get_kernel_info(session['user_id'], lab_id)
+    return jsonify(result)
+
+# ============================================================================
+# OpenAI API Proxy (for demo)
+# ============================================================================
+
+@app.route('/api/openai/chat', methods=['POST'])
+def openai_proxy():
+    """Proxy requests to OpenAI API to avoid browser CORS/network issues"""
+    import urllib.request
+    import urllib.error
+
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    api_key = data.get('api_key')
+    if not api_key:
+        return jsonify({'error': 'No API key provided'}), 400
+
+    # Build the OpenAI request
+    openai_payload = {
+        'model': data.get('model', 'gpt-4o'),
+        'messages': data.get('messages', []),
+        'temperature': data.get('temperature', 0.7),
+        'max_tokens': data.get('max_tokens', 500)
+    }
+
+    try:
+        req = urllib.request.Request(
+            'https://api.openai.com/v1/chat/completions',
+            data=json.dumps(openai_payload).encode('utf-8'),
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_key}'
+            }
+        )
+
+        with urllib.request.urlopen(req, timeout=60) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            return jsonify(result)
+
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode('utf-8')
+        try:
+            error_json = json.loads(error_body)
+            return jsonify(error_json), e.code
+        except:
+            return jsonify({'error': {'message': error_body}}), e.code
+    except urllib.error.URLError as e:
+        return jsonify({'error': {'message': f'Network error: {str(e)}'}}), 500
+    except Exception as e:
+        return jsonify({'error': {'message': str(e)}}), 500
+
+# ============================================================================
 # Content Serving (Sandboxed)
 # ============================================================================
 
@@ -891,7 +1060,13 @@ def serve_content(filename):
 
         # Get the relative path from materials dir
         rel_path = os.path.relpath(safe_path, MATERIALS_DIR)
-        return send_from_directory(MATERIALS_DIR, rel_path)
+        response = send_from_directory(MATERIALS_DIR, rel_path)
+        # Disable caching for HTML files during development
+        if ext.lower() == '.html':
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+        return response
 
     except SandboxError as e:
         return jsonify({'error': f'Access denied: {str(e)}'}), 403

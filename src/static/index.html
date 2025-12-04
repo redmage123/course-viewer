@@ -121,17 +121,17 @@
         /* Content Area */
         .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .content-header {
-            padding: 16px 24px; background: rgba(0, 0, 0, 0.2);
+            padding: 8px 16px; background: rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex; align-items: center; justify-content: space-between;
         }
-        .content-title { font-size: 1.2rem; color: #4ecdc4; }
-        .content-actions { display: flex; gap: 12px; }
+        .content-title { font-size: 1rem; color: #4ecdc4; margin: 0; }
+        .content-actions { display: flex; gap: 8px; }
         .action-btn {
-            padding: 8px 16px; border-radius: 6px;
+            padding: 4px 10px; border-radius: 4px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             background: transparent; color: white; cursor: pointer;
-            font-size: 0.9rem; transition: all 0.2s ease;
+            font-size: 0.8rem; transition: all 0.2s ease;
         }
         .action-btn:hover { background: rgba(255, 255, 255, 0.1); }
         .action-btn.primary { background: #4ecdc4; color: #1a1a2e; border: none; }
@@ -162,10 +162,10 @@
         .cell-btn { padding: 4px 8px; border-radius: 4px; border: none; background: rgba(255,255,255,0.1); color: #aaa; cursor: pointer; font-size: 0.75rem; }
         .cell-btn:hover { background: rgba(255,255,255,0.2); color: white; }
         .cell-btn.danger:hover { background: #ff4444; }
-        .notebook-toolbar { display: flex; gap: 8px; padding: 12px 20px; background: #252525; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .toolbar-group { display: flex; gap: 4px; padding-right: 12px; border-right: 1px solid rgba(255,255,255,0.1); }
+        .notebook-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 12px; background: #252525; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .toolbar-group { display: flex; gap: 2px; padding-right: 8px; border-right: 1px solid rgba(255,255,255,0.1); }
         .toolbar-group:last-child { border-right: none; }
-        .toolbar-btn { padding: 6px 12px; border-radius: 4px; border: none; background: rgba(255,255,255,0.1); color: #ccc; cursor: pointer; font-size: 0.8rem; }
+        .toolbar-btn { padding: 3px 8px; border-radius: 3px; border: none; background: rgba(255,255,255,0.1); color: #ccc; cursor: pointer; font-size: 0.75rem; }
         .toolbar-btn:hover { background: rgba(255,255,255,0.2); color: white; }
         .toolbar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .cell-type-select { padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: #2d2d2d; color: white; font-size: 0.75rem; }
@@ -173,7 +173,7 @@
         .markdown-cell h1, .markdown-cell h2, .markdown-cell h3 { color: #4ecdc4; margin-bottom: 12px; }
         .markdown-cell p { line-height: 1.6; margin-bottom: 12px; }
         .markdown-cell code { background: rgba(78,205,196,0.2); padding: 2px 6px; border-radius: 4px; }
-        .pyodide-status { padding: 12px 20px; background: rgba(0,0,0,0.3); font-size: 0.85rem; display: flex; align-items: center; gap: 10px; }
+        .pyodide-status { padding: 4px 12px; background: rgba(0,0,0,0.3); font-size: 0.75rem; display: flex; align-items: center; gap: 8px; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; }
         .status-dot.loading { background: #feca57; animation: pulse 1s infinite; }
         .status-dot.ready { background: #00cc66; }
@@ -317,6 +317,8 @@
             const [notebook, setNotebook] = useState(null);
             const [pyodide, setPyodide] = useState(null);
             const [pyodideStatus, setPyodideStatus] = useState('loading');
+            const [kernelMode, setKernelMode] = useState('auto'); // 'auto', 'pyodide', 'server'
+            const [activeKernel, setActiveKernel] = useState(null); // 'pyodide' or 'server' - the actual kernel in use
             const [kernelInfo, setKernelInfo] = useState({ name: 'Python (Pyodide)', version: '' });
             const [cellOutputs, setCellOutputs] = useState({});
             const [runningCell, setRunningCell] = useState(null);
@@ -329,8 +331,17 @@
             const [executionCount, setExecutionCount] = useState(0);
             const cellRefs = React.useRef({});
 
-            // Load Pyodide kernel
-            const loadKernel = async () => {
+            // Check if notebook needs PyTorch or other server-only libraries
+            const needsServerKernel = (nb) => {
+                if (!nb || !nb.cells) return false;
+                const code = nb.cells.map(c => c.cell_type === 'code' ? (Array.isArray(c.source) ? c.source.join('') : c.source) : '').join('\n');
+                return code.includes('import torch') || code.includes('from torch') ||
+                       code.includes('import tensorflow') || code.includes('from tensorflow') ||
+                       code.includes('import keras') || code.includes('from keras');
+            };
+
+            // Load Pyodide kernel (browser-side)
+            const loadPyodideKernel = async () => {
                 try {
                     setPyodideStatus('loading');
                     setPyodide(null);
@@ -340,22 +351,72 @@
                     const pyodideInstance = await loadPyodide({
                         indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
                     });
-                    await pyodideInstance.loadPackage(['numpy', 'micropip']);
+                    // Load core data science packages
+                    setPyodideStatus('loading');
+                    await pyodideInstance.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn', 'micropip']);
 
                     // Get Python version
                     const version = pyodideInstance.runPython('import sys; sys.version.split()[0]');
                     setKernelInfo({
                         name: 'Python (Pyodide)',
                         version: version,
-                        packages: ['numpy', 'micropip']
+                        packages: ['numpy', 'pandas', 'matplotlib', 'scikit-learn']
                     });
 
                     setPyodide(pyodideInstance);
+                    setActiveKernel('pyodide');
                     setPyodideStatus('ready');
                 } catch (err) {
                     console.error('Pyodide load error:', err);
                     setPyodideStatus('error');
                     setKernelInfo({ name: 'Python (Pyodide)', version: 'Error', error: err.message });
+                }
+            };
+
+            // Load server-side kernel (supports PyTorch, TensorFlow, etc.)
+            const loadServerKernel = async () => {
+                try {
+                    setPyodideStatus('loading');
+                    setCellOutputs({});
+                    setExecutionCount(0);
+
+                    const response = await fetch('/api/kernel/start', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ lab_id: labId })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    setKernelInfo({
+                        name: 'Python (Server)',
+                        version: '3.x',
+                        packages: ['numpy', 'pandas', 'matplotlib', 'scikit-learn', 'torch']
+                    });
+
+                    setActiveKernel('server');
+                    setPyodideStatus('ready');
+                } catch (err) {
+                    console.error('Server kernel error:', err);
+                    setPyodideStatus('error');
+                    setKernelInfo({ name: 'Python (Server)', version: 'Error', error: err.message });
+                }
+            };
+
+            // Load the appropriate kernel based on mode and notebook content
+            const loadKernel = async (nb = notebook) => {
+                const mode = kernelMode;
+                const needsServer = needsServerKernel(nb);
+
+                if (mode === 'server' || (mode === 'auto' && needsServer)) {
+                    await loadServerKernel();
+                } else {
+                    await loadPyodideKernel();
                 }
             };
 
@@ -365,7 +426,27 @@
                     return;
                 }
                 if (!confirm('Restart kernel? All variables will be lost.')) return;
-                await loadKernel();
+
+                if (activeKernel === 'server') {
+                    // Restart server kernel
+                    setPyodideStatus('loading');
+                    try {
+                        await fetch('/api/kernel/restart', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ lab_id: labId })
+                        });
+                        setCellOutputs({});
+                        setExecutionCount(0);
+                        setPyodideStatus('ready');
+                    } catch (err) {
+                        console.error('Restart error:', err);
+                        setPyodideStatus('error');
+                    }
+                } else {
+                    await loadPyodideKernel();
+                }
             };
 
             const restartAndRunAll = async () => {
@@ -374,20 +455,37 @@
                     return;
                 }
                 if (!confirm('Restart kernel and run all cells? All variables will be reset.')) return;
-                await loadKernel();
+                await restartKernel();
                 // Wait a bit for kernel to be ready, then run all
                 setTimeout(() => runAllCells(), 500);
             };
 
+            // Switch kernel mode
+            const switchKernelMode = async (newMode) => {
+                setKernelMode(newMode);
+                // If we have a notebook loaded, reload the kernel with new mode
+                if (notebook) {
+                    if (newMode === 'server') {
+                        await loadServerKernel();
+                    } else if (newMode === 'pyodide') {
+                        await loadPyodideKernel();
+                    } else {
+                        // auto mode - determine based on notebook content
+                        await loadKernel(notebook);
+                    }
+                }
+            };
+
             useEffect(() => {
-                // Load notebook
+                // Load notebook first, then determine kernel
                 fetch(`/api/lab/${labId}/notebook`, { credentials: 'include' })
                     .then(res => res.json())
-                    .then(data => setNotebook(data))
+                    .then(data => {
+                        setNotebook(data);
+                        // Auto-detect kernel type needed
+                        loadKernel(data);
+                    })
                     .catch(err => console.error('Error loading notebook:', err));
-
-                // Load Pyodide kernel
-                loadKernel();
             }, [labId]);
 
             // Keyboard shortcuts - Jupyter style
@@ -670,7 +768,7 @@
             };
 
             const runAllCells = async () => {
-                if (!pyodide || runningCell !== null || !notebook) return;
+                if (pyodideStatus !== 'ready' || runningCell !== null || !notebook) return;
 
                 for (let i = 0; i < notebook.cells.length; i++) {
                     const cell = notebook.cells[i];
@@ -683,6 +781,35 @@
                 }
             };
 
+            // Render cell output (handles both Pyodide and server kernel outputs)
+            const renderCellOutput = (cellOutput) => {
+                if (!cellOutput) return null;
+
+                // Server kernel outputs (array of outputs)
+                if (cellOutput.outputs && Array.isArray(cellOutput.outputs)) {
+                    return cellOutput.outputs.map((output, i) => {
+                        if (output.type === 'stream') {
+                            return <pre key={i} style={{margin: 0}}>{output.text}</pre>;
+                        } else if (output.type === 'execute_result' || output.type === 'display') {
+                            return <pre key={i} style={{margin: 0}}>{output.text}</pre>;
+                        } else if (output.type === 'image') {
+                            return <img key={i} src={`data:image/png;base64,${output.data}`} alt="Output" style={{maxWidth: '100%'}} />;
+                        } else if (output.type === 'error') {
+                            return (
+                                <pre key={i} style={{margin: 0, color: '#ff6b6b'}}>
+                                    {output.ename}: {output.evalue}
+                                    {output.traceback && '\n' + output.traceback.replace(/\x1b\[[0-9;]*m/g, '')}
+                                </pre>
+                            );
+                        }
+                        return null;
+                    });
+                }
+
+                // Pyodide output (simple string)
+                return <pre style={{margin: 0}}>{cellOutput.output}</pre>;
+            };
+
             const runCellAndAdvance = async (cellIndex) => {
                 await runCell(cellIndex);
                 // Move to next cell after running
@@ -692,50 +819,154 @@
             };
 
             const runCell = async (cellIndex) => {
-                if (!pyodide || runningCell !== null || !notebook) return;
+                if (!notebook) return;
                 const cell = notebook.cells[cellIndex];
-                if (cell.cell_type !== 'code') return;
+
+                // For markdown cells, just exit edit mode to render
+                if (cell.cell_type === 'markdown') {
+                    setEditMode(false);
+                    if (document.activeElement) document.activeElement.blur();
+                    return;
+                }
+
+                if (pyodideStatus !== 'ready' || runningCell !== null) return;
 
                 const code = getCellSource(cell);
                 setRunningCell(cellIndex);
-                try {
-                    pyodide.runPython(`
-                        import sys
-                        from io import StringIO
-                        sys.stdout = StringIO()
-                    `);
-                    const result = await pyodide.runPythonAsync(code);
-                    const stdout = pyodide.runPython('sys.stdout.getvalue()');
-                    setCellOutputs(prev => ({
-                        ...prev,
-                        [cellIndex]: { output: stdout || (result !== undefined ? String(result) : ''), error: false }
-                    }));
-                    fetch(`/api/lab/${labId}/progress`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify({ cell_index: cellIndex, output: stdout })
-                    });
-                } catch (err) {
-                    setCellOutputs(prev => ({
-                        ...prev,
-                        [cellIndex]: { output: err.message, error: true }
-                    }));
+
+                if (activeKernel === 'server') {
+                    // Execute on server kernel
+                    try {
+                        const response = await fetch('/api/kernel/execute', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ lab_id: labId, code: code })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.error && !data.outputs) {
+                            setCellOutputs(prev => ({
+                                ...prev,
+                                [cellIndex]: { output: data.error, error: true, outputs: [] }
+                            }));
+                        } else {
+                            // Process outputs (may include images)
+                            setCellOutputs(prev => ({
+                                ...prev,
+                                [cellIndex]: {
+                                    outputs: data.outputs || [],
+                                    error: data.status === 'error',
+                                    execution_count: data.execution_count
+                                }
+                            }));
+                        }
+
+                        // Save progress
+                        const textOutput = (data.outputs || [])
+                            .filter(o => o.type === 'stream' || o.type === 'execute_result')
+                            .map(o => o.text || o.output || '')
+                            .join('\n');
+
+                        fetch(`/api/lab/${labId}/progress`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ cell_index: cellIndex, output: textOutput })
+                        });
+                    } catch (err) {
+                        setCellOutputs(prev => ({
+                            ...prev,
+                            [cellIndex]: { output: err.message, error: true, outputs: [] }
+                        }));
+                    }
+                } else {
+                    // Execute in Pyodide (browser)
+                    if (!pyodide) {
+                        setRunningCell(null);
+                        return;
+                    }
+                    try {
+                        pyodide.runPython(`
+                            import sys
+                            from io import StringIO
+                            sys.stdout = StringIO()
+                        `);
+                        const result = await pyodide.runPythonAsync(code);
+                        const stdout = pyodide.runPython('sys.stdout.getvalue()');
+                        setCellOutputs(prev => ({
+                            ...prev,
+                            [cellIndex]: { output: stdout || (result !== undefined ? String(result) : ''), error: false }
+                        }));
+                        fetch(`/api/lab/${labId}/progress`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ cell_index: cellIndex, output: stdout })
+                        });
+                    } catch (err) {
+                        setCellOutputs(prev => ({
+                            ...prev,
+                            [cellIndex]: { output: err.message, error: true }
+                        }));
+                    }
                 }
                 setRunningCell(null);
             };
 
             const renderMarkdown = (source) => {
-                // Simple markdown rendering
-                let html = source.join('\n')
-                    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-                    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-                    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                    .replace(/`([^`]+)`/g, '<code>$1</code>')
-                    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\n\n/g, '</p><p>')
-                    .replace(/\n/g, '<br/>');
-                return '<p>' + html + '</p>';
+                // Enhanced markdown rendering
+                const text = Array.isArray(source) ? source.join('') : source;
+                let html = text;
+
+                // Code blocks (``` ... ```)
+                html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+                    return `<pre style="background:#1e1e1e;padding:12px;border-radius:4px;overflow-x:auto;margin:12px 0;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+                });
+
+                // Tables
+                html = html.replace(/^\|(.+)\|\s*\n\|[-:\s|]+\|\s*\n((?:\|.+\|\s*\n?)+)/gm, (match, header, rows) => {
+                    const headers = header.split('|').map(h => h.trim()).filter(h => h);
+                    const headerHtml = headers.map(h => `<th style="border:1px solid #555;padding:8px;background:#2a2a2a;">${h}</th>`).join('');
+                    const rowLines = rows.trim().split('\n');
+                    const rowsHtml = rowLines.map(row => {
+                        const cells = row.split('|').map(c => c.trim()).filter(c => c);
+                        return `<tr>${cells.map(c => `<td style="border:1px solid #555;padding:8px;">${c}</td>`).join('')}</tr>`;
+                    }).join('');
+                    return `<table style="border-collapse:collapse;width:100%;margin:12px 0;"><thead><tr>${headerHtml}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
+                });
+
+                // Headers
+                html = html.replace(/^#### (.*$)/gm, '<h4 style="color:#4ecdc4;margin:16px 0 8px;">$1</h4>');
+                html = html.replace(/^### (.*$)/gm, '<h3 style="color:#4ecdc4;margin:16px 0 8px;">$1</h3>');
+                html = html.replace(/^## (.*$)/gm, '<h2 style="color:#4ecdc4;margin:20px 0 12px;">$1</h2>');
+                html = html.replace(/^# (.*$)/gm, '<h1 style="color:#4ecdc4;margin:24px 0 16px;">$1</h1>');
+
+                // Horizontal rule
+                html = html.replace(/^---+$/gm, '<hr style="border:none;border-top:1px solid #555;margin:20px 0;">');
+
+                // Bold and italic
+                html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+                // Inline code
+                html = html.replace(/`([^`]+)`/g, '<code style="background:rgba(78,205,196,0.2);padding:2px 6px;border-radius:4px;">$1</code>');
+
+                // Lists (unordered)
+                html = html.replace(/^[\-\*] (.+)$/gm, '<li style="margin:4px 0;">$1</li>');
+                html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul style="margin:12px 0;padding-left:24px;">$&</ul>');
+
+                // Numbered lists
+                html = html.replace(/^\d+\. (.+)$/gm, '<li style="margin:4px 0;">$1</li>');
+
+                // Paragraphs (double newlines)
+                html = html.replace(/\n\n+/g, '</p><p style="margin:12px 0;line-height:1.6;">');
+
+                // Single newlines within paragraphs
+                html = html.replace(/\n/g, '<br/>');
+
+                return `<div style="color:#e0e0e0;font-family:'Segoe UI',sans-serif;font-size:0.95rem;"><p style="margin:12px 0;line-height:1.6;">${html}</p></div>`;
             };
 
             if (!notebook) {
@@ -803,6 +1034,25 @@
                                 Esc=cmd | Enter=edit | Shift+Enter=run+next | Ctrl+Enter=run | Ctrl+S=save<br/>
                                 a=add above | b=add below | dd=delete | x=cut | c=copy | v=paste | m=markdown | y=code
                             </span>
+                            <select
+                                value={kernelMode}
+                                onChange={(e) => switchKernelMode(e.target.value)}
+                                disabled={pyodideStatus === 'loading' || runningCell !== null}
+                                style={{
+                                    padding: '4px 8px',
+                                    fontSize: '0.7rem',
+                                    background: '#333',
+                                    color: '#fff',
+                                    border: '1px solid #555',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer'
+                                }}
+                                title="Kernel Mode: Auto detects PyTorch/TensorFlow and uses server. Pyodide runs in browser. Server runs on backend."
+                            >
+                                <option value="auto">Auto</option>
+                                <option value="pyodide">Pyodide (Browser)</option>
+                                <option value="server">Server (PyTorch)</option>
+                            </select>
                             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px'}}>
                                 <span style={{
                                     color: pyodideStatus === 'ready' ? '#4ecdc4' : (pyodideStatus === 'error' ? '#ff6b6b' : '#feca57'),
@@ -815,7 +1065,7 @@
                                 </span>
                                 {pyodideStatus === 'ready' && kernelInfo.version && (
                                     <span style={{color: '#888', fontSize: '0.65rem'}}>
-                                        Python {kernelInfo.version}
+                                        Python {kernelInfo.version} {activeKernel === 'server' && '+ PyTorch'}
                                     </span>
                                 )}
                             </div>
@@ -853,37 +1103,68 @@
                                                 {runningCell === index ? '...' : '▶ Run'}
                                             </button>
                                         )}
+                                        {cell.cell_type === 'markdown' && (
+                                            <button
+                                                className="cell-run-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (selectedCell === index && editMode) {
+                                                        setEditMode(false);
+                                                        if (document.activeElement) document.activeElement.blur();
+                                                    } else {
+                                                        setSelectedCell(index);
+                                                        setEditMode(true);
+                                                        setTimeout(() => cellRefs.current[index]?.focus(), 0);
+                                                    }
+                                                }}
+                                                style={{ background: selectedCell === index && editMode ? '#4ecdc4' : '#666' }}
+                                            >
+                                                {selectedCell === index && editMode ? '✓ Render' : '✎ Edit'}
+                                            </button>
+                                        )}
                                         <button className="cell-btn" onClick={(e) => { e.stopPropagation(); addCell(index + 1, 'code'); setSelectedCell(index + 1); }} title="Add cell below (B)">+</button>
                                         <button className="cell-btn danger" onClick={(e) => { e.stopPropagation(); deleteCell(index); }} title="Delete (DD)" disabled={notebook.cells.length <= 1}>×</button>
                                     </div>
                                 </div>
                                 <div className="cell-content">
-                                    <textarea
-                                        ref={(el) => cellRefs.current[index] = el}
-                                        value={getCellSource(cell)}
-                                        onChange={(e) => setCellSource(index, e.target.value)}
-                                        onFocus={() => { setSelectedCell(index); setEditMode(true); }}
-                                        onBlur={() => { /* Keep edit mode until Esc */ }}
-                                        spellCheck="false"
-                                        placeholder={cell.cell_type === 'code' ? '# Enter code...' : '## Enter markdown...'}
-                                        style={{
-                                            width: '100%',
-                                            minHeight: cell.cell_type === 'code' ? '80px' : '60px',
-                                            background: cell.cell_type === 'code' ? '#1e1e1e' : 'rgba(255,255,255,0.02)',
-                                            color: '#e0e0e0',
-                                            border: 'none',
-                                            padding: '12px',
-                                            fontFamily: cell.cell_type === 'code' ? "'Courier New', monospace" : "'Segoe UI', sans-serif",
-                                            fontSize: '0.9rem',
-                                            resize: 'vertical',
-                                            lineHeight: '1.5',
-                                            outline: 'none'
-                                        }}
-                                    />
+                                    {cell.cell_type === 'markdown' && !(selectedCell === index && editMode) ? (
+                                        <div
+                                            className="markdown-rendered"
+                                            style={{
+                                                padding: '12px',
+                                                minHeight: '50px',
+                                                cursor: 'pointer'
+                                            }}
+                                            dangerouslySetInnerHTML={{ __html: renderMarkdown(cell.source) }}
+                                        />
+                                    ) : (
+                                        <textarea
+                                            ref={(el) => cellRefs.current[index] = el}
+                                            value={getCellSource(cell)}
+                                            onChange={(e) => setCellSource(index, e.target.value)}
+                                            onFocus={() => { setSelectedCell(index); setEditMode(true); }}
+                                            onBlur={() => { /* Keep edit mode until Esc */ }}
+                                            spellCheck="false"
+                                            placeholder={cell.cell_type === 'code' ? '# Enter code...' : '## Enter markdown...'}
+                                            style={{
+                                                width: '100%',
+                                                minHeight: cell.cell_type === 'code' ? '150px' : '100px',
+                                                background: cell.cell_type === 'code' ? '#1e1e1e' : 'rgba(255,255,255,0.02)',
+                                                color: '#e0e0e0',
+                                                border: 'none',
+                                                padding: '12px',
+                                                fontFamily: cell.cell_type === 'code' ? "'Courier New', monospace" : "'Segoe UI', sans-serif",
+                                                fontSize: '0.9rem',
+                                                resize: 'vertical',
+                                                lineHeight: '1.5',
+                                                outline: 'none'
+                                            }}
+                                        />
+                                    )}
                                 </div>
                                 {cell.cell_type === 'code' && cellOutputs[index] && (
                                     <div className={`cell-output ${cellOutputs[index].error ? 'error' : ''}`}>
-                                        <pre>{cellOutputs[index].output}</pre>
+                                        {renderCellOutput(cellOutputs[index])}
                                     </div>
                                 )}
                             </div>
@@ -908,6 +1189,81 @@
             const [selectedItem, setSelectedItem] = useState(null);
             const [runningLab, setRunningLab] = useState(null);
             const [loading, setLoading] = useState(true);
+            const [urlRestored, setUrlRestored] = useState(false);
+
+            // Parse URL and restore state on mount
+            const restoreFromUrl = (coursesData) => {
+                const path = window.location.pathname;
+                const match = path.match(/^\/course\/([^\/]+)(?:\/(lab|item)\/([^\/]+))?/);
+                if (match) {
+                    const [, courseId, type, itemId] = match;
+                    const course = coursesData.find(c => c.id === courseId);
+                    if (course) {
+                        setSelectedCourse(course);
+                        if (type === 'lab' && itemId) {
+                            setRunningLab(itemId);
+                        } else if (type === 'item' && itemId) {
+                            // Item will be set after materials load
+                            window._pendingItemId = itemId;
+                        }
+                    }
+                }
+                setUrlRestored(true);
+            };
+
+            // Sync state to URL
+            useEffect(() => {
+                if (!urlRestored) return;
+                let path = '/';
+                if (selectedCourse) {
+                    path = `/course/${selectedCourse.id}`;
+                    if (runningLab) {
+                        path += `/lab/${runningLab}`;
+                    } else if (selectedItem) {
+                        path += `/item/${selectedItem.id}`;
+                    }
+                }
+                if (window.location.pathname !== path) {
+                    window.history.pushState({ course: selectedCourse?.id, lab: runningLab, item: selectedItem?.id }, '', path);
+                }
+            }, [selectedCourse, selectedItem, runningLab, urlRestored]);
+
+            // Handle browser back/forward
+            useEffect(() => {
+                const handlePopState = () => {
+                    const path = window.location.pathname;
+                    const match = path.match(/^\/course\/([^\/]+)(?:\/(lab|item)\/([^\/]+))?/);
+                    if (match) {
+                        const [, courseId, type, itemId] = match;
+                        const course = courses.find(c => c.id === courseId);
+                        if (course && course.id !== selectedCourse?.id) {
+                            setSelectedCourse(course);
+                        }
+                        if (type === 'lab') {
+                            setRunningLab(itemId);
+                            setSelectedItem(null);
+                        } else if (type === 'item') {
+                            setRunningLab(null);
+                            // Find item in materials
+                            if (materials) {
+                                for (const section of Object.values(materials)) {
+                                    const item = section.items.find(i => i.id === itemId);
+                                    if (item) { setSelectedItem(item); break; }
+                                }
+                            }
+                        } else {
+                            setRunningLab(null);
+                            setSelectedItem(null);
+                        }
+                    } else {
+                        setSelectedCourse(null);
+                        setSelectedItem(null);
+                        setRunningLab(null);
+                    }
+                };
+                window.addEventListener('popstate', handlePopState);
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, [courses, materials, selectedCourse]);
 
             // Check auth status on mount
             useEffect(() => {
@@ -920,12 +1276,16 @@
                     .catch(() => setAuthChecked(true));
             }, []);
 
-            // Load courses
+            // Load courses and restore URL state
             useEffect(() => {
                 fetch('/api/courses')
                     .then(res => res.json())
-                    .then(data => { setCourses(data); setLoading(false); })
-                    .catch(err => { console.error('Error:', err); setLoading(false); });
+                    .then(data => {
+                        setCourses(data);
+                        restoreFromUrl(data);
+                        setLoading(false);
+                    })
+                    .catch(err => { console.error('Error:', err); setUrlRestored(true); setLoading(false); });
             }, []);
 
             // Load materials when course changes
@@ -934,7 +1294,20 @@
                     setLoading(true);
                     fetch(`/api/course/${selectedCourse.id}/materials`)
                         .then(res => res.json())
-                        .then(data => { setMaterials(data); setSelectedItem(null); setRunningLab(null); setLoading(false); })
+                        .then(data => {
+                            setMaterials(data);
+                            // Check for pending item from URL restoration
+                            if (window._pendingItemId) {
+                                for (const section of Object.values(data)) {
+                                    const item = section.items.find(i => i.id === window._pendingItemId);
+                                    if (item) { setSelectedItem(item); break; }
+                                }
+                                delete window._pendingItemId;
+                            } else if (!runningLab) {
+                                setSelectedItem(null);
+                            }
+                            setLoading(false);
+                        })
                         .catch(err => { console.error('Error:', err); setLoading(false); });
                 }
             }, [selectedCourse]);

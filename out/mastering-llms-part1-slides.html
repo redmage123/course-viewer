@@ -7430,6 +7430,1032 @@ word_vectors = embedding(word_indices)  # Shape: (3, 256)</code>
     </ul>
 </div>
 
+<!-- Slide 34b: Computing Q, K, V Matrices -->
+<div class="slide" id="slide52b">
+    <span class="slide-number">52b</span>
+    <h2>Computing Query, Key, Value</h2>
+    <p>How inputs become Q, K, V matrices</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1200px;">
+            <svg viewBox="0 0 900 380" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Input Embeddings -->
+                <g>
+                    <text x="100" y="25" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Input Embeddings (X)</text>
+                    <text x="100" y="45" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">Each word → vector</text>
+
+                    <!-- Token boxes -->
+                    <rect x="20" y="60" width="60" height="120" rx="6" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2">
+                        <animate attributeName="opacity" values="0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.08;1"/>
+                    </rect>
+                    <text x="50" y="100" fill="white" font-size="10" text-anchor="middle">"The"</text>
+                    <text x="50" y="115" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">x₁</text>
+                    <text x="50" y="165" fill="rgba(255,255,255,0.4)" font-size="7" text-anchor="middle">[0.2, -0.5</text>
+                    <text x="50" y="175" fill="rgba(255,255,255,0.4)" font-size="7" text-anchor="middle">0.8, ...]</text>
+
+                    <rect x="85" y="60" width="60" height="120" rx="6" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="2">
+                        <animate attributeName="opacity" values="0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.05;0.12;1"/>
+                    </rect>
+                    <text x="115" y="100" fill="white" font-size="10" text-anchor="middle">"cat"</text>
+                    <text x="115" y="115" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">x₂</text>
+
+                    <rect x="150" y="60" width="60" height="120" rx="6" fill="rgba(255,107,107,0.5)" stroke="#ff6b6b" stroke-width="2">
+                        <animate attributeName="opacity" values="0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.08;0.12;0.18;1"/>
+                    </rect>
+                    <text x="180" y="100" fill="white" font-size="10" text-anchor="middle">"sat"</text>
+                    <text x="180" y="115" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">x₃</text>
+                </g>
+
+                <!-- Arrows to weight matrices -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.15;0.18;0.2;0.25;1"/>
+                    <line x1="215" y1="100" x2="260" y2="70" stroke="#4a90d9" stroke-width="2"/>
+                    <line x1="215" y1="120" x2="260" y2="140" stroke="#51cf66" stroke-width="2"/>
+                    <line x1="215" y1="140" x2="260" y2="210" stroke="#ff6b6b" stroke-width="2"/>
+                </g>
+
+                <!-- Weight Matrices -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.2;0.22;0.24;0.26;0.32;1"/>
+
+                    <!-- Wq -->
+                    <rect x="265" y="40" width="80" height="60" rx="6" fill="rgba(74,144,217,0.4)" stroke="#4a90d9" stroke-width="3">
+                        <animate attributeName="fill" values="rgba(74,144,217,0.4);rgba(74,144,217,0.7);rgba(74,144,217,0.4)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="305" y="65" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Wq</text>
+                    <text x="305" y="82" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">d × d_k</text>
+
+                    <!-- Wk -->
+                    <rect x="265" y="110" width="80" height="60" rx="6" fill="rgba(81,207,102,0.4)" stroke="#51cf66" stroke-width="3">
+                        <animate attributeName="fill" values="rgba(81,207,102,0.4);rgba(81,207,102,0.7);rgba(81,207,102,0.4)" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="305" y="135" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Wk</text>
+                    <text x="305" y="152" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">d × d_k</text>
+
+                    <!-- Wv -->
+                    <rect x="265" y="180" width="80" height="60" rx="6" fill="rgba(255,107,107,0.4)" stroke="#ff6b6b" stroke-width="3">
+                        <animate attributeName="fill" values="rgba(255,107,107,0.4);rgba(255,107,107,0.7);rgba(255,107,107,0.4)" dur="2s" begin="0.6s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="305" y="205" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Wv</text>
+                    <text x="305" y="222" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">d × d_v</text>
+
+                    <text x="305" y="260" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle">Learned parameters!</text>
+                </g>
+
+                <!-- Multiplication signs and arrows -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.3;0.32;0.34;0.36;0.38;0.42;1"/>
+                    <text x="370" y="75" fill="white" font-size="16" text-anchor="middle">×</text>
+                    <text x="370" y="145" fill="white" font-size="16" text-anchor="middle">×</text>
+                    <text x="370" y="215" fill="white" font-size="16" text-anchor="middle">×</text>
+                    <line x1="385" y1="70" x2="420" y2="70" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrowBlueQKV)"/>
+                    <line x1="385" y1="140" x2="420" y2="140" stroke="#51cf66" stroke-width="2" marker-end="url(#arrowGreenQKV)"/>
+                    <line x1="385" y1="210" x2="420" y2="210" stroke="#ff6b6b" stroke-width="2" marker-end="url(#arrowRedQKV)"/>
+                </g>
+
+                <!-- Q, K, V matrices -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.38;0.4;0.42;0.44;0.46;0.48;0.55;1"/>
+
+                    <!-- Q matrix -->
+                    <rect x="430" y="40" width="120" height="60" rx="6" fill="rgba(74,144,217,0.6)" stroke="#4a90d9" stroke-width="3">
+                        <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="490" y="65" fill="white" font-size="16" text-anchor="middle" font-weight="bold">Q</text>
+                    <text x="490" y="82" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">= X · Wq</text>
+                    <text x="490" y="95" fill="#4a90d9" font-size="8" text-anchor="middle">"What am I looking for?"</text>
+
+                    <!-- K matrix -->
+                    <rect x="430" y="110" width="120" height="60" rx="6" fill="rgba(81,207,102,0.6)" stroke="#51cf66" stroke-width="3">
+                        <animate attributeName="stroke-width" values="3;5;3" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="490" y="135" fill="white" font-size="16" text-anchor="middle" font-weight="bold">K</text>
+                    <text x="490" y="152" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">= X · Wk</text>
+                    <text x="490" y="165" fill="#51cf66" font-size="8" text-anchor="middle">"What do I contain?"</text>
+
+                    <!-- V matrix -->
+                    <rect x="430" y="180" width="120" height="60" rx="6" fill="rgba(255,107,107,0.6)" stroke="#ff6b6b" stroke-width="3">
+                        <animate attributeName="stroke-width" values="3;5;3" dur="2s" begin="0.6s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="490" y="205" fill="white" font-size="16" text-anchor="middle" font-weight="bold">V</text>
+                    <text x="490" y="222" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">= X · Wv</text>
+                    <text x="490" y="235" fill="#ff6b6b" font-size="8" text-anchor="middle">"What info do I provide?"</text>
+                </g>
+
+                <!-- Arrow to attention -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.5;0.52;0.54;0.56;0.58;0.6;0.62;0.68;1"/>
+                    <line x1="555" y1="140" x2="600" y2="140" stroke="#ffd700" stroke-width="3" marker-end="url(#arrowYellowQKV)"/>
+                </g>
+
+                <!-- Attention computation -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.58;0.6;0.62;0.64;0.66;0.68;0.7;0.72;0.78;1"/>
+
+                    <rect x="610" y="60" width="270" height="160" rx="8" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="2"/>
+                    <text x="745" y="90" fill="#ffd700" font-size="14" text-anchor="middle" font-weight="bold">Attention Computation</text>
+
+                    <!-- Step 1 -->
+                    <text x="630" y="120" fill="white" font-size="11" text-anchor="start">1. Scores = Q × K^T</text>
+                    <text x="650" y="135" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="start">(how much each word attends to others)</text>
+
+                    <!-- Step 2 -->
+                    <text x="630" y="160" fill="white" font-size="11" text-anchor="start">2. Scale by √d_k</text>
+                    <text x="650" y="175" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="start">(prevents vanishing gradients)</text>
+
+                    <!-- Step 3 -->
+                    <text x="630" y="200" fill="white" font-size="11" text-anchor="start">3. Softmax → Weights (0-1)</text>
+                    <text x="650" y="215" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="start">(probabilities sum to 1)</text>
+                </g>
+
+                <!-- Final output -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.72;0.74;0.76;0.78;0.8;0.82;0.84;0.86;0.88;0.92;1"/>
+
+                    <rect x="610" y="235" width="270" height="55" rx="8" fill="rgba(78,205,196,0.4)" stroke="#4ecdc4" stroke-width="3">
+                        <animate attributeName="fill" values="rgba(78,205,196,0.4);rgba(78,205,196,0.6);rgba(78,205,196,0.4)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="745" y="260" fill="white" font-size="12" text-anchor="middle" font-weight="bold">Output = Weights × V</text>
+                    <text x="745" y="280" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">Weighted combination of values</text>
+                </g>
+
+                <!-- Key dimensions box -->
+                <rect x="20" y="285" width="200" height="85" rx="6" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <text x="120" y="305" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Key Dimensions</text>
+                <text x="30" y="325" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">• d = embedding dim (512, 768, ...)</text>
+                <text x="30" y="340" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">• d_k = key/query dim (64 typical)</text>
+                <text x="30" y="355" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">• d_v = value dim (64 typical)</text>
+                <text x="30" y="370" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">• n = sequence length</text>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arrowBlueQKV" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#4a90d9"/>
+                    </marker>
+                    <marker id="arrowGreenQKV" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#51cf66"/>
+                    </marker>
+                    <marker id="arrowRedQKV" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#ff6b6b"/>
+                    </marker>
+                    <marker id="arrowYellowQKV" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#ffd700"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 34c: Attention Score Computation -->
+<div class="slide" id="slide52c">
+    <span class="slide-number">52c</span>
+    <h2>Attention Scores in Action</h2>
+    <p>Visualizing how attention weights are computed</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1200px;">
+            <svg viewBox="0 0 900 360" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Query vectors -->
+                <g>
+                    <text x="80" y="25" fill="#4a90d9" font-size="13" text-anchor="middle" font-weight="bold">Query (Q)</text>
+                    <text x="80" y="42" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle">"it" is asking: what should I attend to?</text>
+
+                    <rect x="30" y="55" width="100" height="50" rx="6" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(74,144,217,0.5);rgba(74,144,217,0.8);rgba(74,144,217,0.5)" dur="3s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="80" y="80" fill="white" font-size="12" text-anchor="middle" font-weight="bold">q_"it"</text>
+                    <text x="80" y="95" fill="rgba(255,255,255,0.6)" font-size="8" text-anchor="middle">[0.3, -0.2, 0.8, ...]</text>
+                </g>
+
+                <!-- Multiply symbol -->
+                <text x="160" y="85" fill="white" font-size="24" text-anchor="middle">×</text>
+
+                <!-- Key vectors -->
+                <g>
+                    <text x="320" y="25" fill="#51cf66" font-size="13" text-anchor="middle" font-weight="bold">Keys (K^T)</text>
+                    <text x="320" y="42" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle">Each word offers: "here's what I contain"</text>
+
+                    <rect x="190" y="55" width="65" height="50" rx="4" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="222" y="80" fill="white" font-size="9" text-anchor="middle">k_"The"</text>
+
+                    <rect x="260" y="55" width="65" height="50" rx="4" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(81,207,102,0.5);rgba(81,207,102,0.9);rgba(81,207,102,0.5)" dur="3s" begin="1s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="292" y="80" fill="white" font-size="9" text-anchor="middle" font-weight="bold">k_"cat"</text>
+
+                    <rect x="330" y="55" width="65" height="50" rx="4" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="362" y="80" fill="white" font-size="9" text-anchor="middle">k_"sat"</text>
+
+                    <rect x="400" y="55" width="65" height="50" rx="4" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="432" y="80" fill="white" font-size="9" text-anchor="middle">k_"on"</text>
+                </g>
+
+                <!-- Equals -->
+                <text x="495" y="85" fill="white" font-size="24" text-anchor="middle">=</text>
+
+                <!-- Raw scores -->
+                <g>
+                    <text x="610" y="25" fill="#ffd700" font-size="13" text-anchor="middle" font-weight="bold">Raw Scores</text>
+                    <text x="610" y="42" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle">Dot product = similarity</text>
+
+                    <rect x="520" y="55" width="45" height="50" rx="4" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="1"/>
+                    <text x="542" y="85" fill="white" font-size="10" text-anchor="middle">0.5</text>
+
+                    <rect x="570" y="55" width="45" height="50" rx="4" fill="rgba(255,215,0,0.6)" stroke="#ffd700" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(255,215,0,0.6);rgba(255,215,0,1);rgba(255,215,0,0.6)" dur="3s" begin="1s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="592" y="85" fill="white" font-size="10" text-anchor="middle" font-weight="bold">2.1</text>
+
+                    <rect x="620" y="55" width="45" height="50" rx="4" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="1"/>
+                    <text x="642" y="85" fill="white" font-size="10" text-anchor="middle">0.3</text>
+
+                    <rect x="670" y="55" width="45" height="50" rx="4" fill="rgba(255,215,0,0.1)" stroke="#ffd700" stroke-width="1"/>
+                    <text x="692" y="85" fill="white" font-size="10" text-anchor="middle">0.1</text>
+                </g>
+
+                <!-- Division by sqrt(d_k) -->
+                <g>
+                    <line x1="450" y1="130" x2="450" y2="160" stroke="#ffd700" stroke-width="2" marker-end="url(#arrowDownY)"/>
+                    <rect x="350" y="165" width="200" height="35" rx="6" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="1"/>
+                    <text x="450" y="188" fill="#ffd700" font-size="11" text-anchor="middle">÷ √d_k (e.g., √64 = 8)</text>
+                </g>
+
+                <!-- Softmax -->
+                <g>
+                    <line x1="450" y1="200" x2="450" y2="230" stroke="#e040fb" stroke-width="2" marker-end="url(#arrowDownP)"/>
+                    <rect x="350" y="235" width="200" height="35" rx="6" fill="rgba(224,64,251,0.2)" stroke="#e040fb" stroke-width="2"/>
+                    <text x="450" y="258" fill="#e040fb" font-size="11" text-anchor="middle" font-weight="bold">Softmax (normalize to 0-1)</text>
+                </g>
+
+                <!-- Attention weights -->
+                <g>
+                    <line x1="450" y1="270" x2="450" y2="295" stroke="#4ecdc4" stroke-width="2" marker-end="url(#arrowDownT)"/>
+                    <text x="450" y="315" fill="#4ecdc4" font-size="13" text-anchor="middle" font-weight="bold">Attention Weights</text>
+
+                    <!-- Weight bars -->
+                    <rect x="280" y="325" width="30" height="25" rx="3" fill="rgba(78,205,196,0.3)" stroke="#4ecdc4" stroke-width="1"/>
+                    <text x="295" y="342" fill="white" font-size="9" text-anchor="middle">0.12</text>
+                    <text x="295" y="360" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">"The"</text>
+
+                    <rect x="360" y="325" width="80" height="25" rx="3" fill="rgba(78,205,196,0.8)" stroke="#4ecdc4" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(78,205,196,0.8);rgba(78,205,196,1);rgba(78,205,196,0.8)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="400" y="342" fill="white" font-size="9" text-anchor="middle" font-weight="bold">0.71</text>
+                    <text x="400" y="360" fill="rgba(255,255,255,0.8)" font-size="8" text-anchor="middle" font-weight="bold">"cat" ✓</text>
+
+                    <rect x="490" y="325" width="25" height="25" rx="3" fill="rgba(78,205,196,0.2)" stroke="#4ecdc4" stroke-width="1"/>
+                    <text x="502" y="342" fill="white" font-size="9" text-anchor="middle">0.10</text>
+                    <text x="502" y="360" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">"sat"</text>
+
+                    <rect x="565" y="325" width="20" height="25" rx="3" fill="rgba(78,205,196,0.15)" stroke="#4ecdc4" stroke-width="1"/>
+                    <text x="575" y="342" fill="white" font-size="9" text-anchor="middle">0.07</text>
+                    <text x="575" y="360" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">"on"</text>
+                </g>
+
+                <!-- Explanation box -->
+                <rect x="700" y="130" width="180" height="180" rx="8" fill="rgba(78,205,196,0.1)" stroke="#4ecdc4" stroke-width="2"/>
+                <text x="790" y="155" fill="#4ecdc4" font-size="12" text-anchor="middle" font-weight="bold">Result</text>
+                <text x="710" y="180" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">"it" attends mostly</text>
+                <text x="710" y="195" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">to "cat" (71%)</text>
+                <text x="710" y="220" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="start">The model learns:</text>
+                <text x="710" y="235" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="start">"it" refers to "cat"!</text>
+                <text x="710" y="260" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="start">This is how attention</text>
+                <text x="710" y="275" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="start">resolves pronouns</text>
+                <text x="710" y="290" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="start">and dependencies.</text>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arrowDownY" markerWidth="8" markerHeight="8" refX="3" refY="7" orient="auto">
+                        <path d="M0,0 L6,0 L3,8 z" fill="#ffd700"/>
+                    </marker>
+                    <marker id="arrowDownP" markerWidth="8" markerHeight="8" refX="3" refY="7" orient="auto">
+                        <path d="M0,0 L6,0 L3,8 z" fill="#e040fb"/>
+                    </marker>
+                    <marker id="arrowDownT" markerWidth="8" markerHeight="8" refX="3" refY="7" orient="auto">
+                        <path d="M0,0 L6,0 L3,8 z" fill="#4ecdc4"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 34d: Multi-Head Attention -->
+<div class="slide" id="slide52d">
+    <span class="slide-number">52d</span>
+    <h2>Multi-Head Attention</h2>
+    <p>Multiple attention patterns in parallel</p>
+    <div class="two-column">
+        <div class="card" style="text-align: center;">
+            <svg viewBox="0 0 400 280" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Input -->
+                <rect x="150" y="10" width="100" height="40" rx="6" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2"/>
+                <text x="200" y="35" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Input X</text>
+
+                <!-- Split arrows -->
+                <line x1="170" y1="50" x2="70" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+                <line x1="185" y1="50" x2="145" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+                <line x1="200" y1="50" x2="200" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+                <line x1="215" y1="50" x2="255" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+                <line x1="230" y1="50" x2="330" y2="80" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+
+                <!-- Attention heads -->
+                <g>
+                    <rect x="30" y="85" width="70" height="60" rx="6" fill="rgba(255,107,107,0.4)" stroke="#ff6b6b" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(255,107,107,0.4);rgba(255,107,107,0.7);rgba(255,107,107,0.4)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="65" y="110" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Head 1</text>
+                    <text x="65" y="125" fill="rgba(255,255,255,0.6)" font-size="7" text-anchor="middle">Syntax</text>
+                    <text x="65" y="138" fill="rgba(255,255,255,0.5)" font-size="6" text-anchor="middle">subject-verb</text>
+                </g>
+
+                <g>
+                    <rect x="110" y="85" width="70" height="60" rx="6" fill="rgba(255,215,0,0.4)" stroke="#ffd700" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(255,215,0,0.4);rgba(255,215,0,0.7);rgba(255,215,0,0.4)" dur="2s" begin="0.4s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="145" y="110" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Head 2</text>
+                    <text x="145" y="125" fill="rgba(255,255,255,0.6)" font-size="7" text-anchor="middle">Coreference</text>
+                    <text x="145" y="138" fill="rgba(255,255,255,0.5)" font-size="6" text-anchor="middle">it→cat</text>
+                </g>
+
+                <g>
+                    <rect x="190" y="85" width="70" height="60" rx="6" fill="rgba(81,207,102,0.4)" stroke="#51cf66" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(81,207,102,0.4);rgba(81,207,102,0.7);rgba(81,207,102,0.4)" dur="2s" begin="0.8s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="225" y="110" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Head 3</text>
+                    <text x="225" y="125" fill="rgba(255,255,255,0.6)" font-size="7" text-anchor="middle">Position</text>
+                    <text x="225" y="138" fill="rgba(255,255,255,0.5)" font-size="6" text-anchor="middle">nearby</text>
+                </g>
+
+                <g>
+                    <rect x="270" y="85" width="70" height="60" rx="6" fill="rgba(224,64,251,0.4)" stroke="#e040fb" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(224,64,251,0.4);rgba(224,64,251,0.7);rgba(224,64,251,0.4)" dur="2s" begin="1.2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="305" y="110" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Head 4</text>
+                    <text x="305" y="125" fill="rgba(255,255,255,0.6)" font-size="7" text-anchor="middle">Semantic</text>
+                    <text x="305" y="138" fill="rgba(255,255,255,0.5)" font-size="6" text-anchor="middle">meaning</text>
+                </g>
+
+                <!-- Concat -->
+                <line x1="65" y1="145" x2="65" y2="175" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <line x1="145" y1="145" x2="145" y2="175" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <line x1="225" y1="145" x2="225" y2="175" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                <line x1="305" y1="145" x2="305" y2="175" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+
+                <rect x="50" y="175" width="270" height="35" rx="6" fill="rgba(78,205,196,0.3)" stroke="#4ecdc4" stroke-width="2"/>
+                <text x="185" y="197" fill="#4ecdc4" font-size="11" text-anchor="middle" font-weight="bold">Concat(head1, head2, head3, head4)</text>
+
+                <!-- Final projection -->
+                <line x1="185" y1="210" x2="185" y2="235" stroke="#4ecdc4" stroke-width="2"/>
+                <rect x="120" y="235" width="130" height="35" rx="6" fill="rgba(78,205,196,0.5)" stroke="#4ecdc4" stroke-width="3">
+                    <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                </rect>
+                <text x="185" y="258" fill="white" font-size="11" text-anchor="middle" font-weight="bold">× W_O → Output</text>
+            </svg>
+        </div>
+        <div class="card">
+            <h4>Why Multiple Heads?</h4>
+            <ul>
+                <li><strong>Different patterns:</strong> Each head learns different relationships</li>
+                <li><strong>Parallel computation:</strong> All heads run simultaneously</li>
+                <li><strong>Richer representation:</strong> Combine multiple perspectives</li>
+            </ul>
+
+            <h4 style="margin-top: 20px;">Typical Configurations</h4>
+            <table style="width: 100%; font-size: 0.85em; margin: 10px 0;">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td>BERT-base</td>
+                    <td style="text-align: right;">12 heads</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td>GPT-2</td>
+                    <td style="text-align: right;">12 heads</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td>GPT-3</td>
+                    <td style="text-align: right;">96 heads</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td>LLaMA 70B</td>
+                    <td style="text-align: right;">64 heads</td>
+                </tr>
+            </table>
+
+            <div class="highlight" style="margin-top: 15px;">
+                <p style="font-size: 0.85em;"><strong>Formula:</strong></p>
+                <p style="font-size: 0.8em; font-family: monospace;">MultiHead(Q,K,V) = Concat(head₁,...,headₕ)W^O</p>
+                <p style="font-size: 0.8em; font-family: monospace;">where headᵢ = Attention(QWᵢᵠ, KWᵢᵏ, VWᵢᵛ)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 34e: Masked Self-Attention (Decoder) -->
+<div class="slide" id="slide52e">
+    <span class="slide-number">52e</span>
+    <h2>Masked Self-Attention (Decoder)</h2>
+    <p>How LLMs generate text one token at a time</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1100px;">
+            <svg viewBox="0 0 800 340" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Title -->
+                <text x="400" y="25" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Generating: "The cat sat"</text>
+
+                <!-- Attention matrix visualization -->
+                <g transform="translate(50, 50)">
+                    <text x="150" y="0" fill="#ffd700" font-size="12" text-anchor="middle" font-weight="bold">Attention Matrix (with Mask)</text>
+
+                    <!-- Column headers (Keys) -->
+                    <text x="90" y="35" fill="#51cf66" font-size="10" text-anchor="middle">K: "The"</text>
+                    <text x="150" y="35" fill="#51cf66" font-size="10" text-anchor="middle">K: "cat"</text>
+                    <text x="210" y="35" fill="#51cf66" font-size="10" text-anchor="middle">K: "sat"</text>
+
+                    <!-- Row labels (Queries) -->
+                    <text x="25" y="75" fill="#4a90d9" font-size="10" text-anchor="middle">Q: "The"</text>
+                    <text x="25" y="135" fill="#4a90d9" font-size="10" text-anchor="middle">Q: "cat"</text>
+                    <text x="25" y="195" fill="#4a90d9" font-size="10" text-anchor="middle">Q: "sat"</text>
+
+                    <!-- Matrix cells -->
+                    <!-- Row 1: "The" can only see itself -->
+                    <rect x="60" y="50" width="55" height="50" rx="4" fill="rgba(78,205,196,0.6)" stroke="#4ecdc4" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(78,205,196,0.6);rgba(78,205,196,0.9);rgba(78,205,196,0.6)" dur="3s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="87" y="80" fill="white" font-size="12" text-anchor="middle" font-weight="bold">1.0</text>
+
+                    <rect x="120" y="50" width="55" height="50" rx="4" fill="rgba(255,107,107,0.3)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="147" y="75" fill="#ff6b6b" font-size="16" text-anchor="middle">✗</text>
+                    <text x="147" y="92" fill="rgba(255,255,255,0.4)" font-size="8" text-anchor="middle">-∞</text>
+
+                    <rect x="180" y="50" width="55" height="50" rx="4" fill="rgba(255,107,107,0.3)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="207" y="75" fill="#ff6b6b" font-size="16" text-anchor="middle">✗</text>
+                    <text x="207" y="92" fill="rgba(255,255,255,0.4)" font-size="8" text-anchor="middle">-∞</text>
+
+                    <!-- Row 2: "cat" can see "The" and itself -->
+                    <rect x="60" y="110" width="55" height="50" rx="4" fill="rgba(78,205,196,0.4)" stroke="#4ecdc4" stroke-width="1"/>
+                    <text x="87" y="140" fill="white" font-size="12" text-anchor="middle">0.3</text>
+
+                    <rect x="120" y="110" width="55" height="50" rx="4" fill="rgba(78,205,196,0.7)" stroke="#4ecdc4" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(78,205,196,0.7);rgba(78,205,196,1);rgba(78,205,196,0.7)" dur="3s" begin="1s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="147" y="140" fill="white" font-size="12" text-anchor="middle" font-weight="bold">0.7</text>
+
+                    <rect x="180" y="110" width="55" height="50" rx="4" fill="rgba(255,107,107,0.3)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="207" y="135" fill="#ff6b6b" font-size="16" text-anchor="middle">✗</text>
+                    <text x="207" y="152" fill="rgba(255,255,255,0.4)" font-size="8" text-anchor="middle">-∞</text>
+
+                    <!-- Row 3: "sat" can see all previous -->
+                    <rect x="60" y="170" width="55" height="50" rx="4" fill="rgba(78,205,196,0.25)" stroke="#4ecdc4" stroke-width="1"/>
+                    <text x="87" y="200" fill="white" font-size="12" text-anchor="middle">0.15</text>
+
+                    <rect x="120" y="170" width="55" height="50" rx="4" fill="rgba(78,205,196,0.5)" stroke="#4ecdc4" stroke-width="1"/>
+                    <text x="147" y="200" fill="white" font-size="12" text-anchor="middle">0.35</text>
+
+                    <rect x="180" y="170" width="55" height="50" rx="4" fill="rgba(78,205,196,0.65)" stroke="#4ecdc4" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(78,205,196,0.65);rgba(78,205,196,0.95);rgba(78,205,196,0.65)" dur="3s" begin="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="207" y="200" fill="white" font-size="12" text-anchor="middle" font-weight="bold">0.50</text>
+
+                    <!-- Mask indicator -->
+                    <line x1="55" y1="45" x2="240" y2="225" stroke="#ff6b6b" stroke-width="3" stroke-dasharray="8,4" opacity="0.7"/>
+                    <text x="260" y="130" fill="#ff6b6b" font-size="10" text-anchor="start">← Mask</text>
+                    <text x="260" y="145" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="start">(future tokens)</text>
+                </g>
+
+                <!-- Explanation -->
+                <g transform="translate(400, 50)">
+                    <text x="180" y="20" fill="white" font-size="13" text-anchor="middle" font-weight="bold">Why Masking?</text>
+
+                    <rect x="20" y="35" width="320" height="80" rx="6" fill="rgba(255,107,107,0.15)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="180" y="60" fill="#ff6b6b" font-size="11" text-anchor="middle" font-weight="bold">Prevents "Cheating"</text>
+                    <text x="30" y="80" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">During training, the model sees the full sequence.</text>
+                    <text x="30" y="95" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">Masking ensures it can only use past tokens</text>
+                    <text x="30" y="110" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">to predict the next one (like during inference).</text>
+
+                    <rect x="20" y="125" width="320" height="70" rx="6" fill="rgba(78,205,196,0.15)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="180" y="150" fill="#4ecdc4" font-size="11" text-anchor="middle" font-weight="bold">Autoregressive Generation</text>
+                    <text x="30" y="170" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">1. Generate token 1 (only sees: &lt;start&gt;)</text>
+                    <text x="30" y="185" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">2. Generate token 2 (sees: &lt;start&gt;, token 1)</text>
+
+                    <rect x="20" y="205" width="320" height="55" rx="6" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="2"/>
+                    <text x="180" y="230" fill="#ffd700" font-size="11" text-anchor="middle" font-weight="bold">Implementation</text>
+                    <text x="30" y="250" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">mask = torch.triu(torch.ones(n, n), diagonal=1)</text>
+                    <text x="30" y="262" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="start">scores.masked_fill(mask == 1, float('-inf'))</text>
+                </g>
+
+                <!-- Encoder vs Decoder comparison -->
+                <g transform="translate(50, 275)">
+                    <rect x="0" y="0" width="170" height="55" rx="6" fill="rgba(81,207,102,0.2)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="85" y="20" fill="#51cf66" font-size="11" text-anchor="middle" font-weight="bold">Encoder (BERT)</text>
+                    <text x="85" y="38" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">Bidirectional - sees all</text>
+                    <text x="85" y="50" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">Good for: classification, NER</text>
+
+                    <rect x="190" y="0" width="170" height="55" rx="6" fill="rgba(224,64,251,0.2)" stroke="#e040fb" stroke-width="2"/>
+                    <text x="275" y="20" fill="#e040fb" font-size="11" text-anchor="middle" font-weight="bold">Decoder (GPT)</text>
+                    <text x="275" y="38" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">Causal - sees only past</text>
+                    <text x="275" y="50" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">Good for: generation, chat</text>
+
+                    <rect x="380" y="0" width="170" height="55" rx="6" fill="rgba(78,205,196,0.2)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="465" y="20" fill="#4ecdc4" font-size="11" text-anchor="middle" font-weight="bold">Encoder-Decoder (T5)</text>
+                    <text x="465" y="38" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">Both patterns combined</text>
+                    <text x="465" y="50" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">Good for: translation, summarization</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 34f: Encoder-Decoder Cross-Attention -->
+<div class="slide" id="slide52f">
+    <span class="slide-number">52f</span>
+    <h2>Encoder-Decoder Communication</h2>
+    <p>How the decoder attends to the encoder's output (Cross-Attention)</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1200px;">
+            <svg viewBox="0 0 900 400" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Title -->
+                <text x="450" y="25" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Translation: "The cat sat" → "Le chat assis"</text>
+
+                <!-- ENCODER SIDE -->
+                <g transform="translate(30, 45)">
+                    <rect x="0" y="0" width="280" height="300" rx="10" fill="rgba(81,207,102,0.1)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="140" y="25" fill="#51cf66" font-size="14" text-anchor="middle" font-weight="bold">ENCODER</text>
+
+                    <!-- Input tokens -->
+                    <text x="140" y="50" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">Input: English</text>
+                    <g transform="translate(20, 60)">
+                        <rect x="0" y="0" width="70" height="35" rx="4" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2">
+                            <animate attributeName="opacity" values="0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.05;1"/>
+                        </rect>
+                        <text x="35" y="22" fill="white" font-size="10" text-anchor="middle">"The"</text>
+
+                        <rect x="80" y="0" width="70" height="35" rx="4" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2">
+                            <animate attributeName="opacity" values="0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.03;0.08;1"/>
+                        </rect>
+                        <text x="115" y="22" fill="white" font-size="10" text-anchor="middle">"cat"</text>
+
+                        <rect x="160" y="0" width="70" height="35" rx="4" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2">
+                            <animate attributeName="opacity" values="0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.06;0.08;0.12;1"/>
+                        </rect>
+                        <text x="195" y="22" fill="white" font-size="10" text-anchor="middle">"sat"</text>
+                    </g>
+
+                    <!-- Encoder self-attention -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.1;0.12;0.18;1"/>
+                        <rect x="40" y="110" width="200" height="50" rx="6" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="2"/>
+                        <text x="140" y="135" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Self-Attention</text>
+                        <text x="140" y="150" fill="rgba(255,255,255,0.6)" font-size="8" text-anchor="middle">(Bidirectional - sees all)</text>
+                    </g>
+
+                    <!-- Encoder FFN -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.15;0.18;0.2;0.25;1"/>
+                        <rect x="40" y="170" width="200" height="40" rx="6" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="2"/>
+                        <text x="140" y="195" fill="white" font-size="10" text-anchor="middle">Feed Forward</text>
+                    </g>
+
+                    <!-- Encoder Output (K, V) -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.22;0.25;0.27;0.3;0.35;1"/>
+                        <rect x="20" y="225" width="240" height="65" rx="8" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="3">
+                            <animate attributeName="fill" values="rgba(81,207,102,0.5);rgba(81,207,102,0.8);rgba(81,207,102,0.5)" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="140" y="250" fill="white" font-size="12" text-anchor="middle" font-weight="bold">Encoder Output</text>
+                        <text x="80" y="275" fill="#ffd700" font-size="11" text-anchor="middle" font-weight="bold">K</text>
+                        <text x="140" y="275" fill="rgba(255,255,255,0.5)" font-size="10" text-anchor="middle">&</text>
+                        <text x="200" y="275" fill="#ff6b6b" font-size="11" text-anchor="middle" font-weight="bold">V</text>
+                    </g>
+                </g>
+
+                <!-- DECODER SIDE -->
+                <g transform="translate(590, 45)">
+                    <rect x="0" y="0" width="280" height="300" rx="10" fill="rgba(224,64,251,0.1)" stroke="#e040fb" stroke-width="2"/>
+                    <text x="140" y="25" fill="#e040fb" font-size="14" text-anchor="middle" font-weight="bold">DECODER</text>
+
+                    <!-- Output tokens (so far) -->
+                    <text x="140" y="50" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">Output: French (so far)</text>
+                    <g transform="translate(20, 60)">
+                        <rect x="0" y="0" width="70" height="35" rx="4" fill="rgba(224,64,251,0.5)" stroke="#e040fb" stroke-width="2">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.35;0.38;0.4;0.42;0.45;0.5;1"/>
+                        </rect>
+                        <text x="35" y="22" fill="white" font-size="10" text-anchor="middle">"Le"</text>
+
+                        <rect x="80" y="0" width="70" height="35" rx="4" fill="rgba(224,64,251,0.5)" stroke="#e040fb" stroke-width="2">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.45;0.48;0.5;0.52;0.55;0.58;0.62;1"/>
+                        </rect>
+                        <text x="115" y="22" fill="white" font-size="10" text-anchor="middle">"chat"</text>
+
+                        <rect x="160" y="0" width="70" height="35" rx="4" fill="rgba(224,64,251,0.3)" stroke="#e040fb" stroke-width="2" stroke-dasharray="4,2">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.6;0.62;0.64;0.66;0.68;0.7;0.72;0.78;1"/>
+                        </rect>
+                        <text x="195" y="22" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">???</text>
+                    </g>
+
+                    <!-- Decoder masked self-attention -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.5;0.52;0.54;0.56;0.58;0.6;0.65;1"/>
+                        <rect x="40" y="110" width="200" height="50" rx="6" fill="rgba(224,64,251,0.3)" stroke="#e040fb" stroke-width="2"/>
+                        <text x="140" y="135" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Masked Self-Attention</text>
+                        <text x="140" y="150" fill="rgba(255,255,255,0.6)" font-size="8" text-anchor="middle">(Causal - sees only past)</text>
+                    </g>
+
+                    <!-- Decoder Query output -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.58;0.6;0.62;0.64;0.66;0.68;0.7;0.75;1"/>
+                        <rect x="90" y="170" width="100" height="35" rx="6" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2">
+                            <animate attributeName="fill" values="rgba(74,144,217,0.5);rgba(74,144,217,0.8);rgba(74,144,217,0.5)" dur="1.5s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="140" y="192" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Q</text>
+                    </g>
+                </g>
+
+                <!-- CROSS-ATTENTION (the bridge) -->
+                <g transform="translate(320, 120)">
+                    <!-- Cross attention box -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.68;0.7;0.72;0.74;0.76;0.78;0.8;0.82;0.88;1"/>
+                        <rect x="0" y="80" width="260" height="100" rx="10" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="3">
+                            <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="130" y="110" fill="#ffd700" font-size="13" text-anchor="middle" font-weight="bold">Cross-Attention</text>
+                        <text x="130" y="130" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle">Q from Decoder</text>
+                        <text x="130" y="145" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle">K, V from Encoder</text>
+                        <text x="130" y="165" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">Attention(Q_dec, K_enc, V_enc)</text>
+                    </g>
+                </g>
+
+                <!-- Animated arrows from Encoder to Cross-Attention -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.7;0.72;0.74;0.76;0.78;0.8;0.82;0.88;1"/>
+                    <!-- K arrow -->
+                    <path d="M 310 315 Q 380 315, 380 240" fill="none" stroke="#ffd700" stroke-width="3" marker-end="url(#arrowYellowCross)">
+                        <animate attributeName="stroke-dasharray" values="0,1000;200,0" dur="1s" begin="8s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="345" y="300" fill="#ffd700" font-size="10" font-weight="bold">K</text>
+
+                    <!-- V arrow -->
+                    <path d="M 310 325 Q 400 325, 500 240" fill="none" stroke="#ff6b6b" stroke-width="3" marker-end="url(#arrowRedCross)">
+                        <animate attributeName="stroke-dasharray" values="0,1000;250,0" dur="1s" begin="8.2s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="395" y="320" fill="#ff6b6b" font-size="10" font-weight="bold">V</text>
+                </g>
+
+                <!-- Animated arrow from Decoder to Cross-Attention -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.72;0.74;0.76;0.78;0.8;0.82;0.84;0.9;1"/>
+                    <path d="M 590 233 Q 520 233, 520 240" fill="none" stroke="#4a90d9" stroke-width="3" marker-end="url(#arrowBlueCross)">
+                        <animate attributeName="stroke-dasharray" values="0,1000;150,0" dur="1s" begin="8.5s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="545" y="225" fill="#4a90d9" font-size="10" font-weight="bold">Q</text>
+                </g>
+
+                <!-- Output from Cross-Attention to FFN -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1" dur="10s" repeatCount="indefinite" keyTimes="0;0.8;0.82;0.84;0.86;0.88;0.9;0.92;0.94;0.96;1"/>
+                    <line x1="580" y1="280" x2="730" y2="280" stroke="#4ecdc4" stroke-width="3"/>
+                    <rect x="630" y="290" width="200" height="40" rx="6" fill="rgba(78,205,196,0.4)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="730" y="315" fill="white" font-size="10" text-anchor="middle">Feed Forward → Next Token</text>
+                </g>
+
+                <!-- Key insight box at bottom -->
+                <rect x="150" y="355" width="600" height="40" rx="6" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="2"/>
+                <text x="450" y="375" fill="#ffd700" font-size="11" text-anchor="middle" font-weight="bold">Cross-Attention: "What in the source sentence should I focus on to generate the next target word?"</text>
+                <text x="450" y="390" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">Decoder asks (Q), Encoder answers (K matches, V provides content)</text>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arrowYellowCross" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#ffd700"/>
+                    </marker>
+                    <marker id="arrowRedCross" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#ff6b6b"/>
+                    </marker>
+                    <marker id="arrowBlueCross" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#4a90d9"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 34g: Residual Connections & Layer Norm -->
+<div class="slide" id="slide52g">
+    <span class="slide-number">52g</span>
+    <h2>Residual Connections & Layer Norm</h2>
+    <p>Critical components for training deep transformers</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1200px;">
+            <svg viewBox="0 0 900 360" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Residual Connection Visualization -->
+                <g transform="translate(30, 20)">
+                    <text x="150" y="20" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Residual Connection (Skip Connection)</text>
+
+                    <!-- Input -->
+                    <rect x="100" y="40" width="100" height="40" rx="6" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2"/>
+                    <text x="150" y="65" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Input x</text>
+
+                    <!-- Main path arrow -->
+                    <line x1="150" y1="80" x2="150" y2="115" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrowBlueRes)"/>
+
+                    <!-- Processing block -->
+                    <rect x="80" y="120" width="140" height="60" rx="8" fill="rgba(224,64,251,0.4)" stroke="#e040fb" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(224,64,251,0.4);rgba(224,64,251,0.6);rgba(224,64,251,0.4)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="150" y="145" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Attention or FFN</text>
+                    <text x="150" y="160" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">F(x)</text>
+
+                    <!-- Skip connection (the bypass) -->
+                    <path d="M 100 60 L 40 60 L 40 220 L 100 220" fill="none" stroke="#ffd700" stroke-width="3" stroke-dasharray="8,4">
+                        <animate attributeName="stroke-dashoffset" values="0;24" dur="1s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="25" y="145" fill="#ffd700" font-size="9" text-anchor="middle" transform="rotate(-90, 25, 145)">Skip</text>
+
+                    <!-- Output arrow from processing -->
+                    <line x1="150" y1="180" x2="150" y2="205" stroke="#e040fb" stroke-width="2"/>
+
+                    <!-- Addition circle -->
+                    <circle cx="150" cy="220" r="18" fill="rgba(78,205,196,0.5)" stroke="#4ecdc4" stroke-width="3">
+                        <animate attributeName="r" values="18;22;18" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="150" y="226" fill="white" font-size="20" text-anchor="middle" font-weight="bold">+</text>
+
+                    <!-- Output -->
+                    <line x1="150" y1="238" x2="150" y2="270" stroke="#4ecdc4" stroke-width="2" marker-end="url(#arrowTealRes)"/>
+                    <rect x="80" y="275" width="140" height="40" rx="6" fill="rgba(78,205,196,0.5)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="150" y="300" fill="white" font-size="11" text-anchor="middle" font-weight="bold">x + F(x)</text>
+
+                    <!-- Formula -->
+                    <text x="150" y="340" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">Output = Input + Transformation</text>
+                </g>
+
+                <!-- Why Residuals Matter -->
+                <g transform="translate(320, 20)">
+                    <text x="130" y="20" fill="#ffd700" font-size="14" text-anchor="middle" font-weight="bold">Why Residual Connections?</text>
+
+                    <rect x="10" y="35" width="240" height="70" rx="6" fill="rgba(255,107,107,0.15)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="130" y="55" fill="#ff6b6b" font-size="11" text-anchor="middle" font-weight="bold">The Problem: Vanishing Gradients</text>
+                    <text x="20" y="75" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">In deep networks, gradients shrink</text>
+                    <text x="20" y="90" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">as they backpropagate → early layers</text>
+                    <text x="20" y="105" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">don't learn!</text>
+
+                    <rect x="10" y="115" width="240" height="80" rx="6" fill="rgba(81,207,102,0.15)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="130" y="135" fill="#51cf66" font-size="11" text-anchor="middle" font-weight="bold">The Solution: Skip Connections</text>
+                    <text x="20" y="155" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">• Gradients flow directly backward</text>
+                    <text x="20" y="170" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">• Each layer learns a "delta" (change)</text>
+                    <text x="20" y="185" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">• Easy to learn identity function</text>
+
+                    <rect x="10" y="205" width="240" height="55" rx="6" fill="rgba(78,205,196,0.15)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="130" y="225" fill="#4ecdc4" font-size="11" text-anchor="middle" font-weight="bold">Result</text>
+                    <text x="20" y="245" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">GPT-3: 96 layers deep!</text>
+                    <text x="20" y="258" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="start">Without residuals: ~5-6 layers max</text>
+                </g>
+
+                <!-- Layer Normalization -->
+                <g transform="translate(590, 20)">
+                    <text x="140" y="20" fill="#e040fb" font-size="14" text-anchor="middle" font-weight="bold">Layer Normalization</text>
+
+                    <!-- Before normalization -->
+                    <text x="140" y="50" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">Before LayerNorm</text>
+                    <rect x="30" y="60" width="220" height="40" rx="4" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                    <!-- Variable activations -->
+                    <rect x="40" y="85" width="20" height="12" rx="2" fill="#ff6b6b" transform="rotate(180, 50, 91)"/>
+                    <rect x="70" y="75" width="20" height="22" rx="2" fill="#4a90d9"/>
+                    <rect x="100" y="95" width="20" height="5" rx="2" fill="#ffd700" transform="rotate(180, 110, 95)"/>
+                    <rect x="130" y="68" width="20" height="30" rx="2" fill="#51cf66"/>
+                    <rect x="160" y="88" width="20" height="10" rx="2" fill="#e040fb" transform="rotate(180, 170, 93)"/>
+                    <rect x="190" y="72" width="20" height="25" rx="2" fill="#4ecdc4"/>
+                    <text x="140" y="115" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">High variance, unstable</text>
+
+                    <!-- Arrow -->
+                    <line x1="140" y1="125" x2="140" y2="150" stroke="#e040fb" stroke-width="2" marker-end="url(#arrowPurpleRes)"/>
+                    <text x="180" y="142" fill="#e040fb" font-size="9" text-anchor="start">Normalize</text>
+
+                    <!-- After normalization -->
+                    <text x="140" y="170" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">After LayerNorm</text>
+                    <rect x="30" y="180" width="220" height="40" rx="4" fill="rgba(81,207,102,0.1)" stroke="#51cf66" stroke-width="1"/>
+                    <!-- Normalized activations -->
+                    <rect x="40" y="195" width="20" height="15" rx="2" fill="#51cf66"/>
+                    <rect x="70" y="192" width="20" height="18" rx="2" fill="#51cf66"/>
+                    <rect x="100" y="198" width="20" height="12" rx="2" fill="#51cf66"/>
+                    <rect x="130" y="190" width="20" height="20" rx="2" fill="#51cf66"/>
+                    <rect x="160" y="196" width="20" height="14" rx="2" fill="#51cf66"/>
+                    <rect x="190" y="193" width="20" height="17" rx="2" fill="#51cf66"/>
+                    <text x="140" y="235" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">Mean=0, Var=1 (stable)</text>
+
+                    <!-- Formula -->
+                    <rect x="20" y="250" width="240" height="60" rx="6" fill="rgba(224,64,251,0.15)" stroke="#e040fb" stroke-width="1"/>
+                    <text x="140" y="275" fill="#e040fb" font-size="10" text-anchor="middle" font-weight="bold">LayerNorm(x) = γ · (x - μ) / σ + β</text>
+                    <text x="140" y="295" fill="rgba(255,255,255,0.6)" font-size="8" text-anchor="middle">γ, β are learned scale and shift</text>
+                </g>
+
+                <!-- Full transformer block diagram at bottom -->
+                <g transform="translate(30, 330)">
+                    <rect x="0" y="-10" width="840" height="35" rx="4" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                    <text x="30" y="10" fill="white" font-size="10" text-anchor="start" font-weight="bold">Full Block:</text>
+                    <text x="100" y="10" fill="#4a90d9" font-size="9" text-anchor="start">x</text>
+                    <text x="115" y="10" fill="white" font-size="9" text-anchor="start">→</text>
+                    <text x="130" y="10" fill="#e040fb" font-size="9" text-anchor="start">LayerNorm</text>
+                    <text x="190" y="10" fill="white" font-size="9" text-anchor="start">→</text>
+                    <text x="205" y="10" fill="#ff6b6b" font-size="9" text-anchor="start">Attention</text>
+                    <text x="260" y="10" fill="white" font-size="9" text-anchor="start">→</text>
+                    <text x="275" y="10" fill="#ffd700" font-size="9" text-anchor="start">+ x (residual)</text>
+                    <text x="365" y="10" fill="white" font-size="9" text-anchor="start">→</text>
+                    <text x="380" y="10" fill="#e040fb" font-size="9" text-anchor="start">LayerNorm</text>
+                    <text x="440" y="10" fill="white" font-size="9" text-anchor="start">→</text>
+                    <text x="455" y="10" fill="#51cf66" font-size="9" text-anchor="start">FFN</text>
+                    <text x="485" y="10" fill="white" font-size="9" text-anchor="start">→</text>
+                    <text x="500" y="10" fill="#ffd700" font-size="9" text-anchor="start">+ x (residual)</text>
+                    <text x="590" y="10" fill="white" font-size="9" text-anchor="start">→</text>
+                    <text x="605" y="10" fill="#4ecdc4" font-size="9" text-anchor="start">output</text>
+                </g>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arrowBlueRes" markerWidth="8" markerHeight="8" refX="3" refY="7" orient="auto">
+                        <path d="M0,0 L6,0 L3,8 z" fill="#4a90d9"/>
+                    </marker>
+                    <marker id="arrowTealRes" markerWidth="8" markerHeight="8" refX="3" refY="7" orient="auto">
+                        <path d="M0,0 L6,0 L3,8 z" fill="#4ecdc4"/>
+                    </marker>
+                    <marker id="arrowPurpleRes" markerWidth="8" markerHeight="8" refX="3" refY="7" orient="auto">
+                        <path d="M0,0 L6,0 L3,8 z" fill="#e040fb"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 52h: Feed-Forward Network in Transformers -->
+<div class="slide" id="slide52h">
+    <span class="slide-number">52h</span>
+    <h2>The Feed-Forward Network (FFN)</h2>
+    <p>Where transformers store knowledge and add non-linearity</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1300px;">
+            <svg viewBox="0 0 1000 420" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- FFN Architecture Visualization -->
+                <g transform="translate(20, 15)">
+                    <text x="200" y="25" fill="white" font-size="16" text-anchor="middle" font-weight="bold">FFN Architecture</text>
+
+                    <!-- Input from Attention -->
+                    <rect x="120" y="45" width="160" height="50" rx="8" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="3">
+                        <animate attributeName="opacity" values="0;1;1;1;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.08;0.2;0.4;0.6;1"/>
+                    </rect>
+                    <text x="200" y="72" fill="white" font-size="13" text-anchor="middle" font-weight="bold">From Attention</text>
+                    <text x="200" y="88" fill="rgba(255,255,255,0.7)" font-size="11" text-anchor="middle">dim = 768</text>
+
+                    <!-- Arrow down -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;1;1;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.1;0.15;0.4;0.6;1"/>
+                        <line x1="200" y1="95" x2="200" y2="125" stroke="#4a90d9" stroke-width="3"/>
+                        <polygon points="200,135 193,125 207,125" fill="#4a90d9"/>
+                    </g>
+
+                    <!-- First Linear Layer (Expansion) -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;1;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.15;0.18;0.25;0.6;1"/>
+                        <rect x="80" y="140" width="240" height="55" rx="8" fill="rgba(255,107,107,0.5)" stroke="#ff6b6b" stroke-width="3">
+                            <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="200" y="165" fill="white" font-size="13" text-anchor="middle" font-weight="bold">Linear Layer 1 (W₁)</text>
+                        <text x="200" y="185" fill="#ffd700" font-size="12" text-anchor="middle">768 → 3072 (4× expansion!)</text>
+                    </g>
+
+                    <!-- Arrow down -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.25;0.28;0.3;0.35;1"/>
+                        <line x1="200" y1="195" x2="200" y2="215" stroke="#ff6b6b" stroke-width="3"/>
+                        <polygon points="200,225 193,215 207,215" fill="#ff6b6b"/>
+                    </g>
+
+                    <!-- Activation (GELU/ReLU) -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.3;0.33;0.35;0.38;0.45;1"/>
+                        <rect x="100" y="230" width="200" height="50" rx="8" fill="rgba(255,215,0,0.5)" stroke="#ffd700" stroke-width="3">
+                            <animate attributeName="fill" values="rgba(255,215,0,0.5);rgba(255,215,0,0.8);rgba(255,215,0,0.5)" dur="1.5s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="200" y="255" fill="white" font-size="13" text-anchor="middle" font-weight="bold">GELU Activation</text>
+                        <text x="200" y="273" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">Non-linearity!</text>
+                    </g>
+
+                    <!-- Arrow down -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.45;0.48;0.5;0.52;0.55;0.6;1"/>
+                        <line x1="200" y1="280" x2="200" y2="300" stroke="#ffd700" stroke-width="3"/>
+                        <polygon points="200,310 193,300 207,300" fill="#ffd700"/>
+                    </g>
+
+                    <!-- Second Linear Layer (Projection) -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.55;0.58;0.6;0.62;0.65;0.68;0.75;1"/>
+                        <rect x="80" y="315" width="240" height="55" rx="8" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="3">
+                            <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="200" y="340" fill="white" font-size="13" text-anchor="middle" font-weight="bold">Linear Layer 2 (W₂)</text>
+                        <text x="200" y="360" fill="#ffd700" font-size="12" text-anchor="middle">3072 → 768 (project back)</text>
+                    </g>
+
+                    <!-- Output -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.7;0.73;0.75;0.78;0.8;0.83;0.88;1"/>
+                        <line x1="200" y1="370" x2="200" y2="390" stroke="#51cf66" stroke-width="3"/>
+                        <polygon points="200,400 193,390 207,390" fill="#51cf66"/>
+                        <text x="200" y="415" fill="#51cf66" font-size="12" text-anchor="middle" font-weight="bold">→ Add & Norm → Next Layer</text>
+                    </g>
+
+                    <!-- Formula box -->
+                    <rect x="50" y="50" width="10" height="320" rx="3" fill="rgba(224,64,251,0.3)" stroke="#e040fb" stroke-width="2" stroke-dasharray="5,3"/>
+                    <text x="40" y="210" fill="#e040fb" font-size="11" text-anchor="middle" transform="rotate(-90, 40, 210)">FFN(x) = W₂ · GELU(W₁ · x + b₁) + b₂</text>
+                </g>
+
+                <!-- Why FFN? - The Purpose -->
+                <g transform="translate(430, 15)">
+                    <text x="140" y="25" fill="#ffd700" font-size="16" text-anchor="middle" font-weight="bold">Why Do We Need FFN?</text>
+
+                    <!-- Problem box -->
+                    <rect x="0" y="40" width="280" height="85" rx="8" fill="rgba(255,107,107,0.15)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="140" y="62" fill="#ff6b6b" font-size="13" text-anchor="middle" font-weight="bold">The Problem with Attention Alone</text>
+                    <text x="15" y="82" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">• Attention only does weighted averaging</text>
+                    <text x="15" y="98" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">• It's a linear operation - can't learn</text>
+                    <text x="15" y="114" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">  complex non-linear patterns!</text>
+
+                    <!-- Solution box -->
+                    <rect x="0" y="135" width="280" height="115" rx="8" fill="rgba(81,207,102,0.15)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="140" y="157" fill="#51cf66" font-size="13" text-anchor="middle" font-weight="bold">FFN Adds Critical Capabilities</text>
+                    <text x="15" y="177" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">✓ Non-linearity (GELU activation)</text>
+                    <text x="15" y="195" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">✓ Per-position processing</text>
+                    <text x="15" y="213" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">✓ 4× expansion = more capacity</text>
+                    <text x="15" y="231" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">✓ Where facts & knowledge live!</text>
+
+                    <!-- Knowledge Storage highlight -->
+                    <rect x="0" y="260" width="280" height="75" rx="8" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="2">
+                        <animate attributeName="stroke-width" values="2;4;2" dur="3s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="140" y="282" fill="#ffd700" font-size="13" text-anchor="middle" font-weight="bold">🧠 FFN = The Model's Memory</text>
+                    <text x="15" y="302" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">Research shows FFN layers store:</text>
+                    <text x="15" y="318" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">• Facts ("Paris is capital of France")</text>
+                    <text x="15" y="334" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">• Patterns, syntax, relationships</text>
+
+                    <!-- Analogy -->
+                    <rect x="0" y="345" width="280" height="60" rx="8" fill="rgba(78,205,196,0.15)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="140" y="367" fill="#4ecdc4" font-size="12" text-anchor="middle" font-weight="bold">Simple Analogy</text>
+                    <text x="15" y="387" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">Attention = "Who should I listen to?"</text>
+                    <text x="15" y="403" fill="rgba(255,255,255,0.85)" font-size="11" text-anchor="start">FFN = "What do I know about this?"</text>
+                </g>
+
+                <!-- Concrete Example -->
+                <g transform="translate(730, 15)">
+                    <text x="130" y="25" fill="#e040fb" font-size="16" text-anchor="middle" font-weight="bold">Example in Action</text>
+
+                    <rect x="0" y="40" width="260" height="365" rx="8" fill="rgba(224,64,251,0.1)" stroke="#e040fb" stroke-width="2"/>
+
+                    <!-- Input sentence -->
+                    <text x="130" y="65" fill="white" font-size="12" text-anchor="middle" font-weight="bold">Input: "The capital of France is ___"</text>
+
+                    <!-- Step 1: Attention -->
+                    <rect x="15" y="80" width="230" height="70" rx="6" fill="rgba(74,144,217,0.2)" stroke="#4a90d9" stroke-width="2">
+                        <animate attributeName="opacity" values="0.5;1;0.5" dur="4s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="130" y="100" fill="#4a90d9" font-size="11" text-anchor="middle" font-weight="bold">Step 1: Attention</text>
+                    <text x="25" y="118" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">"capital" attends to "France"</text>
+                    <text x="25" y="133" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">→ Gathers context: this is about</text>
+                    <text x="25" y="148" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">   France's capital city</text>
+
+                    <!-- Arrow -->
+                    <line x1="130" y1="155" x2="130" y2="175" stroke="white" stroke-width="2"/>
+                    <polygon points="130,180 125,172 135,172" fill="white"/>
+
+                    <!-- Step 2: FFN -->
+                    <rect x="15" y="185" width="230" height="85" rx="6" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="2">
+                        <animate attributeName="opacity" values="0.5;1;0.5" dur="4s" repeatCount="indefinite" begin="2s"/>
+                    </rect>
+                    <text x="130" y="205" fill="#ffd700" font-size="11" text-anchor="middle" font-weight="bold">Step 2: FFN (Knowledge Lookup)</text>
+                    <text x="25" y="223" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">FFN neurons activate for:</text>
+                    <text x="25" y="238" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">• "France + capital" → "Paris"</text>
+                    <text x="25" y="253" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">→ Retrieves stored fact from</text>
+                    <text x="25" y="268" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="start">   training data!</text>
+
+                    <!-- Arrow -->
+                    <line x1="130" y1="275" x2="130" y2="295" stroke="white" stroke-width="2"/>
+                    <polygon points="130,300 125,292 135,292" fill="white"/>
+
+                    <!-- Output -->
+                    <rect x="15" y="305" width="230" height="50" rx="6" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="3">
+                        <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="130" y="325" fill="#51cf66" font-size="11" text-anchor="middle" font-weight="bold">Output Prediction</text>
+                    <text x="130" y="345" fill="white" font-size="14" text-anchor="middle" font-weight="bold">"Paris"</text>
+
+                    <!-- Key insight -->
+                    <text x="130" y="380" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle" font-style="italic">Attention finds what's relevant;</text>
+                    <text x="130" y="393" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle" font-style="italic">FFN knows the answer!</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+</div>
+
 <!-- Slide 35: Transformers -->
 <div class="slide" id="slide53">
     <span class="slide-number">53</span>
@@ -7453,6 +8479,202 @@ word_vectors = embedding(word_indices)  # Shape: (3, 256)</code>
                 <li>Captures complex relationships</li>
                 <li>Foundation of ALL modern LLMs</li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 35b: Positional Encoding -->
+<div class="slide" id="slide53b">
+    <span class="slide-number">53b</span>
+    <h2>Positional Encoding</h2>
+    <p>How transformers know word order without recurrence</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1200px;">
+            <svg viewBox="0 0 800 400" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Left side: Token + PE animation -->
+                <g transform="translate(20, 0)">
+                    <!-- Title -->
+                    <text x="200" y="30" fill="white" font-size="16" text-anchor="middle" font-weight="bold">Input: "The cat sat"</text>
+
+                    <!-- Token Embeddings label -->
+                    <text x="100" y="60" fill="#c5d45a" font-size="14" text-anchor="middle" font-weight="bold">Token Embeddings</text>
+
+                    <!-- "The" token -->
+                    <rect x="30" y="75" width="140" height="55" rx="6" fill="rgba(74,144,217,0.6)" stroke="#4a90d9" stroke-width="3">
+                        <animate attributeName="opacity" values="0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.1;1"/>
+                    </rect>
+                    <text x="100" y="108" fill="white" font-size="18" text-anchor="middle" font-weight="bold">"The"</text>
+                    <text x="100" y="125" fill="rgba(255,255,255,0.7)" font-size="12" text-anchor="middle">pos=0</text>
+
+                    <!-- "cat" token -->
+                    <rect x="180" y="75" width="140" height="55" rx="6" fill="rgba(81,207,102,0.6)" stroke="#51cf66" stroke-width="3">
+                        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.1;0.2;1"/>
+                    </rect>
+                    <text x="250" y="108" fill="white" font-size="18" text-anchor="middle" font-weight="bold">"cat"</text>
+                    <text x="250" y="125" fill="rgba(255,255,255,0.7)" font-size="12" text-anchor="middle">pos=1</text>
+
+                    <!-- "sat" token -->
+                    <rect x="330" y="75" width="140" height="55" rx="6" fill="rgba(255,107,107,0.6)" stroke="#ff6b6b" stroke-width="3">
+                        <animate attributeName="opacity" values="0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.15;0.25;0.3;1"/>
+                    </rect>
+                    <text x="400" y="108" fill="white" font-size="18" text-anchor="middle" font-weight="bold">"sat"</text>
+                    <text x="400" y="125" fill="rgba(255,255,255,0.7)" font-size="12" text-anchor="middle">pos=2</text>
+
+                    <!-- Plus signs -->
+                    <text x="100" y="155" fill="#ffd700" font-size="28" text-anchor="middle" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.3;0.35;0.4;0.45;1"/>+</text>
+                    <text x="250" y="155" fill="#ffd700" font-size="28" text-anchor="middle" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.3;0.35;0.4;0.45;1"/>+</text>
+                    <text x="400" y="155" fill="#ffd700" font-size="28" text-anchor="middle" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.3;0.35;0.4;0.45;1"/>+</text>
+
+                    <!-- Positional Encoding label -->
+                    <text x="100" y="180" fill="#ffd700" font-size="14" text-anchor="middle" font-weight="bold" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.3;0.35;0.4;0.45;1"/>Positional Encoding</text>
+
+                    <!-- PE boxes with sine waves -->
+                    <!-- PE(0) -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.35;0.4;0.45;0.5;0.55;1"/>
+                        <rect x="30" y="190" width="140" height="55" rx="6" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="3"/>
+                        <path d="M 40 217 Q 65 195, 100 217 Q 135 239, 160 217" fill="none" stroke="#ffd700" stroke-width="3">
+                            <animate attributeName="d" values="M 40 217 Q 65 195, 100 217 Q 135 239, 160 217;M 40 217 Q 65 239, 100 217 Q 135 195, 160 217;M 40 217 Q 65 195, 100 217 Q 135 239, 160 217" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                        <text x="100" y="238" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">PE(0)</text>
+                    </g>
+
+                    <!-- PE(1) -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.4;0.45;0.5;0.55;0.58;0.62;1"/>
+                        <rect x="180" y="190" width="140" height="55" rx="6" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="3"/>
+                        <path d="M 190 217 Q 210 200, 230 220 Q 260 240, 290 210 Q 305 195, 310 217" fill="none" stroke="#ffd700" stroke-width="3">
+                            <animate attributeName="d" values="M 190 217 Q 210 200, 230 220 Q 260 240, 290 210 Q 305 195, 310 217;M 190 217 Q 210 234, 230 214 Q 260 194, 290 224 Q 305 238, 310 217;M 190 217 Q 210 200, 230 220 Q 260 240, 290 210 Q 305 195, 310 217" dur="2.5s" repeatCount="indefinite"/>
+                        </path>
+                        <text x="250" y="238" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">PE(1)</text>
+                    </g>
+
+                    <!-- PE(2) -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.45;0.5;0.55;0.6;0.63;0.66;0.7;1"/>
+                        <rect x="330" y="190" width="140" height="55" rx="6" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="3"/>
+                        <path d="M 340 217 Q 365 190, 400 220 Q 425 245, 460 200" fill="none" stroke="#ffd700" stroke-width="3">
+                            <animate attributeName="d" values="M 340 217 Q 365 190, 400 220 Q 425 245, 460 200;M 340 217 Q 365 244, 400 214 Q 425 189, 460 234;M 340 217 Q 365 190, 400 220 Q 425 245, 460 200" dur="3s" repeatCount="indefinite"/>
+                        </path>
+                        <text x="400" y="238" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">PE(2)</text>
+                    </g>
+
+                    <!-- Equals signs -->
+                    <text x="100" y="270" fill="#ffd700" font-size="24" text-anchor="middle" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.6;0.63;0.66;0.7;0.73;0.76;0.78;0.8;1"/>=</text>
+                    <text x="250" y="270" fill="#ffd700" font-size="24" text-anchor="middle" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.6;0.63;0.66;0.7;0.73;0.76;0.78;0.8;1"/>=</text>
+                    <text x="400" y="270" fill="#ffd700" font-size="24" text-anchor="middle" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.6;0.63;0.66;0.7;0.73;0.76;0.78;0.8;1"/>=</text>
+
+                    <!-- Position-Aware Embeddings label -->
+                    <text x="250" y="295" fill="#4ecdc4" font-size="14" text-anchor="middle" font-weight="bold" opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.7;0.73;0.76;0.78;0.8;0.82;0.84;0.88;1"/>Position-Aware Embeddings</text>
+
+                    <!-- Final combined embeddings -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.7;0.73;0.76;0.78;0.8;0.82;0.84;0.88;0.92;1"/>
+
+                        <rect x="30" y="305" width="140" height="55" rx="6" fill="rgba(74,144,217,0.4)" stroke="#4ecdc4" stroke-width="3">
+                            <animate attributeName="fill" values="rgba(74,144,217,0.4);rgba(74,144,217,0.6);rgba(74,144,217,0.4)" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="100" y="338" fill="white" font-size="16" text-anchor="middle" font-weight="bold">"The" @ 0</text>
+
+                        <rect x="180" y="305" width="140" height="55" rx="6" fill="rgba(81,207,102,0.4)" stroke="#4ecdc4" stroke-width="3">
+                            <animate attributeName="fill" values="rgba(81,207,102,0.4);rgba(81,207,102,0.6);rgba(81,207,102,0.4)" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="250" y="338" fill="white" font-size="16" text-anchor="middle" font-weight="bold">"cat" @ 1</text>
+
+                        <rect x="330" y="305" width="140" height="55" rx="6" fill="rgba(255,107,107,0.4)" stroke="#4ecdc4" stroke-width="3">
+                            <animate attributeName="fill" values="rgba(255,107,107,0.4);rgba(255,107,107,0.6);rgba(255,107,107,0.4)" dur="2s" begin="0.6s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="400" y="338" fill="white" font-size="16" text-anchor="middle" font-weight="bold">"sat" @ 2</text>
+                    </g>
+
+                    <!-- Arrow to transformer -->
+                    <g opacity="0">
+                        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1;1" dur="6s" repeatCount="indefinite" keyTimes="0;0.75;0.78;0.8;0.82;0.84;0.86;0.88;0.9;0.92;0.95;1"/>
+                        <line x1="250" y1="365" x2="250" y2="390" stroke="#4ecdc4" stroke-width="3" marker-end="url(#arrowTealLg)"/>
+                        <text x="300" y="385" fill="#4ecdc4" font-size="14" text-anchor="start">→ To Transformer</text>
+                    </g>
+                </g>
+
+                <!-- Right side: Formula and heatmap -->
+                <g transform="translate(530, 30)">
+                    <text x="120" y="20" fill="white" font-size="16" text-anchor="middle" font-weight="bold">Sinusoidal Formula</text>
+                    <text x="120" y="50" fill="#ffd700" font-size="13" text-anchor="middle">PE(pos, 2i) = sin(pos/10000^(2i/d))</text>
+                    <text x="120" y="75" fill="#ffd700" font-size="13" text-anchor="middle">PE(pos, 2i+1) = cos(pos/10000^(2i/d))</text>
+
+                    <text x="120" y="115" fill="rgba(255,255,255,0.8)" font-size="14" text-anchor="middle">PE Heatmap (positions × dims)</text>
+
+                    <!-- Heatmap -->
+                    <g transform="translate(20, 130)">
+                        <text x="-10" y="15" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="end">pos</text>
+
+                        <!-- Row 0 -->
+                        <text x="-10" y="35" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="end">0</text>
+                        <rect x="0" y="22" width="25" height="18" fill="#ff6b6b"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/></rect>
+                        <rect x="28" y="22" width="25" height="18" fill="#ffd700"/>
+                        <rect x="56" y="22" width="25" height="18" fill="#51cf66"/>
+                        <rect x="84" y="22" width="25" height="18" fill="#4a90d9"/>
+                        <rect x="112" y="22" width="25" height="18" fill="#e040fb"/>
+                        <rect x="140" y="22" width="25" height="18" fill="#00d4ff"/>
+                        <rect x="168" y="22" width="25" height="18" fill="#ff9f43"/>
+
+                        <!-- Row 1 -->
+                        <text x="-10" y="58" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="end">1</text>
+                        <rect x="0" y="45" width="25" height="18" fill="#ffd700"/>
+                        <rect x="28" y="45" width="25" height="18" fill="#51cf66"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" begin="0.5s" repeatCount="indefinite"/></rect>
+                        <rect x="56" y="45" width="25" height="18" fill="#4a90d9"/>
+                        <rect x="84" y="45" width="25" height="18" fill="#e040fb"/>
+                        <rect x="112" y="45" width="25" height="18" fill="#00d4ff"/>
+                        <rect x="140" y="45" width="25" height="18" fill="#ff6b6b"/>
+                        <rect x="168" y="45" width="25" height="18" fill="#c5d45a"/>
+
+                        <!-- Row 2 -->
+                        <text x="-10" y="81" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="end">2</text>
+                        <rect x="0" y="68" width="25" height="18" fill="#51cf66"/>
+                        <rect x="28" y="68" width="25" height="18" fill="#4a90d9"/>
+                        <rect x="56" y="68" width="25" height="18" fill="#e040fb"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" begin="1s" repeatCount="indefinite"/></rect>
+                        <rect x="84" y="68" width="25" height="18" fill="#00d4ff"/>
+                        <rect x="112" y="68" width="25" height="18" fill="#ff6b6b"/>
+                        <rect x="140" y="68" width="25" height="18" fill="#ffd700"/>
+                        <rect x="168" y="68" width="25" height="18" fill="#4ecdc4"/>
+
+                        <!-- Row 3 -->
+                        <text x="-10" y="104" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="end">3</text>
+                        <rect x="0" y="91" width="25" height="18" fill="#4a90d9"/>
+                        <rect x="28" y="91" width="25" height="18" fill="#e040fb"/>
+                        <rect x="56" y="91" width="25" height="18" fill="#00d4ff"/>
+                        <rect x="84" y="91" width="25" height="18" fill="#ff6b6b"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" begin="1.5s" repeatCount="indefinite"/></rect>
+                        <rect x="112" y="91" width="25" height="18" fill="#ffd700"/>
+                        <rect x="140" y="91" width="25" height="18" fill="#51cf66"/>
+                        <rect x="168" y="91" width="25" height="18" fill="#ff9f43"/>
+
+                        <text x="95" y="125" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">dimensions →</text>
+                    </g>
+
+                    <text x="120" y="280" fill="rgba(255,255,255,0.7)" font-size="12" text-anchor="middle">Each position gets a</text>
+                    <text x="120" y="298" fill="rgba(255,255,255,0.7)" font-size="12" text-anchor="middle">unique encoding pattern</text>
+
+                    <!-- Why PE needed -->
+                    <rect x="10" y="315" width="220" height="70" rx="6" fill="rgba(78,205,196,0.2)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="120" y="338" fill="#4ecdc4" font-size="12" text-anchor="middle" font-weight="bold">Without PE:</text>
+                    <text x="120" y="358" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">"cat sat" = "sat cat"</text>
+                    <text x="120" y="375" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">(Same attention weights!)</text>
+                </g>
+
+                <!-- Gradient definitions -->
+                <defs>
+                    <marker id="arrowTealLg" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#4ecdc4"/>
+                    </marker>
+                </defs>
+            </svg>
         </div>
     </div>
 </div>
@@ -7538,36 +8760,824 @@ print(response.choices[0].message.content)</code>
     </div>
 </div>
 
-<!-- Slide 39: What's Next -->
+<!-- Slide 39: RAG Overview -->
 <div class="slide" id="slide57">
     <span class="slide-number">57</span>
-    <h2>What's Next? Part 2 Preview</h2>
-    <p>Now that you understand the foundations, Part 2 will cover:</p>
+    <h2>Retrieval-Augmented Generation (RAG)</h2>
+    <p>Giving LLMs access to external knowledge</p>
     <div class="two-column">
         <div class="card">
-            <h4>Advanced LLM Techniques</h4>
+            <h4>The Problem with LLMs</h4>
             <ul>
-                <li>Transformer deep dive</li>
-                <li>RAG (Retrieval-Augmented Generation)</li>
-                <li>AI Agents & Tools</li>
-                <li>Chain-of-Thought prompting</li>
+                <li><strong>Knowledge cutoff:</strong> Training data has a date limit</li>
+                <li><strong>Hallucinations:</strong> LLMs can make up facts</li>
+                <li><strong>No private data:</strong> Can't access your documents</li>
+                <li><strong>Generic answers:</strong> No domain-specific knowledge</li>
             </ul>
         </div>
         <div class="card">
-            <h4>Customization</h4>
+            <h4>RAG Solution</h4>
             <ul>
-                <li>Fine-tuning with LoRA</li>
-                <li>Building custom agents</li>
-                <li>Vector databases</li>
-                <li>Production deployment</li>
+                <li><strong>Retrieve:</strong> Find relevant documents</li>
+                <li><strong>Augment:</strong> Add context to the prompt</li>
+                <li><strong>Generate:</strong> LLM answers with evidence</li>
+                <li><strong>Result:</strong> Accurate, grounded responses</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 20px;">
+        <p><strong>Key Insight:</strong> Instead of fine-tuning an LLM on your data, RAG retrieves relevant information at query time and includes it in the prompt.</p>
+    </div>
+</div>
+
+<!-- Slide 40: RAG Architecture -->
+<div class="slide" id="slide58">
+    <span class="slide-number">58</span>
+    <h2>RAG Architecture</h2>
+    <p>How retrieval-augmented generation works</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1200px;">
+            <svg viewBox="0 0 850 380" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- User Query -->
+                <g>
+                    <rect x="20" y="160" width="120" height="60" rx="8" fill="rgba(74,144,217,0.6)" stroke="#4a90d9" stroke-width="3">
+                        <animate attributeName="opacity" values="0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.05;1"/>
+                    </rect>
+                    <text x="80" y="185" fill="white" font-size="12" text-anchor="middle" font-weight="bold">User Query</text>
+                    <text x="80" y="205" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">"What is X?"</text>
+                </g>
+
+                <!-- Arrow from Query to Embedding -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.08;0.12;1"/>
+                    <line x1="140" y1="190" x2="180" y2="190" stroke="#4a90d9" stroke-width="3" marker-end="url(#arrowBlue)"/>
+                </g>
+
+                <!-- Query Embedding -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.1;0.15;0.2;1"/>
+                    <rect x="185" y="160" width="100" height="60" rx="8" fill="rgba(255,215,0,0.5)" stroke="#ffd700" stroke-width="3"/>
+                    <text x="235" y="185" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Embed</text>
+                    <text x="235" y="200" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">Query → Vector</text>
+                </g>
+
+                <!-- Arrow to Vector DB -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.18;0.2;0.22;0.27;1"/>
+                    <line x1="285" y1="190" x2="325" y2="190" stroke="#ffd700" stroke-width="3" marker-end="url(#arrowYellow)"/>
+                </g>
+
+                <!-- Vector Database -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.22;0.25;0.28;0.3;0.35;1"/>
+                    <rect x="330" y="130" width="140" height="120" rx="8" fill="rgba(81,207,102,0.4)" stroke="#51cf66" stroke-width="3"/>
+                    <text x="400" y="155" fill="white" font-size="12" text-anchor="middle" font-weight="bold">Vector Database</text>
+                    <!-- Mini vectors -->
+                    <rect x="345" y="165" width="50" height="20" rx="4" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1">
+                        <animate attributeName="fill" values="rgba(255,255,255,0.2);rgba(81,207,102,0.6);rgba(255,255,255,0.2)" dur="1.5s" begin="2.8s" repeatCount="indefinite"/>
+                    </rect>
+                    <rect x="345" y="190" width="50" height="20" rx="4" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                    <rect x="345" y="215" width="50" height="20" rx="4" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1">
+                        <animate attributeName="fill" values="rgba(255,255,255,0.2);rgba(81,207,102,0.6);rgba(255,255,255,0.2)" dur="1.5s" begin="3s" repeatCount="indefinite"/>
+                    </rect>
+                    <rect x="405" y="165" width="50" height="20" rx="4" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                    <rect x="405" y="190" width="50" height="20" rx="4" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1">
+                        <animate attributeName="fill" values="rgba(255,255,255,0.2);rgba(81,207,102,0.6);rgba(255,255,255,0.2)" dur="1.5s" begin="3.2s" repeatCount="indefinite"/>
+                    </rect>
+                    <rect x="405" y="215" width="50" height="20" rx="4" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                    <text x="400" y="248" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">Similarity Search</text>
+                </g>
+
+                <!-- Arrow from Vector DB to Retrieved Docs -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.35;0.38;0.4;0.42;0.45;0.5;1"/>
+                    <line x1="470" y1="190" x2="505" y2="190" stroke="#51cf66" stroke-width="3" marker-end="url(#arrowGreen)"/>
+                </g>
+
+                <!-- Retrieved Documents -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.42;0.45;0.48;0.5;0.52;0.55;0.6;1"/>
+                    <rect x="510" y="140" width="130" height="100" rx="8" fill="rgba(255,107,107,0.4)" stroke="#ff6b6b" stroke-width="3"/>
+                    <text x="575" y="165" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Retrieved Docs</text>
+                    <!-- Doc icons -->
+                    <rect x="525" y="175" width="45" height="55" rx="4" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                    <line x1="532" y1="188" x2="563" y2="188" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                    <line x1="532" y1="198" x2="558" y2="198" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                    <line x1="532" y1="208" x2="560" y2="208" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                    <rect x="580" y="175" width="45" height="55" rx="4" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                    <line x1="587" y1="188" x2="618" y2="188" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+                    <line x1="587" y1="198" x2="613" y2="198" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                    <line x1="587" y1="208" x2="615" y2="208" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                </g>
+
+                <!-- Arrow to LLM -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.55;0.58;0.6;0.62;0.64;0.66;0.68;0.72;1"/>
+                    <line x1="640" y1="190" x2="675" y2="190" stroke="#ff6b6b" stroke-width="3" marker-end="url(#arrowRed)"/>
+                </g>
+
+                <!-- LLM -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.62;0.65;0.68;0.7;0.72;0.74;0.76;0.78;0.82;1"/>
+                    <rect x="680" y="150" width="130" height="80" rx="8" fill="rgba(224,64,251,0.5)" stroke="#e040fb" stroke-width="3">
+                        <animate attributeName="fill" values="rgba(224,64,251,0.5);rgba(224,64,251,0.7);rgba(224,64,251,0.5)" dur="2s" begin="6s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="745" y="180" fill="white" font-size="14" text-anchor="middle" font-weight="bold">LLM</text>
+                    <text x="745" y="200" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">Query + Context</text>
+                    <text x="745" y="215" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">→ Answer</text>
+                </g>
+
+                <!-- Final Response Arrow -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.75;0.78;0.8;0.82;0.84;0.86;0.88;0.9;0.92;0.95;1"/>
+                    <line x1="745" y1="230" x2="745" y2="280" stroke="#e040fb" stroke-width="3" marker-end="url(#arrowPurple)"/>
+                </g>
+
+                <!-- Response Box -->
+                <g opacity="0">
+                    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;1" dur="8s" repeatCount="indefinite" keyTimes="0;0.8;0.82;0.84;0.86;0.88;0.9;0.92;0.94;0.95;0.97;1"/>
+                    <rect x="660" y="290" width="170" height="60" rx="8" fill="rgba(78,205,196,0.5)" stroke="#4ecdc4" stroke-width="3"/>
+                    <text x="745" y="315" fill="white" font-size="12" text-anchor="middle" font-weight="bold">Grounded Response</text>
+                    <text x="745" y="335" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">With citations!</text>
+                </g>
+
+                <!-- Labels at top -->
+                <text x="80" y="30" fill="#4a90d9" font-size="11" text-anchor="middle" font-weight="bold">1. Query</text>
+                <text x="235" y="30" fill="#ffd700" font-size="11" text-anchor="middle" font-weight="bold">2. Embed</text>
+                <text x="400" y="30" fill="#51cf66" font-size="11" text-anchor="middle" font-weight="bold">3. Search</text>
+                <text x="575" y="30" fill="#ff6b6b" font-size="11" text-anchor="middle" font-weight="bold">4. Retrieve</text>
+                <text x="745" y="30" fill="#e040fb" font-size="11" text-anchor="middle" font-weight="bold">5. Generate</text>
+
+                <!-- Document Store (bottom) -->
+                <g opacity="0.8">
+                    <rect x="280" y="290" width="280" height="70" rx="8" fill="rgba(81,207,102,0.2)" stroke="#51cf66" stroke-width="2" stroke-dasharray="5,5"/>
+                    <text x="420" y="315" fill="#51cf66" font-size="11" text-anchor="middle" font-weight="bold">Document Store (Pre-indexed)</text>
+                    <text x="420" y="335" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">PDFs, web pages, databases, internal docs...</text>
+                    <text x="420" y="350" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle">Split into chunks → Embedded → Stored as vectors</text>
+                </g>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#4a90d9"/>
+                    </marker>
+                    <marker id="arrowYellow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#ffd700"/>
+                    </marker>
+                    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#51cf66"/>
+                    </marker>
+                    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#ff6b6b"/>
+                    </marker>
+                    <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="3" refY="9" orient="auto">
+                        <path d="M0,0 L6,0 L3,9 z" fill="#e040fb"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 41: Vector Embeddings -->
+<div class="slide" id="slide59">
+    <span class="slide-number">59</span>
+    <h2>Vector Embeddings</h2>
+    <p>Converting text to numbers that capture meaning</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1100px;">
+            <svg viewBox="0 0 750 320" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Text inputs -->
+                <g>
+                    <text x="100" y="30" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Text</text>
+
+                    <rect x="20" y="50" width="160" height="40" rx="6" fill="rgba(74,144,217,0.5)" stroke="#4a90d9" stroke-width="2"/>
+                    <text x="100" y="75" fill="white" font-size="12" text-anchor="middle">"king"</text>
+
+                    <rect x="20" y="100" width="160" height="40" rx="6" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="100" y="125" fill="white" font-size="12" text-anchor="middle">"queen"</text>
+
+                    <rect x="20" y="150" width="160" height="40" rx="6" fill="rgba(255,107,107,0.5)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="100" y="175" fill="white" font-size="12" text-anchor="middle">"man"</text>
+
+                    <rect x="20" y="200" width="160" height="40" rx="6" fill="rgba(255,215,0,0.5)" stroke="#ffd700" stroke-width="2"/>
+                    <text x="100" y="225" fill="white" font-size="12" text-anchor="middle">"woman"</text>
+                </g>
+
+                <!-- Arrows -->
+                <g>
+                    <line x1="180" y1="70" x2="220" y2="70" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrowBlue2)"/>
+                    <line x1="180" y1="120" x2="220" y2="120" stroke="#51cf66" stroke-width="2" marker-end="url(#arrowGreen2)"/>
+                    <line x1="180" y1="170" x2="220" y2="170" stroke="#ff6b6b" stroke-width="2" marker-end="url(#arrowRed2)"/>
+                    <line x1="180" y1="220" x2="220" y2="220" stroke="#ffd700" stroke-width="2" marker-end="url(#arrowYellow2)"/>
+                </g>
+
+                <!-- Embedding Model -->
+                <rect x="220" y="100" width="80" height="80" rx="8" fill="rgba(224,64,251,0.4)" stroke="#e040fb" stroke-width="2"/>
+                <text x="260" y="135" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Embedding</text>
+                <text x="260" y="150" fill="white" font-size="10" text-anchor="middle" font-weight="bold">Model</text>
+                <text x="260" y="170" fill="rgba(255,255,255,0.6)" font-size="8" text-anchor="middle">(e.g., ada-002)</text>
+
+                <!-- Arrows to vectors -->
+                <g>
+                    <line x1="300" y1="130" x2="340" y2="70" stroke="#e040fb" stroke-width="2"/>
+                    <line x1="300" y1="140" x2="340" y2="120" stroke="#e040fb" stroke-width="2"/>
+                    <line x1="300" y1="150" x2="340" y2="170" stroke="#e040fb" stroke-width="2"/>
+                    <line x1="300" y1="160" x2="340" y2="220" stroke="#e040fb" stroke-width="2"/>
+                </g>
+
+                <!-- Vectors -->
+                <g>
+                    <text x="420" y="30" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Vectors (1536 dims)</text>
+
+                    <rect x="340" y="50" width="160" height="40" rx="6" fill="rgba(74,144,217,0.3)" stroke="#4a90d9" stroke-width="2"/>
+                    <text x="420" y="75" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle">[0.2, -0.5, 0.8, ...]</text>
+
+                    <rect x="340" y="100" width="160" height="40" rx="6" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="420" y="125" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle">[0.3, -0.4, 0.7, ...]</text>
+
+                    <rect x="340" y="150" width="160" height="40" rx="6" fill="rgba(255,107,107,0.3)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="420" y="175" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle">[0.1, -0.6, 0.3, ...]</text>
+
+                    <rect x="340" y="200" width="160" height="40" rx="6" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="2"/>
+                    <text x="420" y="225" fill="rgba(255,255,255,0.8)" font-size="10" text-anchor="middle">[0.2, -0.5, 0.2, ...]</text>
+                </g>
+
+                <!-- 2D Visualization -->
+                <g transform="translate(530, 20)">
+                    <text x="100" y="15" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Semantic Space</text>
+
+                    <rect x="10" y="25" width="190" height="190" rx="8" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+
+                    <!-- Axis -->
+                    <line x1="20" y1="200" x2="190" y2="200" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+                    <line x1="20" y1="200" x2="20" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+
+                    <!-- Points with animation -->
+                    <circle cx="150" cy="60" r="8" fill="#4a90d9">
+                        <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="165" y="55" fill="#4a90d9" font-size="10">king</text>
+
+                    <circle cx="160" cy="100" r="8" fill="#51cf66">
+                        <animate attributeName="r" values="8;10;8" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="175" y="95" fill="#51cf66" font-size="10">queen</text>
+
+                    <circle cx="60" cy="150" r="8" fill="#ff6b6b">
+                        <animate attributeName="r" values="8;10;8" dur="2s" begin="1s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="45" y="145" fill="#ff6b6b" font-size="10">man</text>
+
+                    <circle cx="70" cy="180" r="8" fill="#ffd700">
+                        <animate attributeName="r" values="8;10;8" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="85" y="185" fill="#ffd700" font-size="10">woman</text>
+
+                    <!-- Relationship arrows -->
+                    <line x1="60" y1="150" x2="150" y2="60" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4,4">
+                        <animate attributeName="stroke-opacity" values="0.3;0.6;0.3" dur="3s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="70" y1="180" x2="160" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4,4">
+                        <animate attributeName="stroke-opacity" values="0.3;0.6;0.3" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+                    </line>
+                </g>
+
+                <!-- Key insight -->
+                <rect x="20" y="260" width="480" height="50" rx="6" fill="rgba(78,205,196,0.2)" stroke="#4ecdc4" stroke-width="2"/>
+                <text x="260" y="282" fill="#4ecdc4" font-size="12" text-anchor="middle" font-weight="bold">king - man + woman ≈ queen</text>
+                <text x="260" y="300" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">Similar meanings → Similar vectors → Close in space</text>
+
+                <!-- Arrow defs -->
+                <defs>
+                    <marker id="arrowBlue2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#4a90d9"/>
+                    </marker>
+                    <marker id="arrowGreen2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#51cf66"/>
+                    </marker>
+                    <marker id="arrowRed2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#ff6b6b"/>
+                    </marker>
+                    <marker id="arrowYellow2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#ffd700"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 42: RAG Implementation -->
+<div class="slide" id="slide60">
+    <span class="slide-number">60</span>
+    <h2>RAG Implementation</h2>
+    <p>Building a simple RAG pipeline</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>1. Index Your Documents</h4>
+            <div class="code-table">
+                <div class="code-table-content">
+                    <code style="font-size: 0.75em;">from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+
+# Split documents into chunks
+splitter = CharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200
+)
+chunks = splitter.split_documents(documents)
+
+# Create vector store
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma.from_documents(
+    chunks, embeddings
+)</code>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h4>2. Query with RAG</h4>
+            <div class="code-table">
+                <div class="code-table-content">
+                    <code style="font-size: 0.75em;">from langchain.chains import RetrievalQA
+from langchain.llms import OpenAI
+
+# Create retriever
+retriever = vectorstore.as_retriever(
+    search_kwargs={"k": 3}  # Top 3 docs
+)
+
+# Create RAG chain
+qa_chain = RetrievalQA.from_chain_type(
+    llm=OpenAI(),
+    retriever=retriever,
+    return_source_documents=True
+)
+
+# Ask questions!
+result = qa_chain("What is X?")
+print(result["answer"])</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 15px;">
+        <h4>Popular Vector Databases</h4>
+        <p style="font-size: 0.9em;">
+            <strong>Pinecone</strong> (managed) • <strong>Chroma</strong> (local/simple) • <strong>Weaviate</strong> (open source) • <strong>Milvus</strong> (scalable) • <strong>pgvector</strong> (PostgreSQL)
+        </p>
+    </div>
+</div>
+
+<!-- Slide 43: RAG Best Practices -->
+<div class="slide" id="slide61">
+    <span class="slide-number">61</span>
+    <h2>RAG Best Practices</h2>
+    <p>Tips for building effective RAG systems</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Chunking Strategy</h4>
+            <ul style="font-size: 0.9em;">
+                <li><strong>Size matters:</strong> 500-1000 tokens typically works well</li>
+                <li><strong>Overlap:</strong> 10-20% overlap prevents losing context</li>
+                <li><strong>Semantic chunking:</strong> Split on paragraphs/sections</li>
+                <li><strong>Metadata:</strong> Store source, page, date with chunks</li>
+            </ul>
+
+            <h4 style="margin-top: 20px;">Retrieval Tuning</h4>
+            <ul style="font-size: 0.9em;">
+                <li><strong>k value:</strong> Start with 3-5 documents</li>
+                <li><strong>Similarity threshold:</strong> Filter low-relevance results</li>
+                <li><strong>Hybrid search:</strong> Combine keyword + semantic</li>
+                <li><strong>Reranking:</strong> Use a second model to reorder results</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Common Pitfalls</h4>
+            <ul style="font-size: 0.9em;">
+                <li>❌ Chunks too large → irrelevant content</li>
+                <li>❌ Chunks too small → missing context</li>
+                <li>❌ No overlap → broken sentences</li>
+                <li>❌ Too many docs → context overflow</li>
+            </ul>
+
+            <h4 style="margin-top: 20px;">Evaluation Metrics</h4>
+            <ul style="font-size: 0.9em;">
+                <li><strong>Retrieval:</strong> Precision@k, Recall@k</li>
+                <li><strong>Generation:</strong> Faithfulness, relevance</li>
+                <li><strong>End-to-end:</strong> Answer correctness</li>
+                <li><strong>Tools:</strong> RAGAS, LangSmith, TruLens</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 15px; text-align: center;">
+        <p><strong>Remember:</strong> RAG quality = Retrieval quality × Generation quality</p>
+    </div>
+</div>
+
+<!-- Slide 44: Fine-tuning Overview -->
+<div class="slide" id="slide62">
+    <span class="slide-number">62</span>
+    <h2>Fine-tuning LLMs</h2>
+    <p>When RAG isn't enough - customize the model itself</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>When to Fine-tune?</h4>
+            <ul>
+                <li><strong>Specific style/tone:</strong> Match brand voice</li>
+                <li><strong>Domain expertise:</strong> Medical, legal, technical</li>
+                <li><strong>New tasks:</strong> Structured output, classification</li>
+                <li><strong>Efficiency:</strong> Smaller prompts, faster inference</li>
+                <li><strong>Privacy:</strong> Train on sensitive data locally</li>
+            </ul>
+            <div class="highlight" style="margin-top: 15px;">
+                <p style="font-size: 0.85em;"><strong>RAG vs Fine-tuning:</strong></p>
+                <ul style="font-size: 0.8em; margin: 5px 0;">
+                    <li>RAG: Dynamic knowledge, factual recall</li>
+                    <li>Fine-tuning: Behavior, style, capabilities</li>
+                    <li>Often used together!</li>
+                </ul>
+            </div>
+        </div>
+        <div class="card">
+            <h4>The Challenge</h4>
+            <p style="font-size: 0.9em;">Full fine-tuning requires updating <strong>all parameters</strong>:</p>
+            <table style="width: 100%; font-size: 0.85em; margin: 10px 0;">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td>LLaMA 7B</td>
+                    <td style="text-align: right; color: #ff6b6b;">~28 GB VRAM</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td>LLaMA 13B</td>
+                    <td style="text-align: right; color: #ff6b6b;">~52 GB VRAM</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td>LLaMA 70B</td>
+                    <td style="text-align: right; color: #ff6b6b;">~280 GB VRAM</td>
+                </tr>
+            </table>
+            <p style="font-size: 0.9em; margin-top: 15px;"><strong>Solution:</strong> Parameter-Efficient Fine-Tuning (PEFT)</p>
+            <ul style="font-size: 0.85em;">
+                <li>LoRA: Low-Rank Adaptation</li>
+                <li>QLoRA: Quantized LoRA</li>
+                <li>Train <strong>0.1-1%</strong> of parameters!</li>
             </ul>
         </div>
     </div>
 </div>
 
-<!-- Slide 40: Summary -->
-<div class="slide" id="slide58">
-    <span class="slide-number">58</span>
+<!-- Slide 45: LoRA Explained -->
+<div class="slide" id="slide63">
+    <span class="slide-number">63</span>
+    <h2>LoRA: Low-Rank Adaptation</h2>
+    <p>Efficient fine-tuning by adding small trainable matrices</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1200px;">
+            <svg viewBox="0 0 850 350" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- Original Weight Matrix -->
+                <g>
+                    <text x="150" y="30" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Original Model</text>
+
+                    <!-- Large W matrix -->
+                    <rect x="50" y="50" width="200" height="200" rx="8" fill="rgba(74,144,217,0.4)" stroke="#4a90d9" stroke-width="3"/>
+                    <text x="150" y="140" fill="white" font-size="24" text-anchor="middle" font-weight="bold">W</text>
+                    <text x="150" y="165" fill="rgba(255,255,255,0.7)" font-size="12" text-anchor="middle">d × d</text>
+                    <text x="150" y="185" fill="rgba(255,255,255,0.5)" font-size="10" text-anchor="middle">(e.g., 4096 × 4096)</text>
+
+                    <!-- Frozen indicator -->
+                    <rect x="70" y="220" width="160" height="25" rx="4" fill="rgba(100,100,100,0.5)" stroke="#888" stroke-width="2"/>
+                    <text x="150" y="238" fill="#aaa" font-size="11" text-anchor="middle">❄️ FROZEN (no updates)</text>
+                </g>
+
+                <!-- Plus sign -->
+                <text x="290" y="155" fill="#ffd700" font-size="40" text-anchor="middle" font-weight="bold">+</text>
+
+                <!-- LoRA matrices -->
+                <g>
+                    <text x="500" y="30" fill="#51cf66" font-size="14" text-anchor="middle" font-weight="bold">LoRA Adapter</text>
+
+                    <!-- Matrix A (down projection) -->
+                    <rect x="340" y="80" width="60" height="160" rx="6" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="3">
+                        <animate attributeName="fill" values="rgba(81,207,102,0.5);rgba(81,207,102,0.7);rgba(81,207,102,0.5)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="370" y="155" fill="white" font-size="18" text-anchor="middle" font-weight="bold">A</text>
+                    <text x="370" y="175" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">d × r</text>
+
+                    <!-- Multiplication sign -->
+                    <text x="420" y="165" fill="white" font-size="20" text-anchor="middle">×</text>
+
+                    <!-- Matrix B (up projection) -->
+                    <rect x="440" y="110" width="160" height="60" rx="6" fill="rgba(255,215,0,0.5)" stroke="#ffd700" stroke-width="3">
+                        <animate attributeName="fill" values="rgba(255,215,0,0.5);rgba(255,215,0,0.7);rgba(255,215,0,0.5)" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="520" y="145" fill="white" font-size="18" text-anchor="middle" font-weight="bold">B</text>
+                    <text x="520" y="165" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">r × d</text>
+
+                    <!-- Trainable indicator -->
+                    <rect x="380" y="220" width="160" height="25" rx="4" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="460" y="238" fill="#51cf66" font-size="11" text-anchor="middle">🔥 TRAINABLE</text>
+                </g>
+
+                <!-- Equals sign -->
+                <text x="640" y="155" fill="#4ecdc4" font-size="40" text-anchor="middle" font-weight="bold">=</text>
+
+                <!-- Result -->
+                <g>
+                    <text x="750" y="30" fill="#4ecdc4" font-size="14" text-anchor="middle" font-weight="bold">Adapted Model</text>
+
+                    <rect x="680" y="50" width="140" height="200" rx="8" fill="rgba(78,205,196,0.4)" stroke="#4ecdc4" stroke-width="3">
+                        <animate attributeName="stroke-width" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="750" y="140" fill="white" font-size="20" text-anchor="middle" font-weight="bold">W + AB</text>
+                    <text x="750" y="170" fill="rgba(255,255,255,0.7)" font-size="11" text-anchor="middle">Same size as W</text>
+                    <text x="750" y="190" fill="rgba(255,255,255,0.5)" font-size="10" text-anchor="middle">New behavior!</text>
+                </g>
+
+                <!-- Key insight box -->
+                <rect x="50" y="280" width="400" height="60" rx="8" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="2"/>
+                <text x="250" y="305" fill="#ffd700" font-size="12" text-anchor="middle" font-weight="bold">The Key Insight: Low Rank (r)</text>
+                <text x="250" y="325" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">If r = 8 and d = 4096: Train 65K params instead of 16M (0.4%!)</text>
+
+                <!-- Rank visualization -->
+                <g transform="translate(500, 270)">
+                    <text x="150" y="15" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Typical Rank Values</text>
+                    <rect x="20" y="25" width="60" height="30" rx="4" fill="rgba(81,207,102,0.3)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="50" y="45" fill="white" font-size="10" text-anchor="middle">r = 8</text>
+                    <rect x="90" y="25" width="60" height="30" rx="4" fill="rgba(81,207,102,0.4)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="120" y="45" fill="white" font-size="10" text-anchor="middle">r = 16</text>
+                    <rect x="160" y="25" width="60" height="30" rx="4" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="190" y="45" fill="white" font-size="10" text-anchor="middle">r = 32</text>
+                    <rect x="230" y="25" width="60" height="30" rx="4" fill="rgba(81,207,102,0.6)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="260" y="45" fill="white" font-size="10" text-anchor="middle">r = 64</text>
+                    <text x="150" y="70" fill="rgba(255,255,255,0.6)" font-size="9" text-anchor="middle">Higher r = more capacity, more params</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 46: QLoRA -->
+<div class="slide" id="slide64">
+    <span class="slide-number">64</span>
+    <h2>QLoRA: Quantized LoRA</h2>
+    <p>Fine-tune 65B models on a single GPU!</p>
+    <div style="display: flex; justify-content: center;">
+        <div class="card" style="text-align: center; width: 95%; max-width: 1100px;">
+            <svg viewBox="0 0 750 300" style="width: 100%; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <!-- 16-bit model -->
+                <g>
+                    <text x="100" y="30" fill="white" font-size="13" text-anchor="middle" font-weight="bold">Standard LoRA</text>
+
+                    <rect x="30" y="50" width="140" height="100" rx="8" fill="rgba(255,107,107,0.4)" stroke="#ff6b6b" stroke-width="2"/>
+                    <text x="100" y="85" fill="white" font-size="12" text-anchor="middle" font-weight="bold">Base Model</text>
+                    <text x="100" y="105" fill="#ff6b6b" font-size="11" text-anchor="middle">16-bit (FP16)</text>
+                    <text x="100" y="125" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">~14 GB for 7B</text>
+
+                    <rect x="50" y="160" width="100" height="50" rx="6" fill="rgba(81,207,102,0.4)" stroke="#51cf66" stroke-width="2"/>
+                    <text x="100" y="185" fill="white" font-size="10" text-anchor="middle">LoRA Adapters</text>
+                    <text x="100" y="200" fill="#51cf66" font-size="9" text-anchor="middle">16-bit</text>
+                </g>
+
+                <!-- Arrow -->
+                <g>
+                    <line x1="190" y1="130" x2="250" y2="130" stroke="#ffd700" stroke-width="3" marker-end="url(#arrowYellowQ)"/>
+                    <text x="220" y="115" fill="#ffd700" font-size="10" text-anchor="middle">Quantize</text>
+                </g>
+
+                <!-- QLoRA model -->
+                <g>
+                    <text x="350" y="30" fill="#4ecdc4" font-size="13" text-anchor="middle" font-weight="bold">QLoRA</text>
+
+                    <rect x="270" y="50" width="160" height="100" rx="8" fill="rgba(78,205,196,0.4)" stroke="#4ecdc4" stroke-width="2"/>
+                    <text x="350" y="80" fill="white" font-size="12" text-anchor="middle" font-weight="bold">Base Model</text>
+                    <text x="350" y="100" fill="#4ecdc4" font-size="11" text-anchor="middle">4-bit (NF4)</text>
+                    <text x="350" y="120" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="middle">~4 GB for 7B</text>
+                    <text x="350" y="140" fill="#51cf66" font-size="9" text-anchor="middle">75% smaller!</text>
+
+                    <rect x="290" y="160" width="120" height="50" rx="6" fill="rgba(81,207,102,0.5)" stroke="#51cf66" stroke-width="2">
+                        <animate attributeName="fill" values="rgba(81,207,102,0.5);rgba(81,207,102,0.7);rgba(81,207,102,0.5)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="350" y="185" fill="white" font-size="10" text-anchor="middle">LoRA Adapters</text>
+                    <text x="350" y="200" fill="#51cf66" font-size="9" text-anchor="middle">16-bit (trainable)</text>
+                </g>
+
+                <!-- Memory comparison -->
+                <g transform="translate(470, 40)">
+                    <text x="130" y="20" fill="white" font-size="13" text-anchor="middle" font-weight="bold">Memory Comparison</text>
+
+                    <!-- Full fine-tune bar -->
+                    <rect x="20" y="40" width="220" height="30" rx="4" fill="rgba(255,107,107,0.3)" stroke="#ff6b6b" stroke-width="1"/>
+                    <rect x="20" y="40" width="220" height="30" rx="4" fill="rgba(255,107,107,0.6)"/>
+                    <text x="130" y="60" fill="white" font-size="10" text-anchor="middle">Full Fine-tune: ~160 GB (70B)</text>
+
+                    <!-- LoRA bar -->
+                    <rect x="20" y="80" width="220" height="30" rx="4" fill="rgba(255,215,0,0.3)" stroke="#ffd700" stroke-width="1"/>
+                    <rect x="20" y="80" width="110" height="30" rx="4" fill="rgba(255,215,0,0.6)"/>
+                    <text x="130" y="100" fill="white" font-size="10" text-anchor="middle">LoRA: ~80 GB (70B)</text>
+
+                    <!-- QLoRA bar -->
+                    <rect x="20" y="120" width="220" height="30" rx="4" fill="rgba(78,205,196,0.3)" stroke="#4ecdc4" stroke-width="1"/>
+                    <rect x="20" y="120" width="44" height="30" rx="4" fill="rgba(78,205,196,0.6)">
+                        <animate attributeName="fill" values="rgba(78,205,196,0.6);rgba(78,205,196,0.9);rgba(78,205,196,0.6)" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="130" y="140" fill="white" font-size="10" text-anchor="middle">QLoRA: ~32 GB (70B) ✓</text>
+
+                    <text x="130" y="175" fill="rgba(255,255,255,0.7)" font-size="10" text-anchor="middle">Fine-tune 70B on a single A100!</text>
+                </g>
+
+                <!-- Key innovations -->
+                <g transform="translate(30, 220)">
+                    <text x="350" y="20" fill="#ffd700" font-size="12" text-anchor="middle" font-weight="bold">QLoRA Key Innovations</text>
+
+                    <rect x="30" y="35" width="200" height="50" rx="6" fill="rgba(255,215,0,0.15)" stroke="#ffd700" stroke-width="1"/>
+                    <text x="130" y="55" fill="#ffd700" font-size="10" text-anchor="middle" font-weight="bold">4-bit NormalFloat (NF4)</text>
+                    <text x="130" y="72" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">Optimal quantization for weights</text>
+
+                    <rect x="250" y="35" width="200" height="50" rx="6" fill="rgba(78,205,196,0.15)" stroke="#4ecdc4" stroke-width="1"/>
+                    <text x="350" y="55" fill="#4ecdc4" font-size="10" text-anchor="middle" font-weight="bold">Double Quantization</text>
+                    <text x="350" y="72" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">Quantize the quantization constants</text>
+
+                    <rect x="470" y="35" width="200" height="50" rx="6" fill="rgba(81,207,102,0.15)" stroke="#51cf66" stroke-width="1"/>
+                    <text x="570" y="55" fill="#51cf66" font-size="10" text-anchor="middle" font-weight="bold">Paged Optimizers</text>
+                    <text x="570" y="72" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">Handle memory spikes gracefully</text>
+                </g>
+
+                <defs>
+                    <marker id="arrowYellowQ" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#ffd700"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 47: Fine-tuning Implementation -->
+<div class="slide" id="slide65">
+    <span class="slide-number">65</span>
+    <h2>Fine-tuning with QLoRA</h2>
+    <p>Practical implementation using Hugging Face</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>1. Setup & Configuration</h4>
+            <div class="code-table">
+                <div class="code-table-content">
+                    <code style="font-size: 0.7em;">from transformers import AutoModelForCausalLM
+from peft import LoraConfig, get_peft_model
+from peft import prepare_model_for_kbit_training
+import bitsandbytes as bnb
+
+# Load model in 4-bit
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-7b-hf",
+    load_in_4bit=True,
+    quantization_config=BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16,
+    )
+)
+
+# Configure LoRA
+lora_config = LoraConfig(
+    r=16,               # Rank
+    lora_alpha=32,      # Scaling
+    target_modules=["q_proj", "v_proj"],
+    lora_dropout=0.05,
+    task_type="CAUSAL_LM"
+)</code>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h4>2. Training</h4>
+            <div class="code-table">
+                <div class="code-table-content">
+                    <code style="font-size: 0.7em;">from transformers import TrainingArguments
+from trl import SFTTrainer
+
+# Prepare model
+model = prepare_model_for_kbit_training(model)
+model = get_peft_model(model, lora_config)
+
+# Training arguments
+training_args = TrainingArguments(
+    output_dir="./results",
+    num_train_epochs=3,
+    per_device_train_batch_size=4,
+    gradient_accumulation_steps=4,
+    learning_rate=2e-4,
+    fp16=True,
+)
+
+# Train!
+trainer = SFTTrainer(
+    model=model,
+    train_dataset=dataset,
+    args=training_args,
+    max_seq_length=512,
+)
+trainer.train()</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 15px;">
+        <h4>Key Parameters</h4>
+        <p style="font-size: 0.85em;">
+            <strong>r (rank):</strong> 8-64, higher = more capacity |
+            <strong>lora_alpha:</strong> Usually 2×r |
+            <strong>target_modules:</strong> Which layers to adapt (attention projections most common)
+        </p>
+    </div>
+</div>
+
+<!-- Slide 48: LoRA Best Practices -->
+<div class="slide" id="slide66">
+    <span class="slide-number">66</span>
+    <h2>LoRA/QLoRA Best Practices</h2>
+    <p>Tips for successful fine-tuning</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Data Preparation</h4>
+            <ul style="font-size: 0.9em;">
+                <li><strong>Quality > Quantity:</strong> 1K good examples beats 100K bad ones</li>
+                <li><strong>Format consistency:</strong> Use same prompt template</li>
+                <li><strong>Diverse examples:</strong> Cover edge cases</li>
+                <li><strong>Clean data:</strong> Remove duplicates, fix errors</li>
+            </ul>
+
+            <h4 style="margin-top: 20px;">Hyperparameters</h4>
+            <ul style="font-size: 0.9em;">
+                <li><strong>Start small:</strong> r=8, then increase if needed</li>
+                <li><strong>Learning rate:</strong> 1e-4 to 2e-4 typical</li>
+                <li><strong>Epochs:</strong> 1-3 usually sufficient</li>
+                <li><strong>Batch size:</strong> Use gradient accumulation</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Which Layers to Target?</h4>
+            <table style="width: 100%; font-size: 0.85em; margin: 10px 0;">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td><strong>q_proj, v_proj</strong></td>
+                    <td>Most common, good default</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td><strong>+ k_proj, o_proj</strong></td>
+                    <td>More capacity</td>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <td><strong>+ gate, up, down</strong></td>
+                    <td>Full adapter (MLP too)</td>
+                </tr>
+            </table>
+
+            <h4 style="margin-top: 20px;">Common Pitfalls</h4>
+            <ul style="font-size: 0.9em;">
+                <li>❌ Too high learning rate → catastrophic forgetting</li>
+                <li>❌ Too few examples → overfitting</li>
+                <li>❌ Wrong prompt format → poor generalization</li>
+                <li>❌ No eval set → can't detect problems</li>
+            </ul>
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 15px; text-align: center;">
+        <p><strong>Tools:</strong> Hugging Face PEFT • Axolotl • LLaMA-Factory • Unsloth (2x faster!)</p>
+    </div>
+</div>
+
+<!-- Slide 49: What's Next -->
+<div class="slide" id="slide67">
+    <span class="slide-number">67</span>
+    <h2>What's Next? Part 2 Preview</h2>
+    <p>Now that you understand the foundations, Part 2 will cover:</p>
+    <div class="two-column">
+        <div class="card">
+            <h4>Advanced Techniques</h4>
+            <ul>
+                <li>AI Agents & Tool Use</li>
+                <li>Chain-of-Thought prompting</li>
+                <li>Advanced RAG patterns (HyDE, RAPTOR)</li>
+                <li>Multi-modal models (Vision, Audio)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>Production & Deployment</h4>
+            <ul>
+                <li>Evaluation frameworks (RAGAS, Evals)</li>
+                <li>Guardrails & safety</li>
+                <li>Scaling & optimization</li>
+                <li>MLOps for LLMs</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 50: Summary -->
+<div class="slide" id="slide68">
+    <span class="slide-number">68</span>
     <h2>Course Summary</h2>
     <div class="three-column">
         <div class="card">
@@ -7592,9 +9602,9 @@ print(response.choices[0].message.content)</code>
             <h4>Day 3</h4>
             <p>NLP & LLMs</p>
             <ul style="font-size: 0.85em; margin-left: 15px;">
-                <li>Text processing</li>
-                <li>Attention & Transformers</li>
-                <li>Using LLM APIs</li>
+                <li>Transformers & Attention</li>
+                <li>RAG & Vector DBs</li>
+                <li>LoRA/QLoRA Fine-tuning</li>
             </ul>
         </div>
     </div>

@@ -214,6 +214,7 @@
                 <li><a href="#training">Training Neural Networks</a></li>
                 <li><a href="#pytorch">PyTorch Fundamentals</a></li>
                 <li><a href="#day3">Day 3: NLP & Large Language Models</a></li>
+                <li><a href="#nlp-fundamentals">NLP Fundamentals</a></li>
                 <li><a href="#tokenization">Tokenization</a></li>
                 <li><a href="#embeddings">Word Embeddings</a></li>
                 <li><a href="#attention">Attention Mechanism</a></li>
@@ -581,6 +582,104 @@ model = nn.Sequential(
         <!-- DAY 3 -->
         <div class="day-section" id="day3">
             <h2>Day 3: NLP & Large Language Models</h2>
+
+            <div class="topic" id="nlp-fundamentals">
+                <h3>NLP Fundamentals</h3>
+                <p>Before diving into deep learning for NLP, you need to understand classical text processing techniques that are still widely used.</p>
+
+                <h4>Text Preprocessing</h4>
+                <p>Raw text must be cleaned and normalized before analysis:</p>
+                <ul>
+                    <li><strong>Lowercase:</strong> Convert to lowercase for consistency</li>
+                    <li><strong>Remove punctuation:</strong> Strip special characters</li>
+                    <li><strong>Tokenization:</strong> Split into words or subwords</li>
+                    <li><strong>Remove stopwords:</strong> Filter common words ("the", "is", "a")</li>
+                </ul>
+
+                <div class="code-block">import re
+
+def preprocess_text(text):
+    text = text.lower()                    # Lowercase
+    text = re.sub(r'[^a-z0-9\s]', '', text)  # Remove punctuation
+    return text
+
+# Example
+clean = preprocess_text("Hello, World! This is NLP 101.")
+# "hello world this is nlp 101"</div>
+
+                <h4>Bag of Words (BoW)</h4>
+                <p>BoW represents text as word counts, ignoring order. Each document becomes a vector of word frequencies.</p>
+
+                <div class="code-block">from sklearn.feature_extraction.text import CountVectorizer
+
+documents = [
+    "I love machine learning",
+    "Machine learning is great",
+    "I love programming"
+]
+
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(documents)
+
+print(vectorizer.get_feature_names_out())
+# ['great', 'is', 'learning', 'love', 'machine', 'programming']
+
+print(X.toarray())
+# [[0, 0, 1, 1, 1, 0],   # doc 1
+#  [1, 1, 1, 0, 1, 0],   # doc 2
+#  [0, 0, 0, 1, 0, 1]]   # doc 3</div>
+
+                <h4>TF-IDF (Term Frequency - Inverse Document Frequency)</h4>
+                <p>TF-IDF weights words by importance: common words in one document but rare across all documents get higher scores.</p>
+
+                <div class="formula">$$\text{TF-IDF} = \text{TF}(t,d) \times \log\left(\frac{N}{\text{DF}(t)}\right)$$</div>
+
+                <ul>
+                    <li><strong>TF (Term Frequency):</strong> How often word appears in document</li>
+                    <li><strong>IDF (Inverse Document Frequency):</strong> How rare word is across all documents</li>
+                    <li><strong>N:</strong> Total number of documents</li>
+                    <li><strong>DF:</strong> Number of documents containing the term</li>
+                </ul>
+
+                <div class="code-block">from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(documents)
+
+# Words unique to a document get higher scores
+# Common words across documents get lower scores</div>
+
+                <h4>Text Classification with Naive Bayes</h4>
+                <p>Naive Bayes is a fast, effective classifier for text. It applies Bayes' theorem with the "naive" assumption that features (words) are independent.</p>
+
+                <div class="formula">$$P(class|text) \propto P(class) \times \prod_{word \in text} P(word|class)$$</div>
+
+                <div class="code-block">from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+
+# Complete text classification pipeline
+pipeline = Pipeline([
+    ('tfidf', TfidfVectorizer()),
+    ('classifier', MultinomialNB())
+])
+
+# Train
+pipeline.fit(X_train_text, y_train)
+
+# Predict
+predictions = pipeline.predict(X_test_text)
+accuracy = pipeline.score(X_test_text, y_test)</div>
+
+                <div class="note">
+                    <strong>When to Use What:</strong>
+                    <ul>
+                        <li><strong>Bag of Words:</strong> Simple tasks, when word order doesn't matter</li>
+                        <li><strong>TF-IDF:</strong> When you need to weight important words higher</li>
+                        <li><strong>Naive Bayes:</strong> Fast training, good baseline for text classification</li>
+                        <li><strong>Deep Learning:</strong> When you need to capture context and word order</li>
+                    </ul>
+                </div>
+            </div>
 
             <div class="topic" id="tokenization">
                 <h3>Tokenization</h3>

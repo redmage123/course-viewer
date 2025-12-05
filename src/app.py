@@ -322,6 +322,7 @@ COURSES = {
                     {"id": "lab-01-python-solution", "name": "Lab 1: Python for Data Science (Solutions)", "file": "out/lab-01-python-data-science-solutions.ipynb", "type": "lab", "runnable": True},
                     {"id": "lab-02-ml", "name": "Lab 2: Machine Learning with PyTorch", "file": "out/lab-02-ml-pytorch.ipynb", "type": "lab", "runnable": True},
                     {"id": "lab-02-ml-solution", "name": "Lab 2: Machine Learning (Solutions)", "file": "out/lab-02-ml-pytorch-solutions.ipynb", "type": "lab", "runnable": True},
+                    {"id": "lab-nlp", "name": "Lab: NLP Fundamentals", "file": "out/lab-03-nlp.ipynb", "type": "lab", "runnable": True},
                     {"id": "lab-03-genai", "name": "Lab 3: Generative AI with Ollama", "file": "out/lab-03-generative-ai.ipynb", "type": "lab", "runnable": True},
                     {"id": "lab-03-genai-solution", "name": "Lab 3: Generative AI (Solutions)", "file": "out/lab-03-generative-ai-solutions.ipynb", "type": "lab", "runnable": True},
                 ]

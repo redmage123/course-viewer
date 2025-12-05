@@ -178,6 +178,81 @@ is_admin = False
     </div>
 </div>
 
+<!-- Slide 5b: User Input -->
+<div class="slide" id="slide5b">
+    <span class="slide-number">5b</span>
+    <h2>User Input: Getting Data from Users</h2>
+    <div class="two-column">
+        <div>
+            <div class="code-block">
+                <div class="code-header">input() function</div>
+                <div class="code-content">
+                    <code># Get input from user
+name = input("What is your name? ")
+print(f"Hello, {name}!")
+
+# IMPORTANT: input() ALWAYS returns a string!
+age = input("Enter your age: ")
+print(type(age))  # &lt;class 'str'&gt;
+
+# This will NOT work as expected:
+age = input("Enter your age: ")
+next_year = age + 1  # ERROR! Can't add str + int</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="warning-box" style="background: rgba(255, 82, 82, 0.2); border-left: 4px solid #ff5252; padding: 15px; margin-bottom: 15px;">
+                <strong>⚠️ Key Point:</strong><br>
+                The <code>input()</code> function <strong>ALWAYS</strong> returns a string, even if the user types a number!
+            </div>
+            <p>If you type <code>25</code>, Python sees it as <code>"25"</code> (text), not the number 25.</p>
+            <p style="margin-top: 15px;">To use it as a number, you must <strong>convert</strong> (cast) it.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5c: Type Casting -->
+<div class="slide" id="slide5c">
+    <span class="slide-number">5c</span>
+    <h2>Type Casting: Converting Between Types</h2>
+    <div class="two-column">
+        <div>
+            <div class="code-block">
+                <div class="code-header">Converting Input to Numbers</div>
+                <div class="code-content">
+                    <code># String to Integer
+age_str = input("Enter your age: ")
+age = int(age_str)      # Convert to integer
+print(age + 1)          # Now math works!
+
+# String to Float
+price_str = input("Enter price: ")
+price = float(price_str)  # Convert to decimal
+print(price * 1.1)        # Add 10% tax
+
+# One-liner (common pattern)
+age = int(input("Enter age: "))
+price = float(input("Enter price: "))</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Casting Functions:</h3>
+            <table style="width: 100%; margin-top: 10px;">
+                <tr style="background: rgba(255,255,255,0.1);"><th>Function</th><th>Converts to</th><th>Example</th></tr>
+                <tr><td><code>int()</code></td><td>Integer</td><td><code>int("42")</code> → 42</td></tr>
+                <tr><td><code>float()</code></td><td>Decimal</td><td><code>float("3.14")</code> → 3.14</td></tr>
+                <tr><td><code>str()</code></td><td>String</td><td><code>str(100)</code> → "100"</td></tr>
+                <tr><td><code>bool()</code></td><td>Boolean</td><td><code>bool(1)</code> → True</td></tr>
+            </table>
+            <div class="tip-box" style="margin-top: 20px;">
+                <strong>Common Error:</strong> If user enters "abc" and you try <code>int("abc")</code>, Python crashes! We'll learn to handle this with try/except later.
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Slide 6: Operators -->
 <div class="slide" id="slide6">
     <span class="slide-number">6</span>
@@ -661,35 +736,891 @@ upper = [name.upper() for name in names]
     </div>
 </div>
 
-<!-- Slide 17: Summary & Next Steps -->
+<!-- Slide 17: Tuples -->
 <div class="slide" id="slide17">
     <span class="slide-number">17</span>
+    <h2>Tuples: Immutable Sequences</h2>
+    <p>Tuples are like lists, but cannot be changed after creation:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Creating and Using Tuples</div>
+            <div class="code-content">
+                <code># Creating tuples
+coordinates = (10, 20)
+rgb_color = (255, 128, 0)
+single_item = (42,)  # Note the comma!
+empty = ()
+
+# Accessing elements (like lists)
+x, y = coordinates
+print(coordinates[0])  # 10
+print(rgb_color[-1])   # 0
+
+# Tuple unpacking
+name, age, city = ("Alice", 30, "NYC")
+
+# Tuples are immutable
+coordinates[0] = 15  # ERROR! Can't modify</code>
+            </div>
+        </div>
+        <div>
+            <h3>Tuples vs Lists</h3>
+            <table class="comparison-table">
+                <tr><th>Feature</th><th>Tuple</th><th>List</th></tr>
+                <tr><td>Syntax</td><td><code>(1, 2, 3)</code></td><td><code>[1, 2, 3]</code></td></tr>
+                <tr><td>Mutable</td><td>No</td><td>Yes</td></tr>
+                <tr><td>Performance</td><td>Faster</td><td>Slower</td></tr>
+                <tr><td>Use Case</td><td>Fixed data</td><td>Dynamic data</td></tr>
+            </table>
+            <div class="tip-box" style="margin-top: 20px;">
+                <strong>When to use tuples:</strong> Function return values, coordinates, RGB colors, database records - anything that shouldn't change!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 18: Sets -->
+<div class="slide" id="slide18">
+    <span class="slide-number">18</span>
+    <h2>Sets: Unique Collections</h2>
+    <p>Sets store unique values with no duplicates and no order:</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Creating and Modifying Sets</div>
+            <div class="code-content">
+                <code># Creating sets
+fruits = {"apple", "banana", "cherry"}
+numbers = {1, 2, 3, 4, 5}
+
+# Duplicates are automatically removed
+duplicates = {1, 2, 2, 3, 3, 3}
+print(duplicates)  # {1, 2, 3}
+
+# Adding and removing
+fruits.add("orange")
+fruits.add("apple")  # No effect (exists)
+fruits.remove("banana")
+fruits.discard("grape")  # Safe (no error)
+
+# Membership testing (very fast!)
+if "apple" in fruits:
+    print("Found it!")</code>
+            </div>
+        </div>
+        <div>
+            <h3>Set Operations</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+# Union (combine)
+print(a | b)  # {1, 2, 3, 4, 5, 6}
+
+# Intersection (common)
+print(a & b)  # {3, 4}
+
+# Difference (in a, not in b)
+print(a - b)  # {1, 2}
+
+# Symmetric difference
+print(a ^ b)  # {1, 2, 5, 6}</code>
+                </div>
+            </div>
+            <div class="warning-box" style="margin-top: 15px;">
+                <strong>Note:</strong> Sets are unordered - you can't use indexing like <code>fruits[0]</code>!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 19: None Type -->
+<div class="slide" id="slide19">
+    <span class="slide-number">19</span>
+    <h2>None: The Absence of Value</h2>
+    <p>None is Python's way of representing "nothing" or "no value":</p>
+    <div class="two-column">
+        <div class="code-block">
+            <div class="code-header">Using None</div>
+            <div class="code-content">
+                <code># None as default parameter
+def greet(name=None):
+    if name is None:
+        return "Hello, stranger!"
+    return f"Hello, {name}!"
+
+print(greet())         # Hello, stranger!
+print(greet("Alice"))  # Hello, Alice!
+
+# Functions return None by default
+def do_something():
+    print("Doing...")
+    # No return statement
+
+result = do_something()
+print(result)  # None
+
+# Checking for None (use 'is', not '==')
+value = None
+if value is None:     # Correct
+    print("No value")</code>
+            </div>
+        </div>
+        <div>
+            <h3>Common Use Cases</h3>
+            <ul>
+                <li><strong>Optional parameters:</strong> Default function arguments</li>
+                <li><strong>Initialization:</strong> Variables not yet assigned</li>
+                <li><strong>Return values:</strong> No meaningful result</li>
+                <li><strong>Database nulls:</strong> Missing or unknown data</li>
+            </ul>
+            <div class="highlight" style="margin-top: 20px;">
+                <p><strong>Best Practice:</strong> Always use <code>is None</code> instead of <code>== None</code></p>
+            </div>
+            <div class="tip-box" style="margin-top: 15px;">
+                <code>None</code> is falsy, so <code>if not value:</code> works but also catches 0, empty strings, and empty lists!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 20: Boolean Logic Deep Dive -->
+<div class="slide" id="slide20">
+    <span class="slide-number">20</span>
+    <h2>Boolean Logic Deep Dive</h2>
+    <div class="two-column">
+        <div>
+            <h3>Truth Tables</h3>
+            <table class="comparison-table">
+                <tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th><th>not A</th></tr>
+                <tr><td>True</td><td>True</td><td>True</td><td>True</td><td>False</td></tr>
+                <tr><td>True</td><td>False</td><td>False</td><td>True</td><td>False</td></tr>
+                <tr><td>False</td><td>True</td><td>False</td><td>True</td><td>True</td></tr>
+                <tr><td>False</td><td>False</td><td>False</td><td>False</td><td>True</td></tr>
+            </table>
+            <div class="code-block" style="margin-top: 15px;">
+                <div class="code-header">Combining Conditions</div>
+                <div class="code-content">
+                    <code>age = 25
+is_student = True
+has_id = False
+
+if age >= 18 and has_id:
+    print("Can enter club")
+
+if is_student or age < 18:
+    print("Gets discount")</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Truthy and Falsy Values</h3>
+            <p>These values are considered <strong>False</strong>:</p>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>bool(False)     # False
+bool(0)         # False
+bool(0.0)       # False
+bool("")        # False (empty string)
+bool([])        # False (empty list)
+bool({})        # False (empty dict)
+bool(None)      # False</code>
+                </div>
+            </div>
+            <p style="margin-top: 10px;">Everything else is <strong>True</strong>!</p>
+            <div class="tip-box" style="margin-top: 15px;">
+                <strong>Short-circuit:</strong> <code>and</code> stops at first False, <code>or</code> stops at first True.
+            </div>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Short-circuit prevents error
+user = None
+if user and user.name == "Alice":
+    print("Hi Alice!")  # Won't crash!</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 21: Loop Control -->
+<div class="slide" id="slide21">
+    <span class="slide-number">21</span>
+    <h2>Loop Control: break, continue, pass</h2>
+    <div class="two-column">
+        <div>
+            <h3>break - Exit Loop Early</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Stop when found
+for num in [1, 2, 3, 4, 5]:
+    if num == 3:
+        break  # Exit loop
+    print(num)  # Prints: 1, 2
+
+# Search pattern
+names = ["Alice", "Bob", "Charlie"]
+for name in names:
+    if name == "Bob":
+        print("Found Bob!")
+        break</code>
+                </div>
+            </div>
+            <h3 style="margin-top: 15px;">continue - Skip Iteration</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Skip even numbers
+for num in range(10):
+    if num % 2 == 0:
+        continue  # Skip to next
+    print(num)  # 1, 3, 5, 7, 9</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>pass - Do Nothing (Placeholder)</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Empty function stub
+def future_feature():
+    pass  # Will implement later
+
+# Placeholder in conditionals
+if condition:
+    pass  # TODO: handle later</code>
+                </div>
+            </div>
+            <h3 style="margin-top: 15px;">Loop else Clause</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># else runs if NO break occurred
+for num in [1, 3, 5, 7]:
+    if num % 2 == 0:
+        print("Found even!")
+        break
+else:
+    print("No evens found")  # Runs!
+
+# Useful for search patterns
+for item in items:
+    if item == target:
+        print("Found!")
+        break
+else:
+    print("Not found")</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 22: enumerate() and zip() -->
+<div class="slide" id="slide22">
+    <span class="slide-number">22</span>
+    <h2>enumerate() and zip()</h2>
+    <div class="two-column">
+        <div>
+            <h3>enumerate() - Get Index with Values</h3>
+            <div class="code-block">
+                <div class="code-header">Basic enumerate()</div>
+                <div class="code-content">
+                    <code>fruits = ['apple', 'banana', 'cherry']
+
+# Without enumerate (old way)
+for i in range(len(fruits)):
+    print(f"{i}: {fruits[i]}")
+
+# With enumerate - cleaner!
+for index, fruit in enumerate(fruits):
+    print(f"{index}: {fruit}")
+
+# Start from custom index
+for i, fruit in enumerate(fruits, start=1):
+    print(f"{i}. {fruit}")</code>
+                </div>
+            </div>
+            <div class="tip-box">
+                <strong>Tip:</strong> Use <code>enumerate()</code> instead of <code>range(len())</code>!
+            </div>
+        </div>
+        <div>
+            <h3>zip() - Combine Multiple Lists</h3>
+            <div class="code-block">
+                <div class="code-header">Basic zip()</div>
+                <div class="code-content">
+                    <code>names = ['Alice', 'Bob', 'Charlie']
+ages = [25, 30, 35]
+cities = ['NYC', 'LA', 'Chicago']
+
+# Combine two lists
+for name, age in zip(names, ages):
+    print(f"{name} is {age}")
+
+# Combine three lists
+for name, age, city in zip(names, ages, cities):
+    print(f"{name}, {age}, {city}")
+
+# Create dictionary from lists
+person_dict = dict(zip(names, ages))
+# {'Alice': 25, 'Bob': 30, 'Charlie': 35}</code>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>Note:</strong> <code>zip()</code> stops at the shortest list!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 23: Sorting -->
+<div class="slide" id="slide23">
+    <span class="slide-number">23</span>
+    <h2>Sorting in Python</h2>
+    <div class="two-column">
+        <div>
+            <h3>sorted() vs .sort()</h3>
+            <table class="comparison-table">
+                <tr><th>Feature</th><th>sorted()</th><th>.sort()</th></tr>
+                <tr><td>Returns</td><td>New list</td><td>None</td></tr>
+                <tr><td>Works on</td><td>Any iterable</td><td>Lists only</td></tr>
+                <tr><td>Original</td><td>Unchanged</td><td>Modified</td></tr>
+            </table>
+            <div class="code-block" style="margin-top: 15px;">
+                <div class="code-content">
+                    <code>numbers = [3, 1, 4, 1, 5, 9]
+
+# sorted() - new list
+sorted_nums = sorted(numbers)
+print(numbers)  # [3, 1, 4, 1, 5, 9]
+
+# .sort() - modifies in place
+numbers.sort()
+print(numbers)  # [1, 1, 3, 4, 5, 9]
+
+# Reverse order
+sorted(numbers, reverse=True)</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Sorting with key Parameter</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Sort by string length
+words = ['python', 'is', 'awesome']
+sorted(words, key=lambda x: len(x))
+# ['is', 'python', 'awesome']
+
+# Case-insensitive sort
+names = ['alice', 'Bob', 'CHARLIE']
+sorted(names, key=lambda x: x.lower())
+
+# Sort dictionaries
+students = [
+    {'name': 'Alice', 'grade': 85},
+    {'name': 'Bob', 'grade': 92},
+]
+
+# Sort by grade (descending)
+sorted(students,
+       key=lambda x: x['grade'],
+       reverse=True)</code>
+                </div>
+            </div>
+            <div class="tip-box">
+                Use <code>key=</code> to customize how items are compared during sorting.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 24: Nested Data Structures -->
+<div class="slide" id="slide24">
+    <span class="slide-number">24</span>
+    <h2>Nested Data Structures</h2>
+    <div class="two-column">
+        <div>
+            <h3>Lists of Dictionaries</h3>
+            <div class="code-block">
+                <div class="code-header">Database-style Records</div>
+                <div class="code-content">
+                    <code># User records
+users = [
+    {"id": 1, "name": "Alice", "age": 28},
+    {"id": 2, "name": "Bob", "age": 34},
+    {"id": 3, "name": "Charlie", "age": 22}
+]
+
+# Access data
+print(users[0]["name"])  # "Alice"
+print(users[1]["age"])   # 34
+
+# Iterate through records
+for user in users:
+    print(f"{user['name']}: {user['age']}")</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Dictionaries of Lists</h3>
+            <div class="code-block">
+                <div class="code-header">Grouped Data</div>
+                <div class="code-content">
+                    <code># Grades by subject
+grades = {
+    "math": [95, 87, 92, 88],
+    "science": [89, 91, 85, 93],
+    "english": [92, 88, 90, 87]
+}
+
+# Access specific data
+print(grades["math"][0])  # 95
+
+# Calculate averages
+for subject, scores in grades.items():
+    avg = sum(scores) / len(scores)
+    print(f"{subject}: {avg:.1f}")</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tip-box">
+        <strong>Best Practice:</strong> Use <code>.get()</code> for safe access: <code>user.get("email", "No email")</code>
+    </div>
+</div>
+
+<!-- Slide 25: Working with JSON -->
+<div class="slide" id="slide25">
+    <span class="slide-number">25</span>
+    <h2>Working with JSON</h2>
+    <div class="two-column">
+        <div>
+            <h3>JSON &lt;-&gt; Python</h3>
+            <table class="comparison-table">
+                <tr><th>JSON</th><th>Python</th></tr>
+                <tr><td>object</td><td>dict</td></tr>
+                <tr><td>array</td><td>list</td></tr>
+                <tr><td>string</td><td>str</td></tr>
+                <tr><td>true/false</td><td>True/False</td></tr>
+                <tr><td>null</td><td>None</td></tr>
+            </table>
+            <div class="code-block" style="margin-top: 15px;">
+                <div class="code-header">Converting</div>
+                <div class="code-content">
+                    <code>import json
+
+data = {"name": "Alice", "age": 30}
+
+# Python to JSON string
+json_str = json.dumps(data)
+
+# JSON string to Python
+data = json.loads(json_str)
+
+# Pretty print
+json.dumps(data, indent=4)</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Reading/Writing JSON Files</h3>
+            <div class="code-block">
+                <div class="code-header">File Operations</div>
+                <div class="code-content">
+                    <code>import json
+
+# Write to file
+data = {"users": [{"id": 1, "name": "Alice"}]}
+
+with open("data.json", "w") as f:
+    json.dump(data, f, indent=4)
+
+# Read from file
+with open("data.json", "r") as f:
+    data = json.load(f)
+
+print(data["users"][0]["name"])</code>
+                </div>
+            </div>
+            <div class="warning-box" style="margin-top: 15px;">
+                <strong>Note:</strong> JSON uses double quotes (") not single quotes. Booleans are lowercase (true/false).
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 26: Essential String Methods -->
+<div class="slide" id="slide26">
+    <span class="slide-number">26</span>
+    <h2>Essential String Methods</h2>
+    <div class="two-column">
+        <div>
+            <h3>Whitespace &amp; Splitting</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Remove whitespace
+text = "  hello world  "
+text.strip()   # "hello world"
+text.lstrip()  # "hello world  "
+text.rstrip()  # "  hello world"
+
+# Split string into list
+csv = "John,Doe,30,Engineer"
+fields = csv.split(',')
+# ['John', 'Doe', '30', 'Engineer']
+
+# Join list into string
+words = ['Hello', 'World']
+result = ' '.join(words)
+# "Hello World"</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Finding &amp; Checking</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># find() returns -1 if not found
+email = "user@example.com"
+email.find('@')  # 4
+email.find('xyz')  # -1
+
+# startswith / endswith
+filename = "report.pdf"
+filename.endswith('.pdf')  # True
+
+url = "https://example.com"
+url.startswith('https://')  # True
+
+# Character type checks
+"123".isdigit()   # True
+"abc".isalpha()   # True
+"abc123".isalnum()  # True</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tip-box">
+        <strong>Tip:</strong> Use <code>strip()</code> on all user input! Use <code>find()</code> instead of <code>index()</code> for safe searching.
+    </div>
+</div>
+
+<!-- Slide 27: String Comparison -->
+<div class="slide" id="slide27">
+    <span class="slide-number">27</span>
+    <h2>String Comparison Operators</h2>
+    <div class="two-column">
+        <div>
+            <h3>== vs is</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># == compares values (USE THIS!)
+str1 = "Python"
+str2 = "Python"
+print(str1 == str2)  # True
+
+# is compares object identity
+print(str1 is str2)  # May vary!
+
+# Always use == for strings
+username = input("Enter username: ")
+if username == "admin":
+    print("Welcome, admin!")</code>
+                </div>
+            </div>
+            <div class="warning-box" style="margin-top: 15px;">
+                <strong>Always use <code>==</code></strong> for string comparison, not <code>is</code>!
+            </div>
+        </div>
+        <div>
+            <h3>The 'in' Operator &amp; Case</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Check if substring exists
+email = "user@example.com"
+if '@' in email:
+    print("Valid email format")
+
+# Case-insensitive comparison
+user_input = "YES"
+if user_input.lower() == "yes":
+    print("User confirmed")
+
+# Multiple valid inputs
+choice = input("Continue? (y/n): ")
+if choice.lower() in ['y', 'yes']:
+    print("Continuing...")</code>
+                </div>
+            </div>
+            <div class="tip-box" style="margin-top: 15px;">
+                Convert to <code>.lower()</code> for case-insensitive comparisons.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 28: Variable Scope -->
+<div class="slide" id="slide28">
+    <span class="slide-number">28</span>
+    <h2>Variable Scope: Where Variables Live</h2>
+    <div class="two-column">
+        <div>
+            <h3>LEGB Rule</h3>
+            <p style="font-size: 1.1em; margin-bottom: 15px;">Python looks for variables in this order:</p>
+            <ul>
+                <li><strong>L</strong>ocal: Inside current function</li>
+                <li><strong>E</strong>nclosing: In parent functions</li>
+                <li><strong>G</strong>lobal: Module level</li>
+                <li><strong>B</strong>uilt-in: Python's built-ins</li>
+            </ul>
+            <div class="code-block" style="margin-top: 15px;">
+                <div class="code-content">
+                    <code>x = "global"  # Global scope
+
+def outer():
+    x = "enclosing"  # Enclosing
+
+    def inner():
+        x = "local"  # Local
+        print(x)     # "local"
+
+    inner()
+    print(x)  # "enclosing"
+
+outer()
+print(x)  # "global"</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Local vs Global</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code># Local variable (preferred!)
+def calc_total(price, tax):
+    total = price * (1 + tax)
+    return total  # Local only
+
+# Global variable (avoid!)
+count = 0
+
+def increment():
+    global count  # Required!
+    count += 1</code>
+                </div>
+            </div>
+            <div class="warning-box" style="margin-top: 15px;">
+                <strong>Avoid global variables!</strong> They make code hard to test and debug. Pass values as parameters instead.
+            </div>
+            <div class="tip-box">
+                <strong>Best practice:</strong> Keep variables local. Use function parameters and return values.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 29: Comments and Docstrings -->
+<div class="slide" id="slide29">
+    <span class="slide-number">29</span>
+    <h2>Comments and Docstrings</h2>
+    <div class="two-column">
+        <div>
+            <h3>Types of Comments</h3>
+            <div class="code-block">
+                <div class="code-header">Single &amp; Multi-line</div>
+                <div class="code-content">
+                    <code># Single-line comment
+x = 5  # Comment after code
+
+# Explain WHY, not WHAT
+# Bad: increment x by 1
+x += 1
+
+# Good: Account for 1-based indexing
+x += 1
+
+# Multi-line comments use
+# multiple single-line comments</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Docstrings for Functions</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>def calculate_area(radius):
+    """
+    Calculate the area of a circle.
+
+    Args:
+        radius (float): Circle radius
+
+    Returns:
+        float: The area
+
+    Example:
+        >>> calculate_area(5)
+        78.54
+    """
+    return 3.14159 * radius ** 2
+
+# Access docstring
+print(calculate_area.__doc__)</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="highlight">
+        <p><strong>Self-documenting code:</strong> Good variable and function names reduce the need for comments!</p>
+    </div>
+</div>
+
+<!-- Slide 30: PEP 8 Style Guide -->
+<div class="slide" id="slide30">
+    <span class="slide-number">30</span>
+    <h2>PEP 8: Python Style Guide</h2>
+    <div class="two-column">
+        <div>
+            <h3>Naming Conventions</h3>
+            <table class="comparison-table">
+                <tr><th>Type</th><th>Convention</th><th>Example</th></tr>
+                <tr><td>Variables</td><td>snake_case</td><td><code>user_name</code></td></tr>
+                <tr><td>Functions</td><td>snake_case</td><td><code>calculate_total()</code></td></tr>
+                <tr><td>Classes</td><td>PascalCase</td><td><code>UserAccount</code></td></tr>
+                <tr><td>Constants</td><td>UPPER_CASE</td><td><code>MAX_SIZE</code></td></tr>
+            </table>
+            <div class="code-block" style="margin-top: 15px;">
+                <div class="code-content">
+                    <code>class ShoppingCart:
+    MAX_ITEMS = 100
+
+    def calculate_total_price(self):
+        total_price = 0
+        for item in self.items:
+            total_price += item.price
+        return total_price</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Other Key Rules</h3>
+            <div class="card">
+                <h4>Indentation</h4>
+                <p>Use 4 spaces (not tabs!)</p>
+            </div>
+            <div class="card">
+                <h4>Line Length</h4>
+                <p>Max 79-120 characters</p>
+            </div>
+            <div class="card">
+                <h4>Imports at Top</h4>
+                <div class="code-block" style="margin-top: 10px;">
+                    <div class="code-content" style="padding: 10px;">
+                        <code># Standard library
+import os
+import sys
+
+# Third-party
+import numpy as np
+
+# Local
+from myapp import utils</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 31: Common Errors and Debugging -->
+<div class="slide" id="slide31">
+    <span class="slide-number">31</span>
+    <h2>Common Errors and Debugging</h2>
+    <div class="two-column">
+        <div>
+            <h3>Reading Error Messages</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>Traceback (most recent call last):
+  File "script.py", line 10
+    result = divide(10, 0)
+  File "script.py", line 5
+    return a / b
+ZeroDivisionError: division by zero
+
+# Read bottom to top:
+# 1. Error type: ZeroDivisionError
+# 2. Message: division by zero
+# 3. Where: line 5 in divide()
+# 4. Called from: line 10</code>
+                </div>
+            </div>
+            <h3 style="margin-top: 15px;">Print Debugging</h3>
+            <div class="code-block">
+                <div class="code-content">
+                    <code>def calc(price, discount):
+    print(f"DEBUG: {price=}, {discount=}")
+    result = price * (1 - discount)
+    print(f"DEBUG: {result=}")
+    return result</code>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3>Common Errors</h3>
+            <div class="card">
+                <h4>IndentationError</h4>
+                <code>def greet():
+print("Hi")  # ERROR!</code>
+            </div>
+            <div class="card">
+                <h4>NameError</h4>
+                <code>print(username)  # Not defined!</code>
+            </div>
+            <div class="card">
+                <h4>TypeError</h4>
+                <code>age = "25"
+next_year = age + 1  # str + int!</code>
+            </div>
+            <div class="tip-box" style="margin-top: 15px;">
+                <strong>Tips:</strong> Read errors carefully, check line numbers, verify types, use print() liberally!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 32: Summary & Next Steps -->
+<div class="slide" id="slide32">
+    <span class="slide-number">32</span>
     <h2>What You've Learned</h2>
     <div class="three-column">
         <div class="card">
-            <h4>Basics</h4>
-            <ul style="font-size: 0.9em; margin-left: 20px;">
+            <h4>Core Concepts</h4>
+            <ul style="font-size: 0.85em; margin-left: 20px;">
                 <li>Variables & data types</li>
-                <li>Operators</li>
-                <li>String manipulation</li>
-                <li>Print & input</li>
+                <li>Operators & input</li>
+                <li>Strings & methods</li>
+                <li>Boolean logic</li>
+                <li>Scope & debugging</li>
             </ul>
         </div>
         <div class="card">
             <h4>Data Structures</h4>
-            <ul style="font-size: 0.9em; margin-left: 20px;">
-                <li>Lists</li>
-                <li>Dictionaries</li>
-                <li>List comprehensions</li>
-                <li>Slicing</li>
+            <ul style="font-size: 0.85em; margin-left: 20px;">
+                <li>Lists & tuples</li>
+                <li>Dictionaries & sets</li>
+                <li>Nested structures</li>
+                <li>JSON handling</li>
+                <li>Sorting & comprehensions</li>
             </ul>
         </div>
         <div class="card">
-            <h4>Control Flow</h4>
-            <ul style="font-size: 0.9em; margin-left: 20px;">
+            <h4>Control & Functions</h4>
+            <ul style="font-size: 0.85em; margin-left: 20px;">
                 <li>If/elif/else</li>
-                <li>For & while loops</li>
-                <li>Functions</li>
+                <li>Loops (for, while)</li>
+                <li>break/continue/pass</li>
+                <li>Functions & scope</li>
                 <li>Error handling</li>
             </ul>
         </div>
@@ -697,7 +1628,7 @@ upper = [name.upper() for name in names]
     <div class="highlight" style="margin-top: 30px;">
         <h3>Next Steps:</h3>
         <ul>
-            <li>Complete the hands-on labs</li>
+            <li>Complete the hands-on labs to reinforce your learning</li>
             <li>Build small projects (calculator, to-do app, quiz game)</li>
             <li>Explore: Web dev (Flask/Django), Data Science (Pandas), or Automation</li>
         </ul>
@@ -712,7 +1643,7 @@ upper = [name.upper() for name in names]
 
 <script>
     let currentSlide = 1;
-    const totalSlides = 17;
+    const totalSlides = 32;
 
     function showSlide(n) {
         if (n < 1) n = totalSlides;

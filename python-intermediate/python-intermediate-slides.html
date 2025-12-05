@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intermediate Python Programming</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+        }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.55em;
+        }
+        .reveal pre code {
+            max-height: 600px;
+            padding: 20px;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .slides section.center {
+            text-align: center;
+        }
+        .reveal ul {
+            display: block;
+        }
+        .reveal li {
+            margin-bottom: 10px;
+        }
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        .highlight-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #42affa;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title Slide -->
+            <section class="center">
+                <h1>Intermediate Python Programming</h1>
+                <p>Taking Your Python Skills to the Next Level</p>
+            </section>
+
+            <!-- Course Overview -->
+            <section>
+                <h2>Course Overview</h2>
+                <ul>
+                    <li><strong>Object-Oriented Programming (OOP)</strong> - Classes, inheritance, polymorphism</li>
+                    <li><strong>Functional Programming</strong> - Lambda, map, filter, reduce</li>
+                    <li><strong>Decorators & Generators</strong> - Advanced function features</li>
+                    <li><strong>Data Handling</strong> - File I/O, JSON, CSV, error handling</li>
+                    <li><strong>Testing & Packaging</strong> - Unit tests, modules, packages</li>
+                </ul>
+            </section>
+
+            <!-- OOP SECTION START -->
+
+            <!-- What is OOP? -->
+            <section>
+                <h2>What is Object-Oriented Programming?</h2>
+                <p>OOP is a programming paradigm based on the concept of "objects" that contain data and code.</p>
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>The Four Pillars of OOP</h3>
+                    <ul>
+                        <li><strong>Encapsulation</strong> - Bundling data and methods together</li>
+                        <li><strong>Abstraction</strong> - Hiding complex implementation details</li>
+                        <li><strong>Inheritance</strong> - Creating new classes from existing ones</li>
+                        <li><strong>Polymorphism</strong> - Using a unified interface for different types</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Classes and Objects -->
+            <section>
+                <h2>Classes and Objects</h2>
+                <div class="two-column">
+                    <div>
+                        <p><strong>Class:</strong> A blueprint for creating objects</p>
+                        <p><strong>Object:</strong> An instance of a class</p>
+                        <pre><code class="python" data-trim>
+# Define a class
+class Dog:
+    def __init__(self, name):
+        self.name = name
+
+    def bark(self):
+        return f"{self.name} says Woof!"
+
+# Create objects (instances)
+dog1 = Dog("Buddy")
+dog2 = Dog("Max")
+
+print(dog1.bark())  # Buddy says Woof!
+print(dog2.bark())  # Max says Woof!
+                        </code></pre>
+                    </div>
+                    <div class="diagram-container">
+                        <svg width="350" height="400" viewBox="0 0 350 400">
+                            <!-- Class Blueprint -->
+                            <rect x="75" y="20" width="200" height="120" fill="#42affa" stroke="#fff" stroke-width="3" rx="5">
+                                <animate attributeName="opacity" values="0;1" dur="0.5s" fill="freeze"/>
+                            </rect>
+                            <text x="175" y="50" fill="#fff" font-size="20" font-weight="bold" text-anchor="middle">
+                                <tspan>Class: Dog</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="175" y="80" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>name</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="175" y="105" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>bark()</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Arrow -->
+                            <path d="M 175 140 L 175 180" stroke="#fff" stroke-width="3" fill="none" marker-end="url(#arrowhead)">
+                                <animate attributeName="opacity" values="0;1" begin="1s" dur="0.5s" fill="freeze"/>
+                            </path>
+                            <text x="200" y="165" fill="#fff" font-size="16">
+                                <tspan>instantiate</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Instance 1 -->
+                            <rect x="20" y="200" width="140" height="100" fill="#50c878" stroke="#fff" stroke-width="2" rx="5">
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </rect>
+                            <text x="90" y="225" fill="#fff" font-size="16" font-weight="bold" text-anchor="middle">
+                                <tspan>dog1</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="90" y="250" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>name: "Buddy"</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="90" y="275" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>bark()</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Instance 2 -->
+                            <rect x="190" y="200" width="140" height="100" fill="#50c878" stroke="#fff" stroke-width="2" rx="5">
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </rect>
+                            <text x="260" y="225" fill="#fff" font-size="16" font-weight="bold" text-anchor="middle">
+                                <tspan>dog2</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="260" y="250" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>name: "Max"</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="260" y="275" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>bark()</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Arrow marker definition -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                    <polygon points="0 0, 10 5, 0 10" fill="#fff"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- __init__ and self -->
+            <section>
+                <h2>Understanding __init__ and self</h2>
+                <div class="highlight-box">
+                    <p><strong>__init__:</strong> The constructor method - called when an object is created</p>
+                    <p><strong>self:</strong> Refers to the instance itself</p>
+                </div>
+                <pre><code class="python" data-trim>
+class Person:
+    def __init__(self, name, age):
+        # self.attribute = parameter
+        self.name = name  # Instance attribute
+        self.age = age
+        self.greeting = f"Hello, I'm {name}!"
+
+    def introduce(self):
+        # self is automatically passed as first parameter
+        return f"{self.greeting} I'm {self.age} years old."
+
+    def have_birthday(self):
+        self.age += 1  # Modify instance attribute
+        return f"Happy Birthday! {self.name} is now {self.age}!"
+
+# Create instance
+person = Person("Alice", 30)
+print(person.introduce())      # Hello, I'm Alice! I'm 30 years old.
+print(person.have_birthday())  # Happy Birthday! Alice is now 31!
+                </code></pre>
+            </section>
+
+            <!-- Instance vs Class Attributes -->
+            <section>
+                <h2>Instance vs Class Attributes</h2>
+                <pre><code class="python" data-trim>
+class BankAccount:
+    # Class attribute - shared by ALL instances
+    bank_name = "Python Bank"
+    interest_rate = 0.02
+    total_accounts = 0
+
+    def __init__(self, owner, balance):
+        # Instance attributes - unique to each instance
+        self.owner = owner
+        self.balance = balance
+        BankAccount.total_accounts += 1
+
+    def deposit(self, amount):
+        self.balance += amount
+        return self.balance
+
+# Each instance has its own owner and balance
+account1 = BankAccount("Alice", 1000)
+account2 = BankAccount("Bob", 2000)
+
+print(account1.bank_name)        # Python Bank (from class)
+print(account1.balance)          # 1000 (instance-specific)
+print(account2.balance)          # 2000 (instance-specific)
+print(BankAccount.total_accounts)  # 2 (class attribute)
+                </code></pre>
+            </section>
+
+            <!-- Methods: Instance, Class, Static -->
+            <section>
+                <h2>Types of Methods</h2>
+                <pre><code class="python" data-trim>
+class MyClass:
+    class_var = "I'm a class variable"
+
+    def __init__(self, value):
+        self.instance_var = value
+
+    # Instance method - operates on instance data
+    def instance_method(self):
+        return f"Instance: {self.instance_var}"
+
+    # Class method - operates on class data
+    @classmethod
+    def class_method(cls):
+        return f"Class: {cls.class_var}"
+
+    # Static method - doesn't access instance or class data
+    @staticmethod
+    def static_method(x, y):
+        return f"Static: {x + y}"
+
+# Usage
+obj = MyClass("hello")
+print(obj.instance_method())       # Instance: hello
+print(MyClass.class_method())      # Class: I'm a class variable
+print(MyClass.static_method(5, 3)) # Static: 8
+                </code></pre>
+            </section>
+
+            <!-- Inheritance -->
+            <section>
+                <h2>Inheritance</h2>
+                <p>Creating new classes based on existing ones - promotes code reuse</p>
+                <div class="two-column">
+                    <div>
+                        <pre><code class="python" data-trim>
+# Parent class (Base class)
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        return "Some sound"
+
+# Child class (Derived class)
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)  # Call parent __init__
+        self.breed = breed
+
+    def speak(self):  # Override parent method
+        return f"{self.name} says Woof!"
+
+class Cat(Animal):
+    def speak(self):
+        return f"{self.name} says Meow!"
+
+# Usage
+dog = Dog("Buddy", "Golden Retriever")
+cat = Cat("Whiskers")
+print(dog.speak())  # Buddy says Woof!
+print(cat.speak())  # Whiskers says Meow!
+                        </code></pre>
+                    </div>
+                    <div class="diagram-container">
+                        <svg width="350" height="400" viewBox="0 0 350 400">
+                            <!-- Parent Class -->
+                            <rect x="100" y="20" width="150" height="80" fill="#42affa" stroke="#fff" stroke-width="3" rx="5">
+                                <animate attributeName="opacity" values="0;1" dur="0.5s" fill="freeze"/>
+                            </rect>
+                            <text x="175" y="50" fill="#fff" font-size="18" font-weight="bold" text-anchor="middle">
+                                <tspan>Animal</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="175" y="75" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>name</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="175" y="92" fill="#fff" font-size="14" text-anchor="middle">
+                                <tspan>speak()</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Inheritance Arrows -->
+                            <path d="M 135 100 L 80 160" stroke="#fff" stroke-width="3" fill="none" marker-end="url(#arrowhead2)">
+                                <animate attributeName="opacity" values="0;1" begin="1s" dur="0.5s" fill="freeze"/>
+                            </path>
+                            <path d="M 215 100 L 270 160" stroke="#fff" stroke-width="3" fill="none" marker-end="url(#arrowhead2)">
+                                <animate attributeName="opacity" values="0;1" begin="1s" dur="0.5s" fill="freeze"/>
+                            </path>
+
+                            <!-- Child Class 1: Dog -->
+                            <rect x="10" y="180" width="140" height="100" fill="#50c878" stroke="#fff" stroke-width="2" rx="5">
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </rect>
+                            <text x="80" y="210" fill="#fff" font-size="18" font-weight="bold" text-anchor="middle">
+                                <tspan>Dog</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="80" y="235" fill="#fff" font-size="13" text-anchor="middle">
+                                <tspan>name (inherited)</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="80" y="253" fill="#fff" font-size="13" text-anchor="middle">
+                                <tspan>breed</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="80" y="271" fill="#fff" font-size="13" text-anchor="middle">
+                                <tspan>speak() (override)</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1.5s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Child Class 2: Cat -->
+                            <rect x="200" y="180" width="140" height="100" fill="#50c878" stroke="#fff" stroke-width="2" rx="5">
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </rect>
+                            <text x="270" y="210" fill="#fff" font-size="18" font-weight="bold" text-anchor="middle">
+                                <tspan>Cat</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="270" y="235" fill="#fff" font-size="13" text-anchor="middle">
+                                <tspan>name (inherited)</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="270" y="253" fill="#fff" font-size="13" text-anchor="middle">
+                                <tspan>speak() (override)</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="2s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Inheritance labels -->
+                            <text x="50" y="145" fill="#ffcc00" font-size="14" font-style="italic">
+                                <tspan>inherits</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1s" dur="0.5s" fill="freeze"/>
+                            </text>
+                            <text x="240" y="145" fill="#ffcc00" font-size="14" font-style="italic">
+                                <tspan>inherits</tspan>
+                                <animate attributeName="opacity" values="0;1" begin="1s" dur="0.5s" fill="freeze"/>
+                            </text>
+
+                            <!-- Arrow marker -->
+                            <defs>
+                                <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="0" refY="5" orient="auto">
+                                    <polygon points="0 5, 10 0, 10 10" fill="#fff"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Method Overriding -->
+            <section>
+                <h2>Method Overriding</h2>
+                <p>Child classes can override parent methods to provide specific implementations</p>
+                <pre><code class="python" data-trim>
+class Vehicle:
+    def __init__(self, brand):
+        self.brand = brand
+
+    def start(self):
+        return "Vehicle is starting..."
+
+    def info(self):
+        return f"This is a {self.brand} vehicle"
+
+class ElectricCar(Vehicle):
+    def __init__(self, brand, battery_capacity):
+        super().__init__(brand)
+        self.battery_capacity = battery_capacity
+
+    # Override start method
+    def start(self):
+        return f"{self.brand} electric motor starting silently..."
+
+    # Override info and extend it
+    def info(self):
+        base_info = super().info()  # Call parent method
+        return f"{base_info} with {self.battery_capacity}kWh battery"
+
+car = ElectricCar("Tesla", 75)
+print(car.start())  # Tesla electric motor starting silently...
+print(car.info())   # This is a Tesla vehicle with 75kWh battery
+                </code></pre>
+            </section>
+
+            <!-- Multiple Inheritance and MRO -->
+            <section>
+                <h2>Multiple Inheritance and MRO</h2>
+                <p>A class can inherit from multiple parent classes</p>
+                <pre><code class="python" data-trim>
+class Flyer:
+    def fly(self):
+        return "Flying through the air"
+
+class Swimmer:
+    def swim(self):
+        return "Swimming in water"
+
+class Duck(Flyer, Swimmer):  # Multiple inheritance
+    def quack(self):
+        return "Quack quack!"
+
+# Duck inherits from both Flyer and Swimmer
+duck = Duck()
+print(duck.fly())   # Flying through the air
+print(duck.swim())  # Swimming in water
+print(duck.quack()) # Quack quack!
+
+# Method Resolution Order (MRO) - order Python searches for methods
+print(Duck.__mro__)
+# (&lt;class 'Duck'&gt;, &lt;class 'Flyer'&gt;, &lt;class 'Swimmer'&gt;, &lt;class 'object'&gt;)
+                </code></pre>
+                <div class="highlight-box">
+                    <p><strong>MRO:</strong> Python uses C3 linearization to determine the order in which base classes are searched when looking for a method.</p>
+                </div>
+            </section>
+
+            <!-- Polymorphism -->
+            <section>
+                <h2>Polymorphism</h2>
+                <p>Different classes can be used interchangeably through a common interface</p>
+                <pre><code class="python" data-trim>
+class Shape:
+    def area(self):
+        pass
+
+    def perimeter(self):
+        pass
+
+class Rectangle(Shape):
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+    def perimeter(self):
+        return 2 * 3.14159 * self.radius
+
+# Polymorphism in action - same interface, different implementations
+shapes = [Rectangle(5, 3), Circle(4), Rectangle(2, 8)]
+
+for shape in shapes:
+    print(f"Area: {shape.area():.2f}, Perimeter: {shape.perimeter():.2f}")
+                </code></pre>
+            </section>
+
+            <!-- Encapsulation -->
+            <section>
+                <h2>Encapsulation: Public, Protected, Private</h2>
+                <p>Control access to class members</p>
+                <pre><code class="python" data-trim>
+class BankAccount:
+    def __init__(self, account_number, balance):
+        self.account_number = account_number    # Public
+        self._balance = balance                 # Protected (convention)
+        self.__pin = "1234"                     # Private (name mangling)
+
+    # Public method
+    def get_balance(self):
+        return self._balance
+
+    # Protected method (convention - can still be accessed)
+    def _calculate_interest(self):
+        return self._balance * 0.02
+
+    # Private method (name mangled to _BankAccount__validate_pin)
+    def __validate_pin(self, pin):
+        return pin == self.__pin
+
+    def withdraw(self, amount, pin):
+        if self.__validate_pin(pin):
+            if amount <= self._balance:
+                self._balance -= amount
+                return f"Withdrew ${amount}"
+            return "Insufficient funds"
+        return "Invalid PIN"
+
+account = BankAccount("123456", 1000)
+print(account.account_number)      # 123456 (accessible)
+print(account._balance)            # 1000 (accessible but discouraged)
+# print(account.__pin)             # AttributeError (private)
+print(account.withdraw(100, "1234"))  # Withdrew $100
+                </code></pre>
+            </section>
+
+            <!-- Properties -->
+            <section>
+                <h2>Properties: Pythonic Getters and Setters</h2>
+                <p>Use @property to create managed attributes with validation</p>
+                <pre><code class="python" data-trim>
+class Temperature:
+    def __init__(self, celsius=0):
+        self._celsius = celsius  # Private storage
+
+    @property
+    def celsius(self):
+        """Getter for celsius"""
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value):
+        """Setter with validation"""
+        if value < -273.15:
+            raise ValueError("Temperature below absolute zero!")
+        self._celsius = value
+
+    @property
+    def fahrenheit(self):
+        """Computed property (read-only)"""
+        return (self._celsius * 9/5) + 32
+
+    @fahrenheit.setter
+    def fahrenheit(self, value):
+        """Set celsius from fahrenheit"""
+        self._celsius = (value - 32) * 5/9
+
+# Usage - looks like attribute access!
+temp = Temperature(25)
+print(temp.celsius)     # 25 (uses getter)
+print(temp.fahrenheit)  # 77.0 (computed)
+
+temp.fahrenheit = 100   # Uses setter
+print(temp.celsius)     # 37.78
+
+temp.celsius = -300     # ValueError: below absolute zero!
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Properties: Advanced Patterns</h2>
+                <div class="two-column">
+                    <div>
+                        <h4>Computed Properties</h4>
+                        <pre><code class="python" data-trim>
+class Circle:
+    def __init__(self, radius):
+        self._radius = radius
+
+    @property
+    def radius(self):
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        if value < 0:
+            raise ValueError("Radius must be positive")
+        self._radius = value
+
+    @property
+    def area(self):
+        """Computed from radius"""
+        return 3.14159 * self._radius ** 2
+
+    @property
+    def diameter(self):
+        return self._radius * 2
+
+c = Circle(5)
+print(c.area)      # 78.54
+print(c.diameter)  # 10
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h4>Deleter Property</h4>
+                        <pre><code class="python" data-trim>
+class Person:
+    def __init__(self, name):
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if not value.strip():
+            raise ValueError("Name cannot be empty")
+        self._name = value.strip().title()
+
+    @name.deleter
+    def name(self):
+        print("Deleting name...")
+        self._name = None
+
+p = Person("  john doe  ")
+print(p.name)   # John Doe (cleaned)
+del p.name      # Deleting name...
+print(p.name)   # None
+                        </code></pre>
+                        <div class="highlight-box" style="margin-top: 15px;">
+                            <strong>Best Practice:</strong> Use properties instead of get_/set_ methods
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Descriptors -->
+            <section>
+                <h2>Descriptors: The Magic Behind Properties</h2>
+                <p>Control attribute access at the class level</p>
+                <pre><code class="python" data-trim>
+# Descriptor Protocol: __get__, __set__, __delete__
+
+class Validator:
+    """A descriptor that validates values"""
+    def __init__(self, min_value=None, max_value=None):
+        self.min_value = min_value
+        self.max_value = max_value
+
+    def __set_name__(self, owner, name):
+        self.name = name  # Automatically get attribute name
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return obj.__dict__.get(self.name)
+
+    def __set__(self, obj, value):
+        if self.min_value is not None and value < self.min_value:
+            raise ValueError(f"{self.name} must be >= {self.min_value}")
+        if self.max_value is not None and value > self.max_value:
+            raise ValueError(f"{self.name} must be <= {self.max_value}")
+        obj.__dict__[self.name] = value
+
+# Usage - reusable validation!
+class Product:
+    price = Validator(min_value=0)        # Can't be negative
+    quantity = Validator(min_value=0, max_value=1000)
+
+p = Product()
+p.price = 29.99      # OK
+p.quantity = 50      # OK
+p.price = -10        # ValueError: price must be >= 0
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Descriptors: Types and Use Cases</h2>
+                <div class="two-column">
+                    <div>
+                        <h4>Data Descriptor (has __set__)</h4>
+                        <pre><code class="python" data-trim>
+class TypedAttribute:
+    """Enforce type at assignment"""
+    def __init__(self, expected_type):
+        self.expected_type = expected_type
+
+    def __set_name__(self, owner, name):
+        self.name = name
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return obj.__dict__.get(self.name)
+
+    def __set__(self, obj, value):
+        if not isinstance(value, self.expected_type):
+            raise TypeError(
+                f"{self.name} must be {self.expected_type.__name__}"
+            )
+        obj.__dict__[self.name] = value
+
+class Person:
+    name = TypedAttribute(str)
+    age = TypedAttribute(int)
+
+p = Person()
+p.name = "Alice"  # OK
+p.age = "thirty"  # TypeError!
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h4>Non-Data Descriptor (only __get__)</h4>
+                        <pre><code class="python" data-trim>
+class LazyProperty:
+    """Compute once, then cache"""
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        # Compute and cache in instance __dict__
+        value = self.func(obj)
+        obj.__dict__[self.func.__name__] = value
+        return value
+
+class DataAnalyzer:
+    def __init__(self, data):
+        self.data = data
+
+    @LazyProperty
+    def statistics(self):
+        """Expensive computation - only done once"""
+        print("Computing statistics...")
+        return {
+            'mean': sum(self.data) / len(self.data),
+            'max': max(self.data),
+            'min': min(self.data)
+        }
+
+analyzer = DataAnalyzer([1, 2, 3, 4, 5])
+print(analyzer.statistics)  # Computing...
+print(analyzer.statistics)  # Cached!
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Match Statement -->
+            <section>
+                <h2>Pattern Matching (Python 3.10+)</h2>
+                <p>Structural pattern matching with the <code>match</code> statement</p>
+                <pre><code class="python" data-trim>
+# Basic matching - like switch/case but more powerful
+def http_status(status):
+    match status:
+        case 200:
+            return "OK"
+        case 404:
+            return "Not Found"
+        case 500:
+            return "Internal Server Error"
+        case _:  # Default case (wildcard)
+            return "Unknown status"
+
+print(http_status(200))  # OK
+print(http_status(418))  # Unknown status
+
+# Matching with OR patterns
+def classify_day(day):
+    match day.lower():
+        case "saturday" | "sunday":
+            return "Weekend!"
+        case "monday" | "tuesday" | "wednesday" | "thursday" | "friday":
+            return "Weekday"
+        case _:
+            return "Invalid day"
+
+# Matching with guards (if conditions)
+def describe_number(n):
+    match n:
+        case x if x < 0:
+            return "Negative"
+        case 0:
+            return "Zero"
+        case x if x > 100:
+            return "Large positive"
+        case _:
+            return "Small positive"
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Pattern Matching: Structural Patterns</h2>
+                <pre><code class="python" data-trim>
+# Matching sequences (lists, tuples)
+def process_command(command):
+    match command.split():
+        case ["quit"]:
+            return "Exiting..."
+        case ["load", filename]:
+            return f"Loading {filename}"
+        case ["save", filename, "as", format]:
+            return f"Saving {filename} as {format}"
+        case ["move", *coordinates]:  # Capture rest
+            return f"Moving to {coordinates}"
+        case _:
+            return "Unknown command"
+
+print(process_command("load data.txt"))       # Loading data.txt
+print(process_command("save doc as pdf"))     # Saving doc as pdf
+print(process_command("move 10 20 30"))       # Moving to ['10', '20', '30']
+
+# Matching dictionaries
+def process_event(event):
+    match event:
+        case {"type": "click", "x": x, "y": y}:
+            return f"Click at ({x}, {y})"
+        case {"type": "keypress", "key": key}:
+            return f"Key pressed: {key}"
+        case {"type": "scroll", "direction": d, **rest}:
+            return f"Scrolling {d}"
+        case _:
+            return "Unknown event"
+
+# Matching class instances
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+def describe_point(point):
+    match point:
+        case Point(x=0, y=0):
+            return "Origin"
+        case Point(x=0, y=y):
+            return f"On Y-axis at y={y}"
+        case Point(x=x, y=0):
+            return f"On X-axis at x={x}"
+        case Point(x=x, y=y) if x == y:
+            return f"On diagonal at ({x}, {y})"
+        case _:
+            return f"Point at ({point.x}, {point.y})"
+                </code></pre>
+            </section>
+
+            <!-- END OOP SECTION -->
+
+<!-- FUNCTIONAL PROGRAMMING SECTION -->
+<section>
+    <section>
+        <h2>Functional Programming in Python</h2>
+        <p>Writing cleaner, more expressive code</p>
+    </section>
+
+    <section>
+        <h3>What is Functional Programming?</h3>
+        <div class="highlight-box">
+            <p><strong>Key Concepts:</strong></p>
+            <ul>
+                <li><strong>Pure Functions:</strong> Same input → Same output, no side effects</li>
+                <li><strong>Immutability:</strong> Data doesn't change after creation</li>
+                <li><strong>First-class Functions:</strong> Functions as values (assign, pass, return)</li>
+                <li><strong>Higher-order Functions:</strong> Functions that take/return functions</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h3>Lambda Functions</h3>
+        <p>Anonymous, single-expression functions</p>
+        <pre><code class="python" data-trim>
+# Regular function
+def square(x):
+    return x ** 2
+
+# Lambda equivalent
+square = lambda x: x ** 2
+
+# Common use cases
+people = [('Alice', 30), ('Bob', 25), ('Charlie', 35)]
+sorted_people = sorted(people, key=lambda x: x[1])
+# [('Bob', 25), ('Alice', 30), ('Charlie', 35)]
+
+# Multiple arguments
+add = lambda x, y: x + y
+print(add(5, 3))  # 8
+
+# Conditional expression
+max_of_two = lambda a, b: a if a > b else b
+print(max_of_two(10, 20))  # 20
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>map() Function</h3>
+        <p>Apply a function to every item in an iterable</p>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+# Basic map usage
+numbers = [1, 2, 3, 4, 5]
+squared = map(lambda x: x**2, numbers)
+print(list(squared))
+# [1, 4, 9, 16, 25]
+
+# With multiple iterables
+list1 = [1, 2, 3]
+list2 = [10, 20, 30]
+result = map(lambda x, y: x + y, list1, list2)
+print(list(result))
+# [11, 22, 33]
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="350" height="300" viewBox="0 0 350 300">
+                    <text x="10" y="30" font-size="14" fill="#61dafb">Input: [1, 2, 3, 4]</text>
+                    <g id="input-array">
+                        <rect x="10" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="35" y="65" font-size="20" fill="#fff" text-anchor="middle">1</text>
+                        <rect x="70" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="95" y="65" font-size="20" fill="#fff" text-anchor="middle">2</text>
+                        <rect x="130" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="155" y="65" font-size="20" fill="#fff" text-anchor="middle">3</text>
+                        <rect x="190" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="215" y="65" font-size="20" fill="#fff" text-anchor="middle">4</text>
+                    </g>
+                    <g id="function-box">
+                        <rect x="60" y="120" width="120" height="50" fill="#805ad5" stroke="#d6bcfa" stroke-width="2" rx="8"/>
+                        <text x="120" y="150" font-size="16" fill="#fff" text-anchor="middle">λ x: x²</text>
+                    </g>
+                    <text x="10" y="220" font-size="14" fill="#48bb78">Output: [1, 4, 9, 16]</text>
+                    <g id="output-array">
+                        <rect x="10" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;1" dur="0.5s" fill="freeze"/>
+                        </rect>
+                        <text x="35" y="255" font-size="20" fill="#48bb78" text-anchor="middle">1</text>
+                        <rect x="70" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.3s" fill="freeze"/>
+                        </rect>
+                        <text x="95" y="255" font-size="20" fill="#48bb78" text-anchor="middle">4</text>
+                        <rect x="130" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.6s" fill="freeze"/>
+                        </rect>
+                        <text x="155" y="255" font-size="20" fill="#48bb78" text-anchor="middle">9</text>
+                        <rect x="190" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.9s" fill="freeze"/>
+                        </rect>
+                        <text x="215" y="255" font-size="20" fill="#48bb78" text-anchor="middle">16</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>filter() Function</h3>
+        <p>Select items from an iterable based on a condition</p>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+# Basic filter usage
+numbers = [1, 2, 3, 4, 5, 6]
+evens = filter(lambda x: x % 2 == 0, numbers)
+print(list(evens))
+# [2, 4, 6]
+
+# Filter None/falsy values
+data = [0, 1, False, 2, '', 3]
+truthy = filter(None, data)
+print(list(truthy))
+# [1, 2, 3]
+
+# Practical example
+users = [
+    {'name': 'Alice', 'age': 25},
+    {'name': 'Bob', 'age': 17},
+    {'name': 'Charlie', 'age': 30}
+]
+adults = filter(lambda u: u['age'] >= 18, users)
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="350" height="300" viewBox="0 0 350 300">
+                    <text x="10" y="30" font-size="14" fill="#61dafb">Input: [1, 2, 3, 4, 5, 6]</text>
+                    <rect x="70" y="120" width="140" height="50" fill="#e53e3e" stroke="#fc8181" stroke-width="2" rx="8"/>
+                    <text x="140" y="150" font-size="14" fill="#fff" text-anchor="middle">λ x: x % 2 == 0</text>
+                    <text x="10" y="220" font-size="14" fill="#48bb78">Output: [2, 4, 6]</text>
+                    <g id="filter-output">
+                        <rect x="40" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;1" dur="0.5s" fill="freeze"/>
+                        </rect>
+                        <text x="65" y="255" font-size="18" fill="#48bb78" text-anchor="middle">2</text>
+                        <rect x="110" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.3s" fill="freeze"/>
+                        </rect>
+                        <text x="135" y="255" font-size="18" fill="#48bb78" text-anchor="middle">4</text>
+                        <rect x="180" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.6s" fill="freeze"/>
+                        </rect>
+                        <text x="205" y="255" font-size="18" fill="#48bb78" text-anchor="middle">6</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>reduce() Function</h3>
+        <p>Combine all items in an iterable into a single value</p>
+        <pre><code class="python" data-trim>
+from functools import reduce
+
+# Basic reduce - sum all numbers
+numbers = [1, 2, 3, 4, 5]
+total = reduce(lambda acc, x: acc + x, numbers)
+print(total)  # 15
+
+# With initial value
+total = reduce(lambda acc, x: acc + x, numbers, 100)
+print(total)  # 115
+
+# Find maximum
+maximum = reduce(lambda a, b: a if a > b else b, numbers)
+print(maximum)  # 5
+
+# Practical: flatten nested lists
+nested = [[1, 2], [3, 4], [5]]
+flat = reduce(lambda acc, lst: acc + lst, nested, [])
+# [1, 2, 3, 4, 5]
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>List/Dict/Set Comprehensions</h3>
+        <p>Advanced patterns for data transformation</p>
+        <pre><code class="python" data-trim>
+# List comprehension with conditional
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+even_squares = [x**2 for x in numbers if x % 2 == 0]
+# [4, 16, 36, 64, 100]
+
+# Nested list comprehension
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flattened = [num for row in matrix for num in row]
+# [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# Dict comprehension
+words = ['apple', 'banana', 'cherry']
+word_lengths = {word: len(word) for word in words}
+# {'apple': 5, 'banana': 6, 'cherry': 6}
+
+# Set comprehension - unique values
+text = "hello world"
+unique_chars = {char.lower() for char in text if char.isalpha()}
+# {'h', 'e', 'l', 'o', 'w', 'r', 'd'}
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Lazy vs Eager Evaluation</h3>
+        <p>When does Python evaluate expressions?</p>
+        <div class="two-column">
+            <div>
+                <h4 style="color: #ff5252;">Eager (Strict) Evaluation</h4>
+                <pre><code class="python" data-trim>
+# List comprehension - EAGER
+# Computes ALL values immediately
+numbers = [x**2 for x in range(1000000)]
+# All 1 million values in memory NOW
+
+# Functions evaluate args eagerly
+def process(data):
+    print("Processing...")
+    return data[0]
+
+# This creates the FULL list first
+result = process([x**2 for x in range(1000000)])
+
+# Even if we only need the first element!
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 10px; border-left-color: #ff5252;">
+                    <strong>Pros:</strong> Predictable, simple debugging<br>
+                    <strong>Cons:</strong> Memory intensive, wastes computation
+                </div>
+            </div>
+            <div>
+                <h4 style="color: #48bb78;">Lazy Evaluation</h4>
+                <pre><code class="python" data-trim>
+# Generator expression - LAZY
+# Computes values ON DEMAND
+numbers = (x**2 for x in range(1000000))
+# Nothing computed yet! Just a recipe
+
+# Only compute what we need
+first_five = [next(numbers) for _ in range(5)]
+# Only 5 values computed
+
+# Generators are lazy
+def lazy_squares(n):
+    for i in range(n):
+        yield i**2  # Computed when requested
+
+# Itertools - lazy operations
+from itertools import islice
+first_10 = list(islice(lazy_squares(1000000), 10))
+# Only 10 values ever computed!
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 10px; border-left-color: #48bb78;">
+                    <strong>Pros:</strong> Memory efficient, infinite sequences<br>
+                    <strong>Cons:</strong> Can only iterate once
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Lazy Evaluation: Practical Patterns</h3>
+        <pre><code class="python" data-trim>
+# Pattern 1: Lazy file processing (don't load entire file)
+def process_large_file(filename):
+    with open(filename) as f:
+        for line in f:  # Lazy - one line at a time
+            yield line.strip().upper()
+
+# Pattern 2: Lazy chaining with generators
+def numbers():
+    n = 0
+    while True:  # Infinite!
+        yield n
+        n += 1
+
+def square(nums):
+    for n in nums:
+        yield n ** 2
+
+def take(n, iterable):
+    for i, item in enumerate(iterable):
+        if i >= n:
+            break
+        yield item
+
+# Lazy pipeline - nothing computed until list()
+result = list(take(5, square(numbers())))
+# [0, 1, 4, 9, 16] - only 5 values ever computed!
+
+# Pattern 3: Lazy property (computed on first access)
+class DataLoader:
+    def __init__(self, filename):
+        self.filename = filename
+        self._data = None  # Not loaded yet
+
+    @property
+    def data(self):
+        if self._data is None:
+            print("Loading data...")  # Only happens once
+            self._data = self._load_data()
+        return self._data
+
+    def _load_data(self):
+        # Expensive operation
+        return open(self.filename).read()
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Monads: Chainable Computations</h3>
+        <p>A design pattern for handling values in a context (errors, optionals, async)</p>
+        <div class="two-column">
+            <div>
+                <h4>The Maybe Monad (Optional)</h4>
+                <pre><code class="python" data-trim>
+# Problem: Chaining operations that might fail
+def get_user(id):
+    return {"name": "Alice", "address": None}
+
+def get_street(address):
+    return address.get("street") if address else None
+
+# Without monad - nested None checks
+user = get_user(1)
+if user:
+    address = user.get("address")
+    if address:
+        street = address.get("street")
+        # ...nightmare!
+
+# With Maybe monad pattern
+class Maybe:
+    def __init__(self, value):
+        self.value = value
+
+    def bind(self, func):
+        """Chain operations, skip if None"""
+        if self.value is None:
+            return Maybe(None)
+        return Maybe(func(self.value))
+
+    def __repr__(self):
+        return f"Maybe({self.value})"
+
+# Clean chaining!
+result = (Maybe(get_user(1))
+    .bind(lambda u: u.get("address"))
+    .bind(lambda a: a.get("street")))
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="300" height="300" viewBox="0 0 300 300">
+                    <text x="150" y="25" text-anchor="middle" font-size="14" fill="#61dafb" font-weight="bold">Maybe Monad Flow</text>
+
+                    <!-- Value box -->
+                    <rect x="100" y="45" width="100" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="6"/>
+                    <text x="150" y="70" text-anchor="middle" font-size="12" fill="#fff">Maybe(user)</text>
+
+                    <!-- Arrow 1 -->
+                    <path d="M 150 85 L 150 115" stroke="#805ad5" stroke-width="2" marker-end="url(#arrowMonad)"/>
+                    <text x="175" y="105" font-size="10" fill="#805ad5">.bind()</text>
+
+                    <!-- Operation 1 -->
+                    <rect x="80" y="120" width="140" height="40" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6"/>
+                    <text x="150" y="145" text-anchor="middle" font-size="11" fill="#fff">get("address")</text>
+
+                    <!-- Arrow 2 -->
+                    <path d="M 150 160 L 150 190" stroke="#805ad5" stroke-width="2" marker-end="url(#arrowMonad)"/>
+                    <text x="175" y="180" font-size="10" fill="#805ad5">.bind()</text>
+
+                    <!-- Operation 2 -->
+                    <rect x="80" y="195" width="140" height="40" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6"/>
+                    <text x="150" y="220" text-anchor="middle" font-size="11" fill="#fff">get("street")</text>
+
+                    <!-- Result -->
+                    <path d="M 150 235 L 150 260" stroke="#48bb78" stroke-width="2" marker-end="url(#arrowMonad)"/>
+                    <rect x="80" y="265" width="140" height="30" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="6"/>
+                    <text x="150" y="285" text-anchor="middle" font-size="11" fill="#48bb78">Maybe(result)</text>
+
+                    <!-- None path annotation -->
+                    <text x="240" y="145" font-size="9" fill="#888">If None,</text>
+                    <text x="240" y="158" font-size="9" fill="#888">skip to end</text>
+
+                    <defs>
+                        <marker id="arrowMonad" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#805ad5"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Monads: Result Type (Error Handling)</h3>
+        <pre><code class="python" data-trim>
+# Result Monad - Either success or failure
+class Result:
+    def __init__(self, value=None, error=None):
+        self.value = value
+        self.error = error
+        self.is_ok = error is None
+
+    @staticmethod
+    def ok(value):
+        return Result(value=value)
+
+    @staticmethod
+    def err(error):
+        return Result(error=error)
+
+    def bind(self, func):
+        """Chain operations, propagate errors"""
+        if not self.is_ok:
+            return self  # Pass through the error
+        try:
+            return func(self.value)
+        except Exception as e:
+            return Result.err(str(e))
+
+    def unwrap_or(self, default):
+        return self.value if self.is_ok else default
+
+# Usage: Chain operations that might fail
+def parse_int(s):
+    return Result.ok(int(s))
+
+def divide_by(divisor):
+    def divider(n):
+        if divisor == 0:
+            return Result.err("Division by zero")
+        return Result.ok(n / divisor)
+    return divider
+
+# Clean error handling chain
+result = (Result.ok("42")
+    .bind(parse_int)
+    .bind(divide_by(2))
+    .bind(divide_by(3)))
+
+print(result.value)  # 7.0
+
+# Error propagation
+bad_result = (Result.ok("42")
+    .bind(parse_int)
+    .bind(divide_by(0))   # Error here
+    .bind(divide_by(3)))  # Skipped!
+
+print(bad_result.error)  # "Division by zero"
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Closures: Functions with Memory</h3>
+        <p>A closure captures variables from its enclosing scope</p>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+# A closure is a function that "remembers"
+# variables from its enclosing scope
+
+def make_counter():
+    count = 0  # This variable is "enclosed"
+
+    def counter():
+        nonlocal count  # Access enclosing scope
+        count += 1
+        return count
+
+    return counter  # Returns the inner function
+
+# Create independent counters
+counter_a = make_counter()
+counter_b = make_counter()
+
+print(counter_a())  # 1
+print(counter_a())  # 2
+print(counter_a())  # 3
+
+print(counter_b())  # 1 (separate state!)
+print(counter_b())  # 2
+
+# Each closure has its own "memory"
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="320" height="320" viewBox="0 0 320 320">
+                    <text x="160" y="25" text-anchor="middle" font-size="14" fill="#61dafb" font-weight="bold">Closure Captures Variables</text>
+
+                    <!-- Outer function scope -->
+                    <rect x="30" y="45" width="260" height="240" fill="none" stroke="#805ad5" stroke-width="2" rx="10" stroke-dasharray="5,5"/>
+                    <text x="50" y="65" font-size="12" fill="#805ad5">make_counter() scope</text>
+
+                    <!-- Enclosed variable -->
+                    <rect x="50" y="80" width="120" height="40" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="110" y="105" text-anchor="middle" font-size="12" fill="#fff">count = 0</text>
+
+                    <!-- Inner function -->
+                    <rect x="50" y="140" width="220" height="130" fill="#2d3748" stroke="#61dafb" stroke-width="2" rx="8"/>
+                    <text x="160" y="165" text-anchor="middle" font-size="12" fill="#61dafb">def counter():</text>
+                    <text x="70" y="190" font-size="11" fill="#888">nonlocal count</text>
+                    <text x="70" y="210" font-size="11" fill="#888">count += 1</text>
+                    <text x="70" y="230" font-size="11" fill="#888">return count</text>
+
+                    <!-- Arrow showing capture -->
+                    <path d="M 110 120 L 110 140" stroke="#48bb78" stroke-width="2" marker-end="url(#arrowCapture)">
+                        <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+                    </path>
+                    <text x="130" y="135" font-size="10" fill="#48bb78">captured!</text>
+
+                    <!-- Return arrow -->
+                    <path d="M 270 205 L 300 205 L 300 300" stroke="#48bb78" stroke-width="2" marker-end="url(#arrowCapture)"/>
+                    <text x="280" y="300" font-size="11" fill="#48bb78">returns</text>
+
+                    <defs>
+                        <marker id="arrowCapture" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#48bb78"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Closures: Practical Examples</h3>
+        <pre><code class="python" data-trim>
+# Example 1: Configurable multiplier
+def make_multiplier(factor):
+    def multiply(x):
+        return x * factor  # 'factor' is captured from enclosing scope
+    return multiply
+
+double = make_multiplier(2)
+triple = make_multiplier(3)
+print(double(5))  # 10
+print(triple(5))  # 15
+
+# Example 2: Private data (like a simple class)
+def create_account(initial_balance):
+    balance = initial_balance  # Private variable
+
+    def deposit(amount):
+        nonlocal balance
+        balance += amount
+        return balance
+
+    def withdraw(amount):
+        nonlocal balance
+        if amount <= balance:
+            balance -= amount
+            return balance
+        return "Insufficient funds"
+
+    def get_balance():
+        return balance
+
+    # Return multiple closures sharing the same state
+    return deposit, withdraw, get_balance
+
+deposit, withdraw, get_balance = create_account(100)
+print(get_balance())  # 100
+print(deposit(50))    # 150
+print(withdraw(30))   # 120
+
+# Example 3: Event handlers with state
+def make_click_handler(button_name):
+    clicks = 0
+    def handler():
+        nonlocal clicks
+        clicks += 1
+        print(f"{button_name} clicked {clicks} times")
+    return handler
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Partial Functions</h3>
+        <p>Create specialized functions by pre-filling arguments</p>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+from functools import partial
+
+# Original function with multiple args
+def power(base, exponent):
+    return base ** exponent
+
+# Create specialized versions
+square = partial(power, exponent=2)
+cube = partial(power, exponent=3)
+
+print(square(5))  # 25
+print(cube(5))    # 125
+
+# Practical: Logging with context
+def log(message, level='INFO', prefix=''):
+    print(f"[{level}] {prefix}{message}")
+
+error_log = partial(log, level='ERROR')
+debug_log = partial(log, level='DEBUG')
+api_log = partial(log, prefix='[API] ')
+
+error_log("Connection failed")
+# [ERROR] Connection failed
+api_log("Request received")
+# [INFO] [API] Request received
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="320" height="300" viewBox="0 0 320 300">
+                    <text x="160" y="25" text-anchor="middle" font-size="14" fill="#61dafb" font-weight="bold">Partial Application</text>
+
+                    <!-- Original function -->
+                    <rect x="60" y="45" width="200" height="60" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="8"/>
+                    <text x="160" y="70" text-anchor="middle" font-size="13" fill="#fff">power(base, exponent)</text>
+                    <text x="160" y="90" text-anchor="middle" font-size="11" fill="#888">Original function</text>
+
+                    <!-- Arrow -->
+                    <path d="M 160 105 L 160 140" stroke="#805ad5" stroke-width="2" marker-end="url(#arrowPurple)"/>
+                    <text x="200" y="125" font-size="11" fill="#805ad5">partial()</text>
+
+                    <!-- Partial function -->
+                    <rect x="60" y="145" width="200" height="60" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="8">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="160" y="170" text-anchor="middle" font-size="13" fill="#fff">square = partial(power, exponent=2)</text>
+                    <text x="160" y="190" text-anchor="middle" font-size="11" fill="#d6bcfa">exponent is "baked in"</text>
+
+                    <!-- Result -->
+                    <rect x="90" y="230" width="140" height="50" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="8"/>
+                    <text x="160" y="250" text-anchor="middle" font-size="13" fill="#48bb78">square(5)</text>
+                    <text x="160" y="268" text-anchor="middle" font-size="12" fill="#fff">→ 25</text>
+
+                    <defs>
+                        <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#805ad5"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Currying: Functions Returning Functions</h3>
+        <p>Transform a function with multiple arguments into a chain of single-argument functions</p>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+# Regular function
+def add(a, b, c):
+    return a + b + c
+
+print(add(1, 2, 3))  # 6
+
+# Curried version - each call returns a new function
+def curried_add(a):
+    def add_b(b):
+        def add_c(c):
+            return a + b + c
+        return add_c
+    return add_b
+
+# Call one argument at a time
+print(curried_add(1)(2)(3))  # 6
+
+# Store intermediate functions
+add_1 = curried_add(1)
+add_1_2 = add_1(2)
+result = add_1_2(3)  # 6
+
+# Practical: configurable formatter
+def make_formatter(prefix):
+    def with_suffix(suffix):
+        def format_value(value):
+            return f"{prefix}{value}{suffix}"
+        return format_value
+    return with_suffix
+
+price_fmt = make_formatter("$")("USD")
+print(price_fmt(99.99))  # $99.99USD
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="320" height="340" viewBox="0 0 320 340">
+                    <text x="160" y="25" text-anchor="middle" font-size="14" fill="#61dafb" font-weight="bold">Currying Flow</text>
+
+                    <!-- Step 1 -->
+                    <rect x="80" y="45" width="160" height="45" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="6">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="160" y="65" text-anchor="middle" font-size="12" fill="#fff">curried_add(1)</text>
+                    <text x="160" y="82" text-anchor="middle" font-size="10" fill="#61dafb">Returns: function</text>
+
+                    <path d="M 160 90 L 160 115" stroke="#fff" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+                    <!-- Step 2 -->
+                    <rect x="80" y="120" width="160" height="45" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+                    </rect>
+                    <text x="160" y="140" text-anchor="middle" font-size="12" fill="#fff">add_b(2)</text>
+                    <text x="160" y="157" text-anchor="middle" font-size="10" fill="#d6bcfa">Returns: function</text>
+
+                    <path d="M 160 165 L 160 190" stroke="#fff" stroke-width="2" marker-end="url(#arrowWhite)"/>
+
+                    <!-- Step 3 -->
+                    <rect x="80" y="195" width="160" height="45" fill="#2d5a3f" stroke="#48bb78" stroke-width="2" rx="6">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite" begin="1s"/>
+                    </rect>
+                    <text x="160" y="215" text-anchor="middle" font-size="12" fill="#fff">add_c(3)</text>
+                    <text x="160" y="232" text-anchor="middle" font-size="10" fill="#48bb78">Returns: value</text>
+
+                    <path d="M 160 240 L 160 265" stroke="#48bb78" stroke-width="3" marker-end="url(#arrowGreen)"/>
+
+                    <!-- Result -->
+                    <rect x="110" y="270" width="100" height="45" fill="#2d3748" stroke="#48bb78" stroke-width="3" rx="8"/>
+                    <text x="160" y="298" text-anchor="middle" font-size="18" fill="#48bb78" font-weight="bold">6</text>
+
+                    <defs>
+                        <marker id="arrowWhite" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#fff"/>
+                        </marker>
+                        <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#48bb78"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Currying vs Partial: When to Use Which</h3>
+        <div class="two-column">
+            <div>
+                <h4>Currying</h4>
+                <pre><code class="python" data-trim>
+# Manual currying
+def multiply(a):
+    def by(b):
+        return a * b
+    return by
+
+double = multiply(2)
+triple = multiply(3)
+
+print(double(5))  # 10
+print(triple(5))  # 15
+
+# Auto-curry helper
+def curry(func):
+    def curried(*args):
+        if len(args) >= func.__code__.co_argcount:
+            return func(*args)
+        return lambda *more: curried(*(args + more))
+    return curried
+
+@curry
+def add3(a, b, c):
+    return a + b + c
+
+print(add3(1)(2)(3))    # 6
+print(add3(1, 2)(3))    # 6
+print(add3(1)(2, 3))    # 6
+                </code></pre>
+            </div>
+            <div>
+                <h4>Partial Application</h4>
+                <pre><code class="python" data-trim>
+from functools import partial
+
+# Partial is more Pythonic
+def greet(greeting, name, punctuation):
+    return f"{greeting}, {name}{punctuation}"
+
+# Fix some arguments
+say_hello = partial(greet, "Hello")
+excited_hello = partial(greet, "Hello", punctuation="!")
+
+print(say_hello("Alice", "!"))  # Hello, Alice!
+print(excited_hello("Bob"))     # Hello, Bob!
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <h4>Use Currying When:</h4>
+                    <ul style="font-size: 0.85em;">
+                        <li>Building DSLs or fluent APIs</li>
+                        <li>Functional programming patterns</li>
+                    </ul>
+                    <h4>Use Partial When:</h4>
+                    <ul style="font-size: 0.85em;">
+                        <li>Creating specialized versions of functions</li>
+                        <li>Callbacks with pre-set arguments</li>
+                        <li>More readable, Pythonic code</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>functools: lru_cache for Memoization</h3>
+        <p>Cache expensive computations automatically</p>
+        <pre><code class="python" data-trim>
+from functools import lru_cache
+
+# Without caching - exponential time O(2^n)
+def fib_slow(n):
+    if n < 2:
+        return n
+    return fib_slow(n-1) + fib_slow(n-2)
+
+# With caching - linear time O(n)
+@lru_cache(maxsize=128)
+def fib_fast(n):
+    if n < 2:
+        return n
+    return fib_fast(n-1) + fib_fast(n-2)
+
+print(fib_fast(100))  # Instant: 354224848179261915075
+print(fib_fast.cache_info())  # CacheInfo(hits=98, misses=101, ...)
+
+# Practical: API response caching
+@lru_cache(maxsize=100)
+def fetch_user(user_id):
+    """Expensive API call - cached!"""
+    return api.get(f'/users/{user_id}')
+
+# Clear cache when needed
+fib_fast.cache_clear()
+        </code></pre>
+        <div class="highlight-box" style="margin-top: 15px;">
+            <strong>Python 3.9+:</strong> Use <code>@cache</code> for unlimited cache (simpler than lru_cache)
+        </div>
+    </section>
+</section>
+
+<!-- DECORATORS & GENERATORS SECTION -->
+<section>
+    <section>
+        <h2>Decorators & Generators</h2>
+        <p>Advanced Python patterns for cleaner, more efficient code</p>
+    </section>
+
+    <section>
+        <h3>What are Decorators?</h3>
+        <p>Functions that modify the behavior of other functions</p>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+# Decorator syntax
+@decorator_name
+def my_function():
+    pass
+
+# Is equivalent to:
+def my_function():
+    pass
+my_function = decorator_name(my_function)
+
+# Simple example
+def uppercase_decorator(func):
+    def wrapper():
+        result = func()
+        return result.upper()
+    return wrapper
+
+@uppercase_decorator
+def greet():
+    return "hello world"
+
+print(greet())  # "HELLO WORLD"
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="350" height="380" viewBox="0 0 350 380">
+                    <rect x="125" y="20" width="100" height="60" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="8"/>
+                    <text x="175" y="45" font-size="14" fill="#fff" text-anchor="middle">Original</text>
+                    <text x="175" y="65" font-size="14" fill="#fff" text-anchor="middle">Function</text>
+                    <path d="M 175 80 L 175 115" stroke="#61dafb" stroke-width="2"/>
+                    <rect x="75" y="115" width="200" height="200" fill="none" stroke="#805ad5" stroke-width="3" rx="12" stroke-dasharray="5,5">
+                        <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="175" y="135" font-size="14" fill="#805ad5" text-anchor="middle" font-weight="bold">Decorator Wrapper</text>
+                    <rect x="95" y="150" width="160" height="40" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6"/>
+                    <text x="175" y="175" font-size="13" fill="#fff" text-anchor="middle">Before Logic</text>
+                    <rect x="115" y="210" width="120" height="40" fill="#2d3748" stroke="#61dafb" stroke-width="2" rx="8"/>
+                    <text x="175" y="235" font-size="13" fill="#61dafb" text-anchor="middle">Original Function</text>
+                    <rect x="95" y="270" width="160" height="40" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6"/>
+                    <text x="175" y="295" font-size="13" fill="#fff" text-anchor="middle">After Logic</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Creating Basic Decorators</h3>
+        <p>Essential patterns and best practices</p>
+        <pre><code class="python" data-trim>
+from functools import wraps
+import time
+
+# Timer decorator
+def timer(func):
+    @wraps(func)  # Preserves original function's metadata
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:.4f} seconds")
+        return result
+    return wrapper
+
+@timer
+def slow_function():
+    time.sleep(1)
+    return "Done"
+
+# Logging decorator
+def log_calls(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args={args}")
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} returned {result}")
+        return result
+    return wrapper
+
+@log_calls
+def add(a, b):
+    return a + b
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Decorators with Arguments</h3>
+        <p>Creating configurable decorators</p>
+        <pre><code class="python" data-trim>
+# Decorator factory pattern
+def repeat(times):
+    """Decorator that repeats function execution"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            results = []
+            for _ in range(times):
+                result = func(*args, **kwargs)
+                results.append(result)
+            return results
+        return wrapper
+    return decorator
+
+@repeat(times=3)
+def greet(name):
+    return f"Hello, {name}!"
+
+print(greet("Alice"))
+# ['Hello, Alice!', 'Hello, Alice!', 'Hello, Alice!']
+
+# Retry decorator
+def retry(max_attempts=3, delay=1):
+    """Retry function on exception"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    time.sleep(delay)
+        return wrapper
+    return decorator
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Common Built-in Decorators</h3>
+        <p>@property, @staticmethod, @classmethod</p>
+        <pre><code class="python" data-trim>
+class Person:
+    def __init__(self, first_name, birth_year):
+        self._first_name = first_name
+        self._birth_year = birth_year
+
+    @property
+    def age(self):
+        from datetime import datetime
+        return datetime.now().year - self._birth_year
+
+    @property
+    def first_name(self):
+        return self._first_name
+
+    @first_name.setter
+    def first_name(self, value):
+        if not value:
+            raise ValueError("Name cannot be empty")
+        self._first_name = value.capitalize()
+
+    @staticmethod
+    def is_adult(age):
+        return age >= 18
+
+    @classmethod
+    def from_birth_year(cls, first_name, birth_year):
+        return cls(first_name, birth_year)
+
+person = Person("john", 1990)
+print(person.age)        # Computed property
+print(Person.is_adult(20))  # Static method
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>What are Generators?</h3>
+        <p>Functions that produce values lazily using yield</p>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+# Regular function - returns all at once
+def get_numbers_list(n):
+    result = []
+    for i in range(n):
+        result.append(i ** 2)
+    return result
+
+# Generator - yields one at a time
+def get_numbers_generator(n):
+    for i in range(n):
+        yield i ** 2
+
+# Usage
+gen = get_numbers_generator(5)
+print(next(gen))  # 0
+print(next(gen))  # 1
+print(next(gen))  # 4
+
+# Infinite generator
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+fib = fibonacci()
+first_10 = [next(fib) for _ in range(10)]
+                </code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="320" height="350" viewBox="0 0 320 350">
+                    <text x="160" y="25" font-size="16" fill="#61dafb" text-anchor="middle" font-weight="bold">Generator Flow</text>
+                    <rect x="60" y="45" width="200" height="280" fill="#1a202c" stroke="#805ad5" stroke-width="2" rx="8"/>
+                    <text x="160" y="70" font-size="14" fill="#805ad5" text-anchor="middle">def my_generator():</text>
+                    <g id="yield1">
+                        <circle cx="90" cy="100" r="8" fill="#48bb78">
+                            <animate attributeName="fill" values="#48bb78;#38a169;#48bb78" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="110" y="105" font-size="13" fill="#fff">yield 1</text>
+                        <rect x="70" y="115" width="180" height="25" fill="#2d3748" opacity="0.7">
+                            <animate attributeName="opacity" values="0;0.7;0" dur="3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="160" y="132" font-size="11" fill="#cbd5e0" text-anchor="middle">⏸ Paused - State Saved</text>
+                    </g>
+                    <g id="yield2">
+                        <circle cx="90" cy="170" r="8" fill="#48bb78"/>
+                        <text x="110" y="175" font-size="13" fill="#fff">yield 2</text>
+                    </g>
+                    <g id="yield3">
+                        <circle cx="90" cy="240" r="8" fill="#48bb78"/>
+                        <text x="110" y="245" font-size="13" fill="#fff">yield 3</text>
+                    </g>
+                    <rect x="80" y="280" width="160" height="35" fill="#2d3748" stroke="#e53e3e" stroke-width="2" rx="6"/>
+                    <text x="160" y="302" font-size="14" fill="#fc8181" text-anchor="middle">StopIteration</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Generator Expressions vs List Comprehensions</h3>
+        <p>Choosing the right tool for memory efficiency</p>
+        <pre><code class="python" data-trim>
+# List comprehension - Creates entire list in memory
+squares = [x**2 for x in range(1000000)]
+# Memory: ~8MB for 1 million integers
+
+# Generator expression - Creates generator object
+squares_gen = (x**2 for x in range(1000000))
+# Memory: ~200 bytes!
+
+import sys
+print(sys.getsizeof([x**2 for x in range(1000000)]))  # 8448728 bytes
+print(sys.getsizeof((x**2 for x in range(1000000))))  # 200 bytes
+
+# Use List Comprehension when:
+# - Need to iterate multiple times
+# - Need indexing/slicing
+# - Dataset is small
+
+# Use Generator Expression when:
+# - Iterate once
+# - Large or infinite sequences
+# - Memory is a concern
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>itertools Module Highlights</h3>
+        <p>Powerful tools for working with iterators</p>
+        <pre><code class="python" data-trim>
+from itertools import count, cycle, chain, islice, groupby, combinations, permutations
+
+# count() - infinite counter
+for i in count(10, 2):
+    if i > 20: break
+    print(i)  # 10, 12, 14, 16, 18, 20
+
+# chain() - combine iterables
+combined = list(chain([1, 2, 3], [4, 5, 6]))  # [1, 2, 3, 4, 5, 6]
+
+# islice() - slice an iterator
+first_5 = list(islice(count(), 5))  # [0, 1, 2, 3, 4]
+
+# combinations() and permutations()
+items = ['A', 'B', 'C']
+print(list(combinations(items, 2)))  # [('A', 'B'), ('A', 'C'), ('B', 'C')]
+print(list(permutations(items, 2)))  # All orderings of 2 items
+
+# accumulate() - running totals
+from itertools import accumulate
+numbers = [1, 2, 3, 4, 5]
+print(list(accumulate(numbers)))  # [1, 3, 6, 10, 15]
+        </code></pre>
+    </section>
+</section>
+
+<!-- DATA HANDLING SECTION -->
+<section>
+    <section>
+        <h2>Data Handling</h2>
+        <p>Working with External Data Formats</p>
+        <ul>
+            <li>JSON - JavaScript Object Notation</li>
+            <li>CSV - Comma Separated Values</li>
+            <li>Regular Expressions - Pattern Matching</li>
+            <li>DateTime and File Handling</li>
+        </ul>
+    </section>
+
+    <section>
+        <h3>Working with JSON</h3>
+        <div class="two-column">
+            <div>
+                <h4>Python to JSON (Encoding)</h4>
+                <pre><code class="python" data-trim>
+import json
+
+data = {
+    "name": "Alice",
+    "age": 30,
+    "skills": ["Python", "Java"]
+}
+
+# Convert to JSON string
+json_string = json.dumps(data, indent=2)
+
+# Write to file
+with open('data.json', 'w') as f:
+    json.dump(data, f, indent=2)
+                </code></pre>
+            </div>
+            <div>
+                <h4>JSON to Python (Decoding)</h4>
+                <pre><code class="python" data-trim>
+import json
+
+# JSON string to Python
+json_string = '{"name": "Bob", "age": 25}'
+data = json.loads(json_string)
+print(data['name'])  # Bob
+
+# Read from file
+with open('data.json', 'r') as f:
+    data = json.load(f)
+                </code></pre>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 20px;">
+            <strong>Key Functions:</strong>
+            <code>json.dumps()</code> (dict→string),
+            <code>json.dump()</code> (dict→file),
+            <code>json.loads()</code> (string→dict),
+            <code>json.load()</code> (file→dict)
+        </div>
+    </section>
+
+    <section>
+        <h3>Working with CSV Files</h3>
+        <div class="two-column">
+            <div>
+                <h4>Reading with csv.reader()</h4>
+                <pre><code class="python" data-trim>
+import csv
+
+with open('data.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    header = next(csv_reader)
+
+    for row in csv_reader:
+        name, age, city = row
+        print(f"{name} is {age}")
+                </code></pre>
+            </div>
+            <div>
+                <h4>Writing with csv.writer()</h4>
+                <pre><code class="python" data-trim>
+import csv
+
+with open('output.csv', 'w', newline='') as file:
+    csv_writer = csv.writer(file)
+    csv_writer.writerow(['Name', 'Age', 'City'])
+    csv_writer.writerow(['Alice', 30, 'NYC'])
+    csv_writer.writerows([
+        ['Bob', 25, 'LA'],
+        ['Carol', 28, 'Chicago']
+    ])
+                </code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Regular Expressions (Regex)</h3>
+        <div class="two-column">
+            <div>
+                <h4>Pattern Matching Power</h4>
+                <ul>
+                    <li>Powerful text pattern matching</li>
+                    <li>Search, validate, extract data</li>
+                    <li>Format validation (email, phone)</li>
+                </ul>
+            </div>
+            <div class="diagram-container">
+                <svg width="350" height="180" viewBox="0 0 350 180">
+                    <text x="10" y="30" font-family="monospace" font-size="14" fill="#FFD43B">Text: "Email: john@example.com"</text>
+                    <text x="10" y="60" font-family="monospace" font-size="14" fill="#4CAF50">Pattern: \w+@\w+\.\w+</text>
+                    <line x1="0" y1="90" x2="0" y2="110" stroke="#FF6B6B" stroke-width="2">
+                        <animate attributeName="x1" values="0;350;0" dur="3s" repeatCount="indefinite"/>
+                        <animate attributeName="x2" values="0;350;0" dur="3s" repeatCount="indefinite"/>
+                    </line>
+                    <rect x="80" y="120" width="160" height="30" fill="#4CAF50" opacity="0.3"/>
+                    <text x="80" y="142" font-family="monospace" font-size="16" fill="white">john@example.com</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>The re Module Functions</h3>
+        <pre><code class="python" data-trim>
+import re
+
+text = "Contact: alice@example.com and bob@test.org"
+
+# search() - finds ANYWHERE in string
+result = re.search(r'\w+@\w+\.\w+', text)
+print(result.group())  # alice@example.com
+
+# findall() - returns list of all matches
+emails = re.findall(r'\w+@\w+\.\w+', text)
+print(emails)  # ['alice@example.com', 'bob@test.org']
+
+# sub() - find and replace
+masked = re.sub(r'\w+@\w+\.\w+', '[EMAIL]', text)
+print(masked)  # Contact: [EMAIL] and [EMAIL]
+
+# Capture groups
+pattern = r'(\w+)@(\w+)\.(\w+)'
+match = re.search(pattern, text)
+print(match.group(1))  # alice (username)
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Working with datetime Module</h3>
+        <pre><code class="python" data-trim>
+from datetime import datetime, date, timedelta
+
+# Current date and time
+now = datetime.now()
+today = date.today()
+
+# Date arithmetic
+future = now + timedelta(days=7)
+past = now - timedelta(hours=5)
+
+# Time difference
+date1 = datetime(2024, 1, 1)
+date2 = datetime(2024, 12, 31)
+diff = date2 - date1
+print(f"Days between: {diff.days}")
+
+# Formatting (datetime → string)
+print(now.strftime("%Y-%m-%d"))       # 2024-01-15
+print(now.strftime("%B %d, %Y"))      # January 15, 2024
+
+# Parsing (string → datetime)
+date_str = "2024-01-15"
+dt = datetime.strptime(date_str, "%Y-%m-%d")
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Modern File Handling with pathlib</h3>
+        <pre><code class="python" data-trim>
+from pathlib import Path
+
+# Create path objects
+path = Path('data/files/report.txt')
+
+# Path properties
+print(path.name)      # report.txt
+print(path.stem)      # report
+print(path.suffix)    # .txt
+print(path.parent)    # data/files
+
+# Read and write
+path = Path('data.txt')
+content = path.read_text()
+path.write_text('New content')
+
+# Join paths (cross-platform)
+file_path = Path('data') / 'reports' / 'jan.txt'
+
+# Create directories
+Path('data/new_folder').mkdir(parents=True, exist_ok=True)
+
+# List files with glob
+for file in Path('data').glob('*.txt'):
+    print(file)
+        </code></pre>
+    </section>
+</section>
+
+<!-- TESTING SECTION -->
+<section>
+    <section>
+        <h2>Testing in Python</h2>
+        <p>Writing Reliable, Maintainable Code</p>
+    </section>
+
+    <section>
+        <h3>unittest Module Basics</h3>
+        <div class="two-column">
+            <div>
+                <h4>Code to Test</h4>
+                <pre><code class="python" data-trim>
+# calculator.py
+def add(a, b):
+    return a + b
+
+def multiply(a, b):
+    return a * b
+                </code></pre>
+            </div>
+            <div>
+                <h4>Test File</h4>
+                <pre><code class="python" data-trim>
+import unittest
+from calculator import add, multiply
+
+class TestCalculator(unittest.TestCase):
+    def test_add(self):
+        self.assertEqual(add(2, 3), 5)
+        self.assertEqual(add(-1, 1), 0)
+
+    def test_multiply(self):
+        self.assertEqual(multiply(3, 4), 12)
+
+if __name__ == '__main__':
+    unittest.main()
+                </code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>pytest: Modern Testing</h3>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+# pytest style (simpler!)
+def test_addition():
+    assert 2 + 2 == 4
+
+def test_subtraction():
+    assert 5 - 3 == 2
+                </code></pre>
+            </div>
+            <div>
+                <h4>pytest Features</h4>
+                <ul>
+                    <li><strong>Simple assertions</strong></li>
+                    <li><strong>Better output</strong></li>
+                    <li><strong>Fixtures</strong></li>
+                    <li><strong>Parametrize</strong></li>
+                </ul>
+                <div class="highlight-box" style="margin-top: 15px;">
+                    <code>pip install pytest</code><br>
+                    <code>pytest</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Test-Driven Development (TDD)</h3>
+        <div class="two-column">
+            <div class="diagram-container">
+                <svg width="300" height="250" viewBox="0 0 300 250">
+                    <circle cx="150" cy="60" r="45" fill="#ff5252" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="150" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">RED</text>
+                    <text x="150" y="72" text-anchor="middle" fill="white" font-size="10">Write Test</text>
+                    <circle cx="240" cy="160" r="45" fill="#4caf50" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="3s" repeatCount="indefinite" begin="1s"/>
+                    </circle>
+                    <text x="240" y="155" text-anchor="middle" fill="white" font-size="14" font-weight="bold">GREEN</text>
+                    <text x="240" y="172" text-anchor="middle" fill="white" font-size="10">Make Pass</text>
+                    <circle cx="60" cy="160" r="45" fill="#2196f3" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="3s" repeatCount="indefinite" begin="2s"/>
+                    </circle>
+                    <text x="60" y="155" text-anchor="middle" fill="white" font-size="14" font-weight="bold">REFACTOR</text>
+                    <text x="60" y="172" text-anchor="middle" fill="white" font-size="10">Improve</text>
+                    <path d="M 180 90 L 210 125" stroke="white" stroke-width="2"/>
+                    <path d="M 195 160 L 105 160" stroke="white" stroke-width="2"/>
+                    <path d="M 90 125 L 120 90" stroke="white" stroke-width="2"/>
+                </svg>
+            </div>
+            <div>
+                <h4>TDD Workflow</h4>
+                <ol>
+                    <li><strong style="color: #ff5252;">RED</strong> - Write failing test</li>
+                    <li><strong style="color: #4caf50;">GREEN</strong> - Make it pass</li>
+                    <li><strong style="color: #2196f3;">REFACTOR</strong> - Clean up</li>
+                    <li><strong>Repeat</strong></li>
+                </ol>
+            </div>
+        </div>
+    </section>
+</section>
+
+<!-- PACKAGING SECTION -->
+<section>
+    <section>
+        <h2>Python Packaging</h2>
+        <p>Organizing and Distributing Your Code</p>
+    </section>
+
+    <section>
+        <h3>Virtual Environments (venv)</h3>
+        <div class="two-column">
+            <div>
+                <h4>Why Virtual Environments?</h4>
+                <ul>
+                    <li><strong>Isolation</strong> - Each project has own packages</li>
+                    <li><strong>No conflicts</strong> - Different versions</li>
+                    <li><strong>Reproducible</strong> - Share dependencies</li>
+                </ul>
+            </div>
+            <div>
+                <pre><code class="bash" data-trim>
+# Create virtual environment
+python -m venv venv
+
+# Activate (Linux/Mac)
+source venv/bin/activate
+
+# Activate (Windows)
+venv\Scripts\activate
+
+# Install packages
+pip install requests pandas
+
+# Deactivate
+deactivate
+                </code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Project Structure</h3>
+        <pre><code data-trim style="font-size: 0.75em;">
+myproject/
+├── myproject/           # Package directory
+│   ├── __init__.py      # Makes it a package
+│   ├── main.py          # Main module
+│   └── utils.py         # Utility functions
+├── tests/               # Test directory
+│   ├── __init__.py
+│   └── test_main.py
+├── venv/                # Virtual environment
+├── .gitignore           # Git ignore file
+├── requirements.txt     # Dependencies
+├── pyproject.toml       # Package metadata
+└── README.md            # Project readme
+        </code></pre>
+        <div class="highlight-box" style="margin-top: 15px;">
+            <strong>Best Practice:</strong> Use <code>pyproject.toml</code> for modern Python projects (PEP 518)
+        </div>
+    </section>
+</section>
+
+<!-- CLOSING SLIDES -->
+<section>
+    <section>
+        <h2>Course Summary</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 30px;">
+            <div class="highlight-box" style="border-left-color: #4caf50;">
+                <h4 style="color: #4caf50;">OOP</h4>
+                <ul style="font-size: 0.85em;">
+                    <li>Classes & Objects</li>
+                    <li>Inheritance</li>
+                    <li>Polymorphism</li>
+                    <li>Encapsulation</li>
+                </ul>
+            </div>
+            <div class="highlight-box" style="border-left-color: #2196f3;">
+                <h4 style="color: #2196f3;">Functional</h4>
+                <ul style="font-size: 0.85em;">
+                    <li>Lambda functions</li>
+                    <li>map/filter/reduce</li>
+                    <li>Decorators</li>
+                    <li>Generators</li>
+                </ul>
+            </div>
+            <div class="highlight-box" style="border-left-color: #ff9800;">
+                <h4 style="color: #ff9800;">Professional</h4>
+                <ul style="font-size: 0.85em;">
+                    <li>Testing</li>
+                    <li>Data handling</li>
+                    <li>Packaging</li>
+                    <li>Best practices</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="center">
+        <h1>Thank You!</h1>
+        <p>Keep Coding, Keep Learning</p>
+        <div class="diagram-container">
+            <svg width="200" height="150" viewBox="0 0 200 150">
+                <circle cx="100" cy="75" r="60" fill="none" stroke="#ffd43b" stroke-width="4">
+                    <animate attributeName="r" values="60;65;60" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="100" cy="75" r="45" fill="none" stroke="#306998" stroke-width="4">
+                    <animate attributeName="r" values="45;50;45" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                </circle>
+                <text x="100" y="85" text-anchor="middle" fill="#ffd43b" font-size="36">🐍</text>
+            </svg>
+        </div>
+        <p style="margin-top: 30px;"><em>"The only way to learn a new programming language is by writing programs in it."</em></p>
+        <p style="font-size: 0.9em;">- Dennis Ritchie</p>
+    </section>
+</section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>

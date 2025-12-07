@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise AI Adoption</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <style>
+        :root {
+            --ai-blue: #0066cc;
+            --ai-purple: #6b46c1;
+            --ai-green: #10b981;
+            --ai-orange: #f59e0b;
+            --ai-red: #ef4444;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+        }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.55em;
+        }
+        .reveal pre code {
+            max-height: 500px;
+            padding: 20px;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .slides section.center {
+            text-align: center;
+        }
+        .reveal ul {
+            display: block;
+        }
+        .reveal li {
+            margin-bottom: 10px;
+        }
+        .reveal table {
+            font-size: 0.7em;
+        }
+        .reveal table th, .reveal table td {
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .reveal table th {
+            background: rgba(255,255,255,0.1);
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        .highlight-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #42affa;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background-color: rgba(239, 68, 68, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ef4444;
+            margin: 15px 0;
+        }
+        .success-box {
+            background-color: rgba(16, 185, 129, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            margin: 15px 0;
+        }
+        .quote-box {
+            background-color: rgba(107, 70, 193, 0.2);
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #6b46c1;
+            font-style: italic;
+            font-size: 1.1em;
+            margin: 20px 0;
+        }
+        .day-badge {
+            background: linear-gradient(135deg, #0066cc, #6b46c1);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            height: 100%;
+        }
+        .card h4 {
+            color: #42affa;
+            margin-bottom: 10px;
+        }
+        .risk-high { color: #ef4444; }
+        .risk-medium { color: #f59e0b; }
+        .risk-low { color: #10b981; }
+        .human-action { background: #3b82f6; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; }
+        .ai-action { background: #10b981; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; }
+        .decision-point { background: #f59e0b; color: black; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; }
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+<!-- ============================================ -->
+<!-- TITLE AND OVERVIEW -->
+<!-- ============================================ -->
+
+<section class="center">
+    <h1>Enterprise AI Adoption</h1>
+    <p>Transforming Workflows for the AI-Native Organization</p>
+    <p style="margin-top: 40px; font-size: 0.8em; opacity: 0.8;">A 5-Day Intensive Course</p>
+</section>
+
+<section>
+    <h2>Course Overview</h2>
+    <div class="two-column">
+        <div>
+            <h4 style="color: #42affa;">What You'll Learn</h4>
+            <ul>
+                <li>Identify AI opportunities in your workflows</li>
+                <li>Redesign processes for human-AI collaboration</li>
+                <li>Build governance frameworks that enable scale</li>
+                <li>Create actionable AI playbooks</li>
+                <li>Plan and execute AI rollouts</li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="color: #42affa;">5-Day Journey</h4>
+            <ul>
+                <li><strong>Day 1:</strong> Foundations & Mindset Shift</li>
+                <li><strong>Day 2:</strong> Mapping & Redesigning Workflows</li>
+                <li><strong>Day 3:</strong> Governance & Human-in-the-Loop</li>
+                <li><strong>Day 4:</strong> Building the AI Playbook</li>
+                <li><strong>Day 5:</strong> Capstone & Rollout</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>The AI Adoption Challenge</h2>
+    <div class="quote-box">
+        "Start with pain, not platforms. AI strategy begins where work is broken."
+    </div>
+    <div class="three-column" style="margin-top: 30px;">
+        <div class="card">
+            <h4>The Problem</h4>
+            <p>70% of AI initiatives fail to deliver expected value</p>
+        </div>
+        <div class="card">
+            <h4>The Cause</h4>
+            <p>Technology-first thinking instead of workflow-first design</p>
+        </div>
+        <div class="card">
+            <h4>The Solution</h4>
+            <p>Human-centered AI adoption with clear governance</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- DAY 1: FOUNDATIONS & MINDSET SHIFT -->
+<!-- ============================================ -->
+
+<section>
+    <section class="center">
+        <span class="day-badge">DAY 1</span>
+        <h1>Foundations & Mindset Shift</h1>
+        <p>Reframing AI adoption as workflow transformation</p>
+    </section>
+
+    <section>
+        <h2>Day 1 Learning Objectives</h2>
+        <div class="highlight-box">
+            <p>By the end of today, you will be able to:</p>
+            <ul>
+                <li>Distinguish between automation and AI-native design</li>
+                <li>Identify workflow friction points in your organization</li>
+                <li>Complete an AI Readiness assessment</li>
+                <li>Formulate a focused AI Design Challenge</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>Automation vs. AI-Native Design</h2>
+        <div class="two-column">
+            <div class="card">
+                <h4>Traditional Automation</h4>
+                <ul>
+                    <li>Rule-based, deterministic</li>
+                    <li>Replaces specific tasks</li>
+                    <li>Requires structured inputs</li>
+                    <li>No learning or adaptation</li>
+                    <li>"If X, then Y"</li>
+                </ul>
+                <p style="margin-top: 15px;"><em>Example: Auto-filing emails by sender</em></p>
+            </div>
+            <div class="card">
+                <h4>AI-Native Design</h4>
+                <ul>
+                    <li>Probabilistic, adaptive</li>
+                    <li>Augments human judgment</li>
+                    <li>Handles unstructured data</li>
+                    <li>Learns from feedback</li>
+                    <li>"Given context, suggest action"</li>
+                </ul>
+                <p style="margin-top: 15px;"><em>Example: Drafting email responses based on context</em></p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The Workflow Autopsy</h2>
+        <p>Identify where work is broken before introducing AI</p>
+        <div class="two-column">
+            <div>
+                <h4>Common Friction Points</h4>
+                <table style="width: 100%;">
+                    <tr><th>Friction Type</th><th>Symptoms</th></tr>
+                    <tr><td>Manual Handoffs</td><td>Email chains, waiting for approvals</td></tr>
+                    <tr><td>Duplicate Data Entry</td><td>Same info in multiple systems</td></tr>
+                    <tr><td>Information Hunting</td><td>Searching across tools/docs</td></tr>
+                    <tr><td>Format Translation</td><td>Converting between formats</td></tr>
+                    <tr><td>Review Bottlenecks</td><td>Work queued for expert review</td></tr>
+                    <tr><td>Rework Loops</td><td>Frequent corrections/revisions</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="highlight-box">
+                    <h4>Lab Exercise 1.1</h4>
+                    <p>Map a workflow you do weekly:</p>
+                    <ol>
+                        <li>List every step from trigger to completion</li>
+                        <li>Mark friction points with a red flag</li>
+                        <li>Note time spent on each step</li>
+                        <li>Identify "why does this exist?" moments</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The AI Readiness Canvas</h2>
+        <p>Evaluate your organization across five dimensions</p>
+        <div class="diagram-container">
+            <svg width="700" height="400" viewBox="0 0 700 400">
+                <!-- Pentagon shape -->
+                <polygon points="350,50 550,170 480,350 220,350 150,170" fill="none" stroke="#42affa" stroke-width="2"/>
+                <polygon points="350,100 500,190 450,320 250,320 200,190" fill="none" stroke="#42affa" stroke-width="1" opacity="0.5"/>
+                <polygon points="350,150 450,210 420,290 280,290 250,210" fill="none" stroke="#42affa" stroke-width="1" opacity="0.3"/>
+
+                <!-- Labels -->
+                <text x="350" y="35" fill="#42affa" font-size="14" text-anchor="middle" font-weight="bold">Data Access</text>
+                <text x="580" y="175" fill="#10b981" font-size="14" text-anchor="start" font-weight="bold">Decision Speed</text>
+                <text x="510" y="375" fill="#f59e0b" font-size="14" text-anchor="middle" font-weight="bold">Risk Tolerance</text>
+                <text x="190" y="375" fill="#ef4444" font-size="14" text-anchor="middle" font-weight="bold">Tech Integration</text>
+                <text x="110" y="175" fill="#6b46c1" font-size="14" text-anchor="end" font-weight="bold">Employee Readiness</text>
+
+                <!-- Sample data polygon (filled) -->
+                <polygon points="350,80 520,180 440,330 260,330 180,180" fill="rgba(66,175,250,0.3)" stroke="#42affa" stroke-width="2">
+                    <animate attributeName="opacity" values="0;1" dur="1s" fill="freeze"/>
+                </polygon>
+            </svg>
+        </div>
+        <p style="text-align: center; font-size: 0.8em;">Rate each dimension 1-5 to visualize your readiness profile</p>
+    </section>
+
+    <section>
+        <h2>Five Readiness Dimensions</h2>
+        <table style="width: 100%; font-size: 0.85em;">
+            <tr>
+                <th>Dimension</th>
+                <th>What to Assess</th>
+                <th>Low Score Indicators</th>
+            </tr>
+            <tr>
+                <td><strong style="color: #42affa;">Data Access</strong></td>
+                <td>Can AI reach the data it needs?</td>
+                <td>Siloed systems, manual exports, no APIs</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #10b981;">Decision Speed</strong></td>
+                <td>How fast are decisions made today?</td>
+                <td>Multi-week approvals, committee decisions</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #f59e0b;">Risk Tolerance</strong></td>
+                <td>Appetite for AI-assisted decisions?</td>
+                <td>Zero-error culture, heavy regulation</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #ef4444;">Tech Integration</strong></td>
+                <td>Can you connect AI to existing tools?</td>
+                <td>Legacy systems, no IT support, vendor lock-in</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #6b46c1;">Employee Readiness</strong></td>
+                <td>Are people prepared and willing?</td>
+                <td>Fear of replacement, no training, skepticism</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Culture: The Real Bottleneck</h2>
+        <div class="quote-box">
+            "Culture is the real bottleneck. Fear slows AI adoption more than technology."
+        </div>
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="warning-box">
+                <h4>Signs of Fear-Based Culture</h4>
+                <ul>
+                    <li>"AI will take my job"</li>
+                    <li>"We've always done it this way"</li>
+                    <li>"What if it makes a mistake?"</li>
+                    <li>"I don't trust the outputs"</li>
+                    <li>"IT said no"</li>
+                </ul>
+            </div>
+            <div class="success-box">
+                <h4>Signs of AI-Ready Culture</h4>
+                <ul>
+                    <li>"How can AI help me do better work?"</li>
+                    <li>"What if we tried a new approach?"</li>
+                    <li>"Humans verify, AI accelerates"</li>
+                    <li>"Let's pilot and learn"</li>
+                    <li>"What guardrails do we need?"</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The AI Design Challenge Template</h2>
+        <div class="highlight-box" style="font-size: 1.1em; text-align: center;">
+            <p><strong>How might we</strong> _______________</p>
+            <p><strong>using AI to achieve</strong> _______________</p>
+            <p><strong>without creating new risks in</strong> _______________?</p>
+        </div>
+        <div class="two-column" style="margin-top: 30px;">
+            <div>
+                <h4>Example Challenge</h4>
+                <p><em>"How might we <strong>reduce proposal review time</strong> using AI to achieve <strong>same-day turnaround for standard requests</strong> without creating new risks in <strong>compliance accuracy or customer data exposure</strong>?"</em></p>
+            </div>
+            <div>
+                <div class="highlight-box">
+                    <h4>Lab Exercise 1.2</h4>
+                    <p>Write YOUR AI Design Challenge based on the workflow you mapped earlier.</p>
+                    <p>Be specific about the outcome and the risks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Day 1 Deliverables</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>1. Workflow Autopsy</h4>
+                <p>Documented current-state process with friction points identified and time estimates</p>
+            </div>
+            <div class="card">
+                <h4>2. Readiness Canvas</h4>
+                <p>5-dimension assessment of your team/org's AI adoption readiness</p>
+            </div>
+            <div class="card">
+                <h4>3. Design Challenge</h4>
+                <p>Focused problem statement using the HMW template</p>
+            </div>
+        </div>
+        <div class="success-box" style="margin-top: 30px;">
+            <strong>Tomorrow:</strong> We'll transform your design challenge into a redesigned workflow with clear human-AI collaboration points.
+        </div>
+    </section>
+</section>
+
+<!-- ============================================ -->
+<!-- DAY 2: MAPPING AND REDESIGNING WORKFLOWS -->
+<!-- ============================================ -->
+
+<section>
+    <section class="center">
+        <span class="day-badge">DAY 2</span>
+        <h1>Mapping & Redesigning Workflows</h1>
+        <p>From pain points to AI-augmented processes</p>
+    </section>
+
+    <section>
+        <h2>Day 2 Learning Objectives</h2>
+        <div class="highlight-box">
+            <p>By the end of today, you will be able to:</p>
+            <ul>
+                <li>Apply outcome-backward design to workflow problems</li>
+                <li>Create before/after workflow maps</li>
+                <li>Identify optimal AI insertion points</li>
+                <li>Produce an AI-Augmented Process Blueprint</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>Outcome-Backward Design</h2>
+        <div class="quote-box">
+            "Most broken processes stay broken because we start from the first step and work forward."
+        </div>
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="warning-box">
+                <h4>Forward Design (Common)</h4>
+                <ol>
+                    <li>Receive request</li>
+                    <li>Check eligibility</li>
+                    <li>Gather information</li>
+                    <li>Create draft</li>
+                    <li>Review and revise</li>
+                    <li>Get approval</li>
+                    <li>Deliver output</li>
+                </ol>
+                <p><em>Focuses on existing steps</em></p>
+            </div>
+            <div class="success-box">
+                <h4>Backward Design (Better)</h4>
+                <ol>
+                    <li>Define: What does "done" look like?</li>
+                    <li>Identify: What decisions are required?</li>
+                    <li>Determine: What information is needed?</li>
+                    <li>Design: Minimum steps to get there</li>
+                </ol>
+                <p><em>Focuses on outcomes</em></p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The Outcome Brief</h2>
+        <p>Before redesigning, define what success looks like</p>
+        <table style="width: 100%;">
+            <tr>
+                <th>Element</th>
+                <th>Question</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><strong>Outcome</strong></td>
+                <td>What's the final deliverable?</td>
+                <td>Approved customer proposal</td>
+            </tr>
+            <tr>
+                <td><strong>Time Target</strong></td>
+                <td>How fast should it be?</td>
+                <td>Same-day for standard requests</td>
+            </tr>
+            <tr>
+                <td><strong>Quality Standard</strong></td>
+                <td>What defines "good enough"?</td>
+                <td>Zero compliance errors, 90% customer acceptance</td>
+            </tr>
+            <tr>
+                <td><strong>Cost Constraint</strong></td>
+                <td>What resources are available?</td>
+                <td>Max 30 min human time per proposal</td>
+            </tr>
+            <tr>
+                <td><strong>Risk Boundaries</strong></td>
+                <td>What can't go wrong?</td>
+                <td>No pricing errors, no data leaks</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Workflow Mapping Legend</h2>
+        <p>Use consistent color coding for clarity</p>
+        <div class="three-column" style="margin-top: 30px;">
+            <div style="text-align: center;">
+                <div class="human-action" style="font-size: 1.2em; padding: 15px 30px;">HUMAN</div>
+                <p style="margin-top: 15px;">Actions requiring human judgment, creativity, or accountability</p>
+            </div>
+            <div style="text-align: center;">
+                <div class="ai-action" style="font-size: 1.2em; padding: 15px 30px;">AI / AUTO</div>
+                <p style="margin-top: 15px;">Tasks AI or automation can handle with minimal oversight</p>
+            </div>
+            <div style="text-align: center;">
+                <div class="decision-point" style="font-size: 1.2em; padding: 15px 30px;">DECISION</div>
+                <p style="margin-top: 15px;">Branch points where outcomes depend on conditions</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>AI Role Types in Workflows</h2>
+        <table style="width: 100%;">
+            <tr>
+                <th>AI Role</th>
+                <th>What It Does</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td><strong style="color: #42affa;">Analyzer</strong></td>
+                <td>Extracts insights from data</td>
+                <td>Summarize customer history, flag anomalies</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #10b981;">Generator</strong></td>
+                <td>Creates draft content</td>
+                <td>Write first draft of proposal, generate options</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #f59e0b;">Recommender</strong></td>
+                <td>Suggests actions based on patterns</td>
+                <td>Recommend pricing tier, suggest next steps</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #6b46c1;">Validator</strong></td>
+                <td>Checks work against rules</td>
+                <td>Verify compliance, check for errors</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #ef4444;">Router</strong></td>
+                <td>Directs work to right destination</td>
+                <td>Triage support tickets, assign to specialist</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Before/After Mapping Example</h2>
+        <div class="two-column">
+            <div>
+                <h4>Before (Current State)</h4>
+                <div style="font-size: 0.8em;">
+                    <p><span class="human-action">HUMAN</span> Receive request via email</p>
+                    <p><span class="human-action">HUMAN</span> Search for customer history</p>
+                    <p><span class="human-action">HUMAN</span> Check eligibility manually</p>
+                    <p><span class="human-action">HUMAN</span> Draft proposal from scratch</p>
+                    <p><span class="human-action">HUMAN</span> Calculate pricing</p>
+                    <p><span class="human-action">HUMAN</span> Send for review</p>
+                    <p><span class="decision-point">DECISION</span> Approved?</p>
+                    <p><span class="human-action">HUMAN</span> Make revisions</p>
+                    <p><span class="human-action">HUMAN</span> Send to customer</p>
+                </div>
+                <p style="margin-top: 15px;"><strong>Time:</strong> 4-6 hours</p>
+            </div>
+            <div>
+                <h4>After (AI-Augmented)</h4>
+                <div style="font-size: 0.8em;">
+                    <p><span class="ai-action">AI</span> Parse request & extract requirements</p>
+                    <p><span class="ai-action">AI</span> Retrieve & summarize customer history</p>
+                    <p><span class="ai-action">AI</span> Check eligibility against rules</p>
+                    <p><span class="decision-point">DECISION</span> Standard or custom?</p>
+                    <p><span class="ai-action">AI</span> Generate proposal draft</p>
+                    <p><span class="ai-action">AI</span> Calculate pricing options</p>
+                    <p><span class="human-action">HUMAN</span> Review & personalize</p>
+                    <p><span class="ai-action">AI</span> Validate compliance</p>
+                    <p><span class="human-action">HUMAN</span> Final approval & send</p>
+                </div>
+                <p style="margin-top: 15px;"><strong>Time:</strong> 30-45 minutes</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Identifying AI Insertion Points</h2>
+        <p>Ask these questions at each step:</p>
+        <div class="two-column">
+            <div>
+                <div class="highlight-box">
+                    <h4>Good Candidates for AI</h4>
+                    <ul>
+                        <li>Repetitive with slight variations</li>
+                        <li>Time-consuming but low-judgment</li>
+                        <li>Data gathering and summarization</li>
+                        <li>First drafts that need human polish</li>
+                        <li>Pattern matching and classification</li>
+                        <li>Quality checks against known rules</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="warning-box">
+                    <h4>Keep Human for Now</h4>
+                    <ul>
+                        <li>Final accountability decisions</li>
+                        <li>Novel/unprecedented situations</li>
+                        <li>Relationship-critical moments</li>
+                        <li>Ethical or legal gray areas</li>
+                        <li>Creative strategy</li>
+                        <li>Exception handling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The Process Blueprint Template</h2>
+        <div class="highlight-box">
+            <p>Your blueprint should include:</p>
+            <table style="width: 100%;">
+                <tr>
+                    <th>Section</th>
+                    <th>Contents</th>
+                </tr>
+                <tr>
+                    <td><strong>Process Overview</strong></td>
+                    <td>1-2 sentence summary of what this workflow does</td>
+                </tr>
+                <tr>
+                    <td><strong>Trigger</strong></td>
+                    <td>What initiates this workflow?</td>
+                </tr>
+                <tr>
+                    <td><strong>Inputs</strong></td>
+                    <td>Data/information required to start</td>
+                </tr>
+                <tr>
+                    <td><strong>Outputs</strong></td>
+                    <td>Deliverable when complete</td>
+                </tr>
+                <tr>
+                    <td><strong>Workflow Steps</strong></td>
+                    <td>Numbered steps with Human/AI/Decision tags</td>
+                </tr>
+                <tr>
+                    <td><strong>Guardrails</strong></td>
+                    <td>Rules and limits for AI actions</td>
+                </tr>
+                <tr>
+                    <td><strong>Success Metrics</strong></td>
+                    <td>How you'll measure improvement</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <h2>Lab Exercise 2.1: Before/After Map</h2>
+        <div class="highlight-box">
+            <h4>Instructions</h4>
+            <ol>
+                <li>Take the workflow from your Day 1 Autopsy</li>
+                <li>Create a "Before" column with current steps</li>
+                <li>Tag each step: <span class="human-action">HUMAN</span>, <span class="ai-action">AI</span>, or <span class="decision-point">DECISION</span></li>
+                <li>Create an "After" column with redesigned steps</li>
+                <li>For each AI step, identify the AI role type</li>
+                <li>Estimate time savings</li>
+            </ol>
+        </div>
+        <div class="success-box" style="margin-top: 20px;">
+            <strong>Key Principle:</strong> "AI-native workflows start with clarity, not technology."
+        </div>
+    </section>
+
+    <section>
+        <h2>Day 2 Deliverables</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>1. Outcome Brief</h4>
+                <p>Clear definition of success with measurable targets</p>
+            </div>
+            <div class="card">
+                <h4>2. Before/After Map</h4>
+                <p>Visual workflow comparison with color-coded roles</p>
+            </div>
+            <div class="card">
+                <h4>3. Process Blueprint</h4>
+                <p>1-2 page document ready for stakeholder review</p>
+            </div>
+        </div>
+        <div class="success-box" style="margin-top: 30px;">
+            <strong>Tomorrow:</strong> We'll add governance, safety controls, and human-in-the-loop design to make your workflow enterprise-ready.
+        </div>
+    </section>
+</section>
+
+<!-- ============================================ -->
+<!-- DAY 3: GOVERNANCE, SAFETY, HUMAN-IN-THE-LOOP -->
+<!-- ============================================ -->
+
+<section>
+    <section class="center">
+        <span class="day-badge">DAY 3</span>
+        <h1>Governance, Safety & Human-in-the-Loop</h1>
+        <p>Making AI workflows enterprise-ready</p>
+    </section>
+
+    <section>
+        <h2>Day 3 Learning Objectives</h2>
+        <div class="highlight-box">
+            <p>By the end of today, you will be able to:</p>
+            <ul>
+                <li>Classify AI risks across five dimensions</li>
+                <li>Select appropriate oversight models (HITL/HOTL/HOOTL)</li>
+                <li>Design escalation paths and verification steps</li>
+                <li>Complete a Governance Canvas for your workflow</li>
+            </ul>
+        </div>
+        <div class="quote-box" style="margin-top: 20px;">
+            "Governance isn't a blocker — it enables scale."
+        </div>
+    </section>
+
+    <section>
+        <h2>The Five AI Risk Dimensions</h2>
+        <table style="width: 100%;">
+            <tr>
+                <th>Dimension</th>
+                <th>Risk Types</th>
+                <th>Questions to Ask</th>
+            </tr>
+            <tr>
+                <td><strong style="color: #42affa;">Data Risk</strong></td>
+                <td>Privacy, exposure, lineage, integrity, retention</td>
+                <td>What data does AI access? Where does it go?</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #10b981;">Model Risk</strong></td>
+                <td>Hallucinations, bias, drift, confidence gaps</td>
+                <td>How might AI outputs be wrong?</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #f59e0b;">Operational Risk</strong></td>
+                <td>Workflow failures, poor handoffs, monitoring gaps</td>
+                <td>What if the AI is unavailable?</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #ef4444;">Security Risk</strong></td>
+                <td>Prompt injection, unauthorized access, data leakage</td>
+                <td>How could this be exploited?</td>
+            </tr>
+            <tr>
+                <td><strong style="color: #6b46c1;">Reputational Risk</strong></td>
+                <td>Harmful outputs, customer confusion, fairness issues</td>
+                <td>What would the headline be if this fails?</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Risk Classification Matrix</h2>
+        <div class="two-column">
+            <div>
+                <h4>Impact Assessment</h4>
+                <table style="width: 100%;">
+                    <tr>
+                        <th>Level</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td class="risk-low"><strong>Low</strong></td>
+                        <td>Minor inconvenience, easily corrected</td>
+                    </tr>
+                    <tr>
+                        <td class="risk-medium"><strong>Medium</strong></td>
+                        <td>Customer impact, requires intervention</td>
+                    </tr>
+                    <tr>
+                        <td class="risk-high"><strong>High</strong></td>
+                        <td>Regulatory, legal, or significant financial</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <h4>Likelihood Assessment</h4>
+                <table style="width: 100%;">
+                    <tr>
+                        <th>Level</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td class="risk-low"><strong>Rare</strong></td>
+                        <td>Edge case, unlikely to occur</td>
+                    </tr>
+                    <tr>
+                        <td class="risk-medium"><strong>Possible</strong></td>
+                        <td>May occur occasionally</td>
+                    </tr>
+                    <tr>
+                        <td class="risk-high"><strong>Likely</strong></td>
+                        <td>Expected to occur regularly</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 20px;">
+            <strong>Priority = Impact × Likelihood</strong><br>
+            Focus governance controls on high-priority risks first.
+        </div>
+    </section>
+
+    <section>
+        <h2>Three Oversight Archetypes</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4 style="color: #42affa;">Human-in-the-Loop (HITL)</h4>
+                <p><strong>AI drafts → Human approves</strong></p>
+                <ul style="font-size: 0.85em;">
+                    <li>Every AI output reviewed</li>
+                    <li>Human has final say</li>
+                    <li>Slower but safer</li>
+                </ul>
+                <p style="margin-top: 10px;"><em>Use for: Medium-risk decisions, learning phases</em></p>
+            </div>
+            <div class="card">
+                <h4 style="color: #10b981;">Human-on-the-Loop (HOTL)</h4>
+                <p><strong>AI executes → Human monitors</strong></p>
+                <ul style="font-size: 0.85em;">
+                    <li>AI acts autonomously</li>
+                    <li>Human reviews exceptions</li>
+                    <li>Faster with oversight</li>
+                </ul>
+                <p style="margin-top: 10px;"><em>Use for: High-volume, low-risk tasks</em></p>
+            </div>
+            <div class="card">
+                <h4 style="color: #6b46c1;">Human-out-of-Loop (HOOTL)</h4>
+                <p><strong>AI executes autonomously</strong></p>
+                <ul style="font-size: 0.85em;">
+                    <li>No human intervention</li>
+                    <li>Pre-approved rules only</li>
+                    <li>Fastest execution</li>
+                </ul>
+                <p style="margin-top: 10px;"><em>Use for: Structured, rule-based, low-risk only</em></p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Choosing the Right Oversight Model</h2>
+        <table style="width: 100%;">
+            <tr>
+                <th>Factor</th>
+                <th>HITL</th>
+                <th>HOTL</th>
+                <th>HOOTL</th>
+            </tr>
+            <tr>
+                <td><strong>Decision reversibility</strong></td>
+                <td>Irreversible</td>
+                <td>Somewhat reversible</td>
+                <td>Fully reversible</td>
+            </tr>
+            <tr>
+                <td><strong>Stakes</strong></td>
+                <td>High stakes</td>
+                <td>Medium stakes</td>
+                <td>Low stakes</td>
+            </tr>
+            <tr>
+                <td><strong>Volume</strong></td>
+                <td>Low volume</td>
+                <td>Medium-high volume</td>
+                <td>Very high volume</td>
+            </tr>
+            <tr>
+                <td><strong>Pattern clarity</strong></td>
+                <td>Novel/unclear patterns</td>
+                <td>Known patterns + exceptions</td>
+                <td>Fully defined rules</td>
+            </tr>
+            <tr>
+                <td><strong>Error tolerance</strong></td>
+                <td>Near-zero errors required</td>
+                <td>Some errors acceptable</td>
+                <td>Errors have minimal impact</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Designing Escalation Paths</h2>
+        <div class="diagram-container">
+            <svg width="700" height="350" viewBox="0 0 700 350">
+                <!-- Boxes -->
+                <rect x="250" y="20" width="200" height="60" fill="#10b981" rx="8"/>
+                <text x="350" y="55" fill="white" font-size="16" text-anchor="middle" font-weight="bold">AI Processes Task</text>
+
+                <!-- Decision diamond -->
+                <polygon points="350,120 430,170 350,220 270,170" fill="#f59e0b"/>
+                <text x="350" y="175" fill="black" font-size="14" text-anchor="middle">Confidence</text>
+                <text x="350" y="190" fill="black" font-size="14" text-anchor="middle">Check</text>
+
+                <!-- Branches -->
+                <rect x="50" y="260" width="150" height="60" fill="#10b981" rx="8"/>
+                <text x="125" y="295" fill="white" font-size="14" text-anchor="middle">Auto-Complete</text>
+
+                <rect x="275" y="260" width="150" height="60" fill="#42affa" rx="8"/>
+                <text x="350" y="295" fill="white" font-size="14" text-anchor="middle">Human Review</text>
+
+                <rect x="500" y="260" width="150" height="60" fill="#ef4444" rx="8"/>
+                <text x="575" y="295" fill="white" font-size="14" text-anchor="middle">Escalate to Expert</text>
+
+                <!-- Lines -->
+                <line x1="350" y1="80" x2="350" y2="120" stroke="white" stroke-width="2"/>
+                <line x1="270" y1="170" x2="125" y2="170" stroke="white" stroke-width="2"/>
+                <line x1="125" y1="170" x2="125" y2="260" stroke="white" stroke-width="2"/>
+                <line x1="350" y1="220" x2="350" y2="260" stroke="white" stroke-width="2"/>
+                <line x1="430" y1="170" x2="575" y2="170" stroke="white" stroke-width="2"/>
+                <line x1="575" y1="170" x2="575" y2="260" stroke="white" stroke-width="2"/>
+
+                <!-- Labels -->
+                <text x="180" y="160" fill="#10b981" font-size="12">High Confidence</text>
+                <text x="350" y="245" fill="#42affa" font-size="12" text-anchor="middle">Medium</text>
+                <text x="490" y="160" fill="#ef4444" font-size="12">Low / Anomaly</text>
+            </svg>
+        </div>
+    </section>
+
+    <section>
+        <h2>Verification Steps</h2>
+        <p>Build checkpoints into your workflow</p>
+        <div class="two-column">
+            <div>
+                <h4>Types of Verification</h4>
+                <table style="width: 100%;">
+                    <tr><th>Type</th><th>What It Checks</th></tr>
+                    <tr><td><strong>Format Check</strong></td><td>Output structure correct?</td></tr>
+                    <tr><td><strong>Rule Check</strong></td><td>Business rules followed?</td></tr>
+                    <tr><td><strong>Completeness</strong></td><td>All required fields present?</td></tr>
+                    <tr><td><strong>Consistency</strong></td><td>Data matches across sources?</td></tr>
+                    <tr><td><strong>Confidence</strong></td><td>AI certainty above threshold?</td></tr>
+                    <tr><td><strong>Sampling</strong></td><td>Random human review %</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="highlight-box">
+                    <h4>Example: Proposal Workflow</h4>
+                    <ul style="font-size: 0.9em;">
+                        <li><strong>After AI draft:</strong> Check pricing within approved ranges</li>
+                        <li><strong>Before send:</strong> Verify customer name/details correct</li>
+                        <li><strong>Weekly:</strong> Sample 10% for quality review</li>
+                        <li><strong>Monthly:</strong> Compare AI vs. human accuracy</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The Governance Canvas</h2>
+        <p>One-page compliance document for your workflow</p>
+        <table style="width: 100%; font-size: 0.85em;">
+            <tr>
+                <td style="width: 50%; vertical-align: top; padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>Workflow Name & ID</strong><br>
+                    <em>[Name, version, owner]</em>
+                </td>
+                <td style="width: 50%; vertical-align: top; padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>Scope & Boundaries</strong><br>
+                    <em>[What this does/doesn't cover]</em>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>AI Capabilities Used</strong><br>
+                    <em>[Models, tools, integrations]</em>
+                </td>
+                <td style="padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>Human Roles & Responsibilities</strong><br>
+                    <em>[Who does what, when]</em>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>Risk Assessment</strong><br>
+                    <em>[Key risks and mitigations]</em>
+                </td>
+                <td style="padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>Oversight Model</strong><br>
+                    <em>[HITL/HOTL/HOOTL and why]</em>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>Logging & Audit Trail</strong><br>
+                    <em>[What gets recorded]</em>
+                </td>
+                <td style="padding: 15px; border: 1px solid rgba(255,255,255,0.3);">
+                    <strong>Success Metrics & Review Cadence</strong><br>
+                    <em>[KPIs and review schedule]</em>
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Lab Exercise 3.1: Risk Annotation</h2>
+        <div class="highlight-box">
+            <h4>Instructions</h4>
+            <ol>
+                <li>Take your Before/After workflow map from Day 2</li>
+                <li>For each AI step, identify risks using the 5 dimensions</li>
+                <li>Rate each risk: <span class="risk-low">Low</span> / <span class="risk-medium">Medium</span> / <span class="risk-high">High</span></li>
+                <li>Determine oversight model for each AI step</li>
+                <li>Add verification checkpoints</li>
+                <li>Design escalation paths for exceptions</li>
+            </ol>
+        </div>
+    </section>
+
+    <section>
+        <h2>Day 3 Deliverables</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>1. Risk-Annotated Map</h4>
+                <p>Workflow with risks identified and color-coded by severity</p>
+            </div>
+            <div class="card">
+                <h4>2. Oversight Architecture</h4>
+                <p>Diagram showing human checkpoints and escalation paths</p>
+            </div>
+            <div class="card">
+                <h4>3. Governance Canvas</h4>
+                <p>Single-page compliance document ready for leadership review</p>
+            </div>
+        </div>
+        <div class="success-box" style="margin-top: 30px;">
+            <strong>Tomorrow:</strong> We'll turn everything into a practical playbook that others can follow.
+        </div>
+    </section>
+</section>
+
+<!-- ============================================ -->
+<!-- DAY 4: BUILDING THE INTERNAL AI PLAYBOOK -->
+<!-- ============================================ -->
+
+<section>
+    <section class="center">
+        <span class="day-badge">DAY 4</span>
+        <h1>Building the Internal AI Playbook</h1>
+        <p>Creating documentation that teaches and enables</p>
+    </section>
+
+    <section>
+        <h2>Day 4 Learning Objectives</h2>
+        <div class="highlight-box">
+            <p>By the end of today, you will be able to:</p>
+            <ul>
+                <li>Write clear, actionable process documentation</li>
+                <li>Create effective prompt templates and examples</li>
+                <li>Design verification checklists</li>
+                <li>Produce a working AI Playbook draft</li>
+            </ul>
+        </div>
+        <div class="quote-box" style="margin-top: 20px;">
+            "Tools come and go. A well-written playbook survives tools."
+        </div>
+    </section>
+
+    <section>
+        <h2>What Makes a Good Playbook?</h2>
+        <div class="two-column">
+            <div class="success-box">
+                <h4>Effective Playbooks</h4>
+                <ul>
+                    <li>Written for someone with no context</li>
+                    <li>Uses plain language, not jargon</li>
+                    <li>Shows examples, not just instructions</li>
+                    <li>Includes "what if" scenarios</li>
+                    <li>Has clear success criteria</li>
+                    <li>Tells you when NOT to use it</li>
+                </ul>
+            </div>
+            <div class="warning-box">
+                <h4>Ineffective Playbooks</h4>
+                <ul>
+                    <li>Assumes reader knows the context</li>
+                    <li>Full of acronyms and insider terms</li>
+                    <li>Only describes happy path</li>
+                    <li>No examples or templates</li>
+                    <li>Unclear ownership</li>
+                    <li>Never updated after creation</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Playbook Structure</h2>
+        <table style="width: 100%;">
+            <tr>
+                <th>Section</th>
+                <th>Purpose</th>
+                <th>Length</th>
+            </tr>
+            <tr>
+                <td><strong>Overview</strong></td>
+                <td>What this playbook helps you do</td>
+                <td>2-3 sentences</td>
+            </tr>
+            <tr>
+                <td><strong>When to Use</strong></td>
+                <td>Triggers and conditions</td>
+                <td>Bullet list</td>
+            </tr>
+            <tr>
+                <td><strong>When NOT to Use</strong></td>
+                <td>Exceptions and escalations</td>
+                <td>Bullet list</td>
+            </tr>
+            <tr>
+                <td><strong>Step-by-Step Process</strong></td>
+                <td>Detailed instructions with AI/Human tags</td>
+                <td>1-2 pages</td>
+            </tr>
+            <tr>
+                <td><strong>Prompts & Templates</strong></td>
+                <td>Copy-paste ready examples</td>
+                <td>As needed</td>
+            </tr>
+            <tr>
+                <td><strong>Verification Checklist</strong></td>
+                <td>How to check AI outputs</td>
+                <td>Checklist format</td>
+            </tr>
+            <tr>
+                <td><strong>Troubleshooting</strong></td>
+                <td>Common problems and solutions</td>
+                <td>FAQ format</td>
+            </tr>
+            <tr>
+                <td><strong>Contacts & Escalation</strong></td>
+                <td>Who to ask for help</td>
+                <td>Names/roles</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Writing Effective Prompts</h2>
+        <p>Include ready-to-use prompt templates in your playbook</p>
+        <div class="two-column">
+            <div>
+                <h4>Prompt Structure</h4>
+                <div class="highlight-box" style="font-size: 0.85em;">
+                    <p><strong>Role:</strong> You are a [role] helping with [task]</p>
+                    <p><strong>Context:</strong> Here is the relevant information: [data]</p>
+                    <p><strong>Task:</strong> Please [specific action]</p>
+                    <p><strong>Format:</strong> Provide your response as [format]</p>
+                    <p><strong>Constraints:</strong> Make sure to [rules/limits]</p>
+                </div>
+            </div>
+            <div>
+                <h4>Example Prompt</h4>
+                <div style="background: #1a1a2e; padding: 15px; border-radius: 8px; font-size: 0.75em; font-family: monospace;">
+                    You are a proposal specialist helping prepare customer quotes.<br><br>
+                    Context: Customer ABC Corp requested pricing for [PRODUCT]. Their history shows [HISTORY SUMMARY].<br><br>
+                    Task: Draft a proposal email including pricing options and next steps.<br><br>
+                    Format: Professional email, 3 paragraphs max.<br><br>
+                    Constraints: Use only approved pricing from the rate card. Do not promise delivery dates.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Verification Checklists</h2>
+        <p>Create checklists for humans reviewing AI outputs</p>
+        <div class="two-column">
+            <div>
+                <h4>Example: Proposal Review Checklist</h4>
+                <div class="card">
+                    <p><input type="checkbox"> Customer name spelled correctly</p>
+                    <p><input type="checkbox"> Pricing matches rate card</p>
+                    <p><input type="checkbox"> No unauthorized discounts</p>
+                    <p><input type="checkbox"> Terms & conditions included</p>
+                    <p><input type="checkbox"> Expiration date set correctly</p>
+                    <p><input type="checkbox"> No confidential info exposed</p>
+                    <p><input type="checkbox"> Tone appropriate for customer</p>
+                    <p><input type="checkbox"> Call-to-action is clear</p>
+                </div>
+            </div>
+            <div>
+                <h4>Checklist Design Principles</h4>
+                <ul>
+                    <li><strong>Binary:</strong> Yes/No questions only</li>
+                    <li><strong>Observable:</strong> Can be verified objectively</li>
+                    <li><strong>Ordered:</strong> Critical items first</li>
+                    <li><strong>Actionable:</strong> Clear what to do if fails</li>
+                    <li><strong>Brief:</strong> 5-10 items maximum</li>
+                </ul>
+                <div class="highlight-box" style="margin-top: 15px;">
+                    Checklists reduce errors by 30-50% in high-stakes environments
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Documenting AI + Human Handoffs</h2>
+        <p>Be explicit about who does what</p>
+        <table style="width: 100%;">
+            <tr>
+                <th>Step</th>
+                <th>Owner</th>
+                <th>Action</th>
+                <th>Output</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td><span class="ai-action">AI</span></td>
+                <td>Parse incoming request and extract requirements</td>
+                <td>Structured requirement list</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td><span class="ai-action">AI</span></td>
+                <td>Generate proposal draft using template</td>
+                <td>Draft document</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td><span class="human-action">HUMAN</span></td>
+                <td>Review draft against checklist</td>
+                <td>Approved or revised draft</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td><span class="decision-point">DECISION</span></td>
+                <td>Is value > $50K?</td>
+                <td>Route to manager or proceed</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td><span class="human-action">HUMAN</span></td>
+                <td>Send to customer with personal note</td>
+                <td>Sent proposal + logged</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Troubleshooting Section</h2>
+        <p>Anticipate problems and provide solutions</p>
+        <div class="highlight-box">
+            <h4>Example Troubleshooting Guide</h4>
+            <table style="width: 100%;">
+                <tr>
+                    <th>Problem</th>
+                    <th>Likely Cause</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>AI generates nonsense</td>
+                    <td>Input data malformed</td>
+                    <td>Check source data format; re-run</td>
+                </tr>
+                <tr>
+                    <td>Wrong customer info</td>
+                    <td>CRM sync delay</td>
+                    <td>Manually verify in CRM; wait 10 min</td>
+                </tr>
+                <tr>
+                    <td>Pricing seems wrong</td>
+                    <td>Rate card outdated</td>
+                    <td>Check rate card version; escalate to manager</td>
+                </tr>
+                <tr>
+                    <td>AI tool unavailable</td>
+                    <td>Service outage</td>
+                    <td>Use manual process; check status page</td>
+                </tr>
+                <tr>
+                    <td>Customer data exposed</td>
+                    <td>Prompt included PII</td>
+                    <td>STOP. Report to security. Do not send.</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <h2>Lab Exercise 4.1: Peer Testing</h2>
+        <div class="highlight-box">
+            <h4>Instructions</h4>
+            <ol>
+                <li>Draft your playbook (3-5 pages) using the template</li>
+                <li>Exchange playbooks with a partner</li>
+                <li>Attempt to follow your partner's playbook step-by-step</li>
+                <li>Note every point of confusion or ambiguity</li>
+                <li>Provide feedback:
+                    <ul>
+                        <li>What was unclear?</li>
+                        <li>What was missing?</li>
+                        <li>Where did you get stuck?</li>
+                    </ul>
+                </li>
+                <li>Revise your playbook based on feedback</li>
+            </ol>
+        </div>
+        <div class="success-box" style="margin-top: 20px;">
+            <strong>Key Test:</strong> Can someone unfamiliar with the process follow it successfully?
+        </div>
+    </section>
+
+    <section>
+        <h2>Day 4 Deliverables</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>1. Complete Playbook Draft</h4>
+                <p>3-5 page document with all sections filled in</p>
+            </div>
+            <div class="card">
+                <h4>2. Prompt Templates</h4>
+                <p>Ready-to-use prompts with variable placeholders</p>
+            </div>
+            <div class="card">
+                <h4>3. Verification Checklist</h4>
+                <p>Binary checklist for reviewing AI outputs</p>
+            </div>
+        </div>
+        <div class="success-box" style="margin-top: 30px;">
+            <strong>Tomorrow:</strong> Capstone presentations, governance defense, and 30-60-90 day rollout planning.
+        </div>
+    </section>
+</section>
+
+<!-- ============================================ -->
+<!-- DAY 5: CAPSTONE & ROLLOUT -->
+<!-- ============================================ -->
+
+<section>
+    <section class="center">
+        <span class="day-badge">DAY 5</span>
+        <h1>Capstone & Rollout</h1>
+        <p>From pilot to sustainable practice</p>
+    </section>
+
+    <section>
+        <h2>Day 5 Learning Objectives</h2>
+        <div class="highlight-box">
+            <p>By the end of today, you will be able to:</p>
+            <ul>
+                <li>Present your AI workflow to stakeholders</li>
+                <li>Defend your governance and design decisions</li>
+                <li>Create a 30-60-90 day rollout plan</li>
+                <li>Establish maintenance and improvement processes</li>
+            </ul>
+        </div>
+        <div class="quote-box" style="margin-top: 20px;">
+            "AI doesn't replace workflows; it refactors them."
+        </div>
+    </section>
+
+    <section>
+        <h2>Capstone Presentation Structure</h2>
+        <p>8-10 minute presentation covering:</p>
+        <table style="width: 100%;">
+            <tr>
+                <th>Section</th>
+                <th>Time</th>
+                <th>Content</th>
+            </tr>
+            <tr>
+                <td><strong>The Problem</strong></td>
+                <td>1 min</td>
+                <td>Pain points from workflow autopsy</td>
+            </tr>
+            <tr>
+                <td><strong>The Solution</strong></td>
+                <td>2 min</td>
+                <td>Before/After workflow with AI roles</td>
+            </tr>
+            <tr>
+                <td><strong>Governance</strong></td>
+                <td>2 min</td>
+                <td>Risks, oversight model, verification</td>
+            </tr>
+            <tr>
+                <td><strong>Demo</strong></td>
+                <td>2 min</td>
+                <td>Walk through the workflow with real/simulated data</td>
+            </tr>
+            <tr>
+                <td><strong>Rollout Plan</strong></td>
+                <td>2 min</td>
+                <td>30-60-90 day implementation plan</td>
+            </tr>
+            <tr>
+                <td><strong>Ask</strong></td>
+                <td>1 min</td>
+                <td>What you need to move forward</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Common Failure Points</h2>
+        <p>Issues discovered during capstone testing</p>
+        <div class="two-column">
+            <div class="warning-box">
+                <h4>Technical Failures</h4>
+                <ul>
+                    <li>Unclear verification steps</li>
+                    <li>Missing data assumptions</li>
+                    <li>Poorly defined handoffs</li>
+                    <li>No fallback for AI unavailability</li>
+                    <li>Ambiguous prompt templates</li>
+                </ul>
+            </div>
+            <div class="warning-box">
+                <h4>Process Failures</h4>
+                <ul>
+                    <li>Unclear ownership</li>
+                    <li>No escalation path</li>
+                    <li>Missing edge cases</li>
+                    <li>Untested with real data</li>
+                    <li>No success metrics defined</li>
+                </ul>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 20px;">
+            <strong>Fix these before rollout!</strong> Better to find problems in testing than in production.
+        </div>
+    </section>
+
+    <section>
+        <h2>Defending Your Design Decisions</h2>
+        <p>Be prepared to answer "Why?"</p>
+        <div class="two-column">
+            <div>
+                <h4>Common Challenges</h4>
+                <ul>
+                    <li>"Why does a human need to review this?"</li>
+                    <li>"Why can't AI do this step too?"</li>
+                    <li>"What if the AI makes a mistake?"</li>
+                    <li>"Is this compliant with [regulation]?"</li>
+                    <li>"How do we know this is working?"</li>
+                    <li>"What happens when the tool changes?"</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Strong Answers Include</h4>
+                <ul>
+                    <li>Reference to risk assessment</li>
+                    <li>Clear accountability chain</li>
+                    <li>Specific verification steps</li>
+                    <li>Measurable success criteria</li>
+                    <li>Escalation procedures</li>
+                    <li>Maintenance ownership</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>The 30-60-90 Day Rollout Plan</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4 style="color: #10b981;">Days 1-30: Stabilize</h4>
+                <p><strong>Focus:</strong> Small group pilot</p>
+                <ul style="font-size: 0.85em;">
+                    <li>2-3 users only</li>
+                    <li>Daily check-ins</li>
+                    <li>Log every issue</li>
+                    <li>Refine playbook</li>
+                    <li>Establish baseline metrics</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Exit Criteria:</strong> No critical issues for 1 week</p>
+            </div>
+            <div class="card">
+                <h4 style="color: #f59e0b;">Days 31-60: Expand</h4>
+                <p><strong>Focus:</strong> Add teams</p>
+                <ul style="font-size: 0.85em;">
+                    <li>10-20 users</li>
+                    <li>Weekly check-ins</li>
+                    <li>Train new users</li>
+                    <li>Document patterns</li>
+                    <li>Collect feedback</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Exit Criteria:</strong> Positive user feedback, metrics improving</p>
+            </div>
+            <div class="card">
+                <h4 style="color: #42affa;">Days 61-90: Operationalize</h4>
+                <p><strong>Focus:</strong> Full integration</p>
+                <ul style="font-size: 0.85em;">
+                    <li>All target users</li>
+                    <li>Standard process</li>
+                    <li>Upstream/downstream integration</li>
+                    <li>Reporting automated</li>
+                    <li>Continuous improvement</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Exit Criteria:</strong> Process is the new normal</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Rollout Plan Template</h2>
+        <table style="width: 100%; font-size: 0.85em;">
+            <tr>
+                <th>Phase</th>
+                <th>Users</th>
+                <th>Key Activities</th>
+                <th>Success Metrics</th>
+                <th>Risks</th>
+            </tr>
+            <tr>
+                <td><strong>Pilot (1-30)</strong></td>
+                <td>Alice, Bob, Carol</td>
+                <td>Daily use, feedback sessions</td>
+                <td>No critical errors, 50% time savings</td>
+                <td>Data access issues</td>
+            </tr>
+            <tr>
+                <td><strong>Expand (31-60)</strong></td>
+                <td>Sales Team West</td>
+                <td>Training, playbook updates</td>
+                <td>80% adoption, positive NPS</td>
+                <td>Resistance to change</td>
+            </tr>
+            <tr>
+                <td><strong>Scale (61-90)</strong></td>
+                <td>All Sales Teams</td>
+                <td>Full rollout, monitoring</td>
+                <td>Process time down 60%</td>
+                <td>Volume stress testing</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>Living Systems, Not Static Solutions</h2>
+        <div class="quote-box">
+            "Treat AI systems as living systems — with owners, updates, and accountability."
+        </div>
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="highlight-box">
+                <h4>Maintenance Requirements</h4>
+                <ul>
+                    <li><strong>Weekly:</strong> Review exception logs</li>
+                    <li><strong>Monthly:</strong> Analyze success metrics</li>
+                    <li><strong>Quarterly:</strong> Update prompts and playbook</li>
+                    <li><strong>As Needed:</strong> Respond to tool changes</li>
+                    <li><strong>Annually:</strong> Full governance review</li>
+                </ul>
+            </div>
+            <div class="highlight-box">
+                <h4>Ownership Clarity</h4>
+                <ul>
+                    <li><strong>Process Owner:</strong> Accountable for outcomes</li>
+                    <li><strong>Technical Owner:</strong> Maintains integrations</li>
+                    <li><strong>Governance Owner:</strong> Ensures compliance</li>
+                    <li><strong>Training Owner:</strong> Onboards new users</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Continuous Improvement Loop</h2>
+        <div class="diagram-container">
+            <svg width="600" height="350" viewBox="0 0 600 350">
+                <!-- Circle of boxes -->
+                <rect x="225" y="20" width="150" height="60" fill="#42affa" rx="8"/>
+                <text x="300" y="55" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Measure</text>
+
+                <rect x="420" y="120" width="150" height="60" fill="#10b981" rx="8"/>
+                <text x="495" y="155" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Analyze</text>
+
+                <rect x="420" y="220" width="150" height="60" fill="#f59e0b" rx="8"/>
+                <text x="495" y="255" fill="black" font-size="14" text-anchor="middle" font-weight="bold">Improve</text>
+
+                <rect x="225" y="270" width="150" height="60" fill="#6b46c1" rx="8"/>
+                <text x="300" y="305" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Implement</text>
+
+                <rect x="30" y="170" width="150" height="60" fill="#ef4444" rx="8"/>
+                <text x="105" y="205" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Operate</text>
+
+                <!-- Arrows -->
+                <path d="M 375 50 Q 420 50 420 120" stroke="white" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+                <path d="M 495 180 L 495 220" stroke="white" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+                <path d="M 420 250 L 375 280" stroke="white" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+                <path d="M 225 300 Q 105 300 105 230" stroke="white" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+                <path d="M 105 170 Q 105 50 225 50" stroke="white" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="white"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </section>
+
+    <section>
+        <h2>Final Deliverables</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>1. Capstone Presentation</h4>
+                <p>8-10 minute presentation with demo ready for stakeholders</p>
+            </div>
+            <div class="card">
+                <h4>2. Complete Playbook</h4>
+                <p>Polished, peer-tested documentation</p>
+            </div>
+            <div class="card">
+                <h4>3. Rollout Plan</h4>
+                <p>30-60-90 day plan with owners and metrics</p>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 30px; font-size: 0.9em;">
+            <strong>You now have:</strong> A governance-approved, human-centered AI workflow with documentation, training materials, and an implementation roadmap.
+        </div>
+    </section>
+
+    <section class="center">
+        <h2>Key Takeaways</h2>
+        <div class="quote-box" style="font-size: 1em;">
+            <p>"Start with pain, not platforms."</p>
+            <p>"Culture is the real bottleneck."</p>
+            <p>"Governance isn't a blocker — it enables scale."</p>
+            <p>"Tools come and go. A well-written playbook survives tools."</p>
+            <p>"AI doesn't replace workflows; it refactors them."</p>
+            <p>"Organizational change ultimately depends on people, not technology alone."</p>
+        </div>
+    </section>
+
+    <section class="center">
+        <h1>Congratulations!</h1>
+        <p>You've completed the Enterprise AI Adoption course</p>
+        <div style="margin-top: 40px;">
+            <p><strong>What's Next?</strong></p>
+            <ul style="list-style: none; text-align: center;">
+                <li>Execute your 30-60-90 day plan</li>
+                <li>Share your playbook with your team</li>
+                <li>Measure and iterate</li>
+                <li>Help others adopt AI responsibly</li>
+            </ul>
+        </div>
+    </section>
+</section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <style>
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .fullscreen-btn:hover {
+            background: white;
+            color: #1a1a2e;
+        }
+    </style>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">&#x26F6;</button>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            view: 'scroll',
+            scrollProgress: true,
+            plugins: [ RevealHighlight ],
+            keyboard: {
+                38: null,  // Disable up arrow for reveal (allow scrolling)
+                40: null   // Disable down arrow for reveal (allow scrolling)
+            }
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen error:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+    </script>
+</body>
+</html>

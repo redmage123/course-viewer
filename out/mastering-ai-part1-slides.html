@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mastering LLMs Part 1: AI & Machine Learning Foundations</title>
+    <title>Mastering AI Part 1: AI & Machine Learning Foundations</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #4a5a23 0%, #6b7d3a 100%); color: white; min-height: 100vh; }
@@ -53,7 +53,7 @@
 <div class="slide" id="slide1">
     <span class="slide-number">1</span>
     <div class="series-badge">PART 1 OF 3</div>
-    <h1>Mastering LLMs</h1>
+    <h1>Mastering AI</h1>
     <p class="subtitle">Part 1: AI & Machine Learning Foundations</p>
     <p style="font-size: 1.1em; opacity: 0.8; margin-top: 40px;">A 3-Day Intensive Course</p>
     <div style="margin-top: 40px;">
@@ -9615,6 +9615,7 @@ trainer.train()</code>
 
 <!-- Navigation -->
 <div class="nav-buttons">
+    <button class="nav-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">&#x26F6;</button>
     <button class="nav-btn" onclick="prevSlide()">← Previous</button>
     <button class="nav-btn" onclick="nextSlide()">Next →</button>
 </div>
@@ -9651,8 +9652,21 @@ trainer.train()</code>
         } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
             e.preventDefault();
             prevSlide();
+        } else if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            toggleFullscreen();
         }
     });
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log('Fullscreen error:', err);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
 </script>
 
 </body>

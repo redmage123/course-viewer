@@ -153,6 +153,537 @@ print(result)  # [${result.map(x => x.toFixed(2)).join(', ')}]`;
             );
         }
 
+        // Demo 1b: NumPy Advanced - Matrix Operations
+        function NumpyMatrixDemo() {
+            const [matrixA, setMatrixA] = useState([[1, 2], [3, 4]]);
+            const [matrixB, setMatrixB] = useState([[5, 6], [7, 8]]);
+            const [operation, setOperation] = useState('multiply');
+
+            const matMul = (A, B) => {
+                return A.map((row, i) => B[0].map((_, j) => row.reduce((sum, elm, k) => sum + elm * B[k][j], 0)));
+            };
+
+            const matAdd = (A, B) => A.map((row, i) => row.map((val, j) => val + B[i][j]));
+            const transpose = (A) => A[0].map((_, i) => A.map(row => row[i]));
+
+            const getResult = () => {
+                if (operation === 'multiply') return matMul(matrixA, matrixB);
+                if (operation === 'add') return matAdd(matrixA, matrixB);
+                if (operation === 'transpose') return transpose(matrixA);
+                return matrixA;
+            };
+
+            const result = getResult();
+
+            const formatMatrix = (m) => m.map(row => `[${row.join(', ')}]`).join('\n');
+
+            const getCodeExample = () => {
+                const ops = {
+                    multiply: `result = np.dot(A, B)  # or A @ B`,
+                    add: `result = A + B`,
+                    transpose: `result = A.T`,
+                };
+                return `import numpy as np
+
+A = np.array([
+    [${matrixA[0].join(', ')}],
+    [${matrixA[1].join(', ')}]
+])
+B = np.array([
+    [${matrixB[0].join(', ')}],
+    [${matrixB[1].join(', ')}]
+])
+
+${ops[operation]}
+print(result)`;
+            };
+
+            return (
+                <div className="demo-panel">
+                    <h2 style={{marginBottom: '20px', color: '#90EE90'}}>NumPy Matrix Operations</h2>
+
+                    <div className="controls">
+                        <div className="control-group">
+                            <label>Operation</label>
+                            <select value={operation} onChange={e => setOperation(e.target.value)}>
+                                <option value="multiply">Matrix Multiply (dot product)</option>
+                                <option value="add">Matrix Add</option>
+                                <option value="transpose">Transpose A</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="demo-section">
+                        <div className="code-area">
+                            <h3>Python Code</h3>
+                            <pre>{getCodeExample()}</pre>
+                        </div>
+                        <div className="output-area">
+                            <h3>Result</h3>
+                            <div style={{display: 'flex', gap: '20px', alignItems: 'center', justifyContent: 'center', marginTop: '20px'}}>
+                                <div style={{textAlign: 'center'}}>
+                                    <div style={{color: '#c5d45a', marginBottom: '5px'}}>Matrix A</div>
+                                    <pre style={{background: '#1a1a2e', padding: '10px', borderRadius: '5px'}}>{formatMatrix(matrixA)}</pre>
+                                </div>
+                                <div style={{fontSize: '1.5em'}}>{operation === 'multiply' ? '×' : operation === 'add' ? '+' : '→ᵀ'}</div>
+                                {operation !== 'transpose' && (
+                                    <div style={{textAlign: 'center'}}>
+                                        <div style={{color: '#c5d45a', marginBottom: '5px'}}>Matrix B</div>
+                                        <pre style={{background: '#1a1a2e', padding: '10px', borderRadius: '5px'}}>{formatMatrix(matrixB)}</pre>
+                                    </div>
+                                )}
+                                <div style={{fontSize: '1.5em'}}>=</div>
+                                <div style={{textAlign: 'center'}}>
+                                    <div style={{color: '#90EE90', marginBottom: '5px'}}>Result</div>
+                                    <pre style={{background: '#1a1a2e', padding: '10px', borderRadius: '5px', color: '#90EE90'}}>{formatMatrix(result)}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="explanation">
+                        <h4>Why Matrix Operations Matter</h4>
+                        <p><strong>Matrix multiplication</strong> is the core operation in neural networks. Every layer in a neural network performs: output = weights @ input + bias. Understanding matrix shapes and operations is essential!</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Demo 1c: Pandas Data Exploration
+        function PandasDemo() {
+            const [data] = useState([
+                {name: 'Alice', age: 28, salary: 75000, department: 'Engineering'},
+                {name: 'Bob', age: 35, salary: 85000, department: 'Engineering'},
+                {name: 'Charlie', age: 42, salary: 95000, department: 'Management'},
+                {name: 'Diana', age: 31, salary: 70000, department: 'Marketing'},
+                {name: 'Eve', age: 26, salary: 65000, department: 'Marketing'},
+                {name: 'Frank', age: 38, salary: 90000, department: 'Engineering'},
+            ]);
+            const [operation, setOperation] = useState('head');
+            const [filterDept, setFilterDept] = useState('all');
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            const getFilteredData = () => {
+                if (filterDept === 'all') return data;
+                return data.filter(d => d.department === filterDept);
+            };
+
+            const getStats = () => {
+                const filtered = getFilteredData();
+                return {
+                    count: filtered.length,
+                    avgAge: (filtered.reduce((s, d) => s + d.age, 0) / filtered.length).toFixed(1),
+                    avgSalary: (filtered.reduce((s, d) => s + d.salary, 0) / filtered.length).toFixed(0),
+                    maxSalary: Math.max(...filtered.map(d => d.salary)),
+                    minSalary: Math.min(...filtered.map(d => d.salary)),
+                };
+            };
+
+            const getGroupByDept = () => {
+                const groups = {};
+                data.forEach(d => {
+                    if (!groups[d.department]) groups[d.department] = [];
+                    groups[d.department].push(d);
+                });
+                return Object.entries(groups).map(([dept, items]) => ({
+                    department: dept,
+                    count: items.length,
+                    avgSalary: (items.reduce((s, d) => s + d.salary, 0) / items.length).toFixed(0)
+                }));
+            };
+
+            useEffect(() => {
+                if (!chartRef.current) return;  // Canvas not rendered yet
+                if (chartInstance.current) chartInstance.current.destroy();
+                const ctx = chartRef.current.getContext('2d');
+                const grouped = getGroupByDept();
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: grouped.map(g => g.department),
+                        datasets: [{
+                            label: 'Avg Salary by Department',
+                            data: grouped.map(g => g.avgSalary),
+                            backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(144, 238, 144, 0.7)', 'rgba(255, 206, 86, 0.7)']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }, [operation]);
+
+            const getCodeExample = () => {
+                const ops = {
+                    head: `# View first rows
+df.head()`,
+                    describe: `# Statistical summary
+df.describe()`,
+                    filter: `# Filter by department
+df[df['department'] == '${filterDept === 'all' ? 'Engineering' : filterDept}']`,
+                    groupby: `# Group by department, calculate mean
+df.groupby('department')['salary'].mean()`,
+                };
+                return `import pandas as pd
+
+# Create DataFrame
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie', ...],
+    'age': [28, 35, 42, ...],
+    'salary': [75000, 85000, 95000, ...],
+    'department': ['Engineering', 'Engineering', 'Management', ...]
+})
+
+${ops[operation]}`;
+            };
+
+            const stats = getStats();
+
+            return (
+                <div className="demo-panel">
+                    <h2 style={{marginBottom: '20px', color: '#90EE90'}}>Pandas Data Exploration</h2>
+
+                    <div className="controls">
+                        <div className="control-group">
+                            <label>Operation</label>
+                            <select value={operation} onChange={e => setOperation(e.target.value)}>
+                                <option value="head">View Data (head)</option>
+                                <option value="describe">Statistics (describe)</option>
+                                <option value="filter">Filter Rows</option>
+                                <option value="groupby">Group By</option>
+                            </select>
+                        </div>
+                        {operation === 'filter' && (
+                            <div className="control-group">
+                                <label>Department</label>
+                                <select value={filterDept} onChange={e => setFilterDept(e.target.value)}>
+                                    <option value="all">All</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Management">Management</option>
+                                </select>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="demo-section">
+                        <div className="code-area">
+                            <h3>Python Code</h3>
+                            <pre>{getCodeExample()}</pre>
+                        </div>
+                        <div className="output-area">
+                            <h3>Output</h3>
+                            {operation === 'head' && (
+                                <table className="data-table">
+                                    <thead><tr><th>name</th><th>age</th><th>salary</th><th>department</th></tr></thead>
+                                    <tbody>
+                                        {data.slice(0, 5).map((d, i) => (
+                                            <tr key={i}><td>{d.name}</td><td>{d.age}</td><td>${d.salary.toLocaleString()}</td><td>{d.department}</td></tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                            {operation === 'describe' && (
+                                <table className="data-table">
+                                    <thead><tr><th>Stat</th><th>age</th><th>salary</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>count</td><td>{data.length}</td><td>{data.length}</td></tr>
+                                        <tr><td>mean</td><td>{stats.avgAge}</td><td>${Number(stats.avgSalary).toLocaleString()}</td></tr>
+                                        <tr><td>min</td><td>{Math.min(...data.map(d => d.age))}</td><td>${stats.minSalary.toLocaleString()}</td></tr>
+                                        <tr><td>max</td><td>{Math.max(...data.map(d => d.age))}</td><td>${stats.maxSalary.toLocaleString()}</td></tr>
+                                    </tbody>
+                                </table>
+                            )}
+                            {operation === 'filter' && (
+                                <table className="data-table">
+                                    <thead><tr><th>name</th><th>age</th><th>salary</th><th>department</th></tr></thead>
+                                    <tbody>
+                                        {getFilteredData().map((d, i) => (
+                                            <tr key={i}><td>{d.name}</td><td>{d.age}</td><td>${d.salary.toLocaleString()}</td><td>{d.department}</td></tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                            {operation === 'groupby' && (
+                                <>
+                                    <table className="data-table">
+                                        <thead><tr><th>department</th><th>count</th><th>avg_salary</th></tr></thead>
+                                        <tbody>
+                                            {getGroupByDept().map((g, i) => (
+                                                <tr key={i}><td>{g.department}</td><td>{g.count}</td><td>${Number(g.avgSalary).toLocaleString()}</td></tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <div className="chart-container" style={{marginTop: '15px'}}>
+                                        <canvas ref={chartRef}></canvas>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="explanation">
+                        <h4>Why Pandas is Essential</h4>
+                        <p>Pandas is the standard for data manipulation in Python. You'll use it to: <strong>load datasets</strong> (CSV, JSON, SQL), <strong>clean data</strong> (handle missing values), <strong>transform features</strong> (for ML models), and <strong>explore patterns</strong> before training.</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Demo: Logistic Regression Visualizer
+        function LogisticRegressionDemo() {
+            const [threshold, setThreshold] = useState(0.5);
+            const [bias, setBias] = useState(0);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            // Sample data: study hours vs pass/fail
+            const data = [
+                {x: 1, y: 0}, {x: 2, y: 0}, {x: 2.5, y: 0}, {x: 3, y: 0}, {x: 3.5, y: 0},
+                {x: 4, y: 0}, {x: 4.5, y: 1}, {x: 5, y: 0}, {x: 5.5, y: 1}, {x: 6, y: 1},
+                {x: 6.5, y: 1}, {x: 7, y: 1}, {x: 7.5, y: 1}, {x: 8, y: 1}, {x: 9, y: 1}
+            ];
+
+            // Sigmoid function
+            const sigmoid = (x) => 1 / (1 + Math.exp(-(x - 5 + bias)));
+
+            // Generate sigmoid curve points
+            const sigmoidCurve = [];
+            for (let x = 0; x <= 10; x += 0.1) {
+                sigmoidCurve.push({x: x, y: sigmoid(x)});
+            }
+
+            // Predictions
+            const predictions = data.map(d => ({
+                ...d,
+                prob: sigmoid(d.x),
+                predicted: sigmoid(d.x) > threshold ? 1 : 0,
+                correct: (sigmoid(d.x) > threshold ? 1 : 0) === d.y
+            }));
+
+            const accuracy = (predictions.filter(p => p.correct).length / predictions.length * 100).toFixed(0);
+
+            useEffect(() => {
+                if (chartInstance.current) chartInstance.current.destroy();
+                const ctx = chartRef.current.getContext('2d');
+
+                const fails = data.filter(d => d.y === 0);
+                const passes = data.filter(d => d.y === 1);
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            { label: 'Fail (0)', data: fails, backgroundColor: 'rgba(255, 99, 132, 0.8)', pointRadius: 10 },
+                            { label: 'Pass (1)', data: passes, backgroundColor: 'rgba(54, 162, 235, 0.8)', pointRadius: 10 },
+                            { label: 'Sigmoid', data: sigmoidCurve, type: 'line', borderColor: '#c5d45a', borderWidth: 3, pointRadius: 0, fill: false },
+                            { label: 'Threshold', data: [{x: 0, y: threshold}, {x: 10, y: threshold}], type: 'line', borderColor: 'yellow', borderWidth: 2, borderDash: [5,5], pointRadius: 0 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            x: { min: 0, max: 10, title: { display: true, text: 'Study Hours', color: '#333' } },
+                            y: { min: -0.1, max: 1.1, title: { display: true, text: 'Probability / Class', color: '#333' } }
+                        },
+                        plugins: { title: { display: true, text: 'Logistic Regression: Pass/Fail Prediction' } }
+                    }
+                });
+            }, [threshold, bias]);
+
+            return (
+                <div className="demo-panel">
+                    <h2 style={{marginBottom: '20px', color: '#90EE90'}}>Logistic Regression</h2>
+                    <div className="controls">
+                        <div className="control-group">
+                            <label>Decision Threshold</label>
+                            <input type="range" min="0.1" max="0.9" step="0.05" value={threshold}
+                                   onChange={e => setThreshold(Number(e.target.value))} style={{width: '150px'}} />
+                            <span>{threshold.toFixed(2)}</span>
+                        </div>
+                        <div className="control-group">
+                            <label>Bias (shifts curve)</label>
+                            <input type="range" min="-3" max="3" step="0.5" value={bias}
+                                   onChange={e => setBias(Number(e.target.value))} style={{width: '150px'}} />
+                            <span>{bias > 0 ? '+' : ''}{bias}</span>
+                        </div>
+                        <div className="metric-card" style={{padding: '10px 20px'}}>
+                            <div className="metric-value" style={{fontSize: '1.5em'}}>{accuracy}%</div>
+                            <div className="metric-label">Accuracy</div>
+                        </div>
+                    </div>
+                    <div className="demo-section">
+                        <div className="code-area">
+                            <h3>Python Code</h3>
+                            <pre>{`from sklearn.linear_model import LogisticRegression
+import numpy as np
+
+# Training data
+X = np.array([[1], [2], [3], ... [9]])
+y = np.array([0, 0, 0, ... 1])  # 0=Fail, 1=Pass
+
+# Train model
+model = LogisticRegression()
+model.fit(X, y)
+
+# Predict
+probs = model.predict_proba([[6]])  # [[0.2, 0.8]]
+prediction = model.predict([[6]])   # [1] (Pass)
+
+# The sigmoid: P(y=1) = 1/(1+e^-(wx+b))`}</pre>
+                        </div>
+                        <div className="output-area">
+                            <h3>Visualization</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="explanation">
+                        <h4>Key Concepts</h4>
+                        <p>The <strong>sigmoid curve</strong> converts any input to a probability (0-1). Points above the <strong>threshold</strong> (yellow line) are predicted as class 1. Adjust the bias to see how the decision boundary shifts!</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // Demo: SVM Visualizer
+        function SVMDemo() {
+            const [kernel, setKernel] = useState('linear');
+            const [C, setC] = useState(1);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            // Two classes of data
+            const class0 = [
+                {x: 1, y: 1}, {x: 1.5, y: 2}, {x: 2, y: 1.5}, {x: 2, y: 2.5}, {x: 2.5, y: 1},
+                {x: 1, y: 3}, {x: 2.5, y: 2.5}, {x: 3, y: 2}
+            ];
+            const class1 = [
+                {x: 5, y: 5}, {x: 5.5, y: 4}, {x: 6, y: 5.5}, {x: 6, y: 4.5}, {x: 6.5, y: 5},
+                {x: 5, y: 6}, {x: 7, y: 5}, {x: 6.5, y: 6}
+            ];
+
+            // Simulated decision boundary based on kernel
+            const getBoundary = () => {
+                if (kernel === 'linear') {
+                    return [{x: 0, y: 7.5}, {x: 7.5, y: 0}];
+                } else if (kernel === 'rbf') {
+                    // Curved boundary for RBF
+                    const curve = [];
+                    for (let t = 0; t <= Math.PI; t += 0.1) {
+                        curve.push({x: 3.5 + 2*Math.cos(t), y: 3.5 + 2*Math.sin(t)});
+                    }
+                    return curve;
+                }
+                return [{x: 0, y: 8}, {x: 8, y: 0}];
+            };
+
+            // Margin lines (for linear)
+            const getMargins = () => {
+                if (kernel === 'linear') {
+                    const offset = 1 / C;
+                    return {
+                        upper: [{x: 0, y: 7.5 + offset}, {x: 7.5 + offset, y: 0}],
+                        lower: [{x: 0, y: 7.5 - offset}, {x: 7.5 - offset, y: 0}]
+                    };
+                }
+                return null;
+            };
+
+            useEffect(() => {
+                if (chartInstance.current) chartInstance.current.destroy();
+                const ctx = chartRef.current.getContext('2d');
+
+                const datasets = [
+                    { label: 'Class 0', data: class0, backgroundColor: 'rgba(255, 99, 132, 0.8)', pointRadius: 10 },
+                    { label: 'Class 1', data: class1, backgroundColor: 'rgba(54, 162, 235, 0.8)', pointRadius: 10 },
+                    { label: 'Decision Boundary', data: getBoundary(), type: 'line', borderColor: '#c5d45a', borderWidth: 3, pointRadius: 0, fill: false }
+                ];
+
+                const margins = getMargins();
+                if (margins) {
+                    datasets.push(
+                        { label: 'Margin', data: margins.upper, type: 'line', borderColor: 'rgba(197, 212, 90, 0.5)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false },
+                        { label: '', data: margins.lower, type: 'line', borderColor: 'rgba(197, 212, 90, 0.5)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false }
+                    );
+                }
+
+                chartInstance.current = new Chart(ctx, {
+                    type: 'scatter',
+                    data: { datasets },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            x: { min: 0, max: 8, title: { display: true, text: 'Feature 1', color: '#333' } },
+                            y: { min: 0, max: 8, title: { display: true, text: 'Feature 2', color: '#333' } }
+                        },
+                        plugins: {
+                            title: { display: true, text: `SVM with ${kernel.toUpperCase()} Kernel` },
+                            legend: { labels: { filter: item => item.text !== '' } }
+                        }
+                    }
+                });
+            }, [kernel, C]);
+
+            return (
+                <div className="demo-panel">
+                    <h2 style={{marginBottom: '20px', color: '#90EE90'}}>Support Vector Machine (SVM)</h2>
+                    <div className="controls">
+                        <div className="control-group">
+                            <label>Kernel</label>
+                            <select value={kernel} onChange={e => setKernel(e.target.value)}>
+                                <option value="linear">Linear</option>
+                                <option value="rbf">RBF (Gaussian)</option>
+                            </select>
+                        </div>
+                        {kernel === 'linear' && (
+                            <div className="control-group">
+                                <label>C (Regularization)</label>
+                                <input type="range" min="0.5" max="3" step="0.5" value={C}
+                                       onChange={e => setC(Number(e.target.value))} style={{width: '150px'}} />
+                                <span>{C}</span>
+                            </div>
+                        )}
+                    </div>
+                    <div className="demo-section">
+                        <div className="code-area">
+                            <h3>Python Code</h3>
+                            <pre>{`from sklearn.svm import SVC
+import numpy as np
+
+# Training data
+X = np.array([[1,1], [2,2], ... [6,5]])
+y = np.array([0, 0, ... 1])
+
+# Train SVM
+model = SVC(
+    kernel='${kernel}',
+    C=${C}  # Higher C = smaller margin
+)
+model.fit(X, y)
+
+# Predict
+prediction = model.predict([[4, 4]])
+
+# Support vectors (points on margin)
+print(model.support_vectors_)`}</pre>
+                        </div>
+                        <div className="output-area">
+                            <h3>Visualization</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="explanation">
+                        <h4>Key Concepts</h4>
+                        <p><strong>SVM</strong> finds the boundary that maximizes the <strong>margin</strong> (distance to nearest points). <strong>Linear kernel</strong> = straight line. <strong>RBF kernel</strong> = curved boundary for non-linear data. Higher <strong>C</strong> = narrower margin, fits training data more tightly.</p>
+                    </div>
+                </div>
+            );
+        }
+
         // Demo 2: Linear Regression Visualizer
         function LinearRegressionDemo() {
             const [points, setPoints] = useState([
@@ -268,7 +799,8 @@ print(result)  # [${result.map(x => x.toFixed(2)).join(', ')}]`;
             const chartRef = useRef(null);
             const chartInstance = useRef(null);
 
-            // Simulated data points with features and labels
+            // Simulated data: patients with 2 test scores
+            // Label 0 = Healthy, Label 1 = Has condition
             const data = [
                 {x: 1, y: 2, label: 0}, {x: 2, y: 3, label: 0}, {x: 1.5, y: 1, label: 0},
                 {x: 2.5, y: 2.5, label: 0}, {x: 3, y: 1.5, label: 0},
@@ -276,16 +808,14 @@ print(result)  # [${result.map(x => x.toFixed(2)).join(', ')}]`;
                 {x: 6.5, y: 5.5, label: 1}, {x: 4.5, y: 5, label: 1},
             ];
 
-            // Simple logistic-like prediction based on distance from center
-            const predict = (point) => {
-                const score = (point.x + point.y) / 12; // Simplified
-                return score;
-            };
+            // Model: score = (x + y) / 12. If score > threshold, predict positive.
+            // Decision boundary is the line where x + y = threshold * 12
+            const boundarySum = threshold * 12;
 
             const predictions = data.map(p => ({
                 ...p,
-                score: predict(p),
-                predicted: predict(p) > threshold ? 1 : 0
+                score: (p.x + p.y) / 12,
+                predicted: (p.x + p.y) / 12 > threshold ? 1 : 0
             }));
 
             const tp = predictions.filter(p => p.label === 1 && p.predicted === 1).length;
@@ -301,22 +831,63 @@ print(result)  # [${result.map(x => x.toFixed(2)).join(', ')}]`;
                 if (chartInstance.current) chartInstance.current.destroy();
 
                 const ctx = chartRef.current.getContext('2d');
-                const class0 = data.filter(p => p.label === 0);
-                const class1 = data.filter(p => p.label === 1);
+
+                // True class 0 (healthy) = red circles
+                const trueNegatives = predictions.filter(p => p.label === 0);
+                // True class 1 (has condition) = blue circles
+                const truePositives = predictions.filter(p => p.label === 1);
+
+                // Decision boundary line: y = boundarySum - x
+                const boundaryLine = [
+                    {x: 0, y: Math.min(8, boundarySum)},
+                    {x: Math.min(8, boundarySum), y: 0}
+                ];
 
                 chartInstance.current = new Chart(ctx, {
                     type: 'scatter',
                     data: {
                         datasets: [
-                            { label: 'Class 0 (Negative)', data: class0, backgroundColor: 'rgba(255, 99, 132, 0.7)', pointRadius: 10 },
-                            { label: 'Class 1 (Positive)', data: class1, backgroundColor: 'rgba(54, 162, 235, 0.7)', pointRadius: 10 },
+                            {
+                                label: 'True Negative (Healthy)',
+                                data: trueNegatives,
+                                backgroundColor: trueNegatives.map(p => p.predicted === 0 ? 'rgba(99, 255, 132, 0.9)' : 'rgba(255, 99, 132, 0.9)'),
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                pointRadius: 12,
+                                pointStyle: 'circle'
+                            },
+                            {
+                                label: 'True Positive (Has Condition)',
+                                data: truePositives,
+                                backgroundColor: truePositives.map(p => p.predicted === 1 ? 'rgba(99, 255, 132, 0.9)' : 'rgba(255, 99, 132, 0.9)'),
+                                borderColor: 'blue',
+                                borderWidth: 2,
+                                pointRadius: 12,
+                                pointStyle: 'triangle'
+                            },
+                            {
+                                label: 'Decision Boundary',
+                                data: boundaryLine,
+                                type: 'line',
+                                borderColor: 'yellow',
+                                borderWidth: 3,
+                                borderDash: [10, 5],
+                                pointRadius: 0,
+                                fill: false
+                            }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: { x: { min: 0, max: 8 }, y: { min: 0, max: 8 } },
-                        plugins: { title: { display: true, text: 'Binary Classification' } }
+                        scales: {
+                            x: { min: 0, max: 8, title: { display: true, text: 'Test Score 1', color: '#fff' } },
+                            y: { min: 0, max: 8, title: { display: true, text: 'Test Score 2', color: '#fff' } }
+                        },
+                        plugins: {
+                            title: { display: true, text: 'Medical Diagnosis: Green fill = Correct, Red fill = Wrong', color: '#fff' },
+                            legend: { labels: { color: '#fff' } }
+                        }
                     }
                 });
             }, [threshold]);
@@ -372,8 +943,24 @@ Actual 0 [ ${tn}    ${fp} ]  (TN, FP)
                     </div>
 
                     <div className="explanation">
-                        <h4>Understanding the Metrics</h4>
-                        <p><strong>Accuracy</strong> = correct predictions / total. <strong>Precision</strong> = how many predicted positives are actually positive. <strong>Recall</strong> = how many actual positives did we find. Adjusting the threshold changes the trade-off!</p>
+                        <h4>How This Works</h4>
+                        <p style={{marginBottom: '10px'}}>
+                            <strong>Scenario:</strong> A model predicts if patients have a medical condition based on 2 test scores.
+                        </p>
+                        <p style={{marginBottom: '10px'}}>
+                            <strong>The Chart:</strong><br/>
+                            • <span style={{color: 'red'}}>●</span> Circles = Actually healthy &nbsp;&nbsp;
+                            • <span style={{color: 'blue'}}>▲</span> Triangles = Actually has condition<br/>
+                            • <span style={{color: 'yellow'}}>---</span> Yellow dashed line = Decision boundary (moves with threshold)<br/>
+                            • <span style={{color: 'lightgreen'}}>Green fill</span> = Correct prediction &nbsp;&nbsp;
+                            • <span style={{color: 'salmon'}}>Red fill</span> = Wrong prediction
+                        </p>
+                        <p style={{marginBottom: '10px'}}>
+                            <strong>Key Insight:</strong> Points ABOVE the yellow line are predicted positive. Move the threshold slider and watch the line move - some predictions become correct, others become wrong!
+                        </p>
+                        <p>
+                            <strong>Metrics:</strong> Accuracy = overall correctness. Precision = of those we flagged positive, how many truly were? Recall = of all true positives, how many did we catch?
+                        </p>
                     </div>
                 </div>
             );
@@ -386,11 +973,23 @@ Actual 0 [ ${tn}    ${fp} ]  (TN, FP)
             return (
                 <div className="container">
                     <h1>Day 1 Demo: Python for ML</h1>
-                    <p className="subtitle">Interactive exploration of NumPy, Linear Regression, and Classification</p>
+                    <p className="subtitle">Interactive exploration of NumPy, Pandas, ML Algorithms, and Classification</p>
 
                     <div className="demo-tabs">
                         <button className={`tab-btn ${activeTab === 'numpy' ? 'active' : ''}`} onClick={() => setActiveTab('numpy')}>
-                            NumPy Operations
+                            NumPy Basics
+                        </button>
+                        <button className={`tab-btn ${activeTab === 'matrix' ? 'active' : ''}`} onClick={() => setActiveTab('matrix')}>
+                            Matrix Operations
+                        </button>
+                        <button className={`tab-btn ${activeTab === 'pandas' ? 'active' : ''}`} onClick={() => setActiveTab('pandas')}>
+                            Pandas
+                        </button>
+                        <button className={`tab-btn ${activeTab === 'logistic' ? 'active' : ''}`} onClick={() => setActiveTab('logistic')}>
+                            Logistic Regression
+                        </button>
+                        <button className={`tab-btn ${activeTab === 'svm' ? 'active' : ''}`} onClick={() => setActiveTab('svm')}>
+                            SVM
                         </button>
                         <button className={`tab-btn ${activeTab === 'regression' ? 'active' : ''}`} onClick={() => setActiveTab('regression')}>
                             Linear Regression
@@ -401,6 +1000,10 @@ Actual 0 [ ${tn}    ${fp} ]  (TN, FP)
                     </div>
 
                     {activeTab === 'numpy' && <NumpyDemo />}
+                    {activeTab === 'matrix' && <NumpyMatrixDemo />}
+                    {activeTab === 'pandas' && <PandasDemo />}
+                    {activeTab === 'logistic' && <LogisticRegressionDemo />}
+                    {activeTab === 'svm' && <SVMDemo />}
                     {activeTab === 'regression' && <LinearRegressionDemo />}
                     {activeTab === 'classification' && <ClassificationDemo />}
 

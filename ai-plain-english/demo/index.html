@@ -239,20 +239,26 @@
             if (!API_KEY) {
                 throw new Error('Please enter your OpenAI API key first (click the key icon in the nav bar)');
             }
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-                body: JSON.stringify({
-                    model: 'gpt-5.1',
-                    messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }],
-                    temperature: 0.7,
-                    max_completion_tokens: 500,
-                    reasoning_effort: 'none'
-                })
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-            return data.choices[0].message.content;
+            try {
+                // Use server-side proxy to avoid browser network issues
+                const response = await fetch('/api/openai/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        api_key: API_KEY,
+                        model: 'gpt-4o',
+                        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: prompt }],
+                        temperature: 0.7,
+                        max_tokens: 500
+                    })
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                return data.choices[0].message.content;
+            } catch (err) {
+                console.error('OpenAI API Error:', err);
+                throw err;
+            }
         }
 
         // Slide 1: Title
@@ -307,8 +313,17 @@
                             responsive: true, maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
                             scales: {
-                                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)' } },
-                                x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)' } }
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(255,255,255,0.05)' },
+                                    ticks: { color: 'rgba(255,255,255,0.5)' },
+                                    title: { display: true, text: 'AI Capability Index', color: 'rgba(255,255,255,0.7)', font: { size: 14 } }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: 'rgba(255,255,255,0.5)' },
+                                    title: { display: true, text: 'Year', color: 'rgba(255,255,255,0.7)', font: { size: 14 } }
+                                }
                             }
                         }
                     });
@@ -451,7 +466,7 @@
                         setOutput(result.slice(0, i));
                     }
                 } catch (e) {
-                    setOutput('Error connecting to AI. Please try again.');
+                    setOutput('Error: ' + e.message);
                 }
                 setLoading(false);
             };
@@ -534,7 +549,7 @@
                         setAnalysis(result.slice(0, i));
                     }
                 } catch (e) {
-                    setAnalysis('Error connecting to AI.');
+                    setAnalysis('Error: ' + e.message);
                 }
                 setLoading(false);
             };
@@ -652,7 +667,7 @@
                         setOutput(result.slice(0, i));
                     }
                 } catch (e) {
-                    setOutput('Error connecting to AI.');
+                    setOutput('Error: ' + e.message);
                 }
                 setLoading(false);
             };

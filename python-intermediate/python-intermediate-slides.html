@@ -15,16 +15,28 @@
         .reveal pre {
             width: 100%;
             font-size: 0.55em;
+            border: 2px solid #42affa;
+            border-radius: 0;
+            margin: 20px 0;
+            background: #1a1a2e;
+            overflow: auto;
+            max-height: 500px;
         }
         .reveal pre code {
-            max-height: 600px;
             padding: 20px;
+            font-family: 'Courier', 'Courier New', monospace;
+            display: block;
+            overflow-x: auto;
         }
         .reveal .slides section {
             text-align: left;
+            overflow: auto;
         }
         .reveal .slides section.center {
             text-align: center;
+        }
+        .reveal .slides {
+            overflow: visible;
         }
         .reveal ul {
             display: block;
@@ -37,12 +49,27 @@
             justify-content: center;
             align-items: center;
             margin: 30px 0;
+            overflow: auto;
+            max-width: 100%;
+        }
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
         }
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             align-items: start;
+            overflow: visible;
+        }
+        .two-column > div {
+            overflow: auto;
+            max-width: 100%;
+        }
+        .two-column pre {
+            max-width: 100%;
+            overflow: auto;
         }
         .highlight-box {
             background-color: rgba(255, 255, 255, 0.1);
@@ -66,10 +93,11 @@
             <section>
                 <h2>Course Overview</h2>
                 <ul>
-                    <li><strong>Object-Oriented Programming (OOP)</strong> - Classes, inheritance, polymorphism</li>
-                    <li><strong>Functional Programming</strong> - Lambda, map, filter, reduce</li>
-                    <li><strong>Decorators & Generators</strong> - Advanced function features</li>
+                    <li><strong>Object-Oriented Programming (OOP)</strong> - Classes, inheritance, ABC, Protocol, mixins, operator overloading</li>
+                    <li><strong>Functional Programming</strong> - Lambda, map, filter, reduce, generator pipelines, coroutines</li>
+                    <li><strong>Decorators & Generators</strong> - Advanced function features, itertools</li>
                     <li><strong>Data Handling</strong> - File I/O, JSON, CSV, error handling</li>
+                    <li><strong>Standard Library</strong> - collections, os, sys modules</li>
                     <li><strong>Testing & Packaging</strong> - Unit tests, modules, packages</li>
                 </ul>
             </section>
@@ -192,8 +220,8 @@ print(dog2.bark())  # Max says Woof!
             <section>
                 <h2>Understanding __init__ and self</h2>
                 <div class="highlight-box">
-                    <p><strong>__init__:</strong> The constructor method - called when an object is created</p>
-                    <p><strong>self:</strong> Refers to the instance itself</p>
+                    <p><strong>__init__:</strong> The initializer method - called after the object is constructed to set up its attributes</p>
+                    <p><strong>self:</strong> The already-constructed object instance, passed automatically as the first argument</p>
                 </div>
                 <pre><code class="python" data-trim>
 class Person:
@@ -869,6 +897,327 @@ def describe_point(point):
         case _:
             return f"Point at ({point.x}, {point.y})"
                 </code></pre>
+            </section>
+
+            <!-- ABC, PROTOCOL, AND MIXINS -->
+            <section>
+                <h2>Interfaces in Python: ABC, Protocol & Mixins</h2>
+                <p>Python's approaches to defining contracts and sharing behavior</p>
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h4>Three Complementary Approaches</h4>
+                    <ul>
+                        <li><strong>ABC (Abstract Base Classes)</strong> - Formal interfaces with enforcement</li>
+                        <li><strong>Protocol</strong> - Structural subtyping (duck typing with type hints)</li>
+                        <li><strong>Mixins</strong> - Reusable behavior via multiple inheritance</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Abstract Base Classes (ABC)</h2>
+                <p>Formal interfaces with runtime enforcement</p>
+                <pre><code class="python" data-trim>
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    """Abstract base class defining the interface for shapes"""
+
+    @abstractmethod
+    def area(self) -> float:
+        """Calculate the area - MUST be implemented"""
+        pass
+
+    @abstractmethod
+    def perimeter(self) -> float:
+        """Calculate the perimeter - MUST be implemented"""
+        pass
+
+    def describe(self) -> str:
+        """Concrete method - shared implementation"""
+        return f"{self.__class__.__name__}: area={self.area():.2f}"
+
+class Circle(Shape):
+    def __init__(self, radius: float):
+        self.radius = radius
+
+    def area(self) -> float:
+        return 3.14159 * self.radius ** 2
+
+    def perimeter(self) -> float:
+        return 2 * 3.14159 * self.radius
+
+# shape = Shape()  # TypeError: Can't instantiate abstract class
+circle = Circle(5)
+print(circle.describe())  # Circle: area=78.54
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Protocol Classes (Structural Subtyping)</h2>
+                <p>Duck typing with type checker support - Python 3.8+</p>
+                <pre><code class="python" data-trim>
+from typing import Protocol
+
+class Drawable(Protocol):
+    """Protocol: Any class with these methods is considered Drawable"""
+
+    def draw(self) -> str:
+        ...  # No implementation needed
+
+    def get_color(self) -> str:
+        ...
+
+class Button:
+    """Implicitly implements Drawable - no inheritance needed!"""
+    def draw(self) -> str:
+        return f"Drawing {self.get_color()} button"
+
+    def get_color(self) -> str:
+        return "blue"
+
+    def click(self) -> None:
+        print("Clicked!")
+
+def render(item: Drawable) -> None:
+    """Works with ANY object that has draw() and get_color()"""
+    print(item.draw())
+
+button = Button()
+render(button)  # Works! Button matches the Protocol structure
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 15px;">
+                    <strong>Key Difference:</strong> No <code>class Button(Drawable)</code> needed - structural matching!
+                </div>
+            </section>
+
+            <section>
+                <h2>ABC vs Protocol: When to Use Which?</h2>
+                <table style="width: 100%; font-size: 0.8em;">
+                    <thead>
+                        <tr style="background: rgba(255,255,255,0.1);">
+                            <th>Aspect</th>
+                            <th>ABC</th>
+                            <th>Protocol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Subtyping</strong></td>
+                            <td>Nominal (explicit inheritance)</td>
+                            <td>Structural (duck typing)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Enforcement</strong></td>
+                            <td>Runtime error on instantiation</td>
+                            <td>Type checker only (mypy, Pyright)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shared Code</strong></td>
+                            <td>Can have concrete methods</td>
+                            <td>No implementation (signatures only)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Registration</strong></td>
+                            <td>@ABC.register() for virtual subclasses</td>
+                            <td>runtime_checkable decorator</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best For</strong></td>
+                            <td>Internal APIs, frameworks</td>
+                            <td>External code, flexibility</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <pre><code class="python" data-trim style="margin-top: 15px;">
+# Using both together
+from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
+
+@runtime_checkable
+class Serializable(Protocol):
+    def to_json(self) -> str: ...
+
+# Now you can use isinstance checks
+obj = SomeClass()
+if isinstance(obj, Serializable):
+    print(obj.to_json())
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Mixins: Reusable Behavior</h2>
+                <p>Small, focused classes for composable functionality</p>
+                <pre><code class="python" data-trim>
+class TimestampMixin:
+    """Adds timestamp tracking to any class"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from datetime import datetime
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
+    def touch(self):
+        from datetime import datetime
+        self.updated_at = datetime.now()
+
+class SerializableMixin:
+    """Adds JSON serialization to any class"""
+    def to_dict(self):
+        return {k: v for k, v in self.__dict__.items()
+                if not k.startswith('_')}
+
+    def to_json(self):
+        import json
+        return json.dumps(self.to_dict(), default=str)
+
+class User(TimestampMixin, SerializableMixin):
+    def __init__(self, name: str, email: str):
+        self.name = name
+        self.email = email
+        super().__init__()  # Initialize mixins
+
+user = User("Alice", "alice@example.com")
+print(user.to_json())
+# {"name": "Alice", "email": "alice@example.com",
+#  "created_at": "2024-01-15 10:30:00", ...}
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 15px;">
+                    <strong>Convention:</strong> Name mixins with <code>Mixin</code> suffix, keep them focused and small
+                </div>
+            </section>
+
+            <!-- OPERATOR OVERLOADING -->
+            <section>
+                <h2>Operator Overloading</h2>
+                <p>Making your classes work with Python operators</p>
+                <div class="highlight-box">
+                    <p>Python uses "magic methods" (dunder methods) to customize operator behavior</p>
+                </div>
+                <pre><code class="python" data-trim>
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        """v1 + v2"""
+        return Vector(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        """v1 - v2"""
+        return Vector(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, scalar):
+        """v * 3"""
+        return Vector(self.x * scalar, self.y * scalar)
+
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+
+v1 = Vector(2, 3)
+v2 = Vector(1, 4)
+print(v1 + v2)      # Vector(3, 7)
+print(v1 * 3)       # Vector(6, 9)
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Comparison Operators</h2>
+                <p>Making objects comparable and sortable</p>
+                <pre><code class="python" data-trim>
+from functools import total_ordering
+
+@total_ordering  # Generates other comparisons from __eq__ and __lt__
+class Student:
+    def __init__(self, name, grade):
+        self.name = name
+        self.grade = grade
+
+    def __eq__(self, other):
+        """student1 == student2"""
+        return self.grade == other.grade
+
+    def __lt__(self, other):
+        """student1 < student2"""
+        return self.grade < other.grade
+
+    def __repr__(self):
+        return f"{self.name}: {self.grade}"
+
+students = [
+    Student("Alice", 85),
+    Student("Bob", 92),
+    Student("Charlie", 78)
+]
+
+print(sorted(students))  # [Charlie: 78, Alice: 85, Bob: 92]
+print(max(students))     # Bob: 92
+print(students[0] < students[1])  # True
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 15px;">
+                    <strong>Tip:</strong> Use <code>@total_ordering</code> to only implement <code>__eq__</code> and one of <code>__lt__</code>, <code>__le__</code>, <code>__gt__</code>, <code>__ge__</code>
+                </div>
+            </section>
+
+            <section>
+                <h2>Other Useful Operator Methods</h2>
+                <div class="two-column">
+                    <div>
+                        <h4>Container Operations</h4>
+                        <pre><code class="python" data-trim>
+class Inventory:
+    def __init__(self):
+        self._items = {}
+
+    def __getitem__(self, key):
+        """inventory["sword"]"""
+        return self._items[key]
+
+    def __setitem__(self, key, value):
+        """inventory["sword"] = 5"""
+        self._items[key] = value
+
+    def __contains__(self, key):
+        """"sword" in inventory"""
+        return key in self._items
+
+    def __len__(self):
+        """len(inventory)"""
+        return len(self._items)
+
+inv = Inventory()
+inv["sword"] = 3
+print("sword" in inv)  # True
+print(len(inv))        # 1
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h4>Callable Objects</h4>
+                        <pre><code class="python" data-trim>
+class Multiplier:
+    def __init__(self, factor):
+        self.factor = factor
+
+    def __call__(self, value):
+        """Make instance callable"""
+        return value * self.factor
+
+double = Multiplier(2)
+triple = Multiplier(3)
+
+print(double(5))   # 10
+print(triple(5))   # 15
+
+# Common use: configurable functions
+prices = [10, 20, 30]
+print(list(map(double, prices)))
+# [20, 40, 60]
+                        </code></pre>
+                        <div class="highlight-box" style="margin-top: 15px;">
+                            <strong>__call__</strong> turns objects into function-like callables
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- END OOP SECTION -->
@@ -2020,6 +2369,342 @@ numbers = [1, 2, 3, 4, 5]
 print(list(accumulate(numbers)))  # [1, 3, 6, 10, 15]
         </code></pre>
     </section>
+
+    <!-- GENERATOR PIPELINES -->
+    <section>
+        <h3>Generator Pipelines</h3>
+        <p>Chain generators to create efficient data processing pipelines</p>
+        <pre><code class="python" data-trim>
+def read_lines(filename):
+    """Stage 1: Read lines from file"""
+    with open(filename) as f:
+        for line in f:
+            yield line.strip()
+
+def filter_comments(lines):
+    """Stage 2: Remove comment lines"""
+    for line in lines:
+        if not line.startswith('#'):
+            yield line
+
+def parse_csv(lines):
+    """Stage 3: Parse CSV fields"""
+    for line in lines:
+        yield line.split(',')
+
+def extract_field(records, index):
+    """Stage 4: Extract specific field"""
+    for record in records:
+        if len(record) > index:
+            yield record[index]
+
+# Build the pipeline - no data processed yet!
+pipeline = extract_field(
+    parse_csv(
+        filter_comments(
+            read_lines('data.csv')
+        )
+    ),
+    index=2
+)
+
+# Process lazily - one line at a time through entire pipeline
+for value in pipeline:
+    print(value)
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Why Generator Pipelines?</h3>
+        <div class="two-column">
+            <div>
+                <h4>Memory Efficient</h4>
+                <pre><code class="python" data-trim>
+# Without generators - loads entire file
+data = open('huge.log').readlines()  # 10GB!
+filtered = [l for l in data if 'ERROR' in l]
+results = [parse(l) for l in filtered]
+
+# With generator pipeline
+def find_errors(filename):
+    for line in open(filename):
+        if 'ERROR' in line:
+            yield parse(line)
+
+# Only one line in memory at a time!
+for error in find_errors('huge.log'):
+    process(error)
+                </code></pre>
+            </div>
+            <div>
+                <h4>Composable & Reusable</h4>
+                <pre><code class="python" data-trim>
+# Reusable pipeline stages
+def uppercase(items):
+    for item in items:
+        yield item.upper()
+
+def add_prefix(items, prefix):
+    for item in items:
+        yield f"{prefix}{item}"
+
+# Compose pipelines
+words = ['hello', 'world']
+result = add_prefix(
+    uppercase(words),
+    prefix='>>> '
+)
+
+print(list(result))
+# ['>>> HELLO', '>>> WORLD']
+                </code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- COROUTINES -->
+    <section>
+        <h3>Coroutines with send()</h3>
+        <p>Push-based data flow: send values INTO generators</p>
+        <pre><code class="python" data-trim>
+def averager():
+    """Coroutine that computes running average"""
+    total = 0.0
+    count = 0
+    average = None
+    while True:
+        value = yield average  # Receive value, send back average
+        total += value
+        count += 1
+        average = total / count
+
+# Create and prime the coroutine
+avg = averager()
+next(avg)  # Prime: advance to first yield
+
+# Send values in and get running average back
+print(avg.send(10))  # 10.0
+print(avg.send(20))  # 15.0
+print(avg.send(30))  # 20.0
+print(avg.send(40))  # 25.0
+
+# The coroutine maintains state between sends!
+        </code></pre>
+        <div class="highlight-box" style="margin-top: 15px;">
+            <strong>Key Concept:</strong> <code>yield</code> both sends AND receives values in coroutines
+        </div>
+    </section>
+
+    <section>
+        <h3>Coroutine Patterns</h3>
+        <div class="two-column">
+            <div>
+                <h4>Priming Decorator</h4>
+                <pre><code class="python" data-trim>
+def coroutine(func):
+    """Auto-prime coroutines"""
+    def wrapper(*args, **kwargs):
+        gen = func(*args, **kwargs)
+        next(gen)  # Prime it
+        return gen
+    return wrapper
+
+@coroutine
+def grep(pattern):
+    """Filter lines by pattern"""
+    while True:
+        line = yield
+        if pattern in line:
+            print(f"Found: {line}")
+
+# No need to call next()!
+searcher = grep("ERROR")
+searcher.send("INFO: All good")
+searcher.send("ERROR: Disk full")
+# Found: ERROR: Disk full
+                </code></pre>
+            </div>
+            <div>
+                <h4>Pipeline Sink</h4>
+                <pre><code class="python" data-trim>
+@coroutine
+def writer(filename):
+    """Coroutine sink - writes to file"""
+    with open(filename, 'w') as f:
+        while True:
+            line = yield
+            f.write(line + '\n')
+            f.flush()
+
+# Use in data pipeline
+output = writer('results.txt')
+for line in data_source():
+    if should_save(line):
+        output.send(line)
+
+# Close when done
+output.close()
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 15px;">
+                    <strong>Coroutines</strong> are great for event systems, state machines, and data sinks
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ITERTOOLS EXPANDED - JAVA STREAMS EQUIVALENT -->
+    <section>
+        <h3>itertools: Python's Stream Processing</h3>
+        <p>Functional tools equivalent to Java Streams</p>
+        <table style="width: 100%; font-size: 0.7em;">
+            <thead>
+                <tr style="background: rgba(255,255,255,0.1);">
+                    <th>Java Stream</th>
+                    <th>Python itertools</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>.filter()</td><td>filter(), filterfalse()</td><td>Select elements</td></tr>
+                <tr><td>.map()</td><td>map(), starmap()</td><td>Transform elements</td></tr>
+                <tr><td>.flatMap()</td><td>chain.from_iterable()</td><td>Flatten nested</td></tr>
+                <tr><td>.limit()</td><td>islice()</td><td>Take first N</td></tr>
+                <tr><td>.skip()</td><td>islice(iter, n, None)</td><td>Skip first N</td></tr>
+                <tr><td>.distinct()</td><td>dict.fromkeys() or set</td><td>Remove duplicates</td></tr>
+                <tr><td>.sorted()</td><td>sorted()</td><td>Sort elements</td></tr>
+                <tr><td>.reduce()</td><td>functools.reduce()</td><td>Aggregate to single value</td></tr>
+                <tr><td>.collect()</td><td>list(), set(), dict()</td><td>Terminal operation</td></tr>
+                <tr><td>.groupingBy()</td><td>groupby()</td><td>Group by key</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h3>Stream-Style Processing with itertools</h3>
+        <pre><code class="python" data-trim>
+from itertools import groupby, starmap, chain, takewhile, dropwhile
+from functools import reduce
+from operator import mul
+
+data = [
+    {'name': 'Alice', 'dept': 'Engineering', 'salary': 95000},
+    {'name': 'Bob', 'dept': 'Sales', 'salary': 75000},
+    {'name': 'Carol', 'dept': 'Engineering', 'salary': 110000},
+    {'name': 'Dave', 'dept': 'Sales', 'salary': 82000},
+]
+
+# Java: stream().filter().map().collect()
+# Python equivalent:
+engineers = [e['name'] for e in data if e['dept'] == 'Engineering']
+
+# Using functional style with itertools
+high_earners = list(filter(lambda e: e['salary'] > 80000, data))
+names = list(map(lambda e: e['name'], high_earners))
+
+# Group by department (like Collectors.groupingBy)
+sorted_data = sorted(data, key=lambda x: x['dept'])
+for dept, group in groupby(sorted_data, key=lambda x: x['dept']):
+    members = list(group)
+    total = sum(e['salary'] for e in members)
+    print(f"{dept}: ${total:,} ({len(members)} people)")
+# Engineering: $205,000 (2 people)
+# Sales: $157,000 (2 people)
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Advanced itertools Patterns</h3>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+from itertools import (
+    tee, pairwise, batched,
+    takewhile, dropwhile,
+    zip_longest, product
+)
+
+# pairwise (Python 3.10+)
+nums = [1, 2, 3, 4, 5]
+for a, b in pairwise(nums):
+    print(f"{a} -> {b}")
+# 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 5
+
+# batched (Python 3.12+)
+items = range(10)
+for batch in batched(items, 3):
+    print(batch)
+# (0, 1, 2), (3, 4, 5), (6, 7, 8), (9,)
+
+# takewhile / dropwhile
+data = [1, 3, 5, 2, 4, 6]
+print(list(takewhile(lambda x: x < 4, data)))
+# [1, 3]  # Stops at first False
+                </code></pre>
+            </div>
+            <div>
+                <pre><code class="python" data-trim>
+# Cartesian product
+colors = ['red', 'blue']
+sizes = ['S', 'M', 'L']
+for combo in product(colors, sizes):
+    print(combo)
+# ('red', 'S'), ('red', 'M'), ...
+
+# tee - duplicate an iterator
+original = iter([1, 2, 3])
+copy1, copy2 = tee(original, 2)
+print(list(copy1))  # [1, 2, 3]
+print(list(copy2))  # [1, 2, 3]
+
+# zip_longest for uneven iterables
+a = [1, 2, 3]
+b = ['a', 'b']
+result = list(zip_longest(a, b, fillvalue='-'))
+# [(1, 'a'), (2, 'b'), (3, '-')]
+                </code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Building a Data Pipeline with itertools</h3>
+        <pre><code class="python" data-trim>
+from itertools import chain, islice, filterfalse
+from functools import reduce
+
+# Simulating Java Streams API fluency in Python
+class Stream:
+    def __init__(self, iterable):
+        self.data = iter(iterable)
+
+    def filter(self, predicate):
+        self.data = filter(predicate, self.data)
+        return self
+
+    def map(self, func):
+        self.data = map(func, self.data)
+        return self
+
+    def limit(self, n):
+        self.data = islice(self.data, n)
+        return self
+
+    def collect(self):
+        return list(self.data)
+
+    def reduce(self, func, initial=None):
+        return reduce(func, self.data, initial) if initial else reduce(func, self.data)
+
+# Usage - fluent API like Java Streams!
+result = (Stream(range(100))
+    .filter(lambda x: x % 2 == 0)
+    .map(lambda x: x ** 2)
+    .limit(5)
+    .collect())
+
+print(result)  # [0, 4, 16, 36, 64]
+        </code></pre>
+    </section>
 </section>
 
 <!-- DATA HANDLING SECTION -->
@@ -2401,32 +3086,460 @@ myproject/
     </section>
 </section>
 
+<!-- COLLECTIONS MODULE SECTION -->
+<section>
+    <section>
+        <h2>The collections Module</h2>
+        <p>Specialized container data types beyond lists and dicts</p>
+        <div class="highlight-box" style="margin-top: 30px;">
+            <h4>Key Types</h4>
+            <ul>
+                <li><strong>Counter</strong> - Count hashable objects</li>
+                <li><strong>defaultdict</strong> - Dict with default factory</li>
+                <li><strong>deque</strong> - Double-ended queue</li>
+                <li><strong>namedtuple</strong> - Tuple with named fields</li>
+                <li><strong>OrderedDict</strong> - Remembers insertion order</li>
+                <li><strong>ChainMap</strong> - Combine multiple dicts</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h3>Counter: Counting Made Easy</h3>
+        <pre><code class="python" data-trim>
+from collections import Counter
+
+# Count elements in a list
+colors = ['red', 'blue', 'red', 'green', 'blue', 'blue']
+color_count = Counter(colors)
+print(color_count)  # Counter({'blue': 3, 'red': 2, 'green': 1})
+
+# Count characters in a string
+text = "mississippi"
+char_count = Counter(text)
+print(char_count)  # Counter({'i': 4, 's': 4, 'p': 2, 'm': 1})
+
+# Most common elements
+print(char_count.most_common(2))  # [('i', 4), ('s', 4)]
+
+# Arithmetic with Counters
+inventory1 = Counter(apples=5, oranges=3)
+inventory2 = Counter(apples=2, bananas=4)
+
+print(inventory1 + inventory2)  # Counter({'apples': 7, 'bananas': 4, 'oranges': 3})
+print(inventory1 - inventory2)  # Counter({'oranges': 3, 'apples': 3})
+
+# Count words in text
+words = "the quick brown fox jumps over the lazy dog".split()
+word_freq = Counter(words)
+print(word_freq.most_common(3))  # [('the', 2), ('quick', 1), ('brown', 1)]
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>defaultdict: Automatic Default Values</h3>
+        <pre><code class="python" data-trim>
+from collections import defaultdict
+
+# Without defaultdict - KeyError or verbose code
+regular_dict = {}
+# regular_dict['missing']  # KeyError!
+regular_dict.setdefault('colors', []).append('red')  # Verbose!
+
+# With defaultdict - clean and simple
+dd_list = defaultdict(list)
+dd_list['colors'].append('red')
+dd_list['colors'].append('blue')
+print(dd_list)  # defaultdict(<class 'list'>, {'colors': ['red', 'blue']})
+
+# Group items by category
+products = [
+    ('fruit', 'apple'), ('vegetable', 'carrot'),
+    ('fruit', 'banana'), ('vegetable', 'lettuce')
+]
+grouped = defaultdict(list)
+for category, item in products:
+    grouped[category].append(item)
+print(dict(grouped))  # {'fruit': ['apple', 'banana'], 'vegetable': ['carrot', 'lettuce']}
+
+# Count with defaultdict(int)
+word_count = defaultdict(int)
+for word in "the quick brown fox".split():
+    word_count[word] += 1
+print(dict(word_count))  # {'the': 1, 'quick': 1, 'brown': 1, 'fox': 1}
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>deque: Fast Double-Ended Queue</h3>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+from collections import deque
+
+# Create a deque
+d = deque(['a', 'b', 'c'])
+
+# O(1) operations on both ends
+d.append('d')        # Right: ['a','b','c','d']
+d.appendleft('z')    # Left: ['z','a','b','c','d']
+d.pop()              # Remove right: 'd'
+d.popleft()          # Remove left: 'z'
+
+# Rotate elements
+d = deque([1, 2, 3, 4, 5])
+d.rotate(2)   # [4, 5, 1, 2, 3]
+d.rotate(-2)  # [1, 2, 3, 4, 5]
+
+# Fixed-size buffer
+buffer = deque(maxlen=3)
+buffer.append(1)  # [1]
+buffer.append(2)  # [1, 2]
+buffer.append(3)  # [1, 2, 3]
+buffer.append(4)  # [2, 3, 4] - 1 removed!
+                </code></pre>
+            </div>
+            <div>
+                <h4>Performance Comparison</h4>
+                <table style="font-size: 0.75em; width: 100%;">
+                    <tr><th>Operation</th><th>list</th><th>deque</th></tr>
+                    <tr><td>append right</td><td>O(1)</td><td>O(1)</td></tr>
+                    <tr><td>pop right</td><td>O(1)</td><td>O(1)</td></tr>
+                    <tr><td>append left</td><td>O(n)</td><td style="color: #4caf50;">O(1)</td></tr>
+                    <tr><td>pop left</td><td>O(n)</td><td style="color: #4caf50;">O(1)</td></tr>
+                </table>
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <strong>Use cases:</strong>
+                    <ul style="font-size: 0.85em;">
+                        <li>Recent items buffer</li>
+                        <li>Undo/redo stacks</li>
+                        <li>BFS traversal queue</li>
+                        <li>Sliding window</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Other Useful Collections</h3>
+        <div class="two-column">
+            <div>
+                <h4>namedtuple</h4>
+                <pre><code class="python" data-trim>
+from collections import namedtuple
+
+# Create a named tuple type
+Point = namedtuple('Point', ['x', 'y'])
+Color = namedtuple('Color', 'r g b')
+
+# Use like a class but immutable
+p = Point(3, 4)
+print(p.x, p.y)      # 3 4
+print(p[0], p[1])    # 3 4
+
+# Convert to dict
+print(p._asdict())
+# {'x': 3, 'y': 4}
+
+# Create new with replaced value
+p2 = p._replace(x=10)
+print(p2)  # Point(x=10, y=4)
+                </code></pre>
+            </div>
+            <div>
+                <h4>ChainMap</h4>
+                <pre><code class="python" data-trim>
+from collections import ChainMap
+
+# Combine dicts (first match wins)
+defaults = {'color': 'red', 'size': 'medium'}
+user_prefs = {'color': 'blue'}
+runtime = {'debug': True}
+
+config = ChainMap(runtime, user_prefs, defaults)
+print(config['color'])  # 'blue'
+print(config['size'])   # 'medium'
+print(config['debug'])  # True
+
+# Great for configuration layers
+import os
+env_vars = os.environ
+config = ChainMap(env_vars, defaults)
+                </code></pre>
+                <div class="highlight-box" style="margin-top: 10px; font-size: 0.85em;">
+                    <strong>Tip:</strong> Use dataclass or NamedTuple for most cases over namedtuple
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<!-- OS AND SYS MODULES SECTION -->
+<section>
+    <section>
+        <h2>The os and sys Modules</h2>
+        <p>Interacting with the operating system and Python runtime</p>
+        <div class="highlight-box" style="margin-top: 30px;">
+            <ul>
+                <li><strong>os</strong> - Operating system interface: files, directories, environment</li>
+                <li><strong>sys</strong> - Python interpreter: arguments, paths, version info</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h3>os: File System Operations</h3>
+        <pre><code class="python" data-trim>
+import os
+
+# Current working directory
+print(os.getcwd())           # /home/user/project
+os.chdir('/tmp')             # Change directory
+
+# List directory contents
+files = os.listdir('.')      # ['file1.txt', 'folder']
+files = os.listdir('/home')  # List specific directory
+
+# Create and remove directories
+os.mkdir('new_folder')       # Create single directory
+os.makedirs('a/b/c')         # Create nested directories
+os.rmdir('new_folder')       # Remove empty directory
+os.removedirs('a/b/c')       # Remove nested empty directories
+
+# File operations
+os.rename('old.txt', 'new.txt')
+os.remove('file.txt')        # Delete file
+
+# Check paths
+os.path.exists('/tmp')       # True
+os.path.isfile('file.txt')   # True if file
+os.path.isdir('/tmp')        # True if directory
+os.path.getsize('file.txt')  # Size in bytes
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>os.path: Path Manipulation</h3>
+        <pre><code class="python" data-trim>
+import os
+from pathlib import Path  # Modern alternative
+
+# Classic os.path operations
+path = '/home/user/documents/report.pdf'
+
+os.path.basename(path)    # 'report.pdf'
+os.path.dirname(path)     # '/home/user/documents'
+os.path.split(path)       # ('/home/user/documents', 'report.pdf')
+os.path.splitext(path)    # ('/home/user/documents/report', '.pdf')
+
+# Build paths safely (handles OS-specific separators)
+os.path.join('home', 'user', 'file.txt')  # 'home/user/file.txt'
+
+# Expand user and environment variables
+os.path.expanduser('~/docs')    # '/home/user/docs'
+os.path.expandvars('$HOME/docs')  # '/home/user/docs'
+
+# Modern pathlib alternative (Python 3.4+)
+path = Path('/home/user/documents/report.pdf')
+print(path.name)      # 'report.pdf'
+print(path.stem)      # 'report'
+print(path.suffix)    # '.pdf'
+print(path.parent)    # Path('/home/user/documents')
+print(path.exists())  # True/False
+
+# Iterate over directory
+for f in Path('.').glob('*.py'):
+    print(f)
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>os: Environment Variables</h3>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+import os
+
+# Get environment variables
+home = os.environ.get('HOME')
+path = os.environ.get('PATH')
+api_key = os.environ.get('API_KEY', 'default')
+
+# All environment variables
+for key, value in os.environ.items():
+    if key.startswith('PYTHON'):
+        print(f"{key}={value}")
+
+# Set environment variable
+os.environ['MY_VAR'] = 'my_value'
+
+# Process information
+print(os.getpid())    # Process ID
+print(os.getppid())   # Parent process ID
+
+# Platform info
+print(os.name)        # 'posix', 'nt', 'java'
+print(os.sep)         # '/' or '\\'
+print(os.linesep)     # '\n' or '\r\n'
+                </code></pre>
+            </div>
+            <div>
+                <h4>Walking Directory Trees</h4>
+                <pre><code class="python" data-trim>
+import os
+
+# Walk through all directories
+for root, dirs, files in os.walk('/project'):
+    # Skip hidden and venv directories
+    dirs[:] = [d for d in dirs
+               if not d.startswith('.')
+               and d != 'venv']
+
+    for file in files:
+        if file.endswith('.py'):
+            full_path = os.path.join(root, file)
+            print(full_path)
+
+# Find all Python files recursively
+from pathlib import Path
+py_files = list(Path('.').rglob('*.py'))
+                </code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>sys: Python Runtime Information</h3>
+        <pre><code class="python" data-trim>
+import sys
+
+# Command line arguments
+# python script.py arg1 arg2
+print(sys.argv)       # ['script.py', 'arg1', 'arg2']
+print(sys.argv[0])    # Script name
+print(sys.argv[1:])   # Arguments only
+
+# Python version
+print(sys.version)           # '3.11.0 (main, Oct 24 2022, ...)'
+print(sys.version_info)      # sys.version_info(major=3, minor=11, micro=0, ...)
+print(sys.version_info.major)  # 3
+
+# Module search path (where Python looks for imports)
+print(sys.path)       # List of directories
+sys.path.append('/my/custom/modules')  # Add custom path
+
+# Platform information
+print(sys.platform)   # 'linux', 'darwin', 'win32'
+
+# Standard I/O streams
+sys.stdout.write("Hello\n")  # Same as print()
+sys.stderr.write("Error\n")  # Write to stderr
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>sys: Memory and Exit Control</h3>
+        <div class="two-column">
+            <div>
+                <pre><code class="python" data-trim>
+import sys
+
+# Exit program
+sys.exit(0)      # Success
+sys.exit(1)      # Error
+sys.exit("Error message")
+
+# Memory usage
+obj = [1, 2, 3, 4, 5]
+print(sys.getsizeof(obj))    # 104 bytes
+
+# Get size of nested objects
+def total_size(obj):
+    size = sys.getsizeof(obj)
+    if isinstance(obj, dict):
+        size += sum(total_size(v)
+                    for v in obj.values())
+    elif hasattr(obj, '__iter__'):
+        size += sum(total_size(i)
+                    for i in obj)
+    return size
+
+# Reference count
+x = [1, 2, 3]
+print(sys.getrefcount(x))  # 2+
+                </code></pre>
+            </div>
+            <div>
+                <h4>Common Patterns</h4>
+                <pre><code class="python" data-trim>
+import sys
+import os
+
+# Cross-platform script
+if sys.platform == 'win32':
+    config_dir = os.path.expandvars('%APPDATA%')
+else:
+    config_dir = os.path.expanduser('~/.config')
+
+# Version check
+if sys.version_info < (3, 8):
+    sys.exit("Python 3.8+ required")
+
+# Command-line tool
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: script.py <file>")
+        sys.exit(1)
+
+    filename = sys.argv[1]
+    # ... process file
+
+if __name__ == '__main__':
+    main()
+                </code></pre>
+            </div>
+        </div>
+    </section>
+</section>
+
 <!-- CLOSING SLIDES -->
 <section>
     <section>
         <h2>Course Summary</h2>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 30px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-top: 30px;">
             <div class="highlight-box" style="border-left-color: #4caf50;">
                 <h4 style="color: #4caf50;">OOP</h4>
-                <ul style="font-size: 0.85em;">
+                <ul style="font-size: 0.75em;">
                     <li>Classes & Objects</li>
                     <li>Inheritance</li>
-                    <li>Polymorphism</li>
-                    <li>Encapsulation</li>
+                    <li>ABC & Protocol</li>
+                    <li>Mixins</li>
+                    <li>Operator Overloading</li>
                 </ul>
             </div>
             <div class="highlight-box" style="border-left-color: #2196f3;">
                 <h4 style="color: #2196f3;">Functional</h4>
-                <ul style="font-size: 0.85em;">
+                <ul style="font-size: 0.75em;">
                     <li>Lambda functions</li>
                     <li>map/filter/reduce</li>
                     <li>Decorators</li>
-                    <li>Generators</li>
+                    <li>Generators & Pipelines</li>
+                    <li>Coroutines</li>
+                </ul>
+            </div>
+            <div class="highlight-box" style="border-left-color: #9c27b0;">
+                <h4 style="color: #9c27b0;">Standard Library</h4>
+                <ul style="font-size: 0.75em;">
+                    <li>itertools</li>
+                    <li>collections</li>
+                    <li>os & sys</li>
+                    <li>pathlib</li>
                 </ul>
             </div>
             <div class="highlight-box" style="border-left-color: #ff9800;">
                 <h4 style="color: #ff9800;">Professional</h4>
-                <ul style="font-size: 0.85em;">
+                <ul style="font-size: 0.75em;">
                     <li>Testing</li>
                     <li>Data handling</li>
                     <li>Packaging</li>
@@ -2460,12 +3573,55 @@ myproject/
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <style>
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .fullscreen-btn:hover {
+            background: white;
+            color: #1a1a2e;
+        }
+    </style>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">&#x26F6;</button>
     <script>
         Reveal.initialize({
             hash: true,
             slideNumber: true,
             transition: 'slide',
-            plugins: [ RevealHighlight ]
+            view: 'scroll',
+            scrollProgress: true,
+            plugins: [ RevealHighlight ],
+            keyboard: {
+                38: null,  // Disable up arrow for reveal (allow scrolling)
+                40: null   // Disable down arrow for reveal (allow scrolling)
+            }
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen error:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
         });
     </script>
 </body>

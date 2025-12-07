@@ -1,0 +1,1255 @@
+<!-- FUNCTIONAL PROGRAMMING SECTION -->
+<section>
+    <section>
+        <h2>Functional Programming in Python</h2>
+        <p>Writing cleaner, more expressive code</p>
+    </section>
+
+    <section>
+        <h3>What is Functional Programming?</h3>
+        <div style="text-align: left; margin: 20px;">
+            <p><strong>Key Concepts:</strong></p>
+            <ul>
+                <li><strong>Pure Functions:</strong> Same input → Same output, no side effects</li>
+                <li><strong>Immutability:</strong> Data doesn't change after creation</li>
+                <li><strong>First-class Functions:</strong> Functions as values (assign, pass, return)</li>
+                <li><strong>Higher-order Functions:</strong> Functions that take/return functions</li>
+            </ul>
+        </div>
+        <div class="fragment" style="margin-top: 30px;">
+            <p><strong>Benefits:</strong></p>
+            <ul>
+                <li>More predictable and testable code</li>
+                <li>Easier to reason about and debug</li>
+                <li>Better for parallel processing</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h3>Lambda Functions</h3>
+        <p>Anonymous, single-expression functions</p>
+        <div style="text-align: left; margin: 20px;">
+            <pre><code class="python" data-trim>
+# Regular function
+def square(x):
+    return x ** 2
+
+# Lambda equivalent
+square = lambda x: x ** 2
+
+# Common use cases
+numbers = [1, 2, 3, 4, 5]
+
+# Sorting with custom key
+people = [('Alice', 30), ('Bob', 25), ('Charlie', 35)]
+sorted_people = sorted(people, key=lambda x: x[1])
+# [('Bob', 25), ('Alice', 30), ('Charlie', 35)]
+
+# Multiple arguments
+add = lambda x, y: x + y
+print(add(5, 3))  # 8
+
+# Conditional expression
+max_of_two = lambda a, b: a if a > b else b
+print(max_of_two(10, 20))  # 20
+            </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <h3>map() Function</h3>
+        <p>Apply a function to every item in an iterable</p>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div style="flex: 1;">
+                <pre><code class="python" data-trim>
+# Basic map usage
+numbers = [1, 2, 3, 4, 5]
+squared = map(lambda x: x**2, numbers)
+print(list(squared))
+# [1, 4, 9, 16, 25]
+
+# With multiple iterables
+list1 = [1, 2, 3]
+list2 = [10, 20, 30]
+result = map(lambda x, y: x + y,
+             list1, list2)
+print(list(result))
+# [11, 22, 33]
+
+# Practical example
+prices = [10.5, 20.0, 15.75]
+with_tax = map(
+    lambda p: p * 1.08,
+    prices
+)
+# [11.34, 21.6, 17.01]
+                </code></pre>
+            </div>
+            <div style="flex: 1;">
+                <svg width="350" height="300" viewBox="0 0 350 300">
+                    <!-- Input array -->
+                    <g id="input-array">
+                        <text x="10" y="30" font-size="14" fill="#61dafb">Input: [1, 2, 3, 4]</text>
+                        <rect x="10" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="35" y="65" font-size="20" fill="#fff" text-anchor="middle">1</text>
+                        <rect x="70" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="95" y="65" font-size="20" fill="#fff" text-anchor="middle">2</text>
+                        <rect x="130" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="155" y="65" font-size="20" fill="#fff" text-anchor="middle">3</text>
+                        <rect x="190" y="40" width="50" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="215" y="65" font-size="20" fill="#fff" text-anchor="middle">4</text>
+                    </g>
+
+                    <!-- Function -->
+                    <g id="function-box">
+                        <rect x="60" y="120" width="120" height="50" fill="#805ad5" stroke="#d6bcfa" stroke-width="2" rx="8"/>
+                        <text x="120" y="150" font-size="16" fill="#fff" text-anchor="middle">λ x: x²</text>
+                    </g>
+
+                    <!-- Arrows -->
+                    <g id="arrows">
+                        <path d="M 35 80 L 90 120" stroke="#61dafb" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+                            <animate attributeName="opacity" values="0;1;1;1" keyTimes="0;0.2;0.8;1" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M 95 80 L 110 120" stroke="#61dafb" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+                            <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.25;0.45;0.8;1" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M 155 80 L 130 120" stroke="#61dafb" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+                            <animate attributeName="opacity" values="0;0;0;1;1;1" keyTimes="0;0.5;0.65;0.85;0.8;1" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M 215 80 L 150 120" stroke="#61dafb" stroke-width="2" fill="none" marker-end="url(#arrowhead)">
+                            <animate attributeName="opacity" values="0;0;0;0;1;1" keyTimes="0;0.75;0.85;0.9;0.95;1" dur="2s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+
+                    <!-- Output array -->
+                    <g id="output-array">
+                        <text x="10" y="220" font-size="14" fill="#48bb78">Output: [1, 4, 9, 16]</text>
+                        <rect x="10" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;1" keyTimes="0;0.3;1" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="35" y="255" font-size="20" fill="#48bb78" text-anchor="middle">
+                            1
+                            <animate attributeName="opacity" values="0;0;1" keyTimes="0;0.3;1" dur="2s" repeatCount="indefinite"/>
+                        </text>
+                        <rect x="70" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;1" keyTimes="0;0.5;0.55;1" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="95" y="255" font-size="20" fill="#48bb78" text-anchor="middle">
+                            4
+                            <animate attributeName="opacity" values="0;0;0;1" keyTimes="0;0.5;0.55;1" dur="2s" repeatCount="indefinite"/>
+                        </text>
+                        <rect x="130" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;0;1" keyTimes="0;0.7;0.75;0.8;1" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="155" y="255" font-size="20" fill="#48bb78" text-anchor="middle">
+                            9
+                            <animate attributeName="opacity" values="0;0;0;0;1" keyTimes="0;0.7;0.75;0.8;1" dur="2s" repeatCount="indefinite"/>
+                        </text>
+                        <rect x="190" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;0;0;1" keyTimes="0;0.9;0.92;0.95;0.97;1" dur="2s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="215" y="255" font-size="20" fill="#48bb78" text-anchor="middle">
+                            16
+                            <animate attributeName="opacity" values="0;0;0;0;0;1" keyTimes="0;0.9;0.92;0.95;0.97;1" dur="2s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- Arrow marker -->
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#61dafb"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>filter() Function</h3>
+        <p>Select items from an iterable based on a condition</p>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div style="flex: 1;">
+                <pre><code class="python" data-trim>
+# Basic filter usage
+numbers = [1, 2, 3, 4, 5, 6]
+evens = filter(lambda x: x % 2 == 0,
+               numbers)
+print(list(evens))
+# [2, 4, 6]
+
+# Filter None/falsy values
+data = [0, 1, False, 2, '', 3]
+truthy = filter(None, data)
+print(list(truthy))
+# [1, 2, 3]
+
+# Practical example
+users = [
+    {'name': 'Alice', 'age': 25},
+    {'name': 'Bob', 'age': 17},
+    {'name': 'Charlie', 'age': 30}
+]
+adults = filter(
+    lambda u: u['age'] >= 18,
+    users
+)
+# Alice and Charlie
+                </code></pre>
+            </div>
+            <div style="flex: 1;">
+                <svg width="350" height="300" viewBox="0 0 350 300">
+                    <!-- Input array -->
+                    <text x="10" y="30" font-size="14" fill="#61dafb">Input: [1, 2, 3, 4, 5, 6]</text>
+                    <g id="filter-input">
+                        <rect x="10" y="40" width="40" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="30" y="65" font-size="18" fill="#fff" text-anchor="middle">1</text>
+
+                        <rect x="60" y="40" width="40" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="80" y="65" font-size="18" fill="#fff" text-anchor="middle">2</text>
+
+                        <rect x="110" y="40" width="40" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="130" y="65" font-size="18" fill="#fff" text-anchor="middle">3</text>
+
+                        <rect x="160" y="40" width="40" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="180" y="65" font-size="18" fill="#fff" text-anchor="middle">4</text>
+
+                        <rect x="210" y="40" width="40" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="230" y="65" font-size="18" fill="#fff" text-anchor="middle">5</text>
+
+                        <rect x="260" y="40" width="40" height="40" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="280" y="65" font-size="18" fill="#fff" text-anchor="middle">6</text>
+                    </g>
+
+                    <!-- Filter condition -->
+                    <rect x="70" y="120" width="140" height="50" fill="#e53e3e" stroke="#fc8181" stroke-width="2" rx="8"/>
+                    <text x="140" y="150" font-size="14" fill="#fff" text-anchor="middle">λ x: x % 2 == 0</text>
+
+                    <!-- Pass/Reject indicators -->
+                    <g id="filter-decisions">
+                        <!-- Reject 1 -->
+                        <line x1="30" y1="80" x2="30" y2="110" stroke="#e53e3e" stroke-width="3" opacity="0">
+                            <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.1;0.15;0.18;0.2" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                        <!-- Accept 2 -->
+                        <line x1="80" y1="80" x2="140" y2="120" stroke="#48bb78" stroke-width="3" opacity="0" marker-end="url(#arrowgreen)">
+                            <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.2;0.25;0.3;0.33;0.35" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                        <!-- Reject 3 -->
+                        <line x1="130" y1="80" x2="130" y2="110" stroke="#e53e3e" stroke-width="3" opacity="0">
+                            <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.35;0.4;0.42;0.45;0.48;0.5" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                        <!-- Accept 4 -->
+                        <line x1="180" y1="80" x2="140" y2="120" stroke="#48bb78" stroke-width="3" opacity="0" marker-end="url(#arrowgreen)">
+                            <animate attributeName="opacity" values="0;0;0;0;0;1;1;0" keyTimes="0;0.5;0.55;0.57;0.6;0.63;0.65;0.67" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                        <!-- Reject 5 -->
+                        <line x1="230" y1="80" x2="230" y2="110" stroke="#e53e3e" stroke-width="3" opacity="0">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;1;1;0" keyTimes="0;0.67;0.7;0.72;0.75;0.77;0.8;0.82;0.84" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                        <!-- Accept 6 -->
+                        <line x1="280" y1="80" x2="140" y2="120" stroke="#48bb78" stroke-width="3" opacity="0" marker-end="url(#arrowgreen)">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0" keyTimes="0;0.84;0.87;0.89;0.91;0.93;0.95;0.97;0.99;1" dur="3s" repeatCount="indefinite"/>
+                        </line>
+                    </g>
+
+                    <!-- Output array -->
+                    <text x="10" y="220" font-size="14" fill="#48bb78">Output: [2, 4, 6]</text>
+                    <g id="filter-output">
+                        <rect x="40" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;1" keyTimes="0;0.3;0.35;1" dur="3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="65" y="255" font-size="18" fill="#48bb78" text-anchor="middle">
+                            2
+                            <animate attributeName="opacity" values="0;0;0;1" keyTimes="0;0.3;0.35;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+
+                        <rect x="110" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;0;0;1" keyTimes="0;0.6;0.63;0.65;0.67;1" dur="3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="135" y="255" font-size="18" fill="#48bb78" text-anchor="middle">
+                            4
+                            <animate attributeName="opacity" values="0;0;0;0;0;1" keyTimes="0;0.6;0.63;0.65;0.67;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+
+                        <rect x="180" y="230" width="50" height="40" fill="#2d3748" stroke="#48bb78" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1" keyTimes="0;0.9;0.92;0.94;0.95;0.96;0.97;0.98;1" dur="3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="205" y="255" font-size="18" fill="#48bb78" text-anchor="middle">
+                            6
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1" keyTimes="0;0.9;0.92;0.94;0.95;0.96;0.97;0.98;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <defs>
+                        <marker id="arrowgreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#48bb78"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>reduce() Function</h3>
+        <p>Combine all items in an iterable into a single value</p>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div style="flex: 1;">
+                <pre><code class="python" data-trim>
+from functools import reduce
+
+# Basic reduce - sum all numbers
+numbers = [1, 2, 3, 4, 5]
+total = reduce(
+    lambda acc, x: acc + x,
+    numbers
+)
+print(total)  # 15
+
+# With initial value
+total = reduce(
+    lambda acc, x: acc + x,
+    numbers,
+    100
+)
+print(total)  # 115
+
+# Find maximum
+maximum = reduce(
+    lambda a, b: a if a > b else b,
+    numbers
+)
+print(maximum)  # 5
+
+# Practical: flatten nested lists
+nested = [[1, 2], [3, 4], [5]]
+flat = reduce(
+    lambda acc, lst: acc + lst,
+    nested,
+    []
+)
+# [1, 2, 3, 4, 5]
+                </code></pre>
+            </div>
+            <div style="flex: 1;">
+                <svg width="350" height="320" viewBox="0 0 350 320">
+                    <!-- Title -->
+                    <text x="10" y="25" font-size="14" fill="#61dafb">reduce(λ(acc, x): acc + x, [1, 2, 3, 4])</text>
+
+                    <!-- Step 1 -->
+                    <g id="step1">
+                        <rect x="20" y="45" width="40" height="35" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="40" y="67" font-size="16" fill="#fff" text-anchor="middle">1</text>
+
+                        <text x="70" y="67" font-size="20" fill="#f6ad55">+</text>
+
+                        <rect x="90" y="45" width="40" height="35" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5"/>
+                        <text x="110" y="67" font-size="16" fill="#fff" text-anchor="middle">2</text>
+
+                        <path d="M 75 80 L 75 95 L 165 95 L 165 105" stroke="#f6ad55" stroke-width="2" fill="none" marker-end="url(#arroworange)">
+                            <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.2;0.3;0.35" dur="4s" repeatCount="indefinite"/>
+                        </path>
+
+                        <rect x="145" y="105" width="40" height="35" fill="#2d3748" stroke="#f6ad55" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.3;0.35;0.5;0.55" dur="4s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="165" y="127" font-size="16" fill="#f6ad55" text-anchor="middle">
+                            3
+                            <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.3;0.35;0.5;0.55" dur="4s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- Step 2 -->
+                    <g id="step2">
+                        <rect x="145" y="105" width="40" height="35" fill="#2d3748" stroke="#f6ad55" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.5;0.55;0.6;0.75;0.8" dur="4s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="165" y="127" font-size="16" fill="#f6ad55" text-anchor="middle">
+                            3
+                            <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.5;0.55;0.6;0.75;0.8" dur="4s" repeatCount="indefinite"/>
+                        </text>
+
+                        <text x="195" y="127" font-size="20" fill="#f6ad55">
+                            +
+                            <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.5;0.55;0.6;0.75;0.8" dur="4s" repeatCount="indefinite"/>
+                        </text>
+
+                        <rect x="215" y="105" width="40" height="35" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.5;0.55;0.6;0.75;0.8" dur="4s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="235" y="127" font-size="16" fill="#fff" text-anchor="middle">
+                            3
+                            <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.5;0.55;0.6;0.75;0.8" dur="4s" repeatCount="indefinite"/>
+                        </text>
+
+                        <path d="M 200 140 L 200 155 L 165 155 L 165 165" stroke="#f6ad55" stroke-width="2" fill="none" marker-end="url(#arroworange)">
+                            <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.7;0.75;0.8;0.85;0.9;0.95" dur="4s" repeatCount="indefinite"/>
+                        </path>
+
+                        <rect x="145" y="165" width="40" height="35" fill="#2d3748" stroke="#f6ad55" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;0;0;1;1;0" keyTimes="0;0.8;0.85;0.9;0.95;1;1;1" dur="4s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="165" y="187" font-size="16" fill="#f6ad55" text-anchor="middle">
+                            6
+                            <animate attributeName="opacity" values="0;0;0;0;0;1;1;0" keyTimes="0;0.8;0.85;0.9;0.95;1;1;1" dur="4s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- Step 3 -->
+                    <g id="step3">
+                        <rect x="145" y="165" width="40" height="35" fill="#2d3748" stroke="#f6ad55" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" keyTimes="0;0.9;0.95;1;1;1;1;1" dur="4s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="165" y="187" font-size="16" fill="#f6ad55" text-anchor="middle">
+                            6
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" keyTimes="0;0.9;0.95;1;1;1;1;1" dur="4s" repeatCount="indefinite"/>
+                        </text>
+
+                        <text x="195" y="187" font-size="20" fill="#f6ad55">
+                            +
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" keyTimes="0;0.9;0.95;1;1;1;1;1" dur="4s" repeatCount="indefinite"/>
+                        </text>
+
+                        <rect x="215" y="165" width="40" height="35" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="5">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" keyTimes="0;0.9;0.95;1;1;1;1;1" dur="4s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="235" y="187" font-size="16" fill="#fff" text-anchor="middle">
+                            4
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;1;1" keyTimes="0;0.9;0.95;1;1;1;1;1" dur="4s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- Final result -->
+                    <g id="result">
+                        <path d="M 200 200 L 200 230 L 115 230" stroke="#48bb78" stroke-width="3" fill="none" marker-end="url(#arrowgreen2)">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;1" keyTimes="0;0.9;0.92;0.94;0.96;0.97;0.98;1" dur="4s" repeatCount="indefinite"/>
+                        </path>
+                        <rect x="40" y="240" width="75" height="45" fill="#2d3748" stroke="#48bb78" stroke-width="3" rx="8">
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;1" keyTimes="0;0.9;0.92;0.94;0.96;0.97;0.98;1" dur="4s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="77" y="268" font-size="22" fill="#48bb78" text-anchor="middle" font-weight="bold">
+                            10
+                            <animate attributeName="opacity" values="0;0;0;0;0;0;0;1" keyTimes="0;0.9;0.92;0.94;0.96;0.97;0.98;1" dur="4s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- Input visualization on right -->
+                    <g id="input-list">
+                        <text x="270" y="25" font-size="12" fill="#888">Input:</text>
+                        <rect x="270" y="35" width="30" height="30" fill="#4a5568" stroke="#61dafb" stroke-width="1" rx="3"/>
+                        <text x="285" y="55" font-size="14" fill="#fff" text-anchor="middle">1</text>
+                        <rect x="270" y="70" width="30" height="30" fill="#4a5568" stroke="#61dafb" stroke-width="1" rx="3"/>
+                        <text x="285" y="90" font-size="14" fill="#fff" text-anchor="middle">2</text>
+                        <rect x="270" y="105" width="30" height="30" fill="#4a5568" stroke="#61dafb" stroke-width="1" rx="3"/>
+                        <text x="285" y="125" font-size="14" fill="#fff" text-anchor="middle">3</text>
+                        <rect x="270" y="140" width="30" height="30" fill="#4a5568" stroke="#61dafb" stroke-width="1" rx="3"/>
+                        <text x="285" y="160" font-size="14" fill="#fff" text-anchor="middle">4</text>
+                    </g>
+
+                    <defs>
+                        <marker id="arroworange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#f6ad55"/>
+                        </marker>
+                        <marker id="arrowgreen2" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto">
+                            <polygon points="10 0, 0 3, 10 6" fill="#48bb78"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>List/Dict/Set Comprehensions</h3>
+        <p>Advanced patterns for data transformation</p>
+        <pre><code class="python" data-trim>
+# List comprehension with conditional
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+even_squares = [x**2 for x in numbers if x % 2 == 0]
+# [4, 16, 36, 64, 100]
+
+# Nested list comprehension
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flattened = [num for row in matrix for num in row]
+# [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# Dict comprehension
+words = ['apple', 'banana', 'cherry']
+word_lengths = {word: len(word) for word in words}
+# {'apple': 5, 'banana': 6, 'cherry': 6}
+
+# Set comprehension - unique values
+text = "hello world"
+unique_chars = {char.lower() for char in text if char.isalpha()}
+# {'h', 'e', 'l', 'o', 'w', 'r', 'd'}
+
+# Conditional expression in comprehension
+grades = [85, 92, 78, 90, 88]
+results = ['Pass' if g >= 80 else 'Fail' for g in grades]
+# ['Pass', 'Pass', 'Fail', 'Pass', 'Pass']
+
+# Combining multiple iterables
+list1 = [1, 2, 3]
+list2 = ['a', 'b', 'c']
+combined = [(num, letter) for num in list1 for letter in list2]
+# [(1,'a'), (1,'b'), (1,'c'), (2,'a'), (2,'b'), (2,'c'), (3,'a'), (3,'b'), (3,'c')]
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>functools Module</h3>
+        <p>Essential tools for functional programming</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left;">
+            <div>
+                <h4 style="color: #61dafb;">partial() - Partial Application</h4>
+                <pre><code class="python" data-trim>
+from functools import partial
+
+# Create specialized functions
+def power(base, exponent):
+    return base ** exponent
+
+# Create a square function
+square = partial(power, exponent=2)
+cube = partial(power, exponent=3)
+
+print(square(5))  # 25
+print(cube(5))    # 125
+
+# Practical: logging with context
+def log(message, level='INFO'):
+    print(f'[{level}] {message}')
+
+error_log = partial(log, level='ERROR')
+debug_log = partial(log, level='DEBUG')
+
+error_log('Connection failed')
+# [ERROR] Connection failed
+debug_log('Processing item 42')
+# [DEBUG] Processing item 42
+                </code></pre>
+            </div>
+            <div>
+                <h4 style="color: #48bb78;">lru_cache() - Memoization</h4>
+                <pre><code class="python" data-trim>
+from functools import lru_cache
+
+# Cache expensive computations
+@lru_cache(maxsize=128)
+def fibonacci(n):
+    if n < 2:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# First call: computed
+print(fibonacci(100))  # Fast!
+
+# Second call: cached
+print(fibonacci(100))  # Instant!
+
+# Check cache stats
+print(fibonacci.cache_info())
+# CacheInfo(hits=98, misses=101,
+#           maxsize=128, currsize=101)
+
+# Clear cache if needed
+fibonacci.cache_clear()
+
+# API response caching
+@lru_cache(maxsize=100)
+def fetch_user_data(user_id):
+    # Expensive API call
+    return api.get(f'/users/{user_id}')
+                </code></pre>
+            </div>
+        </div>
+        <div class="fragment" style="margin-top: 20px;">
+            <p><strong>Other useful functools:</strong></p>
+            <ul>
+                <li><code>wraps()</code> - Preserve function metadata in decorators</li>
+                <li><code>total_ordering()</code> - Generate comparison methods from minimal set</li>
+                <li><code>singledispatch()</code> - Function overloading based on type</li>
+            </ul>
+        </div>
+    </section>
+</section>
+
+<!-- DECORATORS & GENERATORS SECTION -->
+<section>
+    <section>
+        <h2>Decorators & Generators</h2>
+        <p>Advanced Python patterns for cleaner, more efficient code</p>
+    </section>
+
+    <section>
+        <h3>What are Decorators?</h3>
+        <p>Functions that modify the behavior of other functions</p>
+        <div style="display: flex; gap: 30px; align-items: center;">
+            <div style="flex: 1;">
+                <pre><code class="python" data-trim>
+# Decorator syntax
+@decorator_name
+def my_function():
+    pass
+
+# Is equivalent to:
+def my_function():
+    pass
+my_function = decorator_name(my_function)
+
+# Simple example
+def uppercase_decorator(func):
+    def wrapper():
+        result = func()
+        return result.upper()
+    return wrapper
+
+@uppercase_decorator
+def greet():
+    return "hello world"
+
+print(greet())  # "HELLO WORLD"
+                </code></pre>
+            </div>
+            <div style="flex: 1;">
+                <svg width="350" height="380" viewBox="0 0 350 380">
+                    <!-- Original function -->
+                    <rect x="125" y="20" width="100" height="60" fill="#4a5568" stroke="#61dafb" stroke-width="2" rx="8"/>
+                    <text x="175" y="45" font-size="14" fill="#fff" text-anchor="middle">Original</text>
+                    <text x="175" y="65" font-size="14" fill="#fff" text-anchor="middle">Function</text>
+
+                    <!-- Arrow down -->
+                    <path d="M 175 80 L 175 115" stroke="#61dafb" stroke-width="2" marker-end="url(#arrow1)"/>
+                    <text x="200" y="100" font-size="12" fill="#888">decorated</text>
+
+                    <!-- Decorator wrapper - outer layer -->
+                    <rect x="75" y="115" width="200" height="240" fill="none" stroke="#805ad5" stroke-width="3" rx="12" stroke-dasharray="5,5">
+                        <animate attributeName="stroke-opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="175" y="135" font-size="14" fill="#805ad5" text-anchor="middle" font-weight="bold">Decorator Wrapper</text>
+
+                    <!-- Before logic -->
+                    <rect x="95" y="150" width="160" height="50" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6">
+                        <animate attributeName="fill" values="#553c9a;#805ad5;#553c9a" dur="2s" repeatCount="indefinite"/>
+                    </rect>
+                    <text x="175" y="170" font-size="13" fill="#fff" text-anchor="middle">Before Logic</text>
+                    <text x="175" y="188" font-size="11" fill="#d6bcfa" text-anchor="middle">(validation, logging, etc.)</text>
+
+                    <!-- Arrow to original -->
+                    <path d="M 175 200 L 175 215" stroke="#61dafb" stroke-width="2" marker-end="url(#arrow1)"/>
+
+                    <!-- Original function inside wrapper -->
+                    <rect x="115" y="215" width="120" height="50" fill="#2d3748" stroke="#61dafb" stroke-width="2" rx="8"/>
+                    <text x="175" y="235" font-size="13" fill="#61dafb" text-anchor="middle" font-weight="bold">Original Function</text>
+                    <text x="175" y="253" font-size="11" fill="#888" text-anchor="middle">executes here</text>
+
+                    <!-- Arrow to after -->
+                    <path d="M 175 265 L 175 280" stroke="#61dafb" stroke-width="2" marker-end="url(#arrow1)"/>
+
+                    <!-- After logic -->
+                    <rect x="95" y="280" width="160" height="50" fill="#553c9a" stroke="#d6bcfa" stroke-width="2" rx="6">
+                        <animate attributeName="fill" values="#553c9a;#805ad5;#553c9a" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                    </rect>
+                    <text x="175" y="300" font-size="13" fill="#fff" text-anchor="middle">After Logic</text>
+                    <text x="175" y="318" font-size="11" fill="#d6bcfa" text-anchor="middle">(modify result, cleanup)</text>
+
+                    <!-- Arrow to result -->
+                    <path d="M 175 355 L 175 375" stroke="#48bb78" stroke-width="3" marker-end="url(#arrowresult)"/>
+                    <text x="210" y="368" font-size="12" fill="#48bb78">result</text>
+
+                    <!-- Side annotation -->
+                    <g id="flow-annotation">
+                        <text x="290" y="200" font-size="11" fill="#888">Wrapper</text>
+                        <text x="290" y="215" font-size="11" fill="#888">controls</text>
+                        <text x="290" y="230" font-size="11" fill="#888">execution</text>
+                        <text x="290" y="245" font-size="11" fill="#888">flow</text>
+                    </g>
+
+                    <defs>
+                        <marker id="arrow1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#61dafb"/>
+                        </marker>
+                        <marker id="arrowresult" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#48bb78"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Creating Basic Decorators</h3>
+        <p>Essential patterns and best practices</p>
+        <pre><code class="python" data-trim>
+from functools import wraps
+import time
+
+# Timer decorator
+def timer(func):
+    @wraps(func)  # Preserves original function's metadata
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:.4f} seconds")
+        return result
+    return wrapper
+
+@timer
+def slow_function():
+    time.sleep(2)
+    return "Done"
+
+# Logging decorator
+def log_calls(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args={args}, kwargs={kwargs}")
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} returned {result}")
+        return result
+    return wrapper
+
+@log_calls
+def add(a, b):
+    return a + b
+
+print(add(5, 3))
+# Calling add with args=(5, 3), kwargs={}
+# add returned 8
+# 8
+
+# Validation decorator
+def validate_positive(func):
+    @wraps(func)
+    def wrapper(x):
+        if x < 0:
+            raise ValueError("Number must be positive")
+        return func(x)
+    return wrapper
+
+@validate_positive
+def square_root(x):
+    return x ** 0.5
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Decorators with Arguments</h3>
+        <p>Creating configurable decorators</p>
+        <pre><code class="python" data-trim>
+# Decorator factory pattern
+def repeat(times):
+    """Decorator that repeats function execution"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            results = []
+            for _ in range(times):
+                result = func(*args, **kwargs)
+                results.append(result)
+            return results
+        return wrapper
+    return decorator
+
+@repeat(times=3)
+def greet(name):
+    return f"Hello, {name}!"
+
+print(greet("Alice"))
+# ['Hello, Alice!', 'Hello, Alice!', 'Hello, Alice!']
+
+# Rate limiting decorator
+def rate_limit(max_calls, period):
+    """Limit function calls to max_calls per period (seconds)"""
+    import time
+    from collections import deque
+
+    def decorator(func):
+        calls = deque()
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            now = time.time()
+            # Remove old calls outside the period
+            while calls and calls[0] < now - period:
+                calls.popleft()
+
+            if len(calls) >= max_calls:
+                raise Exception(f"Rate limit exceeded: {max_calls} calls per {period}s")
+
+            calls.append(now)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@rate_limit(max_calls=3, period=60)
+def api_call():
+    return "API response"
+
+# Retry decorator
+def retry(max_attempts=3, delay=1):
+    """Retry function on exception"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    time.sleep(delay)
+        return wrapper
+    return decorator
+
+@retry(max_attempts=3, delay=2)
+def unreliable_network_call():
+    # Might fail, will retry
+    pass
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Common Built-in Decorators</h3>
+        <p>@property, @staticmethod, @classmethod</p>
+        <pre><code class="python" data-trim>
+class Person:
+    def __init__(self, first_name, last_name, birth_year):
+        self._first_name = first_name
+        self._last_name = last_name
+        self._birth_year = birth_year
+
+    # @property - computed attribute
+    @property
+    def full_name(self):
+        return f"{self._first_name} {self._last_name}"
+
+    @property
+    def age(self):
+        from datetime import datetime
+        return datetime.now().year - self._birth_year
+
+    # Property with setter
+    @property
+    def first_name(self):
+        return self._first_name
+
+    @first_name.setter
+    def first_name(self, value):
+        if not value:
+            raise ValueError("Name cannot be empty")
+        self._first_name = value.capitalize()
+
+    # @staticmethod - no access to instance or class
+    @staticmethod
+    def is_adult(age):
+        return age >= 18
+
+    # @classmethod - receives class as first argument
+    @classmethod
+    def from_birth_year(cls, first_name, last_name, birth_year):
+        return cls(first_name, last_name, birth_year)
+
+# Usage
+person = Person("john", "doe", 1990)
+print(person.full_name)  # John Doe (property accessed like attribute)
+print(person.age)        # 35 (computed)
+
+person.first_name = "jane"  # Uses setter
+print(person.full_name)     # Jane Doe
+
+# Static method - utility function
+print(Person.is_adult(20))  # True
+
+# Class method - alternative constructor
+person2 = Person.from_birth_year("Alice", "Smith", 1995)
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>What are Generators?</h3>
+        <p>Functions that produce values lazily using yield</p>
+        <div style="display: flex; gap: 20px; align-items: flex-start;">
+            <div style="flex: 1;">
+                <pre><code class="python" data-trim>
+# Regular function - returns all at once
+def get_numbers_list(n):
+    result = []
+    for i in range(n):
+        result.append(i ** 2)
+    return result
+
+# Generator - yields one at a time
+def get_numbers_generator(n):
+    for i in range(n):
+        yield i ** 2
+
+# Usage
+gen = get_numbers_generator(5)
+print(next(gen))  # 0
+print(next(gen))  # 1
+print(next(gen))  # 4
+
+# Or iterate
+for num in get_numbers_generator(5):
+    print(num)
+
+# Infinite generator
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+# Take first 10
+fib = fibonacci()
+first_10 = [next(fib) for _ in range(10)]
+# [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+                </code></pre>
+            </div>
+            <div style="flex: 1;">
+                <svg width="320" height="400" viewBox="0 0 320 400">
+                    <!-- Title -->
+                    <text x="160" y="25" font-size="16" fill="#61dafb" text-anchor="middle" font-weight="bold">Generator Function Flow</text>
+
+                    <!-- Generator function box -->
+                    <rect x="60" y="45" width="200" height="320" fill="#1a202c" stroke="#805ad5" stroke-width="2" rx="8"/>
+                    <text x="160" y="70" font-size="14" fill="#805ad5" text-anchor="middle">def my_generator():</text>
+
+                    <!-- State 1: yield 1 -->
+                    <g id="yield1">
+                        <circle cx="90" cy="100" r="8" fill="#48bb78">
+                            <animate attributeName="fill" values="#48bb78;#38a169;#48bb78" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="110" y="105" font-size="13" fill="#fff">yield 1</text>
+                        <path d="M 210 100 L 280 100" stroke="#48bb78" stroke-width="2" marker-end="url(#arrowyield)">
+                            <animate attributeName="opacity" values="0;1;0;0;0" keyTimes="0;0.2;0.25;0.9;1" dur="3s" repeatCount="indefinite"/>
+                        </path>
+                        <text x="290" y="105" font-size="12" fill="#48bb78">
+                            1
+                            <animate attributeName="opacity" values="0;1;0;0;0" keyTimes="0;0.2;0.25;0.9;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+
+                        <!-- Pause indicator -->
+                        <rect x="70" y="115" width="180" height="25" fill="#2d3748" opacity="0.7">
+                            <animate attributeName="opacity" values="0;0;0.7;0.7;0" keyTimes="0;0.25;0.35;0.38;0.4" dur="3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="160" y="132" font-size="11" fill="#cbd5e0" text-anchor="middle">
+                            ⏸ Paused - State Saved
+                            <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.25;0.35;0.38;0.4" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- State 2: yield 2 -->
+                    <g id="yield2">
+                        <circle cx="90" cy="170" r="8" fill="#48bb78">
+                            <animate attributeName="fill" values="#2d3748;#2d3748;#48bb78;#38a169;#48bb78;#2d3748" keyTimes="0;0.4;0.42;0.52;0.57;0.6" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="110" y="175" font-size="13" fill="#fff">yield 2</text>
+                        <path d="M 210 170 L 280 170" stroke="#48bb78" stroke-width="2" marker-end="url(#arrowyield)">
+                            <animate attributeName="opacity" values="0;0;0;1;0;0" keyTimes="0;0.4;0.5;0.55;0.58;1" dur="3s" repeatCount="indefinite"/>
+                        </path>
+                        <text x="290" y="175" font-size="12" fill="#48bb78">
+                            2
+                            <animate attributeName="opacity" values="0;0;0;1;0;0" keyTimes="0;0.4;0.5;0.55;0.58;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+
+                        <rect x="70" y="185" width="180" height="25" fill="#2d3748" opacity="0">
+                            <animate attributeName="opacity" values="0;0;0;0;0.7;0.7;0" keyTimes="0;0.55;0.6;0.65;0.7;0.73;0.75" dur="3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="160" y="202" font-size="11" fill="#cbd5e0" text-anchor="middle">
+                            ⏸ Paused - State Saved
+                            <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.55;0.6;0.65;0.7;0.73;0.75" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- State 3: yield 3 -->
+                    <g id="yield3">
+                        <circle cx="90" cy="240" r="8" fill="#48bb78">
+                            <animate attributeName="fill" values="#2d3748;#2d3748;#2d3748;#48bb78;#38a169;#48bb78" keyTimes="0;0.74;0.76;0.78;0.88;0.93" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="110" y="245" font-size="13" fill="#fff">yield 3</text>
+                        <path d="M 210 240 L 280 240" stroke="#48bb78" stroke-width="2" marker-end="url(#arrowyield)">
+                            <animate attributeName="opacity" values="0;0;0;0;1;0" keyTimes="0;0.74;0.82;0.86;0.91;1" dur="3s" repeatCount="indefinite"/>
+                        </path>
+                        <text x="290" y="245" font-size="12" fill="#48bb78">
+                            3
+                            <animate attributeName="opacity" values="0;0;0;0;1;0" keyTimes="0;0.74;0.82;0.86;0.91;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- Done state -->
+                    <g id="done">
+                        <rect x="80" y="280" width="160" height="60" fill="#2d3748" stroke="#e53e3e" stroke-width="2" rx="6">
+                            <animate attributeName="opacity" values="0;0;0;0;0;1" keyTimes="0;0.9;0.93;0.95;0.97;1" dur="3s" repeatCount="indefinite"/>
+                        </rect>
+                        <text x="160" y="305" font-size="14" fill="#fc8181" text-anchor="middle">
+                            StopIteration
+                            <animate attributeName="opacity" values="0;0;0;0;0;1" keyTimes="0;0.9;0.93;0.95;0.97;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                        <text x="160" y="325" font-size="11" fill="#888" text-anchor="middle">
+                            Generator Exhausted
+                            <animate attributeName="opacity" values="0;0;0;0;0;1" keyTimes="0;0.9;0.93;0.95;0.97;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <!-- Call annotations -->
+                    <g id="calls">
+                        <text x="20" y="105" font-size="11" fill="#61dafb">
+                            next()
+                            <animate attributeName="opacity" values="1;0;0;0;0;1" keyTimes="0;0.22;0.4;0.9;0.95;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                        <text x="20" y="175" font-size="11" fill="#61dafb">
+                            next()
+                            <animate attributeName="opacity" values="0;0;1;0;0;0" keyTimes="0;0.38;0.42;0.6;0.9;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                        <text x="20" y="245" font-size="11" fill="#61dafb">
+                            next()
+                            <animate attributeName="opacity" values="0;0;0;1;0;0" keyTimes="0;0.72;0.76;0.8;0.9;1" dur="3s" repeatCount="indefinite"/>
+                        </text>
+                    </g>
+
+                    <defs>
+                        <marker id="arrowyield" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#48bb78"/>
+                        </marker>
+                    </defs>
+                </svg>
+                <div style="margin-top: 10px; font-size: 12px; color: #888;">
+                    <strong>Key Benefits:</strong>
+                    <ul style="text-align: left; margin-top: 5px;">
+                        <li>Memory efficient - one value at a time</li>
+                        <li>Can represent infinite sequences</li>
+                        <li>Lazy evaluation - computed on demand</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3>Generator Expressions vs List Comprehensions</h3>
+        <p>Choosing the right tool for memory efficiency</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h4 style="color: #e53e3e;">List Comprehension</h4>
+                <pre><code class="python" data-trim>
+# Creates entire list in memory
+squares = [x**2 for x in range(1000000)]
+
+# Memory: ~8MB for 1 million integers
+import sys
+print(sys.getsizeof(squares))
+# 8448728 bytes
+
+# Use when:
+# - Need to iterate multiple times
+# - Need indexing/slicing
+# - Dataset is small
+# - Need len()
+
+# Examples
+numbers = [1, 2, 3, 4, 5]
+doubled = [x * 2 for x in numbers]
+print(doubled[2])  # Can index: 6
+print(len(doubled))  # Can get length: 5
+                </code></pre>
+            </div>
+            <div>
+                <h4 style="color: #48bb78;">Generator Expression</h4>
+                <pre><code class="python" data-trim>
+# Creates generator object
+squares_gen = (x**2 for x in range(1000000))
+
+# Memory: ~200 bytes!
+import sys
+print(sys.getsizeof(squares_gen))
+# 200 bytes
+
+# Use when:
+# - Iterate once
+# - Large or infinite sequences
+# - Want lazy evaluation
+# - Memory is a concern
+
+# Examples
+numbers = [1, 2, 3, 4, 5]
+doubled_gen = (x * 2 for x in numbers)
+# doubled_gen[2]  # ERROR: not subscriptable
+# len(doubled_gen)  # ERROR: no length
+
+# Must iterate
+for val in doubled_gen:
+    print(val)
+                </code></pre>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <h4>Practical Comparison</h4>
+            <pre><code class="python" data-trim>
+# List comprehension - loads entire file into memory
+lines = [line.strip() for line in open('huge_file.txt')]
+total_length = sum(len(line) for line in lines)  # Wasteful!
+
+# Generator expression - processes line by line
+lines_gen = (line.strip() for line in open('huge_file.txt'))
+total_length = sum(len(line) for line in lines_gen)  # Memory efficient!
+
+# Pipeline of generators (very efficient)
+result = sum(
+    x**2
+    for x in range(1000000)
+    if x % 2 == 0
+)
+# No intermediate lists created!
+            </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <h3>itertools Module Highlights</h3>
+        <p>Powerful tools for working with iterators</p>
+        <pre><code class="python" data-trim>
+from itertools import *
+
+# count() - infinite counter
+for i in count(10, 2):  # Start at 10, step by 2
+    if i > 20:
+        break
+    print(i)  # 10, 12, 14, 16, 18, 20
+
+# cycle() - infinite repetition
+counter = 0
+for item in cycle(['A', 'B', 'C']):
+    if counter >= 7:
+        break
+    print(item, end=' ')  # A B C A B C A
+    counter += 1
+
+# chain() - combine iterables
+list1 = [1, 2, 3]
+list2 = [4, 5, 6]
+combined = list(chain(list1, list2))  # [1, 2, 3, 4, 5, 6]
+
+# islice() - slice an iterator
+data = count()  # Infinite iterator
+first_10_evens = list(islice((x for x in data if x % 2 == 0), 10))
+# [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+
+# groupby() - group consecutive elements
+from operator import itemgetter
+data = [('A', 1), ('A', 2), ('B', 3), ('B', 4), ('C', 5)]
+for key, group in groupby(data, key=itemgetter(0)):
+    print(f"{key}: {list(group)}")
+# A: [('A', 1), ('A', 2)]
+# B: [('B', 3), ('B', 4)]
+# C: [('C', 5)]
+
+# combinations() and permutations()
+from itertools import combinations, permutations
+items = ['A', 'B', 'C']
+print(list(combinations(items, 2)))
+# [('A', 'B'), ('A', 'C'), ('B', 'C')]
+print(list(permutations(items, 2)))
+# [('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('C', 'A'), ('C', 'B')]
+
+# product() - cartesian product
+colors = ['red', 'blue']
+sizes = ['S', 'M', 'L']
+print(list(product(colors, sizes)))
+# [('red', 'S'), ('red', 'M'), ('red', 'L'), ('blue', 'S'), ('blue', 'M'), ('blue', 'L')]
+
+# accumulate() - running totals
+from itertools import accumulate
+numbers = [1, 2, 3, 4, 5]
+print(list(accumulate(numbers)))  # [1, 3, 6, 10, 15]
+print(list(accumulate(numbers, lambda x, y: x * y)))  # [1, 2, 6, 24, 120]
+        </code></pre>
+    </section>
+
+    <section>
+        <h3>Advanced Generator Patterns</h3>
+        <p>Real-world use cases</p>
+        <pre><code class="python" data-trim>
+# Generator pipeline for data processing
+def read_lines(filename):
+    """Read lines from file"""
+    with open(filename) as f:
+        for line in f:
+            yield line.strip()
+
+def filter_comments(lines):
+    """Remove comment lines"""
+    for line in lines:
+        if not line.startswith('#'):
+            yield line
+
+def parse_data(lines):
+    """Parse each line"""
+    for line in lines:
+        fields = line.split(',')
+        yield {'name': fields[0], 'value': int(fields[1])}
+
+# Compose the pipeline
+lines = read_lines('data.txt')
+active_lines = filter_comments(lines)
+data = parse_data(active_lines)
+
+# Process one item at a time (memory efficient!)
+for record in data:
+    process(record)
+
+# Send values INTO a generator
+def running_average():
+    total = 0
+    count = 0
+    average = None
+    while True:
+        value = yield average  # Receive value, send average
+        total += value
+        count += 1
+        average = total / count
+
+avg = running_average()
+next(avg)  # Prime the generator
+print(avg.send(10))  # 10.0
+print(avg.send(20))  # 15.0
+print(avg.send(30))  # 20.0
+
+# Generator for pagination
+def paginate(items, page_size):
+    """Yield pages of items"""
+    for i in range(0, len(items), page_size):
+        yield items[i:i + page_size]
+
+data = range(100)
+for page_num, page in enumerate(paginate(data, 10), 1):
+    print(f"Page {page_num}: {list(page)}")
+
+# Infinite sequence with state
+def fibonacci_gen():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+# Take while condition is true
+def take_while(predicate, iterable):
+    for item in iterable:
+        if predicate(item):
+            yield item
+        else:
+            break
+
+fib = fibonacci_gen()
+small_fibs = list(take_while(lambda x: x < 100, fib))
+# [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+        </code></pre>
+    </section>
+</section>
+<!-- END GENERATORS SECTION -->

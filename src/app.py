@@ -299,16 +299,16 @@ COURSES = {
             }
         }
     },
-    "mastering-llms": {
-        "id": "mastering-llms",
-        "name": "Mastering LLMs",
-        "description": "Complete course on Large Language Models from fundamentals to advanced topics",
+    "mastering-ai": {
+        "id": "mastering-ai",
+        "name": "Mastering AI",
+        "description": "Complete course on AI and Large Language Models from fundamentals to advanced topics",
         "icon": "🤖",
         "sections": {
             "part1": {
-                "title": "Part 1: ML Foundations & LLM Introduction",
+                "title": "Part 1: ML Foundations & AI Introduction",
                 "items": [
-                    {"id": "slides-part1", "name": "Slides", "file": "out/mastering-llms-part1-slides.html", "type": "slides"},
+                    {"id": "slides-part1", "name": "Slides", "file": "out/mastering-ai-part1-slides.html", "type": "slides"},
                     {"id": "demo-day1", "name": "Day 1: Python & ML Demo", "file": "out/demo-day1-python-ml.html", "type": "demo"},
                     {"id": "demo-day2", "name": "Day 2: Neural Networks Demo", "file": "out/demo-day2-neural-networks.html", "type": "demo"},
                     {"id": "demo-day3", "name": "Day 3: NLP & LLMs Demo", "file": "out/demo-day3-nlp-llms.html", "type": "demo"},
@@ -328,9 +328,9 @@ COURSES = {
                 ]
             },
             "part2": {
-                "title": "Part 2: Advanced LLM Topics",
+                "title": "Part 2: Advanced AI Topics",
                 "items": [
-                    {"id": "slides-main", "name": "Main Slides", "file": "out/mastering-llms-slides.html", "type": "slides"},
+                    {"id": "slides-main", "name": "Main Slides", "file": "out/mastering-ai-slides.html", "type": "slides"},
                     {"id": "demo-attention", "name": "Attention Visualization", "file": "out/demo-attention-visualization.html", "type": "demo"},
                     {"id": "demo-rag", "name": "RAG Pipeline", "file": "out/demo-rag-pipeline.html", "type": "demo"},
                     {"id": "demo-agent", "name": "Agent Builder", "file": "out/demo-agent-builder.html", "type": "demo"},
@@ -351,6 +351,7 @@ COURSES = {
                 "items": [
                     {"id": "py-slides", "name": "Python Fundamentals Slides", "file": "python-fundamentals/python-fundamentals-slides.html", "type": "slides"},
                     {"id": "py-demo", "name": "Interactive Python Demo", "file": "python-fundamentals/demo-python-basics.html", "type": "demo"},
+                    {"id": "py-notes", "name": "Student Notes", "file": "python-fundamentals/student-notes.md", "type": "notes"},
                 ]
             },
             "labs": {
@@ -358,6 +359,176 @@ COURSES = {
                 "items": [
                     {"id": "py-lab", "name": "Python Basics Lab", "file": "python-fundamentals/lab-python-basics.ipynb", "type": "lab", "runnable": True},
                     {"id": "py-lab-solution", "name": "Python Basics Lab (Solution)", "file": "python-fundamentals/lab-python-basics-solution.ipynb", "type": "lab", "runnable": True},
+                ]
+            }
+        }
+    },
+    "python-intermediate": {
+        "id": "python-intermediate",
+        "name": "Python Intermediate",
+        "description": "Advanced Python concepts including OOP, functional programming, decorators, and testing",
+        "icon": "🐍",
+        "duration": "8 hours",
+        "sections": {
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "pyi-slides", "name": "Python Intermediate Slides", "file": "python-intermediate/python-intermediate-slides.html", "type": "slides"},
+                    {"id": "pyi-notes", "name": "Student Notes", "file": "python-intermediate/student-notes.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "pyi-lab", "name": "Python Intermediate Lab", "file": "python-intermediate/lab-python-intermediate.ipynb", "type": "lab", "runnable": True},
+                    {"id": "pyi-lab-solution", "name": "Python Intermediate Lab (Solutions)", "file": "python-intermediate/lab-python-intermediate-solutions.ipynb", "type": "lab", "runnable": True},
+                ]
+            }
+        }
+    },
+    "enterprise-ai-adoption": {
+        "id": "enterprise-ai-adoption",
+        "name": "Enterprise AI Adoption",
+        "description": "5-day intensive course on adopting AI in enterprise environments - governance, workflows, and implementation",
+        "icon": "🏢",
+        "duration": "5 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "eai-slides", "name": "Enterprise AI Adoption Slides", "file": "enterprise-ai-adoption/enterprise-ai-adoption-slides.html", "type": "slides"},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "eai-notes", "name": "Student Notes", "file": "enterprise-ai-adoption/student-notes.md", "type": "notes"},
+                    {"id": "eai-case-studies", "name": "Case Studies", "file": "enterprise-ai-adoption/case-studies.md", "type": "notes"},
+                    {"id": "eai-facilitator", "name": "Facilitator Guide", "file": "enterprise-ai-adoption/facilitator-guide.md", "type": "notes"},
+                    {"id": "eai-resources", "name": "Follow-up Resources", "file": "enterprise-ai-adoption/resources.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Labs & Exercises",
+                "items": [
+                    {"id": "eai-labs", "name": "Lab Exercises", "file": "enterprise-ai-adoption/labs/lab-exercises.md", "type": "lab"},
+                    {"id": "eai-assessments", "name": "Assessments & Quizzes", "file": "enterprise-ai-adoption/assessments.md", "type": "lab"},
+                ]
+            },
+            "templates": {
+                "title": "Downloadable Templates",
+                "items": [
+                    {"id": "eai-readiness", "name": "AI Readiness Canvas (CSV)", "file": "enterprise-ai-adoption/templates/ai-readiness-canvas.csv", "type": "notes"},
+                    {"id": "eai-governance", "name": "Governance Canvas (CSV)", "file": "enterprise-ai-adoption/templates/governance-canvas.csv", "type": "notes"},
+                    {"id": "eai-workflow", "name": "Workflow Mapping Template", "file": "enterprise-ai-adoption/templates/workflow-mapping-template.md", "type": "notes"},
+                    {"id": "eai-rollout", "name": "30-60-90 Day Plan (CSV)", "file": "enterprise-ai-adoption/templates/30-60-90-day-plan.csv", "type": "notes"},
+                    {"id": "eai-playbook", "name": "AI Playbook Template", "file": "enterprise-ai-adoption/templates/ai-playbook-template.md", "type": "notes"},
+                    {"id": "eai-stakeholder", "name": "Stakeholder Analysis (CSV)", "file": "enterprise-ai-adoption/templates/stakeholder-analysis.csv", "type": "notes"},
+                ]
+            },
+            "advanced": {
+                "title": "Advanced Modules",
+                "items": [
+                    {"id": "eai-managers", "name": "AI for Managers Module", "file": "enterprise-ai-adoption/advanced-modules/ai-for-managers.md", "type": "notes"},
+                    {"id": "eai-technical", "name": "Technical Deep-Dive Module", "file": "enterprise-ai-adoption/advanced-modules/technical-deep-dive.md", "type": "notes"},
+                    {"id": "eai-change", "name": "Change Management Module", "file": "enterprise-ai-adoption/advanced-modules/change-management.md", "type": "notes"},
+                ]
+            }
+        }
+    },
+    "mastering-ai-agents": {
+        "id": "mastering-ai-agents",
+        "name": "Mastering AI Agents",
+        "description": "3-day intensive course on AI agents, agentic swarms, and Google's A2A protocol",
+        "icon": "🤖",
+        "duration": "3 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "maa-slides", "name": "AI Agents Slides", "file": "mastering-ai-agents/mastering-ai-agents-slides.html", "type": "slides"},
+                    {"id": "maa-pdf", "name": "Slides (PDF Download)", "file": "mastering-ai-agents/mastering-ai-agents-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "maa-notes", "name": "Student Notes", "file": "mastering-ai-agents/student-notes.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "maa-lab1", "name": "Lab 1: Reactive Agents", "file": "mastering-ai-agents/labs/lab-01-reactive-agents.ipynb", "type": "lab", "runnable": True},
+                    {"id": "maa-lab2", "name": "Lab 2: Swarm Intelligence", "file": "mastering-ai-agents/labs/lab-02-swarm-intelligence.ipynb", "type": "lab", "runnable": True},
+                ]
+            },
+            "demos": {
+                "title": "Interactive Demos",
+                "items": [
+                    {"id": "maa-demo1", "name": "Demo: Agent Types Comparison", "file": "mastering-ai-agents/demos/demo-01-agent-types.ipynb", "type": "lab", "runnable": True},
+                ]
+            }
+        }
+    },
+    "use-case-prompting": {
+        "id": "use-case-prompting",
+        "name": "Use Case Lab & Prompting Foundations",
+        "description": "90-minute seminar on identifying AI use cases and mastering prompt engineering - ITAG Skillnet AI Advantage",
+        "icon": "💬",
+        "duration": "90 minutes",
+        "sections": {
+            "workshop": {
+                "title": "Workshop Materials",
+                "items": [
+                    {"id": "ucp-slides", "name": "Presentation Slides", "file": "use-case-prompting-seminar/use-case-prompting-slides.html", "type": "slides"},
+                    {"id": "ucp-pdf", "name": "Slides (PDF Download)", "file": "use-case-prompting-seminar/use-case-prompting-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "demo": {
+                "title": "Interactive Demo",
+                "items": [
+                    {"id": "ucp-demo", "name": "ChatGPT Demo Guide (Instructor)", "file": "use-case-prompting-seminar/interactive-demo-guide.md", "type": "notes"},
+                ]
+            },
+            "exercise": {
+                "title": "Take-Home Exercise",
+                "items": [
+                    {"id": "ucp-exercise", "name": "Take-Home Practice Exercise (PDF)", "file": "use-case-prompting-seminar/take-home-exercise.pdf", "type": "notes", "printable": True},
+                ]
+            }
+        }
+    },
+    "ai-sales-marketing": {
+        "id": "ai-sales-marketing",
+        "name": "AI for Sales and Marketing",
+        "description": "2-day practical course on AI applications for sales and marketing professionals - customer engagement, content generation, lead scoring, and campaign analytics",
+        "icon": "📈",
+        "duration": "2 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "asm-slides", "name": "Presentation Slides", "file": "ai-sales-marketing/ai-sales-marketing-slides.html", "type": "slides"},
+                    {"id": "asm-pdf", "name": "Slides (PDF Download)", "file": "ai-sales-marketing/ai-sales-marketing-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "asm-notes", "name": "Student Notes", "file": "ai-sales-marketing/student-notes.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "asm-labs", "name": "Lab Exercises", "file": "ai-sales-marketing/labs/lab-exercises.md", "type": "lab"},
+                ]
+            },
+            "templates": {
+                "title": "Templates & Resources",
+                "items": [
+                    {"id": "asm-prompts", "name": "AI Prompt Library Template", "file": "ai-sales-marketing/templates/prompt-library-template.md", "type": "notes"},
                 ]
             }
         }
@@ -1040,7 +1211,7 @@ def openai_proxy():
 @app.route('/api/materials')
 def get_materials():
     """Return list of all course materials (legacy)"""
-    return jsonify(COURSES["mastering-llms"]["sections"])
+    return jsonify(COURSES["mastering-ai"]["sections"])
 
 @app.route('/content/<path:filename>')
 def serve_content(filename):

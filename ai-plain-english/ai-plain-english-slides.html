@@ -1009,15 +1009,33 @@
     </div>
 </div>
 
+<!-- Slide 31: Feedback -->
+<div class="slide" id="slide31">
+    <span class="slide-number">31</span>
+    <div class="badge itag-badge">ITAG SKILLNET AI ADVANTAGE</div>
+    <h1>We Value Your Feedback!</h1>
+    <p class="subtitle">Help us improve this workshop</p>
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: 40px;">
+        <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            <img src="feedback/QRCode for Skillnet Ireland Reaction To Learning 2025.png" alt="Feedback QR Code" style="width: 300px; height: 300px; display: block;">
+        </div>
+    </div>
+    <div class="highlight" style="margin-top: 40px; text-align: center;">
+        <p style="font-size: 1.3em;">Scan the QR code to share your feedback</p>
+        <p style="font-size: 1em; margin-top: 10px; opacity: 0.8;">Your input helps us create better learning experiences</p>
+    </div>
+</div>
+
 <!-- Navigation -->
 <div class="nav-buttons">
+    <button class="nav-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F)">&#x26F6;</button>
     <button class="nav-btn" onclick="prevSlide()">← Previous</button>
     <button class="nav-btn" onclick="nextSlide()">Next →</button>
 </div>
 
 <script>
     let currentSlide = 1;
-    const totalSlides = 30;
+    const totalSlides = 31;
 
     function showSlide(n) {
         document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
@@ -1047,8 +1065,21 @@
         } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
             e.preventDefault();
             prevSlide();
+        } else if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            toggleFullscreen();
         }
     });
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log('Fullscreen error:', err);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
 
     // Track current slide on scroll
     const observer = new IntersectionObserver((entries) => {

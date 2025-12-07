@@ -532,6 +532,35 @@ COURSES = {
                 ]
             }
         }
+    },
+    "ai-ml-data-scientists": {
+        "id": "ai-ml-data-scientists",
+        "name": "AI/ML for Data Scientists",
+        "description": "3-day comprehensive course on modern AI/ML approaches and deployment for data scientists and business analysts",
+        "icon": "🧠",
+        "duration": "3 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "aiml-slides", "name": "Presentation Slides", "file": "ai-ml-data-scientists/ai-ml-data-scientists-slides.html", "type": "slides"},
+                    {"id": "aiml-pdf", "name": "Slides (PDF Download)", "file": "ai-ml-data-scientists/ai-ml-data-scientists-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "aiml-notes", "name": "Student Notes", "file": "ai-ml-data-scientists/student-notes.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "aiml-lab1", "name": "Lab 1: Data Preprocessing & Feature Engineering", "file": "ai-ml-data-scientists/labs/lab-01-data-preprocessing.ipynb", "type": "lab", "runnable": True},
+                    {"id": "aiml-lab2", "name": "Lab 2: Deep Learning with PyTorch", "file": "ai-ml-data-scientists/labs/lab-02-deep-learning.ipynb", "type": "lab", "runnable": True},
+                ]
+            }
+        }
     }
 }
 

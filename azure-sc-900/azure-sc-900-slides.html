@@ -345,6 +345,123 @@
             background: linear-gradient(90deg, #ff4500, #ff8c00);
             border-radius: 10px;
         }
+
+        /* Animated diagram styles */
+        .diagram {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.2), rgba(255, 140, 0, 0.15));
+            border: 2px solid rgba(255, 140, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #ff8c00;
+            margin: 10px 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .shield-icon {
+            font-size: 3em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .checkpoint {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            margin: 10px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .layer-box {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 8px 0;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .layer-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .ecosystem-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .ecosystem-item:hover {
+            border-color: rgba(255, 140, 0, 0.8);
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .workflow-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #ff8c00;
+            margin: 5px 0;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-down {
+            animation: slideDown 0.6s ease-out forwards;
+        }
     </style>
 </head>
 <body>
@@ -529,25 +646,48 @@
         <h1 class="animate-fade-in-up">Zero Trust Model</h1>
         <p class="subtitle animate-fade-in-up delay-1">"Never Trust, Always Verify"</p>
 
-        <div class="three-column">
-            <div class="card animate-fade-in-up delay-2">
-                <div class="card-icon">✓</div>
-                <h3>Verify Explicitly</h3>
-                <p>Always authenticate and authorize based on all available data points.</p>
+        <div class="two-column">
+            <div>
+                <div class="card animate-fade-in-up delay-2">
+                    <div class="card-icon">✓</div>
+                    <h3>Verify Explicitly</h3>
+                    <p>Always authenticate and authorize based on all available data points.</p>
+                </div>
+                <div class="card animate-fade-in-up delay-3">
+                    <div class="card-icon">🔒</div>
+                    <h3>Least Privilege Access</h3>
+                    <p>Limit user access with just-in-time and just-enough-access (JIT/JEA).</p>
+                </div>
+                <div class="card animate-fade-in-up delay-4">
+                    <div class="card-icon">⚠️</div>
+                    <h3>Assume Breach</h3>
+                    <p>Minimize blast radius and segment access. Verify end-to-end encryption.</p>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-3">
-                <div class="card-icon">🔒</div>
-                <h3>Least Privilege Access</h3>
-                <p>Limit user access with just-in-time and just-enough-access (JIT/JEA).</p>
-            </div>
-            <div class="card animate-fade-in-up delay-4">
-                <div class="card-icon">⚠️</div>
-                <h3>Assume Breach</h3>
-                <p>Minimize blast radius and segment access. Verify end-to-end encryption.</p>
+
+            <div class="diagram animate-fade-in-up delay-2" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="shield-icon">🛡️</div>
+                <h3 style="color: #ff8c00; margin: 20px 0 10px;">Verification Flow</h3>
+                <div class="flow-box animate-slide-left delay-3">
+                    <strong>Request Access</strong>
+                    <div>User/Device/App</div>
+                </div>
+                <div class="flow-arrow animate-fade-in-up delay-4">↓</div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <div class="checkpoint animate-glow delay-4">✓</div>
+                    <div class="checkpoint animate-glow delay-5">✓</div>
+                    <div class="checkpoint animate-glow delay-6">✓</div>
+                </div>
+                <div style="font-size: 0.85em; color: #a0a0a0; margin: 5px 0;">Continuous Verification</div>
+                <div class="flow-arrow animate-fade-in-up delay-5">↓</div>
+                <div class="flow-box animate-slide-right delay-6" style="background: linear-gradient(135deg, rgba(16, 124, 16, 0.3), rgba(16, 124, 16, 0.15));">
+                    <strong>Conditional Access</strong>
+                    <div>Grant/Deny/MFA</div>
+                </div>
             </div>
         </div>
 
-        <div class="highlight-box animate-fade-in-up delay-5">
+        <div class="highlight-box animate-fade-in-up delay-6">
             <h3>Zero Trust Pillars</h3>
             <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
                 <span class="service-badge">Identities</span>
@@ -558,10 +698,6 @@
                 <span class="service-badge">Networks</span>
             </div>
         </div>
-
-        <div class="exam-tip animate-fade-in-up delay-6">
-            Memorize the 3 principles: Verify explicitly, Least privilege access, Assume breach.
-        </div>
     </div>
 
     <!-- Slide 7: Defense in Depth -->
@@ -570,33 +706,33 @@
         <h1 class="animate-fade-in-up">Defense in Depth</h1>
         <p class="subtitle animate-fade-in-up delay-1">Layered Security Approach</p>
 
-        <div class="animate-fade-in-up delay-2" style="max-width: 700px; margin: 0 auto;">
+        <div class="diagram animate-fade-in-up delay-2" style="max-width: 800px; margin: 0 auto;">
             <div style="text-align: center;">
-                <div style="background: rgba(255,0,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
-                    <strong>Physical Security</strong> - Data center access controls
+                <div class="layer-box animate-slide-left delay-2" style="background: rgba(255,0,0,0.2); border: 2px solid rgba(255,0,0,0.5);">
+                    🏢 <strong>Physical Security</strong> - Data center access controls
                 </div>
-                <div style="background: rgba(255,100,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
-                    <strong>Identity & Access</strong> - Authentication, MFA, Conditional Access
+                <div class="layer-box animate-slide-right delay-3" style="background: rgba(255,100,0,0.2); border: 2px solid rgba(255,100,0,0.5);">
+                    🔑 <strong>Identity & Access</strong> - Authentication, MFA, Conditional Access
                 </div>
-                <div style="background: rgba(255,200,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
-                    <strong>Perimeter</strong> - DDoS protection, Firewalls
+                <div class="layer-box animate-slide-left delay-4" style="background: rgba(255,200,0,0.2); border: 2px solid rgba(255,200,0,0.5);">
+                    🛡️ <strong>Perimeter</strong> - DDoS protection, Firewalls
                 </div>
-                <div style="background: rgba(100,255,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
-                    <strong>Network</strong> - Segmentation, NSGs, Private endpoints
+                <div class="layer-box animate-slide-right delay-5" style="background: rgba(100,255,0,0.2); border: 2px solid rgba(100,255,0,0.5);">
+                    🌐 <strong>Network</strong> - Segmentation, NSGs, Private endpoints
                 </div>
-                <div style="background: rgba(0,200,255,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
-                    <strong>Compute</strong> - VM security, Patching, Endpoint protection
+                <div class="layer-box animate-slide-left delay-6" style="background: rgba(0,200,255,0.2); border: 2px solid rgba(0,200,255,0.5);">
+                    💻 <strong>Compute</strong> - VM security, Patching, Endpoint protection
                 </div>
-                <div style="background: rgba(0,100,255,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
-                    <strong>Application</strong> - Secure code, Vulnerability management
+                <div class="layer-box animate-slide-right delay-6" style="background: rgba(0,100,255,0.2); border: 2px solid rgba(0,100,255,0.5);">
+                    📱 <strong>Application</strong> - Secure code, Vulnerability management
                 </div>
-                <div style="background: rgba(100,0,255,0.2); padding: 15px; border-radius: 10px;">
-                    <strong>Data</strong> - Encryption at rest and in transit
+                <div class="layer-box animate-fade-in-up delay-6" style="background: rgba(100,0,255,0.3); border: 3px solid rgba(100,0,255,0.8); animation: glow 2s ease-in-out infinite;">
+                    🔐 <strong>DATA</strong> - Encryption at rest and in transit (CORE)
                 </div>
             </div>
         </div>
 
-        <div class="exam-tip animate-fade-in-up delay-3" style="margin-top: 20px;">
+        <div class="exam-tip animate-fade-in-up delay-6" style="margin-top: 20px;">
             Defense in Depth = if one layer fails, others still protect. Multiple layers of security controls.
         </div>
     </div>
@@ -629,20 +765,34 @@
                     </ul>
                 </div>
             </div>
-            <div class="animate-slide-right delay-3">
-                <div class="card security-card">
-                    <h3>Identity as Primary Security Perimeter</h3>
-                    <p>In modern cloud environments, identity has replaced the network as the primary security boundary.</p>
-                    <ul style="margin-top: 20px;">
-                        <li><strong>Traditional:</strong> Firewall was the perimeter</li>
-                        <li><strong>Modern:</strong> Identity is the perimeter</li>
-                        <li><strong>Why:</strong> Users access from anywhere</li>
-                    </ul>
+            <div class="diagram animate-fade-in-up delay-3" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <h3 style="color: #ff8c00; margin-bottom: 20px;">AuthN → AuthZ Flow</h3>
+                <div class="flow-box animate-slide-down delay-3" style="background: linear-gradient(135deg, rgba(255, 69, 0, 0.3), rgba(255, 140, 0, 0.2)); width: 200px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">👤</div>
+                    <strong>User Login</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">Credentials</div>
+                </div>
+                <div class="flow-arrow animate-fade-in-up delay-4">↓</div>
+                <div class="flow-box animate-slide-down delay-4" style="background: linear-gradient(135deg, rgba(134, 97, 193, 0.3), rgba(134, 97, 193, 0.15)); width: 200px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔐</div>
+                    <strong>Authentication</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">WHO are you?</div>
+                </div>
+                <div class="flow-arrow animate-fade-in-up delay-5">↓</div>
+                <div class="flow-box animate-slide-down delay-5" style="background: linear-gradient(135deg, rgba(16, 124, 16, 0.3), rgba(16, 124, 16, 0.15)); width: 200px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">✓</div>
+                    <strong>Identity Verified</strong>
+                </div>
+                <div class="flow-arrow animate-fade-in-up delay-6">↓</div>
+                <div class="flow-box animate-slide-down delay-6" style="background: linear-gradient(135deg, rgba(0, 120, 212, 0.3), rgba(0, 120, 212, 0.15)); width: 200px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔑</div>
+                    <strong>Authorization</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">WHAT can you do?</div>
                 </div>
             </div>
         </div>
 
-        <div class="exam-tip animate-fade-in-up delay-4">
+        <div class="exam-tip animate-fade-in-up delay-6">
             Authentication = WHO you are. Authorization = WHAT you can do. Identity is the new perimeter.
         </div>
     </div>
@@ -969,42 +1119,59 @@
         <h1 class="animate-fade-in-up">Microsoft Defender XDR</h1>
         <p class="subtitle animate-fade-in-up delay-1">Extended Detection and Response</p>
 
-        <div class="four-column">
-            <div class="card animate-fade-in-up delay-2">
-                <div class="card-icon">💻</div>
-                <h3>Defender for Endpoint</h3>
-                <p>Protect devices (Windows, Mac, Linux, mobile)</p>
+        <div class="two-column">
+            <div>
+                <div class="card animate-fade-in-up delay-2" style="margin-bottom: 15px;">
+                    <div class="card-icon">💻</div>
+                    <h3>Defender for Endpoint</h3>
+                    <p>Protect devices (Windows, Mac, Linux, mobile)</p>
+                </div>
+                <div class="card animate-fade-in-up delay-3" style="margin-bottom: 15px;">
+                    <div class="card-icon">📧</div>
+                    <h3>Defender for Office 365</h3>
+                    <p>Protect email and collaboration</p>
+                </div>
+                <div class="card animate-fade-in-up delay-4" style="margin-bottom: 15px;">
+                    <div class="card-icon">👤</div>
+                    <h3>Defender for Identity</h3>
+                    <p>Protect on-prem Active Directory</p>
+                </div>
+                <div class="card animate-fade-in-up delay-5">
+                    <div class="card-icon">☁️</div>
+                    <h3>Defender for Cloud Apps</h3>
+                    <p>Protect SaaS apps (CASB)</p>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-3">
-                <div class="card-icon">📧</div>
-                <h3>Defender for Office 365</h3>
-                <p>Protect email and collaboration</p>
-            </div>
-            <div class="card animate-fade-in-up delay-4">
-                <div class="card-icon">👤</div>
-                <h3>Defender for Identity</h3>
-                <p>Protect on-prem Active Directory</p>
-            </div>
-            <div class="card animate-fade-in-up delay-5">
-                <div class="card-icon">☁️</div>
-                <h3>Defender for Cloud Apps</h3>
-                <p>Protect SaaS apps (CASB)</p>
-            </div>
-        </div>
 
-        <div class="two-column" style="margin-top: 30px;">
-            <div class="highlight-box animate-fade-in-up delay-6">
-                <h3>XDR Benefits</h3>
-                <ul>
-                    <li>Unified incident view</li>
-                    <li>Automated investigation</li>
-                    <li>Cross-domain correlation</li>
-                    <li>Coordinated response</li>
-                </ul>
-            </div>
-            <div class="tip-box animate-fade-in-up delay-6">
-                <h3>Microsoft Defender Portal</h3>
-                <p>Single pane of glass at security.microsoft.com for all Defender products.</p>
+            <div class="diagram animate-fade-in-up delay-2">
+                <h3 style="color: #ff8c00; text-align: center; margin-bottom: 20px;">XDR Ecosystem</h3>
+                <div class="ecosystem-grid">
+                    <div class="ecosystem-item animate-slide-left delay-3">
+                        <div style="font-size: 2em; margin-bottom: 10px;">💻</div>
+                        <strong>Endpoints</strong>
+                    </div>
+                    <div class="ecosystem-item animate-slide-right delay-3">
+                        <div style="font-size: 2em; margin-bottom: 10px;">📧</div>
+                        <strong>Email</strong>
+                    </div>
+                    <div class="ecosystem-item animate-slide-left delay-4">
+                        <div style="font-size: 2em; margin-bottom: 10px;">👤</div>
+                        <strong>Identities</strong>
+                    </div>
+                    <div class="ecosystem-item animate-slide-right delay-4">
+                        <div style="font-size: 2em; margin-bottom: 10px;">☁️</div>
+                        <strong>Cloud Apps</strong>
+                    </div>
+                </div>
+                <div class="workflow-arrow animate-fade-in-up delay-5">↓</div>
+                <div class="flow-box animate-fade-in-up delay-5" style="background: linear-gradient(135deg, rgba(255, 69, 0, 0.3), rgba(255, 140, 0, 0.2)); margin: 15px 0;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🛡️</div>
+                    <strong>Microsoft Defender Portal</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0; margin-top: 5px;">security.microsoft.com</div>
+                </div>
+                <div class="tip-box animate-fade-in-up delay-6" style="margin-top: 15px;">
+                    <strong>Unified View:</strong> Cross-domain correlation, automated investigation, coordinated response
+                </div>
             </div>
         </div>
     </div>
@@ -1018,12 +1185,14 @@
         <div class="two-column">
             <div class="animate-slide-left delay-2">
                 <div class="card">
-                    <h3>SIEM Capabilities</h3>
+                    <h3>Key Features</h3>
                     <ul>
-                        <li><strong>Collect:</strong> Data from all sources</li>
-                        <li><strong>Detect:</strong> Threats using analytics</li>
-                        <li><strong>Investigate:</strong> AI-powered hunting</li>
-                        <li><strong>Respond:</strong> Automated playbooks</li>
+                        <li><strong>Workbooks:</strong> Visualization dashboards</li>
+                        <li><strong>Analytics Rules:</strong> Threat detection</li>
+                        <li><strong>Incidents:</strong> Correlated alerts</li>
+                        <li><strong>Playbooks:</strong> Automated response (Logic Apps)</li>
+                        <li><strong>Hunting:</strong> Proactive threat hunting</li>
+                        <li><strong>Notebooks:</strong> Jupyter for investigation</li>
                     </ul>
                 </div>
                 <div class="card" style="margin-top: 20px;">
@@ -1036,22 +1205,35 @@
                     </ul>
                 </div>
             </div>
-            <div class="animate-slide-right delay-3">
-                <div class="card security-card">
-                    <h3>Key Features</h3>
-                    <ul>
-                        <li><strong>Workbooks:</strong> Visualization dashboards</li>
-                        <li><strong>Analytics Rules:</strong> Threat detection</li>
-                        <li><strong>Incidents:</strong> Correlated alerts</li>
-                        <li><strong>Playbooks:</strong> Automated response (Logic Apps)</li>
-                        <li><strong>Hunting:</strong> Proactive threat hunting</li>
-                        <li><strong>Notebooks:</strong> Jupyter for investigation</li>
-                    </ul>
+            <div class="diagram animate-fade-in-up delay-2">
+                <h3 style="color: #ff8c00; text-align: center; margin-bottom: 20px;">SIEM + SOAR Workflow</h3>
+                <div class="flow-box animate-slide-down delay-3" style="background: linear-gradient(135deg, rgba(0, 120, 212, 0.3), rgba(0, 120, 212, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">📥</div>
+                    <strong>1. COLLECT</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">Data from all sources</div>
+                </div>
+                <div class="workflow-arrow animate-fade-in-up delay-4">↓</div>
+                <div class="flow-box animate-slide-down delay-4" style="background: linear-gradient(135deg, rgba(255, 185, 0, 0.3), rgba(255, 185, 0, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">🔍</div>
+                    <strong>2. DETECT</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">Analytics & ML</div>
+                </div>
+                <div class="workflow-arrow animate-fade-in-up delay-5">↓</div>
+                <div class="flow-box animate-slide-down delay-5" style="background: linear-gradient(135deg, rgba(134, 97, 193, 0.3), rgba(134, 97, 193, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">🔎</div>
+                    <strong>3. INVESTIGATE</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">AI-powered hunting</div>
+                </div>
+                <div class="workflow-arrow animate-fade-in-up delay-6">↓</div>
+                <div class="flow-box animate-slide-down delay-6" style="background: linear-gradient(135deg, rgba(16, 124, 16, 0.3), rgba(16, 124, 16, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">⚡</div>
+                    <strong>4. RESPOND</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">Automated playbooks</div>
                 </div>
             </div>
         </div>
 
-        <div class="exam-tip animate-fade-in-up delay-4">
+        <div class="exam-tip animate-fade-in-up delay-6">
             Sentinel = SIEM (Security Information and Event Management) + SOAR (Security Orchestration, Automation, Response).
         </div>
     </div>
@@ -1076,20 +1258,35 @@
                     </ul>
                 </div>
             </div>
-            <div class="animate-slide-right delay-3">
-                <div class="card security-card">
-                    <h3>Data Governance</h3>
-                    <ul>
-                        <li><strong>Data Map:</strong> Discover data across estate</li>
-                        <li><strong>Data Catalog:</strong> Business glossary</li>
-                        <li><strong>Data Estate Insights:</strong> Health reports</li>
-                        <li><strong>Data Sharing:</strong> In-place data sharing</li>
-                    </ul>
+            <div class="diagram animate-fade-in-up delay-2">
+                <h3 style="color: #ff8c00; text-align: center; margin-bottom: 20px;">Compliance Workflow</h3>
+                <div class="flow-box animate-slide-down delay-3" style="background: linear-gradient(135deg, rgba(0, 120, 212, 0.3), rgba(0, 120, 212, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">🔍</div>
+                    <strong>Discover Data</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">Map & catalog</div>
+                </div>
+                <div class="workflow-arrow animate-fade-in-up delay-4">↓</div>
+                <div class="flow-box animate-slide-down delay-4" style="background: linear-gradient(135deg, rgba(134, 97, 193, 0.3), rgba(134, 97, 193, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">🏷️</div>
+                    <strong>Classify & Label</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">Sensitivity labels</div>
+                </div>
+                <div class="workflow-arrow animate-fade-in-up delay-5">↓</div>
+                <div class="flow-box animate-slide-down delay-5" style="background: linear-gradient(135deg, rgba(255, 185, 0, 0.3), rgba(255, 185, 0, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">🛡️</div>
+                    <strong>Protect</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">DLP policies</div>
+                </div>
+                <div class="workflow-arrow animate-fade-in-up delay-6">↓</div>
+                <div class="flow-box animate-slide-down delay-6" style="background: linear-gradient(135deg, rgba(16, 124, 16, 0.3), rgba(16, 124, 16, 0.15));">
+                    <div style="font-size: 1.8em; margin-bottom: 5px;">📊</div>
+                    <strong>Monitor & Report</strong>
+                    <div style="font-size: 0.85em; color: #a0a0a0;">Compliance score</div>
                 </div>
             </div>
         </div>
 
-        <div class="highlight-box animate-fade-in-up delay-4">
+        <div class="highlight-box animate-fade-in-up delay-6">
             <h3>Microsoft Purview Portal</h3>
             <p>Unified portal at compliance.microsoft.com for all compliance and governance tools.</p>
         </div>
@@ -1143,42 +1340,71 @@
         <h1 class="animate-fade-in-up">Information Protection</h1>
         <p class="subtitle animate-fade-in-up delay-1">Know Your Data, Protect Your Data</p>
 
-        <div class="three-column">
-            <div class="card animate-fade-in-up delay-2">
-                <div class="card-icon">🔍</div>
-                <h3>Know Your Data</h3>
-                <ul>
-                    <li>Sensitive info types</li>
-                    <li>Trainable classifiers</li>
-                    <li>Content explorer</li>
-                    <li>Activity explorer</li>
-                </ul>
+        <div class="two-column">
+            <div>
+                <div class="card animate-fade-in-up delay-2" style="margin-bottom: 15px;">
+                    <div class="card-icon">🔍</div>
+                    <h3>Know Your Data</h3>
+                    <ul>
+                        <li>Sensitive info types</li>
+                        <li>Trainable classifiers</li>
+                        <li>Content explorer</li>
+                        <li>Activity explorer</li>
+                    </ul>
+                </div>
+                <div class="card animate-fade-in-up delay-3" style="margin-bottom: 15px;">
+                    <div class="card-icon">🏷️</div>
+                    <h3>Protect Your Data</h3>
+                    <ul>
+                        <li>Sensitivity labels</li>
+                        <li>Encryption</li>
+                        <li>Content marking</li>
+                        <li>Access restrictions</li>
+                    </ul>
+                </div>
+                <div class="card animate-fade-in-up delay-4">
+                    <div class="card-icon">🚫</div>
+                    <h3>Prevent Data Loss</h3>
+                    <ul>
+                        <li>DLP policies</li>
+                        <li>Endpoint DLP</li>
+                        <li>Policy tips</li>
+                        <li>Override options</li>
+                    </ul>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-3">
-                <div class="card-icon">🏷️</div>
-                <h3>Protect Your Data</h3>
-                <ul>
-                    <li>Sensitivity labels</li>
-                    <li>Encryption</li>
-                    <li>Content marking</li>
-                    <li>Access restrictions</li>
-                </ul>
-            </div>
-            <div class="card animate-fade-in-up delay-4">
-                <div class="card-icon">🚫</div>
-                <h3>Prevent Data Loss</h3>
-                <ul>
-                    <li>DLP policies</li>
-                    <li>Endpoint DLP</li>
-                    <li>Policy tips</li>
-                    <li>Override options</li>
-                </ul>
-            </div>
-        </div>
 
-        <div class="highlight-box animate-fade-in-up delay-5">
-            <h3>Sensitivity Labels</h3>
-            <p>Apply labels to documents and emails. Labels can encrypt, add watermarks, restrict access, and follow data wherever it goes.</p>
+            <div class="diagram animate-fade-in-up delay-2">
+                <h3 style="color: #ff8c00; text-align: center; margin-bottom: 20px;">Data Protection Lifecycle</h3>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+                    <div class="flow-box animate-slide-left delay-3" style="flex: 1; background: linear-gradient(135deg, rgba(0, 120, 212, 0.3), rgba(0, 120, 212, 0.15)); padding: 15px;">
+                        <div style="font-size: 1.5em; margin-bottom: 5px;">🔍</div>
+                        <strong>Discover</strong>
+                    </div>
+                    <div class="flow-arrow animate-fade-in-up delay-4" style="font-size: 1.5em;">→</div>
+                    <div class="flow-box animate-slide-right delay-4" style="flex: 1; background: linear-gradient(135deg, rgba(134, 97, 193, 0.3), rgba(134, 97, 193, 0.15)); padding: 15px;">
+                        <div style="font-size: 1.5em; margin-bottom: 5px;">🏷️</div>
+                        <strong>Classify</strong>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div class="flow-arrow animate-fade-in-up delay-5" style="transform: rotate(90deg);">↓</div>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                    <div class="flow-box animate-slide-left delay-5" style="flex: 1; background: linear-gradient(135deg, rgba(16, 124, 16, 0.3), rgba(16, 124, 16, 0.15)); padding: 15px;">
+                        <div style="font-size: 1.5em; margin-bottom: 5px;">📊</div>
+                        <strong>Monitor</strong>
+                    </div>
+                    <div class="flow-arrow animate-fade-in-up delay-6" style="font-size: 1.5em;">←</div>
+                    <div class="flow-box animate-slide-right delay-6" style="flex: 1; background: linear-gradient(135deg, rgba(255, 69, 0, 0.3), rgba(255, 69, 0, 0.15)); padding: 15px;">
+                        <div style="font-size: 1.5em; margin-bottom: 5px;">🛡️</div>
+                        <strong>Protect</strong>
+                    </div>
+                </div>
+                <div class="tip-box animate-fade-in-up delay-6" style="margin-top: 20px;">
+                    <strong>Labels follow data:</strong> Protection persists wherever data goes
+                </div>
+            </div>
         </div>
     </div>
 

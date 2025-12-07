@@ -645,6 +645,35 @@ COURSES = {
                 ]
             }
         }
+    },
+    "llm-fine-tuning": {
+        "id": "llm-fine-tuning",
+        "name": "LLM Fine-Tuning",
+        "description": "2-day technical workshop on customizing Large Language Models using LoRA, QLoRA, and PEFT methods",
+        "icon": "🔧",
+        "duration": "2 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "ft-slides", "name": "Presentation Slides", "file": "llm-fine-tuning/llm-fine-tuning-slides.html", "type": "slides"},
+                    {"id": "ft-pdf", "name": "Slides (PDF Download)", "file": "llm-fine-tuning/llm-fine-tuning-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "ft-notes", "name": "Student Notes", "file": "llm-fine-tuning/student-notes.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "ft-lab1", "name": "Lab 1: QLoRA Fine-Tuning", "file": "llm-fine-tuning/labs/lab1-qlora-finetuning.ipynb", "type": "lab", "runnable": True},
+                    {"id": "ft-lab2", "name": "Lab 2: Evaluation & Deployment", "file": "llm-fine-tuning/labs/lab2-evaluation-deployment.ipynb", "type": "lab", "runnable": True},
+                ]
+            }
+        }
     }
 }
 

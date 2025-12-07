@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Fine-Tuning - AI Elevate</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .slide {
+            min-height: 100vh;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 0, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .slide-content { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; width: 100%; }
+        h1 { font-size: 3.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        h2 { font-size: 2.5rem; margin-bottom: 1.5rem; color: #00d4ff; }
+        h3 { font-size: 1.8rem; margin-bottom: 1rem; color: #a78bfa; }
+        p, li { font-size: 1.4rem; line-height: 1.8; color: #e2e8f0; }
+        ul { margin-left: 2rem; }
+        li { margin-bottom: 0.8rem; }
+        .subtitle { font-size: 1.8rem; color: #94a3b8; margin-bottom: 2rem; }
+        .highlight { color: #00d4ff; font-weight: 600; }
+        .accent { color: #a78bfa; }
+        .warning { color: #fbbf24; }
+        .success { color: #34d399; }
+
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .three-column { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .four-column { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .card-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .card h3 { font-size: 1.5rem; margin-bottom: 0.8rem; }
+        .card p, .card li { font-size: 1.1rem; }
+
+        .code-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .code-block code { color: #e6edf3; }
+        .code-comment { color: #8b949e; }
+        .code-keyword { color: #ff7b72; }
+        .code-string { color: #a5d6ff; }
+        .code-function { color: #d2a8ff; }
+        .code-number { color: #79c0ff; }
+
+        .diagram {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+        .flow-arrow { color: #00d4ff; font-size: 2rem; margin: 0 20px; }
+        .flow-box {
+            display: inline-block;
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .comparison-table th {
+            background: rgba(124, 58, 237, 0.3);
+            color: #a78bfa;
+            font-size: 1.1rem;
+        }
+        .comparison-table td { font-size: 1rem; color: #cbd5e1; }
+        .comparison-table tr:hover { background: rgba(255,255,255,0.05); }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05));
+            border-left: 4px solid #22c55e;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.05));
+            border-left: 4px solid #fbbf24;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.05));
+            border-left: 4px solid #00d4ff;
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .tag-purple { background: rgba(124, 58, 237, 0.3); color: #a78bfa; }
+        .tag-blue { background: rgba(59, 130, 246, 0.3); color: #60a5fa; }
+        .tag-green { background: rgba(34, 197, 94, 0.3); color: #4ade80; }
+        .tag-yellow { background: rgba(251, 191, 36, 0.3); color: #fbbf24; }
+
+        .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 2rem 0; }
+        .metric-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+        .metric-value { font-size: 2.5rem; font-weight: 700; color: #00d4ff; }
+        .metric-label { font-size: 1rem; color: #94a3b8; margin-top: 8px; }
+
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+        .nav-btn {
+            background: rgba(124, 58, 237, 0.8);
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .nav-btn:hover { background: rgba(124, 58, 237, 1); transform: scale(1.05); }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            z-index: 1000;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 212, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.8); }
+        }
+        .animate { animation: fadeInUp 0.6s ease-out forwards; }
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+        .delay-5 { animation-delay: 0.5s; opacity: 0; }
+        .delay-6 { animation-delay: 0.6s; opacity: 0; }
+        .slide-left { animation: slideInLeft 0.6s ease-out forwards; }
+        .slide-right { animation: slideInRight 0.6s ease-out forwards; }
+
+        /* LoRA visualization styles */
+        .lora-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 2rem 0;
+        }
+        .matrix-box {
+            background: rgba(124, 58, 237, 0.2);
+            border: 2px solid #7c3aed;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .matrix-large {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .matrix-small {
+            width: 120px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .matrix-small-horizontal {
+            width: 200px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .matrix-label {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+        .matrix-dim {
+            font-size: 1rem;
+            color: #94a3b8;
+        }
+        .matrix-highlight {
+            color: #fbbf24;
+            font-weight: 700;
+        }
+        .arrow-large {
+            font-size: 3rem;
+            color: #00d4ff;
+        }
+        .plus-sign {
+            font-size: 3rem;
+            color: #34d399;
+            font-weight: 700;
+        }
+        .multiply-sign {
+            font-size: 2rem;
+            color: #a78bfa;
+            font-weight: 700;
+        }
+        .decomposition-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .layer-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 1rem;
+        }
+        .layer-item {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 1.1rem;
+            font-family: 'Fira Code', monospace;
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1: Title -->
+    <div class="slide" id="slide1">
+        <div class="slide-content" style="text-align: center;">
+            <div style="font-size: 5rem; margin-bottom: 2rem;">🔧</div>
+            <h1 class="animate">LLM Fine-Tuning</h1>
+            <p class="subtitle animate delay-1">Customizing Large Language Models for Your Use Case</p>
+            <p class="animate delay-2" style="font-size: 1.3rem; color: #64748b; margin-top: 3rem;">2-Day Technical Workshop</p>
+            <div class="animate delay-3" style="margin-top: 2rem;">
+                <span class="tag tag-purple">LoRA</span>
+                <span class="tag tag-blue">QLoRA</span>
+                <span class="tag tag-green">PEFT</span>
+                <span class="tag tag-yellow">Hugging Face</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2: Course Overview -->
+    <div class="slide" id="slide2">
+        <div class="slide-content">
+            <h2>Course Overview</h2>
+            <div class="two-column">
+                <div class="card animate">
+                    <div class="card-icon">📅</div>
+                    <h3>Day 1: Foundations</h3>
+                    <ul>
+                        <li>When to fine-tune vs prompt</li>
+                        <li>Types of fine-tuning approaches</li>
+                        <li>Data preparation & formatting</li>
+                        <li>LoRA and PEFT methods</li>
+                        <li>Infrastructure & tooling</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">🔬</div>
+                    <h3>Day 2: Hands-On</h3>
+                    <ul>
+                        <li>Fine-tuning with LoRA lab</li>
+                        <li>Evaluation & benchmarking</li>
+                        <li>Deployment strategies</li>
+                        <li>Cost optimization</li>
+                        <li>Production best practices</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Why Fine-Tune? -->
+    <div class="slide" id="slide3">
+        <div class="slide-content">
+            <h2>Why Fine-Tune an LLM?</h2>
+            <div class="three-column">
+                <div class="card animate">
+                    <div class="card-icon">🎯</div>
+                    <h3>Domain Expertise</h3>
+                    <p>Teach the model specialized knowledge in medicine, law, finance, or your industry</p>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">🎨</div>
+                    <h3>Style & Tone</h3>
+                    <p>Match your brand voice, communication style, or specific output formats</p>
+                </div>
+                <div class="card animate delay-2">
+                    <div class="card-icon">⚡</div>
+                    <h3>Performance</h3>
+                    <p>Smaller fine-tuned models can outperform larger general models on specific tasks</p>
+                </div>
+            </div>
+            <div class="info-box animate delay-3" style="margin-top: 2rem;">
+                <strong>Key Insight:</strong> Fine-tuning teaches the model <em>how</em> to respond, while RAG provides <em>what</em> to respond with. They're complementary approaches.
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Fine-Tuning vs Alternatives -->
+    <div class="slide" id="slide4">
+        <div class="slide-content">
+            <h2>Fine-Tuning vs Alternatives</h2>
+            <table class="comparison-table animate">
+                <thead>
+                    <tr>
+                        <th>Approach</th>
+                        <th>Best For</th>
+                        <th>Cost</th>
+                        <th>Complexity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Prompt Engineering</span></td>
+                        <td>Quick iterations, general tasks</td>
+                        <td class="success">Low (API costs only)</td>
+                        <td class="success">Low</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">RAG</span></td>
+                        <td>Knowledge-intensive, up-to-date info</td>
+                        <td class="warning">Medium</td>
+                        <td class="warning">Medium</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Fine-Tuning</span></td>
+                        <td>Style, format, specialized behavior</td>
+                        <td class="warning">Medium-High</td>
+                        <td class="warning">High</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Pre-Training</span></td>
+                        <td>Entirely new domains/languages</td>
+                        <td style="color: #ef4444;">Very High</td>
+                        <td style="color: #ef4444;">Very High</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="tip-box animate delay-1">
+                <strong>Rule of Thumb:</strong> Start with prompting, add RAG for knowledge, fine-tune for behavior. Pre-train only if absolutely necessary.
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: When to Fine-Tune -->
+    <div class="slide" id="slide5">
+        <div class="slide-content">
+            <h2>When to Fine-Tune</h2>
+            <div class="two-column">
+                <div>
+                    <h3 class="success">✅ Good Candidates</h3>
+                    <ul class="animate">
+                        <li>Consistent output format required</li>
+                        <li>Specific writing style or tone</li>
+                        <li>Domain-specific terminology</li>
+                        <li>Reducing prompt length/cost</li>
+                        <li>Improving task-specific accuracy</li>
+                        <li>Teaching new behaviors</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: #ef4444;">❌ Not Ideal For</h3>
+                    <ul class="animate delay-1">
+                        <li>Frequently changing information</li>
+                        <li>Factual knowledge injection</li>
+                        <li>Tasks achievable with prompting</li>
+                        <li>Limited training data (&lt;100 examples)</li>
+                        <li>Highly diverse task requirements</li>
+                        <li>Quick prototyping needs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Types of Fine-Tuning -->
+    <div class="slide" id="slide6">
+        <div class="slide-content">
+            <h2>Types of Fine-Tuning</h2>
+            <div class="diagram animate" style="margin-bottom: 2rem;">
+                <div class="flow-box">Full Fine-Tuning</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">LoRA</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">QLoRA</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">Adapters</div>
+            </div>
+            <div class="metric-grid animate delay-1">
+                <div class="metric-card">
+                    <div class="metric-value">100%</div>
+                    <div class="metric-label">Full Fine-Tuning<br>All parameters</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.1-1%</div>
+                    <div class="metric-label">LoRA<br>Low-rank adapters</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">4-bit</div>
+                    <div class="metric-label">QLoRA<br>Quantized + LoRA</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">~1%</div>
+                    <div class="metric-label">Adapters<br>Bottleneck layers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Full Fine-Tuning -->
+    <div class="slide" id="slide7">
+        <div class="slide-content">
+            <h2>Full Fine-Tuning</h2>
+            <div class="two-column">
+                <div>
+                    <h3>How It Works</h3>
+                    <p class="animate">Update <span class="highlight">all model parameters</span> during training on your dataset.</p>
+                    <div class="card animate delay-1" style="margin-top: 1.5rem;">
+                        <h3 class="success">Pros</h3>
+                        <ul>
+                            <li>Maximum flexibility</li>
+                            <li>Best potential performance</li>
+                            <li>Full model customization</li>
+                        </ul>
+                    </div>
+                    <div class="card animate delay-2" style="margin-top: 1rem;">
+                        <h3 style="color: #ef4444;">Cons</h3>
+                        <ul>
+                            <li>Requires massive GPU memory</li>
+                            <li>Risk of catastrophic forgetting</li>
+                            <li>Expensive and time-consuming</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="animate delay-2">
+                    <h3>Memory Requirements</h3>
+                    <table class="comparison-table">
+                        <tr><th>Model</th><th>Parameters</th><th>GPU RAM</th></tr>
+                        <tr><td>Llama 2 7B</td><td>7B</td><td>~56 GB</td></tr>
+                        <tr><td>Llama 2 13B</td><td>13B</td><td>~104 GB</td></tr>
+                        <tr><td>Llama 2 70B</td><td>70B</td><td>~560 GB</td></tr>
+                    </table>
+                    <div class="warning-box" style="margin-top: 1rem;">
+                        Full fine-tuning requires ~8x model size in GPU memory (model + gradients + optimizer states)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: LoRA Deep Dive -->
+    <div class="slide" id="slide8">
+        <div class="slide-content">
+            <h2>LoRA: Low-Rank Adaptation</h2>
+            <div class="two-column">
+                <div>
+                    <h3>The Key Insight</h3>
+                    <p class="animate">Weight updates during fine-tuning have <span class="highlight">low intrinsic rank</span>. Instead of updating the full weight matrix, we add small trainable matrices.</p>
+                    <div class="code-block animate delay-1">
+                        <code>
+<span class="code-comment"># Original: W (d × k matrix)</span>
+<span class="code-comment"># LoRA adds: W + BA</span>
+<span class="code-comment"># Where B (d × r) and A (r × k)</span>
+<span class="code-comment"># r << min(d, k) (e.g., r=8 or r=16)</span>
+
+<span class="code-keyword">from</span> peft <span class="code-keyword">import</span> LoraConfig
+
+config = LoraConfig(
+    r=<span class="code-number">16</span>,              <span class="code-comment"># Rank</span>
+    lora_alpha=<span class="code-number">32</span>,     <span class="code-comment"># Scaling</span>
+    target_modules=[<span class="code-string">"q_proj"</span>, <span class="code-string">"v_proj"</span>],
+    lora_dropout=<span class="code-number">0.05</span>,
+)
+                        </code>
+                    </div>
+                </div>
+                <div>
+                    <div class="card animate delay-2">
+                        <h3>LoRA Benefits</h3>
+                        <ul>
+                            <li><span class="success">90-99% fewer trainable parameters</span></li>
+                            <li>Fits on consumer GPUs</li>
+                            <li>No inference latency added</li>
+                            <li>Easy to swap/combine adapters</li>
+                            <li>Preserves base model knowledge</li>
+                        </ul>
+                    </div>
+                    <div class="metric-grid" style="grid-template-columns: 1fr 1fr; margin-top: 1.5rem;">
+                        <div class="metric-card">
+                            <div class="metric-value">~1%</div>
+                            <div class="metric-label">Trainable Params</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">10-50x</div>
+                            <div class="metric-label">Memory Savings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9: How LoRA Works - Visual Explanation -->
+    <div class="slide" id="slide9">
+        <div class="slide-content">
+            <h2>How LoRA Works: The Math Behind It</h2>
+            <p class="subtitle">Weight Matrix Decomposition for Efficient Fine-Tuning</p>
+
+            <div class="decomposition-container">
+                <!-- Visual diagram showing W = W0 + BA -->
+                <div class="lora-diagram">
+                    <div class="matrix-box matrix-large animate">
+                        <div class="matrix-label">W</div>
+                        <div class="matrix-dim">d × k</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #94a3b8;">Original Weight</div>
+                    </div>
+
+                    <div class="arrow-large animate delay-1">=</div>
+
+                    <div class="matrix-box matrix-large animate delay-2" style="border-color: #34d399; background: rgba(34, 197, 94, 0.1);">
+                        <div class="matrix-label" style="color: #34d399;">W₀</div>
+                        <div class="matrix-dim">d × k</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #94a3b8;">Frozen Base</div>
+                    </div>
+
+                    <div class="plus-sign animate delay-3">+</div>
+
+                    <div style="display: flex; align-items: center; gap: 15px;" class="animate delay-4">
+                        <div class="matrix-box matrix-small" style="border-color: #fbbf24; background: rgba(251, 191, 36, 0.1);">
+                            <div class="matrix-label" style="color: #fbbf24;">B</div>
+                            <div class="matrix-dim">d × <span class="matrix-highlight">r</span></div>
+                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #94a3b8;">Trainable</div>
+                        </div>
+
+                        <div class="multiply-sign">×</div>
+
+                        <div class="matrix-box matrix-small-horizontal" style="border-color: #a78bfa; background: rgba(124, 58, 237, 0.1);">
+                            <div class="matrix-label" style="color: #a78bfa;">A</div>
+                            <div class="matrix-dim"><span class="matrix-highlight">r</span> × k</div>
+                            <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #94a3b8;">Trainable</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key insight boxes -->
+                <div class="two-column" style="margin-top: 2rem;">
+                    <div class="card animate delay-5">
+                        <h3 class="success">Why This Works</h3>
+                        <ul>
+                            <li><strong>Low Intrinsic Rank:</strong> Fine-tuning changes have low-dimensional structure</li>
+                            <li><strong>Small r:</strong> Typically r = 8, 16, or 32 (vs d, k = 4096+)</li>
+                            <li><strong>Massive Reduction:</strong> Instead of d×k parameters, only (d×r) + (r×k)</li>
+                            <li><strong>Example:</strong> 4096×4096 = 16M params → (4096×16) + (16×4096) = 131K params</li>
+                        </ul>
+                    </div>
+
+                    <div class="card animate delay-6">
+                        <h3 style="color: #00d4ff;">Target Layers in Transformers</h3>
+                        <p style="margin-bottom: 1rem;">LoRA typically applies to attention projection layers:</p>
+                        <div class="layer-list">
+                            <div class="layer-item">q_proj</div>
+                            <div class="layer-item">k_proj</div>
+                            <div class="layer-item">v_proj</div>
+                            <div class="layer-item">o_proj</div>
+                        </div>
+                        <div class="info-box" style="margin-top: 1rem; font-size: 0.95rem;">
+                            <strong>Optional:</strong> Can also apply to feed-forward layers (gate_proj, up_proj, down_proj) for more capacity
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mathematical explanation -->
+                <div class="card animate delay-6" style="margin-top: 1.5rem; background: rgba(0, 212, 255, 0.05);">
+                    <h3 style="color: #00d4ff;">Memory Efficiency Calculation</h3>
+                    <div class="two-column" style="gap: 30px; align-items: center;">
+                        <div>
+                            <p style="margin-bottom: 1rem;"><strong>Full Fine-Tuning:</strong></p>
+                            <div class="code-block" style="margin: 0;">
+                                <code>
+<span class="code-comment"># Parameters to train: d × k</span>
+<span class="code-comment"># Example: 4096 × 4096 = 16,777,216</span>
+                                </code>
+                            </div>
+                        </div>
+                        <div>
+                            <p style="margin-bottom: 1rem;"><strong>LoRA (r=16):</strong></p>
+                            <div class="code-block" style="margin: 0;">
+                                <code>
+<span class="code-comment"># Parameters to train: (d × r) + (r × k)</span>
+<span class="code-comment"># Example: (4096×16) + (16×4096) = 131,072</span>
+<span class="code-comment"># Reduction: 128x fewer parameters!</span>
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 10: QLoRA -->
+    <div class="slide" id="slide10">
+        <div class="slide-content">
+            <h2>QLoRA: Quantized LoRA</h2>
+            <p class="subtitle">Fine-tune 65B models on a single 48GB GPU</p>
+
+            <!-- 1. 4-bit Quantization Visualization -->
+            <h3 style="margin-top: 2rem; color: #00d4ff;">1. 4-bit Quantization (NF4)</h3>
+            <div class="diagram" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 40px;">
+                    <!-- FP16 representation -->
+                    <div class="animate slide-left">
+                        <div style="background: rgba(124, 58, 237, 0.2); border: 2px solid #7c3aed; border-radius: 12px; padding: 20px; text-align: center;">
+                            <div style="font-size: 1.3rem; font-weight: 700; color: #a78bfa; margin-bottom: 1rem;">FP16 Weight</div>
+                            <div style="display: flex; gap: 3px; margin-bottom: 0.5rem;">
+                                <div style="width: 12px; height: 40px; background: #ef4444; border-radius: 2px;" title="Sign"></div>
+                                <div style="width: 60px; height: 40px; background: #3b82f6; border-radius: 2px;" title="Exponent"></div>
+                                <div style="width: 120px; height: 40px; background: #22c55e; border-radius: 2px;" title="Mantissa"></div>
+                            </div>
+                            <div style="font-size: 0.9rem; color: #94a3b8;">16 bits per weight</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #fbbf24; margin-top: 0.5rem;">~32 GB</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">(for 7B model)</div>
+                        </div>
+                    </div>
+
+                    <!-- Compression arrow -->
+                    <div class="animate pulse delay-1" style="font-size: 3rem; color: #00d4ff;">→</div>
+
+                    <!-- 4-bit NF4 representation -->
+                    <div class="animate slide-right delay-2">
+                        <div style="background: rgba(34, 197, 94, 0.2); border: 2px solid #22c55e; border-radius: 12px; padding: 20px; text-align: center;">
+                            <div style="font-size: 1.3rem; font-weight: 700; color: #22c55e; margin-bottom: 1rem;">NF4 Weight</div>
+                            <div style="display: flex; gap: 2px; margin-bottom: 0.5rem; justify-content: center;">
+                                <div style="width: 48px; height: 40px; background: linear-gradient(135deg, #3b82f6, #22c55e); border-radius: 2px;"></div>
+                            </div>
+                            <div style="font-size: 0.9rem; color: #94a3b8;">4 bits per weight</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #22c55e; margin-top: 0.5rem;">~8 GB</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">(for 7B model)</div>
+                        </div>
+                    </div>
+
+                    <!-- Reduction indicator -->
+                    <div class="animate fadeInUp delay-3" style="background: rgba(34, 197, 94, 0.2); border: 2px solid #22c55e; border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 2.5rem; font-weight: 700; color: #22c55e;">4x</div>
+                        <div style="font-size: 1rem; color: #94a3b8;">Memory<br>Reduction</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Double Quantization Animation -->
+            <h3 style="color: #00d4ff; margin-top: 1.5rem;">2. Double Quantization</h3>
+            <div class="diagram" style="margin-bottom: 2rem;">
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- First level quantization -->
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 30px;">
+                        <div class="animate slide-left delay-4" style="background: rgba(124, 58, 237, 0.2); border: 2px solid #7c3aed; border-radius: 12px; padding: 15px 25px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #a78bfa;">FP32 Weights</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.3rem;">Original precision</div>
+                        </div>
+                        <div class="animate delay-4" style="font-size: 2rem; color: #00d4ff;">→</div>
+                        <div class="animate slide-right delay-4" style="background: rgba(59, 130, 246, 0.2); border: 2px solid #3b82f6; border-radius: 12px; padding: 15px 25px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #3b82f6;">NF4 Weights</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.3rem;">4-bit quantized</div>
+                        </div>
+                        <div class="animate delay-4" style="font-size: 1.5rem; color: #34d399;">+</div>
+                        <div class="animate fadeInUp delay-5" style="background: rgba(251, 191, 36, 0.2); border: 2px solid #fbbf24; border-radius: 12px; padding: 15px 25px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #fbbf24;">FP32 Constants</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.3rem;">Quantization scale</div>
+                        </div>
+                    </div>
+
+                    <!-- Second level quantization -->
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                        <div class="animate pulse delay-6" style="font-size: 1.8rem; color: #00d4ff;">↓ Quantize Again!</div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 30px;">
+                        <div class="animate slide-left delay-6" style="background: rgba(59, 130, 246, 0.2); border: 2px solid #3b82f6; border-radius: 12px; padding: 15px 25px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #3b82f6;">NF4 Weights</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.3rem;">Still 4-bit</div>
+                        </div>
+                        <div class="animate delay-6" style="font-size: 1.5rem; color: #34d399;">+</div>
+                        <div class="animate slide-right delay-6" style="background: rgba(34, 197, 94, 0.2); border: 2px solid #22c55e; border-radius: 12px; padding: 15px 25px; text-align: center;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #22c55e;">INT8 Constants</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.3rem;">Quantized scale!</div>
+                        </div>
+                        <div class="animate glow delay-6" style="background: rgba(34, 197, 94, 0.3); border: 2px solid #22c55e; border-radius: 12px; padding: 12px 20px;">
+                            <div style="font-size: 0.9rem; font-weight: 700; color: #22c55e;">0.5 GB saved</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Memory Comparison Animation -->
+            <h3 style="color: #00d4ff; margin-top: 1.5rem;">3. Memory Comparison (7B Model)</h3>
+            <div class="diagram" style="margin-bottom: 2rem; padding: 30px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+                    <!-- Full Precision -->
+                    <div class="animate fadeInUp" style="text-align: center;">
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #a78bfa; margin-bottom: 1rem;">Full Precision</div>
+                        <div style="position: relative; height: 200px; display: flex; flex-direction: column; justify-content: flex-end;">
+                            <div style="height: 100%; background: linear-gradient(180deg, #7c3aed, #a78bfa); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-direction: column; animation: slideInLeft 1s ease-out;">
+                                <div style="font-size: 2rem; font-weight: 700; color: white;">56 GB</div>
+                                <div style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-top: 0.3rem;">FP16</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LoRA 16-bit -->
+                    <div class="animate fadeInUp delay-1" style="text-align: center;">
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #3b82f6; margin-bottom: 1rem;">LoRA (16-bit)</div>
+                        <div style="position: relative; height: 200px; display: flex; flex-direction: column; justify-content: flex-end;">
+                            <div style="height: 57%; background: linear-gradient(180deg, #3b82f6, #60a5fa); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-direction: column; animation: slideInLeft 1.2s ease-out;">
+                                <div style="font-size: 2rem; font-weight: 700; color: white;">16 GB</div>
+                                <div style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-top: 0.3rem;">3.5x smaller</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QLoRA 4-bit -->
+                    <div class="animate fadeInUp delay-2" style="text-align: center;">
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #22c55e; margin-bottom: 1rem;">QLoRA (4-bit)</div>
+                        <div style="position: relative; height: 200px; display: flex; flex-direction: column; justify-content: flex-end;">
+                            <div class="glow" style="height: 21%; background: linear-gradient(180deg, #22c55e, #4ade80); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-direction: column; animation: slideInLeft 1.4s ease-out;">
+                                <div style="font-size: 2rem; font-weight: 700; color: white;">6 GB</div>
+                                <div style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-top: 0.3rem;">9x smaller!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tip-box" style="margin-top: 2rem; font-size: 0.95rem;">
+                    <strong>Impact:</strong> Train a 7B model on a consumer GPU (RTX 3090/4090) instead of requiring A100s!
+                </div>
+            </div>
+
+            <!-- 4. Paged Optimizers Visual -->
+            <h3 style="color: #00d4ff; margin-top: 1.5rem;">4. Paged Optimizers</h3>
+            <div class="diagram" style="padding: 30px;">
+                <div style="display: flex; align-items: stretch; gap: 40px; justify-content: center;">
+                    <!-- GPU Memory -->
+                    <div class="animate slide-left delay-3" style="flex: 1; max-width: 280px;">
+                        <div style="background: rgba(239, 68, 68, 0.2); border: 3px solid #ef4444; border-radius: 12px; padding: 20px; height: 100%;">
+                            <div style="font-size: 1.3rem; font-weight: 700; color: #ef4444; margin-bottom: 1rem; text-align: center;">🎮 GPU VRAM</div>
+                            <div style="background: rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #fca5a5;">Model Weights</div>
+                                <div style="font-size: 0.8rem; color: #cbd5e1;">4-bit quantized</div>
+                            </div>
+                            <div style="background: rgba(251, 191, 36, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #fbbf24;">Active Pages</div>
+                                <div style="font-size: 0.8rem; color: #cbd5e1;">Current batch</div>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px;">
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #60a5fa;">LoRA Adapters</div>
+                                <div style="font-size: 0.8rem; color: #cbd5e1;">Trainable params</div>
+                            </div>
+                            <div style="margin-top: 1rem; text-align: center; font-size: 1.2rem; font-weight: 700; color: #22c55e;">16 GB total</div>
+                        </div>
+                    </div>
+
+                    <!-- Bidirectional arrows -->
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px;">
+                        <div class="animate pulse delay-4" style="font-size: 2rem; color: #00d4ff;">⇄</div>
+                        <div style="font-size: 0.85rem; color: #94a3b8; text-align: center; max-width: 100px;">Memory<br>Paging</div>
+                        <div class="animate delay-4" style="font-size: 0.9rem; color: #34d399; background: rgba(34, 197, 94, 0.2); padding: 8px 12px; border-radius: 8px;">Automatic<br>Swap</div>
+                    </div>
+
+                    <!-- CPU Memory -->
+                    <div class="animate slide-right delay-3" style="flex: 1; max-width: 280px;">
+                        <div style="background: rgba(59, 130, 246, 0.2); border: 3px solid #3b82f6; border-radius: 12px; padding: 20px; height: 100%;">
+                            <div style="font-size: 1.3rem; font-weight: 700; color: #3b82f6; margin-bottom: 1rem; text-align: center;">💾 CPU RAM</div>
+                            <div style="background: rgba(148, 163, 184, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #94a3b8;">Inactive Pages</div>
+                                <div style="font-size: 0.8rem; color: #cbd5e1;">Optimizer states</div>
+                            </div>
+                            <div style="background: rgba(148, 163, 184, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #94a3b8;">Gradient Cache</div>
+                                <div style="font-size: 0.8rem; color: #cbd5e1;">Previous batches</div>
+                            </div>
+                            <div style="background: rgba(148, 163, 184, 0.2); border-radius: 8px; padding: 12px;">
+                                <div style="font-size: 0.95rem; font-weight: 600; color: #94a3b8;">Overflow Buffer</div>
+                                <div style="font-size: 0.8rem; color: #cbd5e1;">Spike handling</div>
+                            </div>
+                            <div style="margin-top: 1rem; text-align: center; font-size: 1.2rem; font-weight: 700; color: #94a3b8;">32+ GB available</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 2rem; font-size: 0.95rem;">
+                    <strong>How It Works:</strong> When GPU memory spikes (e.g., during gradient computation), inactive optimizer states are automatically moved to CPU RAM, then swapped back when needed. This prevents OOM errors during training.
+                </div>
+            </div>
+
+            <!-- Code Example -->
+            <div class="code-block animate delay-5" style="margin-top: 2rem;">
+                <code>
+<span class="code-keyword">from</span> transformers <span class="code-keyword">import</span> BitsAndBytesConfig
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=<span class="code-keyword">True</span>,                      <span class="code-comment"># Enable 4-bit quantization</span>
+    bnb_4bit_quant_type=<span class="code-string">"nf4"</span>,                <span class="code-comment"># Use NormalFloat 4-bit</span>
+    bnb_4bit_compute_dtype=torch.bfloat16,   <span class="code-comment"># Compute in BF16 for stability</span>
+    bnb_4bit_use_double_quant=<span class="code-keyword">True</span>,         <span class="code-comment"># Enable double quantization</span>
+)
+                </code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 11: Memory Comparison -->
+    <div class="slide" id="slide11">
+        <div class="slide-content">
+            <h2>Memory Requirements Comparison</h2>
+            <table class="comparison-table animate">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Full FT</th>
+                        <th>LoRA (16-bit)</th>
+                        <th>QLoRA (4-bit)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Llama 2 7B</td>
+                        <td>~56 GB</td>
+                        <td>~16 GB</td>
+                        <td class="success">~6 GB</td>
+                    </tr>
+                    <tr>
+                        <td>Llama 2 13B</td>
+                        <td>~104 GB</td>
+                        <td>~32 GB</td>
+                        <td class="success">~10 GB</td>
+                    </tr>
+                    <tr>
+                        <td>Llama 2 70B</td>
+                        <td>~560 GB</td>
+                        <td>~160 GB</td>
+                        <td class="success">~48 GB</td>
+                    </tr>
+                    <tr>
+                        <td>Mistral 7B</td>
+                        <td>~56 GB</td>
+                        <td>~16 GB</td>
+                        <td class="success">~6 GB</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="tip-box animate delay-1">
+                <strong>Practical Impact:</strong> QLoRA enables fine-tuning a 7B model on a single RTX 3090/4090 (24GB) or even RTX 3080 (10GB) for smaller models!
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 12: Data Preparation -->
+    <div class="slide" id="slide12">
+        <div class="slide-content">
+            <h2>Data Preparation</h2>
+            <div class="two-column">
+                <div>
+                    <h3>Data Quality Matters Most</h3>
+                    <ul class="animate">
+                        <li><span class="highlight">Quality over quantity</span> - 1000 good examples beat 10000 noisy ones</li>
+                        <li>Diverse examples covering edge cases</li>
+                        <li>Consistent formatting and structure</li>
+                        <li>Representative of production use</li>
+                    </ul>
+                    <div class="metric-grid animate delay-1" style="grid-template-columns: repeat(3, 1fr); margin-top: 2rem;">
+                        <div class="metric-card">
+                            <div class="metric-value">100+</div>
+                            <div class="metric-label">Minimum</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">1-10K</div>
+                            <div class="metric-label">Typical</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">50K+</div>
+                            <div class="metric-label">Large Scale</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3>Data Sources</h3>
+                    <div class="card animate delay-2">
+                        <ul>
+                            <li>Existing labeled datasets</li>
+                            <li>Production logs (with consent)</li>
+                            <li>Expert annotations</li>
+                            <li>Synthetic data from stronger models</li>
+                            <li>Human preference comparisons</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box animate delay-3">
+                        <strong>Caution:</strong> Ensure data licensing allows training. Check for PII and sensitive content.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 13: Data Formats -->
+    <div class="slide" id="slide13">
+        <div class="slide-content">
+            <h2>Training Data Formats</h2>
+            <div class="two-column">
+                <div>
+                    <h3>Instruction Format</h3>
+                    <div class="code-block animate">
+                        <code>
+{
+  <span class="code-string">"instruction"</span>: <span class="code-string">"Summarize the text"</span>,
+  <span class="code-string">"input"</span>: <span class="code-string">"Long article text..."</span>,
+  <span class="code-string">"output"</span>: <span class="code-string">"Brief summary..."</span>
+}
+                        </code>
+                    </div>
+                    <h3 style="margin-top: 1.5rem;">Chat Format</h3>
+                    <div class="code-block animate delay-1">
+                        <code>
+{
+  <span class="code-string">"messages"</span>: [
+    {<span class="code-string">"role"</span>: <span class="code-string">"system"</span>, <span class="code-string">"content"</span>: <span class="code-string">"..."</span>},
+    {<span class="code-string">"role"</span>: <span class="code-string">"user"</span>, <span class="code-string">"content"</span>: <span class="code-string">"..."</span>},
+    {<span class="code-string">"role"</span>: <span class="code-string">"assistant"</span>, <span class="code-string">"content"</span>: <span class="code-string">"..."</span>}
+  ]
+}
+                        </code>
+                    </div>
+                </div>
+                <div>
+                    <h3>Completion Format</h3>
+                    <div class="code-block animate delay-2">
+                        <code>
+{
+  <span class="code-string">"prompt"</span>: <span class="code-string">"### Question:\nWhat is...\n\n### Answer:\n"</span>,
+  <span class="code-string">"completion"</span>: <span class="code-string">"The answer is..."</span>
+}
+                        </code>
+                    </div>
+                    <div class="tip-box animate delay-3" style="margin-top: 1.5rem;">
+                        <strong>Best Practice:</strong> Use the same prompt template during training and inference for consistent results.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 14: Hugging Face Ecosystem -->
+    <div class="slide" id="slide14">
+        <div class="slide-content">
+            <h2>The Hugging Face Ecosystem</h2>
+            <div class="four-column">
+                <div class="card animate">
+                    <div class="card-icon">🤗</div>
+                    <h3>Transformers</h3>
+                    <p>Model loading, tokenization, inference</p>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">📊</div>
+                    <h3>Datasets</h3>
+                    <p>Efficient data loading and processing</p>
+                </div>
+                <div class="card animate delay-2">
+                    <div class="card-icon">⚙️</div>
+                    <h3>PEFT</h3>
+                    <p>LoRA, adapters, prompt tuning</p>
+                </div>
+                <div class="card animate delay-3">
+                    <div class="card-icon">🎯</div>
+                    <h3>TRL</h3>
+                    <p>SFT, RLHF, DPO training</p>
+                </div>
+            </div>
+            <div class="code-block animate delay-4" style="margin-top: 2rem;">
+                <code>
+<span class="code-comment"># Essential imports for fine-tuning</span>
+<span class="code-keyword">from</span> transformers <span class="code-keyword">import</span> AutoModelForCausalLM, AutoTokenizer, TrainingArguments
+<span class="code-keyword">from</span> peft <span class="code-keyword">import</span> get_peft_model, LoraConfig
+<span class="code-keyword">from</span> trl <span class="code-keyword">import</span> SFTTrainer
+<span class="code-keyword">from</span> datasets <span class="code-keyword">import</span> load_dataset
+                </code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 15: Training Infrastructure -->
+    <div class="slide" id="slide15">
+        <div class="slide-content">
+            <h2>Training Infrastructure Options</h2>
+            <table class="comparison-table animate">
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>GPUs</th>
+                        <th>Cost</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Local GPU</span></td>
+                        <td>RTX 3090/4090</td>
+                        <td>Upfront cost</td>
+                        <td>Experimentation, small models</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Google Colab Pro</span></td>
+                        <td>T4, A100</td>
+                        <td>$10-50/mo</td>
+                        <td>Learning, prototyping</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">RunPod / Vast.ai</span></td>
+                        <td>Various</td>
+                        <td>$0.20-2/hr</td>
+                        <td>Flexible, cost-effective</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">AWS / GCP / Azure</span></td>
+                        <td>A100, H100</td>
+                        <td>$2-30/hr</td>
+                        <td>Production, enterprise</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Lambda Labs</span></td>
+                        <td>A100, H100</td>
+                        <td>$1-2/hr</td>
+                        <td>ML-focused, great value</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Slide 16: Day 1 Recap -->
+    <div class="slide" id="slide16">
+        <div class="slide-content" style="text-align: center;">
+            <h2>Day 1 Recap</h2>
+            <div class="three-column" style="margin-top: 3rem;">
+                <div class="card animate">
+                    <div class="card-icon">🎯</div>
+                    <h3>When to Fine-Tune</h3>
+                    <p>Style, format, behavior - not knowledge</p>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">⚡</div>
+                    <h3>LoRA & QLoRA</h3>
+                    <p>Efficient fine-tuning on consumer hardware</p>
+                </div>
+                <div class="card animate delay-2">
+                    <div class="card-icon">📊</div>
+                    <h3>Data Prep</h3>
+                    <p>Quality over quantity, consistent formats</p>
+                </div>
+            </div>
+            <div class="tip-box animate delay-3" style="margin-top: 3rem; text-align: left;">
+                <strong>Tomorrow:</strong> Hands-on fine-tuning lab, evaluation metrics, deployment strategies, and production best practices.
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 17: Day 2 - Hands-On -->
+    <div class="slide" id="slide17">
+        <div class="slide-content" style="text-align: center;">
+            <div style="font-size: 5rem; margin-bottom: 2rem;">🔬</div>
+            <h1 class="animate">Day 2: Hands-On Fine-Tuning</h1>
+            <p class="subtitle animate delay-1">From Training to Production</p>
+        </div>
+    </div>
+
+    <!-- Slide 18: Fine-Tuning Pipeline -->
+    <div class="slide" id="slide18">
+        <div class="slide-content">
+            <h2>The Fine-Tuning Pipeline</h2>
+            <div class="diagram animate" style="padding: 30px;">
+                <div class="flow-box">Prepare Data</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">Load Model</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">Configure LoRA</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">Train</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">Evaluate</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-box">Deploy</div>
+            </div>
+            <div class="three-column" style="margin-top: 2rem;">
+                <div class="card animate delay-1">
+                    <h3>1. Data Preparation</h3>
+                    <ul>
+                        <li>Format conversion</li>
+                        <li>Train/eval split</li>
+                        <li>Tokenization</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-2">
+                    <h3>2. Training</h3>
+                    <ul>
+                        <li>Hyperparameter tuning</li>
+                        <li>Monitoring loss</li>
+                        <li>Checkpointing</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-3">
+                    <h3>3. Deployment</h3>
+                    <ul>
+                        <li>Merge adapters</li>
+                        <li>Quantize for inference</li>
+                        <li>Serve at scale</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 19: Complete Code Example -->
+    <div class="slide" id="slide19">
+        <div class="slide-content">
+            <h2>Complete Fine-Tuning Example</h2>
+            <div class="code-block animate" style="font-size: 0.85rem;">
+                <code>
+<span class="code-keyword">from</span> transformers <span class="code-keyword">import</span> AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+<span class="code-keyword">from</span> peft <span class="code-keyword">import</span> LoraConfig, get_peft_model
+<span class="code-keyword">from</span> trl <span class="code-keyword">import</span> SFTTrainer, SFTConfig
+
+<span class="code-comment"># 1. Load quantized model</span>
+bnb_config = BitsAndBytesConfig(load_in_4bit=<span class="code-keyword">True</span>, bnb_4bit_quant_type=<span class="code-string">"nf4"</span>)
+model = AutoModelForCausalLM.from_pretrained(<span class="code-string">"mistralai/Mistral-7B-v0.1"</span>, quantization_config=bnb_config)
+tokenizer = AutoTokenizer.from_pretrained(<span class="code-string">"mistralai/Mistral-7B-v0.1"</span>)
+
+<span class="code-comment"># 2. Configure LoRA</span>
+lora_config = LoraConfig(r=<span class="code-number">16</span>, lora_alpha=<span class="code-number">32</span>, target_modules=[<span class="code-string">"q_proj"</span>, <span class="code-string">"v_proj"</span>, <span class="code-string">"k_proj"</span>, <span class="code-string">"o_proj"</span>])
+model = get_peft_model(model, lora_config)
+
+<span class="code-comment"># 3. Train</span>
+trainer = SFTTrainer(model=model, train_dataset=dataset, args=SFTConfig(output_dir=<span class="code-string">"./output"</span>, num_train_epochs=<span class="code-number">3</span>))
+trainer.train()
+                </code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 20: Key Hyperparameters -->
+    <div class="slide" id="slide20">
+        <div class="slide-content">
+            <h2>Key Hyperparameters</h2>
+            <div class="two-column">
+                <div>
+                    <h3>LoRA Parameters</h3>
+                    <table class="comparison-table animate">
+                        <tr><th>Parameter</th><th>Typical Values</th><th>Effect</th></tr>
+                        <tr><td><code>r</code> (rank)</td><td>8, 16, 32, 64</td><td>Capacity of adaptation</td></tr>
+                        <tr><td><code>lora_alpha</code></td><td>16, 32, 64</td><td>Scaling factor</td></tr>
+                        <tr><td><code>lora_dropout</code></td><td>0.0, 0.05, 0.1</td><td>Regularization</td></tr>
+                        <tr><td><code>target_modules</code></td><td>q,k,v,o proj</td><td>Which layers to adapt</td></tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Training Parameters</h3>
+                    <table class="comparison-table animate delay-1">
+                        <tr><th>Parameter</th><th>Typical Values</th></tr>
+                        <tr><td>Learning rate</td><td>1e-4 to 3e-4</td></tr>
+                        <tr><td>Batch size</td><td>4-32 (with gradient accum)</td></tr>
+                        <tr><td>Epochs</td><td>1-5</td></tr>
+                        <tr><td>Warmup ratio</td><td>0.03-0.1</td></tr>
+                        <tr><td>Weight decay</td><td>0.0-0.01</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="tip-box animate delay-2" style="margin-top: 1.5rem;">
+                <strong>Start Conservative:</strong> r=16, lora_alpha=32, lr=2e-4, 3 epochs. Tune from there based on results.
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 21: Evaluation Metrics -->
+    <div class="slide" id="slide21">
+        <div class="slide-content">
+            <h2>Evaluation Metrics</h2>
+            <div class="three-column">
+                <div class="card animate">
+                    <div class="card-icon">📉</div>
+                    <h3>Training Metrics</h3>
+                    <ul>
+                        <li><strong>Loss:</strong> Should decrease</li>
+                        <li><strong>Perplexity:</strong> Lower is better</li>
+                        <li><strong>Gradient norm:</strong> Stability indicator</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">🎯</div>
+                    <h3>Task Metrics</h3>
+                    <ul>
+                        <li><strong>Accuracy:</strong> Classification</li>
+                        <li><strong>ROUGE/BLEU:</strong> Generation</li>
+                        <li><strong>F1 Score:</strong> Extraction</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-2">
+                    <div class="card-icon">👥</div>
+                    <h3>Human Eval</h3>
+                    <ul>
+                        <li><strong>A/B testing:</strong> Preference</li>
+                        <li><strong>Rating scales:</strong> Quality</li>
+                        <li><strong>Error analysis:</strong> Failure modes</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="warning-box animate delay-3" style="margin-top: 2rem;">
+                <strong>Critical:</strong> Always evaluate on a held-out test set that wasn't used during training. Watch for overfitting!
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 22: Common Issues -->
+    <div class="slide" id="slide22">
+        <div class="slide-content">
+            <h2>Common Issues & Solutions</h2>
+            <div class="two-column">
+                <div>
+                    <div class="card animate" style="border-left: 4px solid #ef4444;">
+                        <h3>Overfitting</h3>
+                        <p><strong>Signs:</strong> Training loss drops, eval loss increases</p>
+                        <p><strong>Solutions:</strong> More data, fewer epochs, higher dropout, lower r</p>
+                    </div>
+                    <div class="card animate delay-1" style="border-left: 4px solid #f59e0b; margin-top: 1rem;">
+                        <h3>Catastrophic Forgetting</h3>
+                        <p><strong>Signs:</strong> Model loses general capabilities</p>
+                        <p><strong>Solutions:</strong> Lower learning rate, use LoRA, include diverse data</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="card animate delay-2" style="border-left: 4px solid #3b82f6;">
+                        <h3>Unstable Training</h3>
+                        <p><strong>Signs:</strong> Loss spikes, NaN values</p>
+                        <p><strong>Solutions:</strong> Lower learning rate, gradient clipping, check data</p>
+                    </div>
+                    <div class="card animate delay-3" style="border-left: 4px solid #8b5cf6; margin-top: 1rem;">
+                        <h3>Poor Generation Quality</h3>
+                        <p><strong>Signs:</strong> Repetitive, nonsensical output</p>
+                        <p><strong>Solutions:</strong> Check data quality, adjust sampling params</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 23: Merging & Deployment -->
+    <div class="slide" id="slide23">
+        <div class="slide-content">
+            <h2>Merging & Deployment</h2>
+            <div class="two-column">
+                <div>
+                    <h3>Merge LoRA Weights</h3>
+                    <div class="code-block animate">
+                        <code>
+<span class="code-comment"># Merge adapter into base model</span>
+<span class="code-keyword">from</span> peft <span class="code-keyword">import</span> PeftModel
+
+base_model = AutoModelForCausalLM.from_pretrained(
+    <span class="code-string">"mistralai/Mistral-7B-v0.1"</span>
+)
+model = PeftModel.from_pretrained(
+    base_model,
+    <span class="code-string">"./lora-adapter"</span>
+)
+
+<span class="code-comment"># Merge and save</span>
+merged = model.merge_and_unload()
+merged.save_pretrained(<span class="code-string">"./merged-model"</span>)
+                        </code>
+                    </div>
+                </div>
+                <div>
+                    <h3>Deployment Options</h3>
+                    <div class="card animate delay-1">
+                        <ul>
+                            <li><strong>vLLM:</strong> High-throughput serving</li>
+                            <li><strong>TGI:</strong> Hugging Face inference</li>
+                            <li><strong>Ollama:</strong> Local deployment</li>
+                            <li><strong>LMDeploy:</strong> Efficient inference</li>
+                            <li><strong>llama.cpp:</strong> CPU inference</li>
+                        </ul>
+                    </div>
+                    <div class="tip-box animate delay-2" style="margin-top: 1rem;">
+                        <strong>Pro Tip:</strong> Keep adapters separate for easy A/B testing and rollback capabilities.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 24: Quantization for Inference -->
+    <div class="slide" id="slide24">
+        <div class="slide-content">
+            <h2>Quantization for Inference</h2>
+            <table class="comparison-table animate">
+                <thead>
+                    <tr>
+                        <th>Format</th>
+                        <th>Bits</th>
+                        <th>Quality Loss</th>
+                        <th>Speed</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FP16/BF16</td>
+                        <td>16</td>
+                        <td class="success">None</td>
+                        <td>1x</td>
+                        <td>Default inference</td>
+                    </tr>
+                    <tr>
+                        <td>INT8</td>
+                        <td>8</td>
+                        <td class="success">Minimal</td>
+                        <td>1.5-2x</td>
+                        <td>Production serving</td>
+                    </tr>
+                    <tr>
+                        <td>GPTQ/AWQ</td>
+                        <td>4</td>
+                        <td class="warning">Small</td>
+                        <td>2-3x</td>
+                        <td>Memory-constrained</td>
+                    </tr>
+                    <tr>
+                        <td>GGUF (Q4)</td>
+                        <td>4</td>
+                        <td class="warning">Small</td>
+                        <td>Varies</td>
+                        <td>CPU / Local</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="code-block animate delay-1" style="margin-top: 1.5rem;">
+                <code>
+<span class="code-comment"># Export to GGUF for Ollama</span>
+python llama.cpp/convert.py ./merged-model --outtype f16
+./llama.cpp/quantize ./model.gguf ./model-q4.gguf q4_k_m
+                </code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 25: Cost Optimization -->
+    <div class="slide" id="slide25">
+        <div class="slide-content">
+            <h2>Cost Optimization Strategies</h2>
+            <div class="three-column">
+                <div class="card animate">
+                    <div class="card-icon">💰</div>
+                    <h3>Training Costs</h3>
+                    <ul>
+                        <li>Use spot/preemptible instances</li>
+                        <li>Start with smaller models</li>
+                        <li>Use gradient accumulation</li>
+                        <li>Early stopping</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">📦</div>
+                    <h3>Storage Costs</h3>
+                    <ul>
+                        <li>Store only adapters (MBs vs GBs)</li>
+                        <li>Quantize final models</li>
+                        <li>Use model hubs</li>
+                        <li>Clean up checkpoints</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-2">
+                    <div class="card-icon">⚡</div>
+                    <h3>Inference Costs</h3>
+                    <ul>
+                        <li>Quantize models</li>
+                        <li>Batch requests</li>
+                        <li>Use efficient serving</li>
+                        <li>Cache common queries</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="metric-grid animate delay-3" style="margin-top: 2rem;">
+                <div class="metric-card">
+                    <div class="metric-value">$5-50</div>
+                    <div class="metric-label">7B Model<br>QLoRA Training</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$50-200</div>
+                    <div class="metric-label">13B Model<br>QLoRA Training</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$200-1000</div>
+                    <div class="metric-label">70B Model<br>QLoRA Training</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">10-100x</div>
+                    <div class="metric-label">Cost Reduction<br>vs Full FT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 26: Best Practices -->
+    <div class="slide" id="slide26">
+        <div class="slide-content">
+            <h2>Production Best Practices</h2>
+            <div class="two-column">
+                <div>
+                    <h3 class="success">Do</h3>
+                    <ul class="animate">
+                        <li>Version control your data and configs</li>
+                        <li>Log all experiments with W&B/MLflow</li>
+                        <li>Start with proven base models</li>
+                        <li>Evaluate on multiple metrics</li>
+                        <li>Test in staging before production</li>
+                        <li>Monitor model performance over time</li>
+                        <li>Keep rollback capability</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: #ef4444;">Don't</h3>
+                    <ul class="animate delay-1">
+                        <li>Skip data validation</li>
+                        <li>Train on test data</li>
+                        <li>Ignore evaluation metrics</li>
+                        <li>Deploy without testing</li>
+                        <li>Forget about edge cases</li>
+                        <li>Use unlicensed data</li>
+                        <li>Ignore safety evaluations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 27: RLHF & DPO -->
+    <div class="slide" id="slide27">
+        <div class="slide-content">
+            <h2>Beyond SFT: RLHF & DPO</h2>
+            <div class="two-column">
+                <div class="card animate">
+                    <div class="card-icon">🎮</div>
+                    <h3>RLHF (Reinforcement Learning from Human Feedback)</h3>
+                    <p>Train a reward model from human preferences, then use PPO to optimize the LLM</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>More complex to implement</li>
+                        <li>Requires reward model training</li>
+                        <li>Can achieve strong alignment</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">🎯</div>
+                    <h3>DPO (Direct Preference Optimization)</h3>
+                    <p>Directly optimize on preference pairs without a separate reward model</p>
+                    <ul style="margin-top: 1rem;">
+                        <li>Simpler than RLHF</li>
+                        <li>No reward model needed</li>
+                        <li>Stable training</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="code-block animate delay-2" style="margin-top: 2rem;">
+                <code>
+<span class="code-keyword">from</span> trl <span class="code-keyword">import</span> DPOTrainer, DPOConfig
+
+<span class="code-comment"># DPO requires preference pairs: (prompt, chosen, rejected)</span>
+trainer = DPOTrainer(model=model, ref_model=ref_model, train_dataset=preference_dataset)
+                </code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 28: Safety Considerations -->
+    <div class="slide" id="slide28">
+        <div class="slide-content">
+            <h2>Safety Considerations</h2>
+            <div class="three-column">
+                <div class="card animate" style="border-top: 4px solid #ef4444;">
+                    <div class="card-icon">⚠️</div>
+                    <h3>Risks</h3>
+                    <ul>
+                        <li>Harmful content generation</li>
+                        <li>Bias amplification</li>
+                        <li>Privacy leaks from training data</li>
+                        <li>Jailbreak vulnerabilities</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-1" style="border-top: 4px solid #22c55e;">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Mitigations</h3>
+                    <ul>
+                        <li>Red-team testing</li>
+                        <li>Safety-focused training data</li>
+                        <li>Output filtering</li>
+                        <li>Monitoring & logging</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-2" style="border-top: 4px solid #3b82f6;">
+                    <div class="card-icon">📋</div>
+                    <h3>Evaluation</h3>
+                    <ul>
+                        <li>ToxiGen benchmark</li>
+                        <li>TruthfulQA</li>
+                        <li>BBQ (bias)</li>
+                        <li>Custom safety tests</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="warning-box animate delay-3" style="margin-top: 2rem;">
+                <strong>Important:</strong> Fine-tuning can remove safety guardrails present in the base model. Always test for safety regressions.
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 29: Tools Summary -->
+    <div class="slide" id="slide29">
+        <div class="slide-content">
+            <h2>Tools & Resources</h2>
+            <div class="four-column">
+                <div class="card animate">
+                    <h3>Libraries</h3>
+                    <ul>
+                        <li>Hugging Face PEFT</li>
+                        <li>TRL</li>
+                        <li>Unsloth</li>
+                        <li>Axolotl</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-1">
+                    <h3>Platforms</h3>
+                    <ul>
+                        <li>Hugging Face Hub</li>
+                        <li>RunPod</li>
+                        <li>Lambda Labs</li>
+                        <li>Modal</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-2">
+                    <h3>Tracking</h3>
+                    <ul>
+                        <li>Weights & Biases</li>
+                        <li>MLflow</li>
+                        <li>TensorBoard</li>
+                        <li>Neptune</li>
+                    </ul>
+                </div>
+                <div class="card animate delay-3">
+                    <h3>Serving</h3>
+                    <ul>
+                        <li>vLLM</li>
+                        <li>TGI</li>
+                        <li>Ollama</li>
+                        <li>LiteLLM</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 30: Hands-On Lab Preview -->
+    <div class="slide" id="slide30">
+        <div class="slide-content">
+            <h2>Hands-On Lab</h2>
+            <p class="subtitle">Fine-tune Mistral-7B with QLoRA</p>
+            <div class="two-column">
+                <div>
+                    <h3>What You'll Build</h3>
+                    <div class="card animate">
+                        <ul>
+                            <li>Load a 7B model with 4-bit quantization</li>
+                            <li>Prepare custom instruction dataset</li>
+                            <li>Configure LoRA adapters</li>
+                            <li>Train with SFTTrainer</li>
+                            <li>Evaluate results</li>
+                            <li>Export for deployment</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h3>Requirements</h3>
+                    <div class="card animate delay-1">
+                        <ul>
+                            <li>GPU with 16GB+ VRAM (or Colab)</li>
+                            <li>Python 3.10+</li>
+                            <li>PyTorch 2.0+</li>
+                            <li>transformers, peft, trl, bitsandbytes</li>
+                        </ul>
+                    </div>
+                    <div class="tip-box animate delay-2" style="margin-top: 1rem;">
+                        <strong>Cloud Option:</strong> Use Google Colab Pro for A100 access if local GPU is insufficient.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 31: Course Summary -->
+    <div class="slide" id="slide31">
+        <div class="slide-content" style="text-align: center;">
+            <h2>Course Summary</h2>
+            <div class="three-column" style="margin-top: 3rem;">
+                <div class="card animate">
+                    <div class="card-icon">🎯</div>
+                    <h3>When</h3>
+                    <p>Fine-tune for behavior, style, format - not factual knowledge</p>
+                </div>
+                <div class="card animate delay-1">
+                    <div class="card-icon">⚡</div>
+                    <h3>How</h3>
+                    <p>LoRA/QLoRA makes it accessible on consumer hardware</p>
+                </div>
+                <div class="card animate delay-2">
+                    <div class="card-icon">🚀</div>
+                    <h3>Deploy</h3>
+                    <p>Merge, quantize, serve with vLLM/TGI/Ollama</p>
+                </div>
+            </div>
+            <div class="info-box animate delay-3" style="margin-top: 3rem; text-align: left;">
+                <strong>Key Takeaway:</strong> Fine-tuning has become accessible to everyone. Start small, iterate quickly, and always evaluate thoroughly before deployment.
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 32: Q&A -->
+    <div class="slide" id="slide32">
+        <div class="slide-content" style="text-align: center;">
+            <div style="font-size: 5rem; margin-bottom: 2rem;">❓</div>
+            <h1 class="animate">Questions?</h1>
+            <p class="subtitle animate delay-1">Thank you for attending!</p>
+            <div class="animate delay-2" style="margin-top: 3rem;">
+                <p style="color: #64748b;">
+                    🌐 ai-elevate.ai<br>
+                    📧 training@ai-elevate.ai
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">32</span>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 32;
+
+        function getVisibleSlide() {
+            const slides = document.querySelectorAll('.slide');
+            const viewportCenter = window.scrollY + window.innerHeight / 2;
+            let closestSlide = 1;
+            let closestDistance = Infinity;
+
+            slides.forEach((slide, index) => {
+                const rect = slide.getBoundingClientRect();
+                const slideCenter = window.scrollY + rect.top + rect.height / 2;
+                const distance = Math.abs(viewportCenter - slideCenter);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestSlide = index + 1;
+                }
+            });
+            return closestSlide;
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(direction) {
+            currentSlide = getVisibleSlide();
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const visible = getVisibleSlide();
+                document.getElementById('currentSlide').textContent = visible;
+                document.getElementById('prevBtn').disabled = visible === 1;
+                document.getElementById('nextBtn').disabled = visible === totalSlides;
+            }, 100);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

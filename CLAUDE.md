@@ -14,6 +14,10 @@ course-viewer/
 ├── mastering-ai-agents/        # AI Agents, Swarms, A2A (3 days)
 ├── use-case-prompting-seminar/ # Prompting & Use Cases (90 min)
 ├── ai-ml-data-scientists/      # AI/ML for Data Scientists (3 days)
+├── llm-fine-tuning/            # LLM Fine-Tuning (2 days)
+├── azure-ai-900/               # Azure AI-900 Cert Prep (3 days)
+├── azure-az-900/               # Azure AZ-900 Cert Prep (3 days)
+├── azure-sc-900/               # Azure SC-900 Cert Prep (3 days)
 ├── out/                        # Mastering AI course outputs
 └── src/                        # Flask app, workspaces
 ```
@@ -56,6 +60,29 @@ course-viewer/
   - Day 2: Deep learning, CNNs, RNNs, Transformers, transfer learning, AutoML, multimodal AI
   - Day 3: MLOps, model deployment, monitoring, responsible AI, explainability
 - **Labs:** Data preprocessing (scikit-learn), Deep learning (PyTorch)
+
+### LLM Fine-Tuning (2 days)
+- **Slides:** `llm-fine-tuning/llm-fine-tuning-slides.html` (31 slides)
+- **Topics:**
+  - Day 1: When to fine-tune, LoRA/QLoRA/PEFT methods, data preparation, Hugging Face ecosystem
+  - Day 2: Hands-on training, evaluation metrics, merging adapters, deployment, cost optimization
+- **Labs:** QLoRA fine-tuning with Mistral-7B, Evaluation & deployment
+- **Materials:** Student notes, PDF export
+
+### Azure AI-900 Certification Prep (3 days)
+- **Slides:** `azure-ai-900/azure-ai-900-slides.html`
+- **Topics:** AI workloads, ML principles, Azure AI services, NLP, Computer Vision, Generative AI
+- **Materials:** Student notes, practice questions
+
+### Azure AZ-900 Certification Prep (3 days)
+- **Slides:** `azure-az-900/azure-az-900-slides.html`
+- **Topics:** Cloud concepts, Azure architecture, compute, storage, networking, identity, governance, pricing
+- **Materials:** Student notes, practice questions
+
+### Azure SC-900 Certification Prep (3 days)
+- **Slides:** `azure-sc-900/azure-sc-900-slides.html`
+- **Topics:** Security concepts, Zero Trust, Microsoft Entra, Defender XDR, Sentinel, Purview compliance
+- **Materials:** Student notes, practice questions
 
 ### Mastering AI / LLMs (multi-day)
 - **Slides:** `out/mastering-ai-slides.html`, `out/mastering-ai-part1-slides.html`

@@ -376,6 +376,140 @@
             color: #50e6ff;
             margin-left: 10px;
         }
+
+        /* Animated Visualization Styles */
+        .diagram {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 188, 242, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.3), rgba(0, 188, 242, 0.2));
+            border: 2px solid #0078d4;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 188, 242, 0.4);
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #00bcf2;
+            text-align: center;
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        .service-box {
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.2), rgba(0, 188, 242, 0.1));
+            border: 2px solid rgba(0, 120, 212, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .service-box:hover {
+            border-color: #00bcf2;
+            box-shadow: 0 5px 20px rgba(0, 188, 242, 0.3);
+        }
+
+        .architecture-layer {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid #0078d4;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .pipeline-step {
+            display: inline-block;
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            padding: 15px 25px;
+            border-radius: 25px;
+            margin: 10px;
+            font-weight: bold;
+            position: relative;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .pipeline-arrow {
+            display: inline-block;
+            font-size: 1.5em;
+            color: #50e6ff;
+            vertical-align: middle;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes slideRight {
+            0% { transform: translateX(-20px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .animate-slide-right-delayed {
+            animation: slideRight 0.8s ease-out forwards;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .principle-flow {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .principle-icon {
+            font-size: 2.5em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .vision-task-box {
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.2), rgba(0, 188, 242, 0.1));
+            border: 2px solid rgba(0, 120, 212, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .vision-task-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            border-radius: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .vision-task-box:hover::before {
+            opacity: 0.3;
+        }
     </style>
 </head>
 <body>
@@ -587,6 +721,30 @@
         <h1 class="animate-fade-in-up">ML Model Training Process</h1>
         <p class="subtitle animate-fade-in-up delay-1">From Data to Predictions</p>
 
+        <div class="diagram animate-fade-in-up delay-2" style="text-align: center;">
+            <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px;">
+                <div class="pipeline-step delay-2" style="animation-delay: 0.3s; opacity: 0;">
+                    📊 Data
+                </div>
+                <div class="pipeline-arrow delay-3" style="animation-delay: 0.5s; opacity: 0;">→</div>
+                <div class="pipeline-step delay-3" style="animation-delay: 0.7s; opacity: 0;">
+                    🔧 Prepare
+                </div>
+                <div class="pipeline-arrow delay-4" style="animation-delay: 0.9s; opacity: 0;">→</div>
+                <div class="pipeline-step delay-4" style="animation-delay: 1.1s; opacity: 0;">
+                    🎯 Train
+                </div>
+                <div class="pipeline-arrow delay-5" style="animation-delay: 1.3s; opacity: 0;">→</div>
+                <div class="pipeline-step delay-5" style="animation-delay: 1.5s; opacity: 0;">
+                    ✅ Evaluate
+                </div>
+                <div class="pipeline-arrow delay-6" style="animation-delay: 1.7s; opacity: 0;">→</div>
+                <div class="pipeline-step delay-6" style="animation-delay: 1.9s; opacity: 0;">
+                    🚀 Deploy
+                </div>
+            </div>
+        </div>
+
         <div class="workflow-step animate-fade-in-up delay-2">
             <div class="step-number">1</div>
             <div>
@@ -629,6 +787,32 @@
         <div class="day-badge">Day 1</div>
         <h1 class="animate-fade-in-up">Azure AI Services Overview</h1>
         <p class="subtitle animate-fade-in-up delay-1">Pre-built AI Capabilities</p>
+
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #00bcf2;">Azure AI Services Architecture</h3>
+            <div class="architecture-layer animate-fade-in-up delay-2">
+                <strong style="color: #50e6ff;">Your Applications</strong>
+                <p style="color: #a0a0a0; font-size: 0.9em;">Web Apps, Mobile Apps, Desktop Applications</p>
+            </div>
+            <div style="text-align: center; margin: 10px 0;">
+                <div class="flow-arrow animate-fade-in-up delay-3">↓</div>
+            </div>
+            <div class="architecture-layer animate-fade-in-up delay-3">
+                <strong style="color: #50e6ff;">REST APIs / SDKs</strong>
+                <p style="color: #a0a0a0; font-size: 0.9em;">Python, C#, Java, JavaScript, Go</p>
+            </div>
+            <div style="text-align: center; margin: 10px 0;">
+                <div class="flow-arrow animate-fade-in-up delay-4">↓</div>
+            </div>
+            <div class="architecture-layer animate-fade-in-up delay-4">
+                <div class="grid-layout">
+                    <div class="service-box">👁️ Vision</div>
+                    <div class="service-box">💬 Language</div>
+                    <div class="service-box">🎤 Speech</div>
+                    <div class="service-box">🤖 OpenAI</div>
+                </div>
+            </div>
+        </div>
 
         <div class="four-column">
             <div class="card azure-card animate-fade-in-up delay-2">
@@ -731,38 +915,49 @@
         <h1 class="animate-fade-in-up">Responsible AI Principles</h1>
         <p class="subtitle animate-fade-in-up delay-1">Microsoft's Ethical AI Framework</p>
 
-        <div class="three-column">
-            <div class="card animate-fade-in-up delay-2">
-                <div class="card-icon">⚖️</div>
-                <h3>Fairness</h3>
-                <p>AI should treat all people fairly without bias based on gender, race, or other factors.</p>
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #00bcf2;">6 Core Principles</h3>
+            <div class="principle-flow animate-slide-left delay-2">
+                <div class="principle-icon">⚖️</div>
+                <div style="flex: 1;">
+                    <strong style="color: #50e6ff;">Fairness</strong>
+                    <p style="color: #a0a0a0; font-size: 0.9em; margin-top: 5px;">Treat all people fairly without bias</p>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-3">
-                <div class="card-icon">🛡️</div>
-                <h3>Reliability & Safety</h3>
-                <p>AI must perform reliably and safely under various conditions.</p>
+            <div class="principle-flow animate-slide-right delay-3">
+                <div class="principle-icon">🛡️</div>
+                <div style="flex: 1;">
+                    <strong style="color: #50e6ff;">Reliability & Safety</strong>
+                    <p style="color: #a0a0a0; font-size: 0.9em; margin-top: 5px;">Perform reliably under all conditions</p>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-4">
-                <div class="card-icon">🔒</div>
-                <h3>Privacy & Security</h3>
-                <p>Protect user data and maintain privacy throughout the AI lifecycle.</p>
+            <div class="principle-flow animate-slide-left delay-4">
+                <div class="principle-icon">🔒</div>
+                <div style="flex: 1;">
+                    <strong style="color: #50e6ff;">Privacy & Security</strong>
+                    <p style="color: #a0a0a0; font-size: 0.9em; margin-top: 5px;">Protect data throughout AI lifecycle</p>
+                </div>
             </div>
-        </div>
-        <div class="three-column" style="margin-top: 20px;">
-            <div class="card animate-fade-in-up delay-5">
-                <div class="card-icon">🌐</div>
-                <h3>Inclusiveness</h3>
-                <p>AI should empower everyone and engage all people regardless of ability.</p>
+            <div class="principle-flow animate-slide-right delay-5">
+                <div class="principle-icon">🌐</div>
+                <div style="flex: 1;">
+                    <strong style="color: #50e6ff;">Inclusiveness</strong>
+                    <p style="color: #a0a0a0; font-size: 0.9em; margin-top: 5px;">Empower everyone regardless of ability</p>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-6">
-                <div class="card-icon">🔍</div>
-                <h3>Transparency</h3>
-                <p>AI systems should be understandable with clear documentation.</p>
+            <div class="principle-flow animate-slide-left delay-5">
+                <div class="principle-icon">🔍</div>
+                <div style="flex: 1;">
+                    <strong style="color: #50e6ff;">Transparency</strong>
+                    <p style="color: #a0a0a0; font-size: 0.9em; margin-top: 5px;">Understandable with clear documentation</p>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-6">
-                <div class="card-icon">👥</div>
-                <h3>Accountability</h3>
-                <p>People should be accountable for AI systems they design and deploy.</p>
+            <div class="principle-flow animate-slide-right delay-6">
+                <div class="principle-icon">👥</div>
+                <div style="flex: 1;">
+                    <strong style="color: #50e6ff;">Accountability</strong>
+                    <p style="color: #a0a0a0; font-size: 0.9em; margin-top: 5px;">People accountable for AI systems</p>
+                </div>
             </div>
         </div>
 
@@ -823,6 +1018,31 @@
         <div class="day-badge">Day 2</div>
         <h1 class="animate-fade-in-up">Computer Vision Workloads</h1>
         <p class="subtitle animate-fade-in-up delay-1">Teaching Machines to See</p>
+
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #00bcf2;">Computer Vision Task Hierarchy</h3>
+            <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div class="vision-task-box animate-fade-in-up delay-2" style="flex: 1; min-width: 200px;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🖼️</div>
+                    <strong style="color: #50e6ff;">Image Input</strong>
+                </div>
+                <div class="flow-arrow delay-3" style="animation-delay: 0.5s; opacity: 0; font-size: 2em;">→</div>
+                <div style="flex: 2; min-width: 300px;">
+                    <div class="vision-task-box animate-fade-in-up delay-3" style="margin-bottom: 15px;">
+                        <strong>🏷️ Classification</strong>
+                        <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">What is this? (cat, dog, car)</p>
+                    </div>
+                    <div class="vision-task-box animate-fade-in-up delay-4" style="margin-bottom: 15px;">
+                        <strong>📦 Detection</strong>
+                        <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Where are objects? (bounding boxes)</p>
+                    </div>
+                    <div class="vision-task-box animate-fade-in-up delay-5">
+                        <strong>✂️ Segmentation</strong>
+                        <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Which pixels? (pixel-level masks)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="four-column">
             <div class="card animate-fade-in-up delay-2">
@@ -1000,6 +1220,35 @@
         <div class="day-badge">Day 2</div>
         <h1 class="animate-fade-in-up">Natural Language Processing</h1>
         <p class="subtitle animate-fade-in-up delay-1">Teaching Machines to Understand Text</p>
+
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #00bcf2;">NLP Processing Pipeline</h3>
+            <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 15px;">
+                <div class="flow-box animate-fade-in-up delay-2" style="flex: 1; min-width: 150px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📄</div>
+                    <strong>Raw Text</strong>
+                    <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Input document</p>
+                </div>
+                <div class="flow-arrow delay-3" style="animation-delay: 0.4s; opacity: 0;">→</div>
+                <div class="flow-box animate-fade-in-up delay-3" style="flex: 1; min-width: 150px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔍</div>
+                    <strong>Tokenize</strong>
+                    <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Split into words</p>
+                </div>
+                <div class="flow-arrow delay-4" style="animation-delay: 0.6s; opacity: 0;">→</div>
+                <div class="flow-box animate-fade-in-up delay-4" style="flex: 1; min-width: 150px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🧠</div>
+                    <strong>Analyze</strong>
+                    <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Extract meaning</p>
+                </div>
+                <div class="flow-arrow delay-5" style="animation-delay: 0.8s; opacity: 0;">→</div>
+                <div class="flow-box animate-fade-in-up delay-5" style="flex: 1; min-width: 150px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📊</div>
+                    <strong>Results</strong>
+                    <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Insights & entities</p>
+                </div>
+            </div>
+        </div>
 
         <div class="three-column">
             <div class="card animate-fade-in-up delay-2">
@@ -1604,6 +1853,47 @@
         <div class="day-badge">Day 3</div>
         <h1 class="animate-fade-in-up">Retrieval-Augmented Generation</h1>
         <p class="subtitle animate-fade-in-up delay-1">Grounding AI with Your Data</p>
+
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #00bcf2;">RAG Workflow Visualization</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                <div style="text-align: center;">
+                    <div class="flow-box animate-fade-in-up delay-2" style="min-height: 140px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="font-size: 2.5em; margin-bottom: 10px;">🔍</div>
+                        <strong style="color: #50e6ff; font-size: 1.2em;">Retrieval</strong>
+                        <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 8px;">Search your data</p>
+                        <p style="color: #666; font-size: 0.8em; margin-top: 5px;">Azure AI Search</p>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="flow-box animate-fade-in-up delay-3" style="min-height: 140px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="font-size: 2.5em; margin-bottom: 10px;">➕</div>
+                        <strong style="color: #50e6ff; font-size: 1.2em;">Augmentation</strong>
+                        <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 8px;">Add context</p>
+                        <p style="color: #666; font-size: 0.8em; margin-top: 5px;">Prompt Engineering</p>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="flow-box animate-fade-in-up delay-4" style="min-height: 140px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="font-size: 2.5em; margin-bottom: 10px;">🤖</div>
+                        <strong style="color: #50e6ff; font-size: 1.2em;">Generation</strong>
+                        <p style="color: #a0a0a0; font-size: 0.85em; margin-top: 8px;">AI response</p>
+                        <p style="color: #666; font-size: 0.8em; margin-top: 5px;">Azure OpenAI</p>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                    <div class="pipeline-step delay-5" style="animation-delay: 1s; opacity: 0;">User Query</div>
+                    <div class="pipeline-arrow delay-5" style="animation-delay: 1.2s; opacity: 0;">→</div>
+                    <div class="pipeline-step delay-5" style="animation-delay: 1.4s; opacity: 0;">Retrieve</div>
+                    <div class="pipeline-arrow delay-6" style="animation-delay: 1.6s; opacity: 0;">→</div>
+                    <div class="pipeline-step delay-6" style="animation-delay: 1.8s; opacity: 0;">Augment</div>
+                    <div class="pipeline-arrow delay-6" style="animation-delay: 2s; opacity: 0;">→</div>
+                    <div class="pipeline-step delay-6" style="animation-delay: 2.2s; opacity: 0;">Generate</div>
+                </div>
+            </div>
+        </div>
 
         <div class="two-column">
             <div class="animate-slide-left delay-2">

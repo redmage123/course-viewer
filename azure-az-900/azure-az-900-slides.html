@@ -369,6 +369,166 @@
             font-size: 2.5em;
             margin-bottom: 10px;
         }
+
+        /* Diagram and flow visualization styles */
+        .diagram {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 188, 242, 0.4);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.3), rgba(0, 188, 242, 0.2));
+            border: 2px solid #0078d4;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 188, 242, 0.4);
+        }
+
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #00bcf2;
+            margin: 10px 0;
+        }
+
+        .flow-arrow::after {
+            content: "→";
+        }
+
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .layer {
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid;
+            transition: all 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateX(10px);
+            box-shadow: -5px 0 20px rgba(0, 188, 242, 0.3);
+        }
+
+        .layer-iaas {
+            background: linear-gradient(135deg, rgba(255, 185, 0, 0.2), rgba(255, 140, 0, 0.1));
+            border-color: #ffb900;
+        }
+
+        .layer-paas {
+            background: linear-gradient(135deg, rgba(0, 188, 242, 0.2), rgba(0, 120, 212, 0.1));
+            border-color: #00bcf2;
+        }
+
+        .layer-saas {
+            background: linear-gradient(135deg, rgba(16, 124, 16, 0.2), rgba(16, 220, 16, 0.1));
+            border-color: #107c10;
+        }
+
+        .compute-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .compute-box {
+            background: rgba(0, 120, 212, 0.15);
+            border: 2px solid rgba(0, 188, 242, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .compute-box:hover {
+            border-color: #00bcf2;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 188, 242, 0.3);
+        }
+
+        .storage-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .storage-box {
+            background: linear-gradient(135deg, rgba(80, 230, 255, 0.15), rgba(0, 188, 242, 0.1));
+            border: 2px solid #50e6ff;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .identity-flow {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .identity-step {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(134, 97, 193, 0.2), rgba(134, 97, 193, 0.1));
+            border: 2px solid #8661c1;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .hierarchy-box {
+            border: 3px solid;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        .hierarchy-level-1 {
+            border-color: #0078d4;
+            background: rgba(0, 120, 212, 0.1);
+        }
+
+        .hierarchy-level-2 {
+            border-color: #00bcf2;
+            background: rgba(0, 188, 242, 0.1);
+        }
+
+        .hierarchy-level-3 {
+            border-color: #50e6ff;
+            background: rgba(80, 230, 255, 0.1);
+        }
+
+        .hierarchy-level-4 {
+            border-color: #b4ec51;
+            background: rgba(180, 236, 81, 0.1);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate { animation: fadeInUp 0.6s ease-out forwards; }
     </style>
 </head>
 <body>
@@ -569,44 +729,69 @@
     <div class="slide" id="slide6">
         <div class="day-badge">Day 1</div>
         <h1 class="animate-fade-in-up">Cloud Service Types</h1>
-        <p class="subtitle animate-fade-in-up delay-1">IaaS, PaaS, SaaS</p>
+        <p class="subtitle animate-fade-in-up delay-1">IaaS, PaaS, SaaS - Layered Architecture</p>
 
-        <div class="three-column">
-            <div class="card animate-fade-in-up delay-2">
-                <div class="card-icon">🖥️</div>
-                <h3>IaaS</h3>
-                <p><strong>Infrastructure as a Service</strong></p>
-                <ul style="margin-top: 15px;">
-                    <li>Virtual machines</li>
-                    <li>Storage</li>
-                    <li>Networks</li>
-                    <li>You manage: OS, apps</li>
-                </ul>
-                <div class="service-badge" style="margin-top: 15px;">Most Control</div>
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="diagram">
+                    <h3 style="margin-bottom: 20px; text-align: center;">Service Model Stack</h3>
+                    <div class="layer-stack">
+                        <div class="layer layer-saas animate delay-2">
+                            <div style="font-size: 1.3em; margin-bottom: 5px;">📱 SaaS</div>
+                            <div style="font-size: 0.9em; color: #a0a0a0;">Applications</div>
+                        </div>
+                        <div class="layer layer-paas animate delay-3">
+                            <div style="font-size: 1.3em; margin-bottom: 5px;">🔧 PaaS</div>
+                            <div style="font-size: 0.9em; color: #a0a0a0;">Runtime & Middleware</div>
+                        </div>
+                        <div class="layer layer-iaas animate delay-4">
+                            <div style="font-size: 1.3em; margin-bottom: 5px;">🖥️ IaaS</div>
+                            <div style="font-size: 0.9em; color: #a0a0a0;">VMs, Storage, Network</div>
+                        </div>
+                        <div class="layer animate delay-5" style="background: rgba(100, 100, 100, 0.2); border-color: #666;">
+                            <div style="font-size: 1.3em; margin-bottom: 5px;">🏢 Physical Infrastructure</div>
+                            <div style="font-size: 0.9em; color: #a0a0a0;">Data Centers, Servers, Networking</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card animate-fade-in-up delay-3">
-                <div class="card-icon">🔧</div>
-                <h3>PaaS</h3>
-                <p><strong>Platform as a Service</strong></p>
-                <ul style="margin-top: 15px;">
-                    <li>Development platforms</li>
-                    <li>Databases</li>
-                    <li>Web hosting</li>
-                    <li>You manage: Apps, data</li>
-                </ul>
-                <div class="service-badge" style="margin-top: 15px;">Balanced</div>
-            </div>
-            <div class="card animate-fade-in-up delay-4">
-                <div class="card-icon">📱</div>
-                <h3>SaaS</h3>
-                <p><strong>Software as a Service</strong></p>
-                <ul style="margin-top: 15px;">
-                    <li>Email (Microsoft 365)</li>
-                    <li>CRM systems</li>
-                    <li>Collaboration tools</li>
-                    <li>Provider manages all</li>
-                </ul>
-                <div class="service-badge" style="margin-top: 15px;">Least Control</div>
+            <div class="animate-slide-right delay-2">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">🖥️</div>
+                    <h3>IaaS</h3>
+                    <p><strong>Infrastructure as a Service</strong></p>
+                    <ul style="margin-top: 15px;">
+                        <li>Virtual machines</li>
+                        <li>Storage</li>
+                        <li>Networks</li>
+                        <li>You manage: OS, apps</li>
+                    </ul>
+                    <div class="service-badge" style="margin-top: 15px;">Most Control</div>
+                </div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">🔧</div>
+                    <h3>PaaS</h3>
+                    <p><strong>Platform as a Service</strong></p>
+                    <ul style="margin-top: 15px;">
+                        <li>Development platforms</li>
+                        <li>Databases</li>
+                        <li>Web hosting</li>
+                        <li>You manage: Apps, data</li>
+                    </ul>
+                    <div class="service-badge" style="margin-top: 15px;">Balanced</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📱</div>
+                    <h3>SaaS</h3>
+                    <p><strong>Software as a Service</strong></p>
+                    <ul style="margin-top: 15px;">
+                        <li>Email (Microsoft 365)</li>
+                        <li>CRM systems</li>
+                        <li>Collaboration tools</li>
+                        <li>Provider manages all</li>
+                    </ul>
+                    <div class="service-badge" style="margin-top: 15px;">Least Control</div>
+                </div>
             </div>
         </div>
 
@@ -816,19 +1001,29 @@
                 </div>
             </div>
             <div class="animate-slide-right delay-3">
-                <div class="card azure-card" style="height: 100%;">
-                    <h3>Hierarchy</h3>
-                    <div style="text-align: center; padding: 20px;">
-                        <div style="border: 3px solid #0078d4; border-radius: 20px; padding: 20px;">
-                            <strong>Geography</strong> (Americas, Europe...)
-                            <div style="border: 3px solid #00bcf2; border-radius: 15px; padding: 15px; margin-top: 15px;">
-                                <strong>Region Pair</strong> (East US ↔ West US)
-                                <div style="border: 3px solid #50e6ff; border-radius: 10px; padding: 10px; margin-top: 15px;">
-                                    <strong>Region</strong> (East US)
-                                    <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center;">
-                                        <span style="background: rgba(0,188,242,0.3); padding: 5px 10px; border-radius: 5px;">AZ 1</span>
-                                        <span style="background: rgba(0,188,242,0.3); padding: 5px 10px; border-radius: 5px;">AZ 2</span>
-                                        <span style="background: rgba(0,188,242,0.3); padding: 5px 10px; border-radius: 5px;">AZ 3</span>
+                <div class="diagram">
+                    <h3 style="text-align: center; margin-bottom: 20px;">Infrastructure Hierarchy</h3>
+                    <div class="hierarchy-box hierarchy-level-1 animate delay-2">
+                        <strong style="font-size: 1.2em;">🌐 Geography</strong>
+                        <div style="font-size: 0.9em; color: #a0a0a0; margin-top: 5px;">Americas, Europe, Asia Pacific</div>
+                        <div class="hierarchy-box hierarchy-level-2 animate delay-3" style="margin-top: 15px;">
+                            <strong style="font-size: 1.1em;">🔄 Region Pair</strong>
+                            <div style="font-size: 0.85em; color: #a0a0a0; margin: 5px 0;">East US ↔ West US</div>
+                            <div class="hierarchy-box hierarchy-level-3 animate delay-4" style="margin-top: 15px;">
+                                <strong style="font-size: 1em;">📍 Region</strong>
+                                <div style="font-size: 0.85em; color: #a0a0a0; margin: 5px 0;">East US</div>
+                                <div style="display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap;">
+                                    <div class="hierarchy-box hierarchy-level-4 animate delay-5" style="flex: 1; min-width: 80px; padding: 10px;">
+                                        <strong>AZ 1</strong>
+                                        <div style="font-size: 0.75em; color: #a0a0a0;">Data Center</div>
+                                    </div>
+                                    <div class="hierarchy-box hierarchy-level-4 animate delay-5" style="flex: 1; min-width: 80px; padding: 10px;">
+                                        <strong>AZ 2</strong>
+                                        <div style="font-size: 0.75em; color: #a0a0a0;">Data Center</div>
+                                    </div>
+                                    <div class="hierarchy-box hierarchy-level-4 animate delay-6" style="flex: 1; min-width: 80px; padding: 10px;">
+                                        <strong>AZ 3</strong>
+                                        <div style="font-size: 0.75em; color: #a0a0a0;">Data Center</div>
                                     </div>
                                 </div>
                             </div>
@@ -836,6 +1031,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-6">
+            Availability Zones provide high availability within a region. Region Pairs provide disaster recovery across regions.
         </div>
     </div>
 
@@ -845,30 +1044,49 @@
         <h1 class="animate-fade-in-up">Azure Compute Services</h1>
         <p class="subtitle animate-fade-in-up delay-1">Running Your Applications</p>
 
-        <div class="four-column">
-            <div class="card animate-fade-in-up delay-2">
-                <div class="card-icon">🖥️</div>
-                <h3>Virtual Machines</h3>
-                <p>IaaS - Full control over OS and software</p>
-                <div class="service-badge" style="margin-top: 10px;">IaaS</div>
-            </div>
-            <div class="card animate-fade-in-up delay-3">
-                <div class="card-icon">📦</div>
-                <h3>App Service</h3>
-                <p>PaaS - Host web apps without managing infrastructure</p>
-                <div class="service-badge" style="margin-top: 10px;">PaaS</div>
-            </div>
-            <div class="card animate-fade-in-up delay-4">
-                <div class="card-icon">🐳</div>
-                <h3>Containers</h3>
-                <p>Container Instances, AKS for Kubernetes</p>
-                <div class="service-badge" style="margin-top: 10px;">PaaS</div>
-            </div>
-            <div class="card animate-fade-in-up delay-5">
-                <div class="card-icon">⚡</div>
-                <h3>Azure Functions</h3>
-                <p>Serverless - Run code on events</p>
-                <div class="service-badge" style="margin-top: 10px;">Serverless</div>
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px;">Compute Options Comparison</h3>
+            <div class="compute-grid">
+                <div class="compute-box animate-slide-left delay-2">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🖥️</div>
+                    <h3>Virtual Machines</h3>
+                    <div class="service-badge" style="margin: 10px 0;">IaaS</div>
+                    <p style="font-size: 0.9em; color: #a0a0a0;">Full OS control, lift & shift migrations</p>
+                    <div style="margin-top: 10px; font-size: 0.85em;">
+                        <div>✓ Maximum flexibility</div>
+                        <div>✓ Custom software</div>
+                    </div>
+                </div>
+                <div class="compute-box animate-slide-right delay-3">
+                    <div style="font-size: 2em; margin-bottom: 10px;">📦</div>
+                    <h3>App Service</h3>
+                    <div class="service-badge" style="margin: 10px 0;">PaaS</div>
+                    <p style="font-size: 0.9em; color: #a0a0a0;">Web apps, APIs, mobile backends</p>
+                    <div style="margin-top: 10px; font-size: 0.85em;">
+                        <div>✓ Auto-scaling</div>
+                        <div>✓ CI/CD integration</div>
+                    </div>
+                </div>
+                <div class="compute-box animate-slide-left delay-4">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🐳</div>
+                    <h3>Containers</h3>
+                    <div class="service-badge" style="margin: 10px 0;">PaaS</div>
+                    <p style="font-size: 0.9em; color: #a0a0a0;">ACI, AKS - microservices</p>
+                    <div style="margin-top: 10px; font-size: 0.85em;">
+                        <div>✓ Lightweight</div>
+                        <div>✓ Orchestration</div>
+                    </div>
+                </div>
+                <div class="compute-box animate-slide-right delay-5">
+                    <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
+                    <h3>Functions</h3>
+                    <div class="service-badge" style="margin: 10px 0;">Serverless</div>
+                    <p style="font-size: 0.9em; color: #a0a0a0;">Event-driven, pay per execution</p>
+                    <div style="margin-top: 10px; font-size: 0.85em;">
+                        <div>✓ No infrastructure</div>
+                        <div>✓ Auto-scale to zero</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -945,26 +1163,53 @@
         <h1 class="animate-fade-in-up">Azure Storage Services</h1>
         <p class="subtitle animate-fade-in-up delay-1">Storing Your Data</p>
 
-        <div class="four-column">
-            <div class="card animate-fade-in-up delay-2">
-                <div class="card-icon">📁</div>
-                <h3>Blob Storage</h3>
-                <p>Object storage for unstructured data (images, videos, backups)</p>
-            </div>
-            <div class="card animate-fade-in-up delay-3">
-                <div class="card-icon">📂</div>
-                <h3>File Storage</h3>
-                <p>Managed file shares accessible via SMB protocol</p>
-            </div>
-            <div class="card animate-fade-in-up delay-4">
-                <div class="card-icon">📋</div>
-                <h3>Queue Storage</h3>
-                <p>Message queue for async communication between apps</p>
-            </div>
-            <div class="card animate-fade-in-up delay-5">
-                <div class="card-icon">📊</div>
-                <h3>Table Storage</h3>
-                <p>NoSQL key-value store for structured data</p>
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px;">Storage Types Overview</h3>
+            <div class="storage-container">
+                <div class="storage-box animate-slide-left delay-2">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">📁</div>
+                    <h3>Blob Storage</h3>
+                    <p style="font-size: 0.9em; color: #a0a0a0; margin: 10px 0;">Object storage for unstructured data</p>
+                    <div style="margin-top: 15px; font-size: 0.85em; text-align: left;">
+                        <div>✓ Images, videos</div>
+                        <div>✓ Backups, logs</div>
+                        <div>✓ Documents, files</div>
+                        <div style="margin-top: 10px; color: #50e6ff;">Hot / Cool / Archive tiers</div>
+                    </div>
+                </div>
+                <div class="storage-box animate-slide-right delay-3">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">📂</div>
+                    <h3>File Storage</h3>
+                    <p style="font-size: 0.9em; color: #a0a0a0; margin: 10px 0;">Managed file shares (SMB/NFS)</p>
+                    <div style="margin-top: 15px; font-size: 0.85em; text-align: left;">
+                        <div>✓ Lift & shift apps</div>
+                        <div>✓ Shared storage</div>
+                        <div>✓ Mount like drives</div>
+                        <div style="margin-top: 10px; color: #50e6ff;">Replace file servers</div>
+                    </div>
+                </div>
+                <div class="storage-box animate-slide-left delay-4">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">📋</div>
+                    <h3>Queue Storage</h3>
+                    <p style="font-size: 0.9em; color: #a0a0a0; margin: 10px 0;">Message queue for async apps</p>
+                    <div style="margin-top: 15px; font-size: 0.85em; text-align: left;">
+                        <div>✓ Decouple components</div>
+                        <div>✓ Async processing</div>
+                        <div>✓ Work distribution</div>
+                        <div style="margin-top: 10px; color: #50e6ff;">Millions of messages</div>
+                    </div>
+                </div>
+                <div class="storage-box animate-slide-right delay-5">
+                    <div style="font-size: 2.5em; margin-bottom: 10px;">📊</div>
+                    <h3>Table Storage</h3>
+                    <p style="font-size: 0.9em; color: #a0a0a0; margin: 10px 0;">NoSQL key-value store</p>
+                    <div style="margin-top: 15px; font-size: 0.85em; text-align: left;">
+                        <div>✓ Structured data</div>
+                        <div>✓ Schema-less</div>
+                        <div>✓ Fast queries</div>
+                        <div style="margin-top: 10px; color: #50e6ff;">Scalable & cost-effective</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1066,6 +1311,35 @@
         <div class="day-badge">Day 2</div>
         <h1 class="animate-fade-in-up">Azure Identity Services</h1>
         <p class="subtitle animate-fade-in-up delay-1">Authentication & Authorization</p>
+
+        <div class="diagram animate-fade-in-up delay-2">
+            <h3 style="text-align: center; margin-bottom: 20px;">Identity & Access Management Flow</h3>
+            <div class="identity-flow">
+                <div class="identity-step animate-slide-left delay-2">
+                    <div style="font-size: 2em; margin-bottom: 10px;">👤</div>
+                    <h3 style="font-size: 1.1em;">User</h3>
+                    <p style="font-size: 0.85em; color: #a0a0a0; margin-top: 5px;">Attempts to access resource</p>
+                </div>
+                <div class="flow-arrow animate delay-3"></div>
+                <div class="identity-step animate delay-3">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔐</div>
+                    <h3 style="font-size: 1.1em;">Entra ID</h3>
+                    <p style="font-size: 0.85em; color: #a0a0a0; margin-top: 5px;">Authentication + MFA</p>
+                </div>
+                <div class="flow-arrow animate delay-4"></div>
+                <div class="identity-step animate delay-4">
+                    <div style="font-size: 2em; margin-bottom: 10px;">✅</div>
+                    <h3 style="font-size: 1.1em;">Conditional Access</h3>
+                    <p style="font-size: 0.85em; color: #a0a0a0; margin-top: 5px;">Policy evaluation</p>
+                </div>
+                <div class="flow-arrow animate delay-5"></div>
+                <div class="identity-step animate-slide-right delay-5">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🎯</div>
+                    <h3 style="font-size: 1.1em;">Resource</h3>
+                    <p style="font-size: 0.85em; color: #a0a0a0; margin-top: 5px;">Access granted/denied</p>
+                </div>
+            </div>
+        </div>
 
         <div class="two-column">
             <div class="animate-slide-left delay-2">
@@ -1208,26 +1482,33 @@
 
         <div class="two-column">
             <div class="animate-slide-left delay-2">
-                <div class="card">
-                    <h3>Management Hierarchy</h3>
-                    <div style="padding: 20px;">
-                        <div style="border: 2px solid #0078d4; padding: 15px; border-radius: 10px; text-align: center;">
-                            <strong>Management Groups</strong>
-                            <div style="border: 2px solid #00bcf2; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                                <strong>Subscriptions</strong>
-                                <div style="border: 2px solid #50e6ff; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                                    <strong>Resource Groups</strong>
-                                    <div style="background: rgba(80,230,255,0.2); padding: 8px; border-radius: 4px; margin-top: 10px;">
-                                        Resources
+                <div class="diagram">
+                    <h3 style="text-align: center; margin-bottom: 20px;">Governance Hierarchy</h3>
+                    <div style="padding: 10px;">
+                        <div class="hierarchy-box hierarchy-level-1 animate delay-2">
+                            <div style="font-size: 1.2em; margin-bottom: 5px;">🏢 Management Groups</div>
+                            <div style="font-size: 0.8em; color: #a0a0a0;">Organize multiple subscriptions</div>
+                            <div class="hierarchy-box hierarchy-level-2 animate delay-3" style="margin-top: 15px;">
+                                <div style="font-size: 1.1em; margin-bottom: 5px;">📋 Subscriptions</div>
+                                <div style="font-size: 0.8em; color: #a0a0a0;">Billing boundary, access control</div>
+                                <div class="hierarchy-box hierarchy-level-3 animate delay-4" style="margin-top: 15px;">
+                                    <div style="font-size: 1em; margin-bottom: 5px;">📁 Resource Groups</div>
+                                    <div style="font-size: 0.8em; color: #a0a0a0;">Logical container for resources</div>
+                                    <div class="hierarchy-box hierarchy-level-4 animate delay-5" style="margin-top: 15px; padding: 12px;">
+                                        <div style="font-size: 0.95em;">⚙️ Resources</div>
+                                        <div style="font-size: 0.75em; color: #a0a0a0; margin-top: 5px;">VMs, Storage, Databases, etc.</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div style="text-align: center; margin-top: 15px; padding: 15px; background: rgba(0, 188, 242, 0.1); border-radius: 10px;">
+                        <div style="font-size: 0.9em; color: #50e6ff;">↓ Policies & RBAC Inherited Downward ↓</div>
+                    </div>
                 </div>
             </div>
             <div class="animate-slide-right delay-3">
-                <div class="card azure-card">
+                <div class="card azure-card" style="margin-bottom: 20px;">
                     <h3>Governance Features</h3>
                     <ul>
                         <li><strong>Azure Policy:</strong> Enforce standards and compliance</li>
@@ -1237,10 +1518,19 @@
                         <li><strong>Blueprints:</strong> Repeatable environment setup</li>
                     </ul>
                 </div>
+                <div class="highlight-box">
+                    <h3>Key Concepts</h3>
+                    <ul style="margin-top: 10px;">
+                        <li><strong>Management Groups:</strong> Up to 6 levels deep</li>
+                        <li><strong>Subscriptions:</strong> Billing & quota limits</li>
+                        <li><strong>Resource Groups:</strong> Same region not required</li>
+                        <li><strong>Resources:</strong> Must be in one RG only</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <div class="exam-tip animate-fade-in-up delay-4">
+        <div class="exam-tip animate-fade-in-up delay-6">
             Policies are inherited down the hierarchy. A policy at Management Group applies to all subscriptions below it.
         </div>
     </div>

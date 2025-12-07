@@ -13,6 +13,7 @@ course-viewer/
 ├── enterprise-ai-adoption/     # Enterprise AI strategy (2 days)
 ├── mastering-ai-agents/        # AI Agents, Swarms, A2A (3 days)
 ├── use-case-prompting-seminar/ # Prompting & Use Cases (90 min)
+├── ai-ml-data-scientists/      # AI/ML for Data Scientists (3 days)
 ├── out/                        # Mastering AI course outputs
 └── src/                        # Flask app, workspaces
 ```
@@ -47,6 +48,14 @@ course-viewer/
 - **Topics:** CRAFT framework, context engineering, use case identification, prompt engineering techniques
 - **Materials:** Interactive demo guide (instructor), take-home exercise PDF
 - **Client:** ITAG Skillnet AI Advantage
+
+### AI/ML for Data Scientists (3 days)
+- **Slides:** `ai-ml-data-scientists/ai-ml-data-scientists-slides.html` (32 slides)
+- **Topics:**
+  - Day 1: ML foundations, data preprocessing, feature engineering, model selection, evaluation metrics
+  - Day 2: Deep learning, CNNs, RNNs, Transformers, transfer learning, AutoML, multimodal AI
+  - Day 3: MLOps, model deployment, monitoring, responsible AI, explainability
+- **Labs:** Data preprocessing (scikit-learn), Deep learning (PyTorch)
 
 ### Mastering AI / LLMs (multi-day)
 - **Slides:** `out/mastering-ai-slides.html`, `out/mastering-ai-part1-slides.html`

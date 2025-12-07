@@ -2166,6 +2166,24 @@ result = permutation_importance(model, X, y)
         let currentSlide = 1;
         const totalSlides = 32;
 
+        function getVisibleSlide() {
+            const slides = document.querySelectorAll('.slide');
+            const viewportCenter = window.scrollY + window.innerHeight / 2;
+            let closestSlide = 1;
+            let closestDistance = Infinity;
+
+            slides.forEach((slide, index) => {
+                const rect = slide.getBoundingClientRect();
+                const slideCenter = window.scrollY + rect.top + rect.height / 2;
+                const distance = Math.abs(viewportCenter - slideCenter);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestSlide = index + 1;
+                }
+            });
+            return closestSlide;
+        }
+
         function showSlide(n) {
             const slides = document.querySelectorAll('.slide');
 
@@ -2175,15 +2193,32 @@ result = permutation_importance(model, X, y)
             slides.forEach(slide => slide.classList.remove('active'));
             slides[currentSlide - 1].classList.add('active');
 
+            // Scroll to the slide
+            slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+
             document.getElementById('currentSlide').textContent = currentSlide;
             document.getElementById('prevBtn').disabled = currentSlide === 1;
             document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
         }
 
         function changeSlide(direction) {
+            // Sync with visible slide before changing
+            currentSlide = getVisibleSlide();
             currentSlide += direction;
             showSlide(currentSlide);
         }
+
+        // Update counter on scroll
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const visible = getVisibleSlide();
+                document.getElementById('currentSlide').textContent = visible;
+                document.getElementById('prevBtn').disabled = visible === 1;
+                document.getElementById('nextBtn').disabled = visible === totalSlides;
+            }, 100);
+        });
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {

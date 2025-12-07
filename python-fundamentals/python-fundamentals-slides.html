@@ -1648,17 +1648,59 @@ next_year = age + 1  # str + int!</code>
     let currentSlide = 1;
     const totalSlides = 32;
 
-    function showSlide(n) {
-        if (n < 1) n = totalSlides;
-        if (n > totalSlides) n = 1;
-        currentSlide = n;
-        document.getElementById('slide' + n).scrollIntoView({ behavior: 'smooth' });
+    function getVisibleSlide() {
+        const slides = document.querySelectorAll('.slide');
+        const viewportCenter = window.scrollY + window.innerHeight / 2;
+        let closestSlide = 1;
+        let closestDistance = Infinity;
+
+        slides.forEach((slide, index) => {
+            const rect = slide.getBoundingClientRect();
+            const slideCenter = window.scrollY + rect.top + rect.height / 2;
+            const distance = Math.abs(viewportCenter - slideCenter);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestSlide = index + 1;
+            }
+        });
+        return closestSlide;
     }
 
-    function nextSlide() { showSlide(currentSlide + 1); }
-    function previousSlide() { showSlide(currentSlide - 1); }
+    function showSlide(n) {
+        const slides = document.querySelectorAll('.slide');
 
-    document.addEventListener('keydown', function(e) {
+        if (n > totalSlides) currentSlide = 1;
+        if (n < 1) currentSlide = totalSlides;
+
+        slides.forEach(slide => slide.classList.remove('active'));
+        slides[currentSlide - 1].classList.add('active');
+
+        // Scroll to the slide
+        slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function changeSlide(direction) {
+        // Sync with visible slide before changing
+        currentSlide = getVisibleSlide();
+        currentSlide += direction;
+        showSlide(currentSlide);
+    }
+
+    function nextSlide() { changeSlide(1); }
+    function previousSlide() { changeSlide(-1); }
+
+    // Update counter on scroll
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            const visible = getVisibleSlide();
+            currentSlide = visible;
+        }, 100);
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
             e.preventDefault();
             nextSlide();
@@ -1680,6 +1722,9 @@ next_year = age + 1  # str + int!</code>
             document.exitFullscreen();
         }
     }
+
+    // Initialize
+    showSlide(currentSlide);
 </script>
 
 </body>

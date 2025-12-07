@@ -1037,23 +1037,58 @@
     let currentSlide = 1;
     const totalSlides = 31;
 
+    function getVisibleSlide() {
+        const slides = document.querySelectorAll('.slide');
+        const viewportCenter = window.scrollY + window.innerHeight / 2;
+        let closestSlide = 1;
+        let closestDistance = Infinity;
+
+        slides.forEach((slide, index) => {
+            const rect = slide.getBoundingClientRect();
+            const slideCenter = window.scrollY + rect.top + rect.height / 2;
+            const distance = Math.abs(viewportCenter - slideCenter);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestSlide = index + 1;
+            }
+        });
+        return closestSlide;
+    }
+
     function showSlide(n) {
-        document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+        if (n > totalSlides) currentSlide = totalSlides;
+        if (n < 1) currentSlide = 1;
+
+        document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function changeSlide(direction) {
+        // Sync with visible slide before changing
+        currentSlide = getVisibleSlide();
+        currentSlide += direction;
+
+        if (currentSlide > totalSlides) currentSlide = totalSlides;
+        if (currentSlide < 1) currentSlide = 1;
+
+        showSlide(currentSlide);
     }
 
     function nextSlide() {
-        if (currentSlide < totalSlides) {
-            currentSlide++;
-            document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
-        }
+        changeSlide(1);
     }
 
     function prevSlide() {
-        if (currentSlide > 1) {
-            currentSlide--;
-            document.getElementById(`slide${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
-        }
+        changeSlide(-1);
     }
+
+    // Update counter on scroll
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            currentSlide = getVisibleSlide();
+        }, 100);
+    });
 
     // Keyboard navigation (including presentation clicker support)
     document.addEventListener('keydown', (e) => {
@@ -1081,16 +1116,8 @@
         }
     }
 
-    // Track current slide on scroll
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                currentSlide = parseInt(entry.target.id.replace('slide', ''));
-            }
-        });
-    }, { threshold: 0.5 });
-
-    document.querySelectorAll('.slide').forEach(slide => observer.observe(slide));
+    // Initialize
+    showSlide(currentSlide);
 </script>
 
 </body>

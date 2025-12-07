@@ -3,224 +3,624 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Viewer</title>
+    <title>AI Elevate - Professional Training</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Pyodide for running Python in browser -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { height: 100%; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            color: white;
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.5;
         }
-        .app-container { display: flex; height: 100vh; }
+        #root { height: 100%; }
 
-        /* Auth Modal */
-        .auth-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8); display: flex;
-            align-items: center; justify-content: center; z-index: 1000;
+        /* ========== LAYOUT ========== */
+        .app {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+            height: 100%;
+            overflow: hidden;
         }
-        .auth-modal {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 16px; padding: 40px; width: 400px;
-            border: 1px solid rgba(255,255,255,0.1);
+        .app.with-sidebar {
+            grid-template-columns: 320px 1fr;
+            grid-template-rows: 100vh;
         }
-        .auth-modal h2 { color: #4ecdc4; margin-bottom: 24px; text-align: center; }
-        .auth-tabs { display: flex; margin-bottom: 24px; }
-        .auth-tab {
-            flex: 1; padding: 12px; background: transparent; border: none;
-            color: rgba(255,255,255,0.5); cursor: pointer; font-size: 1rem;
-            border-bottom: 2px solid transparent;
-        }
-        .auth-tab.active { color: #4ecdc4; border-bottom-color: #4ecdc4; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; margin-bottom: 6px; opacity: 0.8; font-size: 0.9rem; }
-        .form-group input {
-            width: 100%; padding: 12px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
-            color: white; font-size: 1rem;
-        }
-        .form-group input:focus { outline: none; border-color: #4ecdc4; }
-        .auth-btn {
-            width: 100%; padding: 14px; border-radius: 8px; border: none;
-            background: #4ecdc4; color: #1a1a2e; font-size: 1rem;
-            font-weight: 600; cursor: pointer; margin-top: 16px;
-        }
-        .auth-btn:hover { background: #5eddd4; }
-        .auth-error { color: #ff6b6b; font-size: 0.9rem; margin-top: 12px; text-align: center; }
-        .auth-skip { text-align: center; margin-top: 16px; }
-        .auth-skip button { background: none; border: none; color: rgba(255,255,255,0.5); cursor: pointer; }
-        .auth-skip button:hover { color: white; }
+        .app.with-sidebar .header { display: none; }
 
-        /* User Menu */
-        .user-menu {
-            padding: 12px 20px; background: rgba(0,0,0,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: space-between;
+        /* ========== HEADER (Home Page) ========== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
         }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-avatar {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: #4ecdc4; display: flex; align-items: center;
-            justify-content: center; font-weight: 600; color: #1a1a2e;
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #38bdf8;
         }
-        .user-name { font-size: 0.9rem; }
-        .logout-btn {
-            padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3);
-            background: transparent; color: white; cursor: pointer; font-size: 0.8rem;
+        .header-brand span { font-size: 1.5rem; }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
-        .logout-btn:hover { background: rgba(255,255,255,0.1); }
 
-        /* Sidebar */
+        /* ========== SIDEBAR ========== */
         .sidebar {
-            width: 320px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);
-            overflow-y: auto; border-right: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0; display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
+            background: #1e293b;
+            border-right: 1px solid #334155;
+            height: 100vh;
+            min-height: 0;
         }
-        .sidebar-header { padding: 20px; background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .sidebar-header h1 { font-size: 1.3rem; color: #4ecdc4; margin-bottom: 12px; }
-        .course-selector { position: relative; }
-        .course-dropdown {
-            width: 100%; padding: 12px 16px; background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
-            color: white; font-size: 1rem; cursor: pointer; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center;
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
         }
-        .course-dropdown:hover { border-color: #4ecdc4; }
-        .course-dropdown:focus { outline: none; border-color: #4ecdc4; }
-        .course-dropdown option { background: #1a1a2e; color: white; }
-        .course-description { margin-top: 10px; font-size: 0.85rem; opacity: 0.7; line-height: 1.4; }
-        .sidebar-content { flex: 1; overflow-y: auto; }
-        .section { padding: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #4ecdc4; margin-bottom: 12px; font-weight: 600; }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .sidebar-brand-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #38bdf8;
+        }
+        .sidebar-brand-text span { font-size: 1.1rem; }
+        .back-home {
+            padding: 6px 10px;
+            background: transparent;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .back-home:hover { background: #334155; color: #e2e8f0; }
+        .course-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .course-select:focus { outline: none; border-color: #38bdf8; }
+
+        .sidebar-nav {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px;
+            min-height: 0;
+        }
+        .nav-section { margin-bottom: 20px; }
+        .nav-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            padding: 0 8px;
+            margin-bottom: 8px;
+        }
         .nav-item {
-            display: flex; align-items: center; padding: 12px 16px; margin: 4px 0;
-            border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
-            background: transparent; border: none; color: white; width: 100%;
-            text-align: left; font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s;
         }
-        .nav-item:hover { background: rgba(78, 205, 196, 0.2); }
-        .nav-item.active { background: rgba(78, 205, 196, 0.3); border-left: 3px solid #4ecdc4; }
-        .nav-item-icon { width: 24px; height: 24px; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-        .type-badge { margin-left: auto; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; font-weight: 600; }
-        .type-slides { background: #4ecdc4; color: #1a1a2e; }
-        .type-demo { background: #ff6b6b; color: white; }
-        .type-lab { background: #a66cff; color: white; }
-        .type-notes { background: #feca57; color: #1a1a2e; }
-        .runnable-badge { background: #00cc66; color: white; font-size: 0.6rem; margin-left: 4px; }
-        .printable-badge { background: #2c5282; color: white; font-size: 0.6rem; margin-left: 4px; }
-        .external-badge { background: #805ad5; color: white; font-size: 0.6rem; margin-left: 4px; }
+        .nav-item:hover { background: #334155; }
+        .nav-item.active { background: #0ea5e9; color: white; }
+        .nav-item-icon { font-size: 1rem; }
+        .nav-item-label { flex: 1; }
+        .nav-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .badge-slides { background: #0ea5e9; color: white; }
+        .badge-lab { background: #8b5cf6; color: white; }
+        .badge-demo { background: #f43f5e; color: white; }
+        .badge-notes { background: #eab308; color: #1e293b; }
+        .badge-run { background: #22c55e; color: white; margin-left: 4px; }
+        .badge-pdf { background: #3b82f6; color: white; margin-left: 4px; }
+        .badge-live { background: #a855f7; color: white; margin-left: 4px; }
 
-        /* Content Area */
-        .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        .download-all-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid #38bdf8;
+            border-radius: 6px;
+            color: #38bdf8;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .download-all-btn:hover { background: rgba(56, 189, 248, 0.1); }
+
+        /* ========== MAIN CONTENT ========== */
+        .main {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #0f172a;
+            height: 100vh;
+            min-height: 0;
+        }
         .content-header {
-            padding: 8px 16px; background: rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
         }
-        .content-title { font-size: 1rem; color: #4ecdc4; margin: 0; }
+        .content-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
         .content-actions { display: flex; gap: 8px; }
-        .action-btn {
-            padding: 4px 10px; border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: transparent; color: white; cursor: pointer;
-            font-size: 0.8rem; transition: all 0.2s ease;
-        }
-        .action-btn:hover { background: rgba(255, 255, 255, 0.1); }
-        .action-btn.primary { background: #4ecdc4; color: #1a1a2e; border: none; }
-        .action-btn.primary:hover { background: #5eddd4; }
-        .action-btn.run { background: #00cc66; color: white; border: none; }
-        .action-btn.run:hover { background: #00dd77; }
-        .content-frame { flex: 1; border: none; background: white; }
 
-        /* Notebook Viewer */
-        .notebook-container { flex: 1; overflow-y: auto; padding: 20px; background: #1e1e1e; }
-        .notebook-loading { display: flex; align-items: center; justify-content: center; height: 100%; }
-        .cell { margin-bottom: 16px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-        .cell-header { padding: 8px 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; }
-        .cell-type { font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; }
-        .cell-run-btn {
-            padding: 4px 12px; border-radius: 4px; border: none;
-            background: #00cc66; color: white; cursor: pointer; font-size: 0.8rem;
+        .content-body {
+            flex: 1;
+            overflow: auto;
         }
-        .cell-run-btn:hover { background: #00dd77; }
-        .cell-run-btn:disabled { background: #666; cursor: not-allowed; }
-        .cell-content { padding: 12px; background: #2d2d2d; }
-        .cell-content pre { font-family: 'Courier New', monospace; font-size: 0.9rem; white-space: pre-wrap; color: #e0e0e0; }
-        .cell-output { padding: 12px; background: #1a1a1a; border-top: 1px solid rgba(255,255,255,0.1); }
-        .cell-output pre { font-family: 'Courier New', monospace; font-size: 0.9rem; white-space: pre-wrap; color: #4ecdc4; }
-        .cell-output.error pre { color: #ff6b6b; }
-        .cell.selected { border-color: #4ecdc4; box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.3); }
-        .cell-controls { display: flex; gap: 4px; align-items: center; }
-        .cell-btn { padding: 4px 8px; border-radius: 4px; border: none; background: rgba(255,255,255,0.1); color: #aaa; cursor: pointer; font-size: 0.75rem; }
-        .cell-btn:hover { background: rgba(255,255,255,0.2); color: white; }
-        .cell-btn.danger:hover { background: #ff4444; }
-        .notebook-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 12px; background: #252525; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .toolbar-group { display: flex; gap: 2px; padding-right: 8px; border-right: 1px solid rgba(255,255,255,0.1); }
-        .toolbar-group:last-child { border-right: none; }
-        .toolbar-btn { padding: 3px 8px; border-radius: 3px; border: none; background: rgba(255,255,255,0.1); color: #ccc; cursor: pointer; font-size: 0.75rem; }
-        .toolbar-btn:hover { background: rgba(255,255,255,0.2); color: white; }
-        .toolbar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .cell-type-select { padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: #2d2d2d; color: white; font-size: 0.75rem; }
-        .markdown-cell { padding: 16px; background: rgba(255,255,255,0.02); }
-        .markdown-cell h1, .markdown-cell h2, .markdown-cell h3 { color: #4ecdc4; margin-bottom: 12px; }
-        .markdown-cell p { line-height: 1.6; margin-bottom: 12px; }
-        .markdown-cell code { background: rgba(78,205,196,0.2); padding: 2px 6px; border-radius: 4px; }
-        .pyodide-status { padding: 4px 12px; background: rgba(0,0,0,0.3); font-size: 0.75rem; display: flex; align-items: center; gap: 8px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .status-dot.loading { background: #feca57; animation: pulse 1s infinite; }
-        .status-dot.ready { background: #00cc66; }
-        .status-dot.error { background: #ff6b6b; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
 
-        /* Welcome Screen */
-        .welcome-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; }
-        .welcome-icon { font-size: 4rem; margin-bottom: 24px; }
-        .welcome-screen h2 { font-size: 2rem; color: #4ecdc4; margin-bottom: 16px; }
-        .welcome-screen p { font-size: 1.1rem; opacity: 0.8; max-width: 500px; line-height: 1.6; }
-        .course-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; max-width: 900px; width: 100%; }
-        .course-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 24px; cursor: pointer; transition: all 0.3s ease; text-align: left; }
-        .course-card:hover { background: rgba(255, 255, 255, 0.1); border-color: #4ecdc4; transform: translateY(-4px); }
-        .course-card-icon { font-size: 2.5rem; margin-bottom: 16px; }
-        .course-card h3 { font-size: 1.2rem; color: #4ecdc4; margin-bottom: 8px; }
-        .course-card p { font-size: 0.9rem; opacity: 0.7; line-height: 1.5; }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
-        .stat-card { background: rgba(0, 0, 0, 0.2); padding: 24px; border-radius: 12px; text-align: center; }
-        .stat-number { font-size: 2.5rem; font-weight: 700; color: #4ecdc4; }
-        .stat-label { font-size: 0.9rem; opacity: 0.8; margin-top: 8px; }
-        .download-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 12px 24px; border-radius: 8px; border: none;
-            background: linear-gradient(135deg, #4ecdc4 0%, #44a8a0 100%);
-            color: #1a1a2e; font-size: 1rem; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; margin-top: 24px;
+        /* ========== HOME PAGE ========== */
+        .home {
+            flex: 1;
+            overflow-y: auto;
+            padding: 48px 32px;
         }
-        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(78, 205, 196, 0.4); }
-        .download-btn:active { transform: translateY(0); }
-        .sidebar-download {
-            padding: 12px 20px; background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(255,255,255,0.1);
+        .home-hero {
+            max-width: 600px;
+            margin: 0 auto 48px;
+            text-align: center;
         }
-        .sidebar-download-btn {
-            width: 100%; padding: 10px 16px; border-radius: 6px;
-            border: 1px solid rgba(78, 205, 196, 0.5); background: rgba(78, 205, 196, 0.1);
-            color: #4ecdc4; font-size: 0.9rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        .home-hero-icon { font-size: 4rem; margin-bottom: 16px; }
+        .home-hero h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+        }
+        .home-hero p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+        .home-tagline {
+            font-size: 1.25rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .home-cta {
+            margin-top: 40px;
+        }
+        .btn-lg {
+            padding: 14px 32px;
+            font-size: 1rem;
+        }
+        .course-picker {
+            padding: 14px 20px;
+            font-size: 1rem;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #e2e8f0;
+            min-width: 300px;
+            cursor: pointer;
+        }
+        .course-picker:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .course-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
             transition: all 0.2s;
         }
-        .sidebar-download-btn:hover { background: rgba(78, 205, 196, 0.2); border-color: #4ecdc4; }
-        .loading { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 1.2rem; opacity: 0.7; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #4ecdc4; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 16px; }
+        .course-card:hover {
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .course-card-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .course-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+        .course-card p {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        .course-card-duration {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* ========== COURSE WELCOME ========== */
+        .course-welcome {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+            text-align: center;
+            overflow-y: auto;
+        }
+        .course-welcome-icon { font-size: 4rem; margin-bottom: 16px; }
+        .course-welcome h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+        }
+        .course-welcome p {
+            font-size: 1rem;
+            color: #94a3b8;
+            max-width: 500px;
+            margin-bottom: 24px;
+        }
+        .stats-row {
+            display: flex;
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .stat-box {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #38bdf8;
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #e2e8f0;
+        }
+        .btn-ghost:hover { background: #334155; }
+        .btn-primary {
+            background: #0ea5e9;
+            color: white;
+        }
+        .btn-primary:hover { background: #0284c7; }
+        .btn-success {
+            background: #22c55e;
+            color: white;
+        }
+        .btn-success:hover { background: #16a34a; }
+
+        /* ========== USER ========== */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #0ea5e9;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .user-name {
+            font-size: 0.875rem;
+            color: #e2e8f0;
+        }
+        .guest-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        /* ========== AUTH MODAL ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .modal h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .modal-tabs {
+            display: flex;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #334155;
+        }
+        .modal-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.875rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+        .modal-tab.active {
+            color: #38bdf8;
+            border-bottom-color: #38bdf8;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .form-error {
+            color: #f43f5e;
+            font-size: 0.875rem;
+            text-align: center;
+            margin-top: 12px;
+        }
+        .modal-footer {
+            text-align: center;
+            margin-top: 16px;
+        }
+        .modal-footer button {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        .modal-footer button:hover { color: #94a3b8; }
+
+        /* ========== LOADING ========== */
+        .loading-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 16px;
+            color: #64748b;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #334155;
+            border-top-color: #38bdf8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .no-materials { padding: 40px; text-align: center; opacity: 0.6; }
-        .no-materials-icon { font-size: 3rem; margin-bottom: 16px; }
+
+        /* ========== NOTEBOOK ========== */
+        .notebook-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: #0f172a;
+        }
+        .notebook-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+        }
+        .toolbar-group {
+            display: flex;
+            gap: 4px;
+            padding-right: 12px;
+            border-right: 1px solid #334155;
+        }
+        .toolbar-group:last-child { border-right: none; }
+        .toolbar-btn {
+            padding: 6px 10px;
+            background: #334155;
+            border: none;
+            border-radius: 4px;
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .toolbar-btn:hover { background: #475569; }
+        .toolbar-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .cell {
+            margin-bottom: 16px;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .cell.selected { border-color: #38bdf8; }
+        .cell-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #1e293b;
+        }
+        .cell-controls { display: flex; align-items: center; gap: 8px; }
+        .cell-type-label {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .cell-content {
+            padding: 12px;
+            background: #0f172a;
+        }
+        .cell-content textarea {
+            width: 100%;
+            min-height: 100px;
+            background: transparent;
+            border: none;
+            color: #e2e8f0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+            outline: none;
+        }
+        .cell-output {
+            padding: 12px;
+            background: #0c1322;
+            border-top: 1px solid #334155;
+        }
+        .cell-output pre {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.875rem;
+            color: #38bdf8;
+            white-space: pre-wrap;
+        }
+        .cell-output.error pre { color: #f43f5e; }
+        .cell-run-btn {
+            padding: 4px 10px;
+            background: #22c55e;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .cell-run-btn:hover { background: #16a34a; }
+        .cell-run-btn:disabled { background: #475569; cursor: not-allowed; }
+        .kernel-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        .kernel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .kernel-dot.ready { background: #22c55e; }
+        .kernel-dot.loading { background: #eab308; animation: pulse 1s infinite; }
+        .kernel-dot.error { background: #f43f5e; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -230,7 +630,7 @@
 
         const icons = { slides: '📊', demo: '🎮', lab: '🧪', notes: '📝' };
 
-        // Auth Modal Component
+        // Auth Modal
         function AuthModal({ onLogin, onSkip }) {
             const [mode, setMode] = useState('login');
             const [username, setUsername] = useState('');
@@ -244,39 +644,24 @@
                 e.preventDefault();
                 setError('');
                 setLoading(true);
-
                 const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
-                const body = mode === 'login'
-                    ? { username, password }
-                    : { username, email, password, full_name: fullName };
-
+                const body = mode === 'login' ? { username, password } : { username, email, password, full_name: fullName };
                 try {
-                    const res = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify(body)
-                    });
+                    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(body) });
                     const data = await res.json();
-
-                    if (res.ok) {
-                        onLogin(data.user);
-                    } else {
-                        setError(data.error || 'An error occurred');
-                    }
-                } catch (err) {
-                    setError('Connection error. Please try again.');
-                }
+                    if (res.ok) onLogin(data.user);
+                    else setError(data.error || 'An error occurred');
+                } catch (err) { setError('Connection error'); }
                 setLoading(false);
             };
 
             return (
-                <div className="auth-overlay">
-                    <div className="auth-modal">
+                <div className="modal-overlay">
+                    <div className="modal">
                         <h2>Welcome to Course Viewer</h2>
-                        <div className="auth-tabs">
-                            <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')}>Login</button>
-                            <button className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => setMode('register')}>Register</button>
+                        <div className="modal-tabs">
+                            <button className={`modal-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')}>Login</button>
+                            <button className={`modal-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => setMode('register')}>Register</button>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
@@ -299,12 +684,12 @@
                                 <label>Password</label>
                                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                             </div>
-                            <button type="submit" className="auth-btn" disabled={loading}>
+                            <button type="submit" className="btn btn-primary" style={{width: '100%'}} disabled={loading}>
                                 {loading ? 'Please wait...' : (mode === 'login' ? 'Login' : 'Register')}
                             </button>
-                            {error && <div className="auth-error">{error}</div>}
+                            {error && <div className="form-error">{error}</div>}
                         </form>
-                        <div className="auth-skip">
+                        <div className="modal-footer">
                             <button onClick={onSkip}>Continue as Guest</button>
                         </div>
                     </div>
@@ -312,873 +697,98 @@
             );
         }
 
-        // Notebook Viewer Component with Pyodide and full cell management
+        // Notebook Viewer (simplified for readability)
         function NotebookViewer({ labId, onBack }) {
             const [notebook, setNotebook] = useState(null);
             const [pyodide, setPyodide] = useState(null);
-            const [pyodideStatus, setPyodideStatus] = useState('loading');
-            const [kernelMode, setKernelMode] = useState('auto'); // 'auto', 'pyodide', 'server'
-            const [activeKernel, setActiveKernel] = useState(null); // 'pyodide' or 'server' - the actual kernel in use
-            const [kernelInfo, setKernelInfo] = useState({ name: 'Python (Pyodide)', version: '' });
-            const [cellOutputs, setCellOutputs] = useState({});
-            const [runningCell, setRunningCell] = useState(null);
-            const [hasChanges, setHasChanges] = useState(false);
-            const [selectedCell, setSelectedCell] = useState(0);
-            const [clipboard, setClipboard] = useState(null);
-            const [clipboardAction, setClipboardAction] = useState(null);
-            const [editMode, setEditMode] = useState(false); // false = command mode, true = edit mode
-            const [deleteConfirm, setDeleteConfirm] = useState(false); // for dd delete
-            const [executionCount, setExecutionCount] = useState(0);
-            const cellRefs = React.useRef({});
-
-            // Check if notebook needs PyTorch or other server-only libraries
-            const needsServerKernel = (nb) => {
-                if (!nb || !nb.cells) return false;
-                const code = nb.cells.map(c => c.cell_type === 'code' ? (Array.isArray(c.source) ? c.source.join('') : c.source) : '').join('\n');
-                return code.includes('import torch') || code.includes('from torch') ||
-                       code.includes('import tensorflow') || code.includes('from tensorflow') ||
-                       code.includes('import keras') || code.includes('from keras');
-            };
-
-            // Load Pyodide kernel (browser-side)
-            const loadPyodideKernel = async () => {
-                try {
-                    setPyodideStatus('loading');
-                    setPyodide(null);
-                    setCellOutputs({});
-                    setExecutionCount(0);
-
-                    const pyodideInstance = await loadPyodide({
-                        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
-                    });
-                    // Load core data science packages
-                    setPyodideStatus('loading');
-                    await pyodideInstance.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn', 'micropip']);
-
-                    // Get Python version
-                    const version = pyodideInstance.runPython('import sys; sys.version.split()[0]');
-                    setKernelInfo({
-                        name: 'Python (Pyodide)',
-                        version: version,
-                        packages: ['numpy', 'pandas', 'matplotlib', 'scikit-learn']
-                    });
-
-                    setPyodide(pyodideInstance);
-                    setActiveKernel('pyodide');
-                    setPyodideStatus('ready');
-                } catch (err) {
-                    console.error('Pyodide load error:', err);
-                    setPyodideStatus('error');
-                    setKernelInfo({ name: 'Python (Pyodide)', version: 'Error', error: err.message });
-                }
-            };
-
-            // Load server-side kernel (supports PyTorch, TensorFlow, etc.)
-            const loadServerKernel = async () => {
-                try {
-                    setPyodideStatus('loading');
-                    setCellOutputs({});
-                    setExecutionCount(0);
-
-                    const response = await fetch('/api/kernel/start', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify({ lab_id: labId })
-                    });
-
-                    const data = await response.json();
-
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
-
-                    setKernelInfo({
-                        name: 'Python (Server)',
-                        version: '3.x',
-                        packages: ['numpy', 'pandas', 'matplotlib', 'scikit-learn', 'torch']
-                    });
-
-                    setActiveKernel('server');
-                    setPyodideStatus('ready');
-                } catch (err) {
-                    console.error('Server kernel error:', err);
-                    setPyodideStatus('error');
-                    setKernelInfo({ name: 'Python (Server)', version: 'Error', error: err.message });
-                }
-            };
-
-            // Load the appropriate kernel based on mode and notebook content
-            const loadKernel = async (nb = notebook) => {
-                const mode = kernelMode;
-                const needsServer = needsServerKernel(nb);
-
-                if (mode === 'server' || (mode === 'auto' && needsServer)) {
-                    await loadServerKernel();
-                } else {
-                    await loadPyodideKernel();
-                }
-            };
-
-            const restartKernel = async () => {
-                if (runningCell !== null) {
-                    alert('Please wait for the current cell to finish executing.');
-                    return;
-                }
-                if (!confirm('Restart kernel? All variables will be lost.')) return;
-
-                if (activeKernel === 'server') {
-                    // Restart server kernel
-                    setPyodideStatus('loading');
-                    try {
-                        await fetch('/api/kernel/restart', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
-                            body: JSON.stringify({ lab_id: labId })
-                        });
-                        setCellOutputs({});
-                        setExecutionCount(0);
-                        setPyodideStatus('ready');
-                    } catch (err) {
-                        console.error('Restart error:', err);
-                        setPyodideStatus('error');
-                    }
-                } else {
-                    await loadPyodideKernel();
-                }
-            };
-
-            const restartAndRunAll = async () => {
-                if (runningCell !== null) {
-                    alert('Please wait for the current cell to finish executing.');
-                    return;
-                }
-                if (!confirm('Restart kernel and run all cells? All variables will be reset.')) return;
-                await restartKernel();
-                // Wait a bit for kernel to be ready, then run all
-                setTimeout(() => runAllCells(), 500);
-            };
-
-            // Switch kernel mode
-            const switchKernelMode = async (newMode) => {
-                setKernelMode(newMode);
-                // If we have a notebook loaded, reload the kernel with new mode
-                if (notebook) {
-                    if (newMode === 'server') {
-                        await loadServerKernel();
-                    } else if (newMode === 'pyodide') {
-                        await loadPyodideKernel();
-                    } else {
-                        // auto mode - determine based on notebook content
-                        await loadKernel(notebook);
-                    }
-                }
-            };
+            const [status, setStatus] = useState('loading');
+            const [outputs, setOutputs] = useState({});
+            const [running, setRunning] = useState(null);
+            const [selected, setSelected] = useState(0);
 
             useEffect(() => {
-                // Load notebook first, then determine kernel
                 fetch(`/api/lab/${labId}/notebook`, { credentials: 'include' })
                     .then(res => res.json())
                     .then(data => {
                         setNotebook(data);
-                        // Auto-detect kernel type needed
-                        loadKernel(data);
-                    })
-                    .catch(err => console.error('Error loading notebook:', err));
+                        loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" })
+                            .then(async py => {
+                                await py.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn']);
+                                setPyodide(py);
+                                setStatus('ready');
+                            })
+                            .catch(() => setStatus('error'));
+                    });
             }, [labId]);
 
-            // Keyboard shortcuts - Jupyter style
-            useEffect(() => {
-                const handleKeyDown = (e) => {
-                    // Ctrl+S always saves (works in both modes)
-                    if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
-                        e.preventDefault();
-                        saveNotebook();
-                        return;
-                    }
-
-                    // Ctrl+Enter / Cmd+Enter runs cell without advancing (works in both modes)
-                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-                        e.preventDefault();
-                        if (notebook?.cells[selectedCell]?.cell_type === 'code') {
-                            runCell(selectedCell);
-                        }
-                        return;
-                    }
-
-                    // Shift+Enter runs cell and advances (works in both modes)
-                    if (e.key === 'Enter' && e.shiftKey) {
-                        e.preventDefault();
-                        if (notebook?.cells[selectedCell]?.cell_type === 'code') {
-                            runCellAndAdvance(selectedCell);
-                        } else {
-                            // For markdown, just move to next cell
-                            if (selectedCell < notebook.cells.length - 1) {
-                                setSelectedCell(selectedCell + 1);
-                            }
-                        }
-                        setEditMode(false);
-                        if (document.activeElement) document.activeElement.blur();
-                        return;
-                    }
-
-                    // In edit mode, handle Escape and arrow navigation at cell boundaries
-                    if (editMode) {
-                        if (e.key === 'Escape') {
-                            e.preventDefault();
-                            setEditMode(false);
-                            if (document.activeElement) document.activeElement.blur();
-                            return;
-                        }
-
-                        // Arrow key navigation at cell boundaries
-                        const textarea = cellRefs.current[selectedCell];
-                        if (textarea && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
-                            const { selectionStart, selectionEnd, value } = textarea;
-                            const isAtStart = selectionStart === 0 && selectionEnd === 0;
-                            const isAtEnd = selectionStart === value.length && selectionEnd === value.length;
-
-                            if (e.key === 'ArrowUp' && isAtStart && selectedCell > 0) {
-                                e.preventDefault();
-                                setSelectedCell(selectedCell - 1);
-                                setEditMode(false);
-                                textarea.blur();
-                                return;
-                            }
-                            if (e.key === 'ArrowDown' && isAtEnd && selectedCell < (notebook?.cells?.length || 0) - 1) {
-                                e.preventDefault();
-                                setSelectedCell(selectedCell + 1);
-                                setEditMode(false);
-                                textarea.blur();
-                                return;
-                            }
-                        }
-                        return; // Let other keys work normally in textarea
-                    }
-
-                    // Command mode shortcuts
-                    if (!notebook) return;
-                    const numCells = notebook.cells?.length || 0;
-
-                    switch(e.key) {
-                        case 'Enter':
-                            e.preventDefault();
-                            setEditMode(true);
-                            setTimeout(() => cellRefs.current[selectedCell]?.focus(), 0);
-                            break;
-                        case 'a': // Insert cell above
-                            e.preventDefault();
-                            addCell(selectedCell, 'code');
-                            break;
-                        case 'b': // Insert cell below
-                            e.preventDefault();
-                            addCell(selectedCell + 1, 'code');
-                            setSelectedCell(selectedCell + 1);
-                            break;
-                        case 'd': // Delete cell (dd in Jupyter, single d here for simplicity)
-                            e.preventDefault();
-                            if (deleteConfirm) {
-                                deleteCell(selectedCell);
-                                setDeleteConfirm(false);
-                            } else {
-                                setDeleteConfirm(true);
-                                setTimeout(() => setDeleteConfirm(false), 500); // Reset after 500ms
-                            }
-                            break;
-                        case 'x': // Cut cell
-                            e.preventDefault();
-                            cutCell();
-                            break;
-                        case 'c': // Copy cell
-                            e.preventDefault();
-                            copyCell();
-                            break;
-                        case 'v': // Paste cell below
-                            e.preventDefault();
-                            pasteCell();
-                            break;
-                        case 'm': // Change to markdown
-                            e.preventDefault();
-                            changeCellType(selectedCell, 'markdown');
-                            break;
-                        case 'y': // Change to code
-                            e.preventDefault();
-                            changeCellType(selectedCell, 'code');
-                            break;
-                        case 'ArrowUp':
-                        case 'k': // Move selection up
-                            e.preventDefault();
-                            if (e.shiftKey) {
-                                moveCellUp(selectedCell);
-                            } else {
-                                setSelectedCell(Math.max(0, selectedCell - 1));
-                            }
-                            break;
-                        case 'ArrowDown':
-                        case 'j': // Move selection down
-                            e.preventDefault();
-                            if (e.shiftKey) {
-                                moveCellDown(selectedCell);
-                            } else {
-                                setSelectedCell(Math.min(numCells - 1, selectedCell + 1));
-                            }
-                            break;
-                        case 'z': // Undo (placeholder - would need undo stack)
-                            if (e.ctrlKey || e.metaKey) {
-                                e.preventDefault();
-                                // TODO: implement undo
-                            }
-                            break;
-                    }
-                };
-
-                window.addEventListener('keydown', handleKeyDown);
-                return () => window.removeEventListener('keydown', handleKeyDown);
-            }, [editMode, selectedCell, notebook, clipboard, deleteConfirm]);
-
-            const getCellSource = (cell) => {
-                return Array.isArray(cell.source) ? cell.source.join('') : cell.source;
+            const getSource = (cell) => Array.isArray(cell.source) ? cell.source.join('') : cell.source;
+            const setSource = (idx, val) => {
+                const cells = [...notebook.cells];
+                cells[idx] = { ...cells[idx], source: val.split('\n').map((l,i,a) => i < a.length-1 ? l+'\n' : l) };
+                setNotebook({ ...notebook, cells });
             };
 
-            const setCellSource = (cellIndex, content) => {
-                if (!notebook) return;
-                const newCells = [...notebook.cells];
-                newCells[cellIndex] = {
-                    ...newCells[cellIndex],
-                    source: content.split('\n').map((l, i, arr) => i < arr.length - 1 ? l + '\n' : l)
-                };
-                setNotebook({ ...notebook, cells: newCells });
-                setHasChanges(true);
-            };
-
-            const addCell = (index, type = 'code') => {
-                if (!notebook) return;
-                const newCell = {
-                    cell_type: type,
-                    metadata: {},
-                    source: type === 'code' ? ['# Enter your code here\n'] : ['## New Section\n'],
-                    ...(type === 'code' ? { execution_count: null, outputs: [] } : {})
-                };
-                const newCells = [...notebook.cells];
-                newCells.splice(index, 0, newCell);
-                setNotebook({ ...notebook, cells: newCells });
-                setSelectedCell(index);
-                setHasChanges(true);
-            };
-
-            const addCellAbove = () => selectedCell !== null && addCell(selectedCell, 'code');
-            const addCellBelow = () => selectedCell !== null && addCell(selectedCell + 1, 'code');
-
-            const deleteCell = (index) => {
-                if (!notebook || notebook.cells.length <= 1) return;
-                const newCells = notebook.cells.filter((_, i) => i !== index);
-                setNotebook({ ...notebook, cells: newCells });
-                setSelectedCell(Math.min(index, newCells.length - 1));
-                setHasChanges(true);
-            };
-
-            const changeCellType = (index, newType) => {
-                if (!notebook) return;
-                const newCells = [...notebook.cells];
-                const oldCell = newCells[index];
-                newCells[index] = {
-                    cell_type: newType,
-                    metadata: {},
-                    source: oldCell.source,
-                    ...(newType === 'code' ? { execution_count: null, outputs: [] } : {})
-                };
-                setNotebook({ ...notebook, cells: newCells });
-                setHasChanges(true);
-            };
-
-            const moveCellUp = (index) => {
-                if (!notebook || index <= 0) return;
-                const newCells = [...notebook.cells];
-                [newCells[index - 1], newCells[index]] = [newCells[index], newCells[index - 1]];
-                setNotebook({ ...notebook, cells: newCells });
-                setSelectedCell(index - 1);
-                setHasChanges(true);
-            };
-
-            const moveCellDown = (index) => {
-                if (!notebook || index >= notebook.cells.length - 1) return;
-                const newCells = [...notebook.cells];
-                [newCells[index], newCells[index + 1]] = [newCells[index + 1], newCells[index]];
-                setNotebook({ ...notebook, cells: newCells });
-                setSelectedCell(index + 1);
-                setHasChanges(true);
-            };
-
-            const copyCell = () => {
-                if (selectedCell === null || !notebook) return;
-                setClipboard(JSON.parse(JSON.stringify(notebook.cells[selectedCell])));
-                setClipboardAction('copy');
-            };
-
-            const cutCell = () => {
-                if (selectedCell === null || !notebook) return;
-                setClipboard(JSON.parse(JSON.stringify(notebook.cells[selectedCell])));
-                setClipboardAction('cut');
-                deleteCell(selectedCell);
-            };
-
-            const pasteCell = () => {
-                if (!clipboard || selectedCell === null) return;
-                const insertIndex = selectedCell + 1;
-                const newCells = [...notebook.cells];
-                newCells.splice(insertIndex, 0, JSON.parse(JSON.stringify(clipboard)));
-                setNotebook({ ...notebook, cells: newCells });
-                setSelectedCell(insertIndex);
-                setHasChanges(true);
-            };
-
-            const saveNotebook = async () => {
-                if (!notebook) return;
+            const runCell = async (idx) => {
+                if (status !== 'ready' || running !== null || !pyodide) return;
+                const code = getSource(notebook.cells[idx]);
+                setRunning(idx);
                 try {
-                    await fetch(`/api/lab/${labId}/save`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify(notebook)
-                    });
-                    setHasChanges(false);
-                    alert('Notebook saved successfully!');
+                    pyodide.runPython('import sys; from io import StringIO; sys.stdout = StringIO()');
+                    const result = await pyodide.runPythonAsync(code);
+                    const stdout = pyodide.runPython('sys.stdout.getvalue()');
+                    setOutputs(prev => ({ ...prev, [idx]: { output: stdout || (result !== undefined ? String(result) : ''), error: false } }));
                 } catch (err) {
-                    console.error('Save error:', err);
-                    alert('Error saving notebook');
+                    setOutputs(prev => ({ ...prev, [idx]: { output: err.message, error: true } }));
                 }
+                setRunning(null);
             };
 
-            const saveNotebookAs = () => {
-                if (!notebook) return;
-                const filename = prompt('Enter filename (without .ipynb):', labId + '-copy');
-                if (!filename) return;
-
-                // Create downloadable file
-                const blob = new Blob([JSON.stringify(notebook, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename + '.ipynb';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            };
-
-            const runAllCells = async () => {
-                if (pyodideStatus !== 'ready' || runningCell !== null || !notebook) return;
-
-                for (let i = 0; i < notebook.cells.length; i++) {
-                    const cell = notebook.cells[i];
-                    if (cell.cell_type === 'code') {
-                        setSelectedCell(i);
-                        await runCell(i);
-                        // Small delay between cells
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                    }
-                }
-            };
-
-            // Render cell output (handles both Pyodide and server kernel outputs)
-            const renderCellOutput = (cellOutput) => {
-                if (!cellOutput) return null;
-
-                // Server kernel outputs (array of outputs)
-                if (cellOutput.outputs && Array.isArray(cellOutput.outputs)) {
-                    return cellOutput.outputs.map((output, i) => {
-                        if (output.type === 'stream') {
-                            return <pre key={i} style={{margin: 0}}>{output.text}</pre>;
-                        } else if (output.type === 'execute_result' || output.type === 'display') {
-                            return <pre key={i} style={{margin: 0}}>{output.text}</pre>;
-                        } else if (output.type === 'image') {
-                            return <img key={i} src={`data:image/png;base64,${output.data}`} alt="Output" style={{maxWidth: '100%'}} />;
-                        } else if (output.type === 'error') {
-                            return (
-                                <pre key={i} style={{margin: 0, color: '#ff6b6b'}}>
-                                    {output.ename}: {output.evalue}
-                                    {output.traceback && '\n' + output.traceback.replace(/\x1b\[[0-9;]*m/g, '')}
-                                </pre>
-                            );
-                        }
-                        return null;
-                    });
-                }
-
-                // Pyodide output (simple string)
-                return <pre style={{margin: 0}}>{cellOutput.output}</pre>;
-            };
-
-            const runCellAndAdvance = async (cellIndex) => {
-                await runCell(cellIndex);
-                // Move to next cell after running
-                if (cellIndex < notebook.cells.length - 1) {
-                    setSelectedCell(cellIndex + 1);
-                }
-            };
-
-            const runCell = async (cellIndex) => {
-                if (!notebook) return;
-                const cell = notebook.cells[cellIndex];
-
-                // For markdown cells, just exit edit mode to render
-                if (cell.cell_type === 'markdown') {
-                    setEditMode(false);
-                    if (document.activeElement) document.activeElement.blur();
-                    return;
-                }
-
-                if (pyodideStatus !== 'ready' || runningCell !== null) return;
-
-                const code = getCellSource(cell);
-                setRunningCell(cellIndex);
-
-                if (activeKernel === 'server') {
-                    // Execute on server kernel
-                    try {
-                        const response = await fetch('/api/kernel/execute', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
-                            body: JSON.stringify({ lab_id: labId, code: code })
-                        });
-
-                        const data = await response.json();
-
-                        if (data.error && !data.outputs) {
-                            setCellOutputs(prev => ({
-                                ...prev,
-                                [cellIndex]: { output: data.error, error: true, outputs: [] }
-                            }));
-                        } else {
-                            // Process outputs (may include images)
-                            setCellOutputs(prev => ({
-                                ...prev,
-                                [cellIndex]: {
-                                    outputs: data.outputs || [],
-                                    error: data.status === 'error',
-                                    execution_count: data.execution_count
-                                }
-                            }));
-                        }
-
-                        // Save progress
-                        const textOutput = (data.outputs || [])
-                            .filter(o => o.type === 'stream' || o.type === 'execute_result')
-                            .map(o => o.text || o.output || '')
-                            .join('\n');
-
-                        fetch(`/api/lab/${labId}/progress`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
-                            body: JSON.stringify({ cell_index: cellIndex, output: textOutput })
-                        });
-                    } catch (err) {
-                        setCellOutputs(prev => ({
-                            ...prev,
-                            [cellIndex]: { output: err.message, error: true, outputs: [] }
-                        }));
-                    }
-                } else {
-                    // Execute in Pyodide (browser)
-                    if (!pyodide) {
-                        setRunningCell(null);
-                        return;
-                    }
-                    try {
-                        pyodide.runPython(`
-                            import sys
-                            from io import StringIO
-                            sys.stdout = StringIO()
-                        `);
-                        const result = await pyodide.runPythonAsync(code);
-                        const stdout = pyodide.runPython('sys.stdout.getvalue()');
-                        setCellOutputs(prev => ({
-                            ...prev,
-                            [cellIndex]: { output: stdout || (result !== undefined ? String(result) : ''), error: false }
-                        }));
-                        fetch(`/api/lab/${labId}/progress`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
-                            body: JSON.stringify({ cell_index: cellIndex, output: stdout })
-                        });
-                    } catch (err) {
-                        setCellOutputs(prev => ({
-                            ...prev,
-                            [cellIndex]: { output: err.message, error: true }
-                        }));
-                    }
-                }
-                setRunningCell(null);
-            };
-
-            const renderMarkdown = (source) => {
-                // Enhanced markdown rendering
-                const text = Array.isArray(source) ? source.join('') : source;
-                let html = text;
-
-                // Code blocks (``` ... ```)
-                html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
-                    return `<pre style="background:#1e1e1e;padding:12px;border-radius:4px;overflow-x:auto;margin:12px 0;"><code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
-                });
-
-                // Tables
-                html = html.replace(/^\|(.+)\|\s*\n\|[-:\s|]+\|\s*\n((?:\|.+\|\s*\n?)+)/gm, (match, header, rows) => {
-                    const headers = header.split('|').map(h => h.trim()).filter(h => h);
-                    const headerHtml = headers.map(h => `<th style="border:1px solid #555;padding:8px;background:#2a2a2a;">${h}</th>`).join('');
-                    const rowLines = rows.trim().split('\n');
-                    const rowsHtml = rowLines.map(row => {
-                        const cells = row.split('|').map(c => c.trim()).filter(c => c);
-                        return `<tr>${cells.map(c => `<td style="border:1px solid #555;padding:8px;">${c}</td>`).join('')}</tr>`;
-                    }).join('');
-                    return `<table style="border-collapse:collapse;width:100%;margin:12px 0;"><thead><tr>${headerHtml}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
-                });
-
-                // Headers
-                html = html.replace(/^#### (.*$)/gm, '<h4 style="color:#4ecdc4;margin:16px 0 8px;">$1</h4>');
-                html = html.replace(/^### (.*$)/gm, '<h3 style="color:#4ecdc4;margin:16px 0 8px;">$1</h3>');
-                html = html.replace(/^## (.*$)/gm, '<h2 style="color:#4ecdc4;margin:20px 0 12px;">$1</h2>');
-                html = html.replace(/^# (.*$)/gm, '<h1 style="color:#4ecdc4;margin:24px 0 16px;">$1</h1>');
-
-                // Horizontal rule
-                html = html.replace(/^---+$/gm, '<hr style="border:none;border-top:1px solid #555;margin:20px 0;">');
-
-                // Bold and italic
-                html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-
-                // Inline code
-                html = html.replace(/`([^`]+)`/g, '<code style="background:rgba(78,205,196,0.2);padding:2px 6px;border-radius:4px;">$1</code>');
-
-                // Lists (unordered)
-                html = html.replace(/^[\-\*] (.+)$/gm, '<li style="margin:4px 0;">$1</li>');
-                html = html.replace(/(<li.*<\/li>\n?)+/g, '<ul style="margin:12px 0;padding-left:24px;">$&</ul>');
-
-                // Numbered lists
-                html = html.replace(/^\d+\. (.+)$/gm, '<li style="margin:4px 0;">$1</li>');
-
-                // Paragraphs (double newlines)
-                html = html.replace(/\n\n+/g, '</p><p style="margin:12px 0;line-height:1.6;">');
-
-                // Single newlines within paragraphs
-                html = html.replace(/\n/g, '<br/>');
-
-                return `<div style="color:#e0e0e0;font-family:'Segoe UI',sans-serif;font-size:0.95rem;"><p style="margin:12px 0;line-height:1.6;">${html}</p></div>`;
-            };
-
-            if (!notebook) {
-                return (
-                    <div className="notebook-container">
-                        <div className="notebook-loading">
-                            <div className="spinner"></div>
-                            Loading notebook...
-                        </div>
-                    </div>
-                );
-            }
+            if (!notebook) return <div className="loading-screen"><div className="spinner"></div>Loading notebook...</div>;
 
             return (
                 <>
                     <div className="content-header">
-                        <h2 className="content-title">🧪 Interactive Lab</h2>
+                        <div className="content-title"><span>🧪</span> Interactive Lab</div>
                         <div className="content-actions">
-                            <button className="action-btn run" onClick={runAllCells} disabled={pyodideStatus !== 'ready' || runningCell !== null}>▶▶ Run All</button>
-                            <button className="action-btn" onClick={saveNotebook}>💾 Save</button>
-                            <button className="action-btn" onClick={saveNotebookAs}>📥 Save As...</button>
-                            {hasChanges && <span style={{color: '#feca57', fontSize: '0.8rem', padding: '0 8px'}}>● Unsaved</span>}
-                            <button className="action-btn primary" onClick={onBack}>Back to Course</button>
+                            <div className="kernel-status">
+                                <div className={`kernel-dot ${status}`}></div>
+                                {status === 'ready' ? 'Python Ready' : status === 'loading' ? 'Loading...' : 'Error'}
+                            </div>
+                            <button className="btn btn-ghost" onClick={onBack}>← Back</button>
                         </div>
                     </div>
                     <div className="notebook-toolbar">
                         <div className="toolbar-group">
-                            <span style={{
-                                padding: '4px 10px',
-                                borderRadius: '4px',
-                                fontSize: '0.75rem',
-                                fontWeight: 'bold',
-                                background: editMode ? '#4ecdc4' : '#666',
-                                color: editMode ? '#000' : '#fff'
-                            }}>
-                                {editMode ? 'EDIT' : 'CMD'}
-                            </span>
-                        </div>
-                        <div className="toolbar-group">
-                            <button className="toolbar-btn" onClick={() => runCell(selectedCell)} disabled={pyodideStatus !== 'ready' || runningCell !== null} title="Run current cell (Ctrl+Enter)" style={{background: '#00cc66', color: 'white'}}>▶ Run</button>
-                            <button className="toolbar-btn" onClick={runAllCells} disabled={pyodideStatus !== 'ready' || runningCell !== null} title="Run all cells">▶▶ All</button>
-                        </div>
-                        <div className="toolbar-group">
-                            <button className="toolbar-btn" onClick={() => { addCell(selectedCell + 1, 'code'); setSelectedCell(selectedCell + 1); }} title="Insert code cell below (B)">+ Code</button>
-                            <button className="toolbar-btn" onClick={() => addCell(selectedCell, 'markdown')} title="Insert markdown cell above (A)">+ MD</button>
-                        </div>
-                        <div className="toolbar-group">
-                            <button className="toolbar-btn" onClick={() => moveCellUp(selectedCell)} disabled={selectedCell === 0} title="Move Up (Shift+K)">↑</button>
-                            <button className="toolbar-btn" onClick={() => moveCellDown(selectedCell)} disabled={selectedCell >= (notebook?.cells?.length || 0) - 1} title="Move Down (Shift+J)">↓</button>
-                        </div>
-                        <div className="toolbar-group">
-                            <button className="toolbar-btn" onClick={copyCell} title="Copy (C)">Copy</button>
-                            <button className="toolbar-btn" onClick={cutCell} title="Cut (X)">Cut</button>
-                            <button className="toolbar-btn" onClick={pasteCell} disabled={!clipboard} title="Paste (V)">Paste</button>
-                        </div>
-                        <div className="toolbar-group">
-                            <button className="toolbar-btn" onClick={() => deleteCell(selectedCell)} disabled={notebook?.cells?.length <= 1} title="Delete (DD)">Delete</button>
-                        </div>
-                        <div className="toolbar-group">
-                            <button className="toolbar-btn" onClick={restartKernel} disabled={pyodideStatus === 'loading' || runningCell !== null} title="Restart kernel (clears all variables)">🔄 Restart</button>
-                            <button className="toolbar-btn" onClick={restartAndRunAll} disabled={pyodideStatus === 'loading' || runningCell !== null} title="Restart kernel and run all cells">🔄▶ Restart & Run All</button>
-                        </div>
-                        <div className="toolbar-group" style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px'}}>
-                            <span style={{color: '#888', fontSize: '0.65rem', lineHeight: '1.3'}}>
-                                Esc=cmd | Enter=edit | Shift+Enter=run+next | Ctrl+Enter=run | Ctrl+S=save<br/>
-                                a=add above | b=add below | dd=delete | x=cut | c=copy | v=paste | m=markdown | y=code
-                            </span>
-                            <select
-                                value={kernelMode}
-                                onChange={(e) => switchKernelMode(e.target.value)}
-                                disabled={pyodideStatus === 'loading' || runningCell !== null}
-                                style={{
-                                    padding: '4px 8px',
-                                    fontSize: '0.7rem',
-                                    background: '#333',
-                                    color: '#fff',
-                                    border: '1px solid #555',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer'
-                                }}
-                                title="Kernel Mode: Auto detects PyTorch/TensorFlow and uses server. Pyodide runs in browser. Server runs on backend."
-                            >
-                                <option value="auto">Auto</option>
-                                <option value="pyodide">Pyodide (Browser)</option>
-                                <option value="server">Server (PyTorch)</option>
-                            </select>
-                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px'}}>
-                                <span style={{
-                                    color: pyodideStatus === 'ready' ? '#4ecdc4' : (pyodideStatus === 'error' ? '#ff6b6b' : '#feca57'),
-                                    fontSize: '0.75rem',
-                                    fontWeight: 'bold'
-                                }}>
-                                    {pyodideStatus === 'loading' && '⏳ Loading Kernel...'}
-                                    {pyodideStatus === 'ready' && `✓ ${kernelInfo.name}`}
-                                    {pyodideStatus === 'error' && '✗ Kernel Error'}
-                                </span>
-                                {pyodideStatus === 'ready' && kernelInfo.version && (
-                                    <span style={{color: '#888', fontSize: '0.65rem'}}>
-                                        Python {kernelInfo.version} {activeKernel === 'server' && '+ PyTorch'}
-                                    </span>
-                                )}
-                            </div>
+                            <button className="toolbar-btn" onClick={() => runCell(selected)} disabled={status !== 'ready' || running !== null}>▶ Run</button>
                         </div>
                     </div>
-                    <div className="notebook-container" onClick={() => { if (!editMode) setEditMode(false); }}>
-                        {notebook.cells && notebook.cells.map((cell, index) => (
-                            <div
-                                className={`cell ${selectedCell === index ? (editMode ? 'selected editing' : 'selected') : ''}`}
-                                key={index}
-                                onClick={() => { setSelectedCell(index); }}
-                                onDoubleClick={() => { setSelectedCell(index); setEditMode(true); setTimeout(() => cellRefs.current[index]?.focus(), 0); }}
-                                style={selectedCell === index ? { borderColor: editMode ? '#4ecdc4' : '#888' } : {}}
-                            >
+                    <div className="notebook-container">
+                        {notebook.cells.map((cell, idx) => (
+                            <div key={idx} className={`cell ${selected === idx ? 'selected' : ''}`} onClick={() => setSelected(idx)}>
                                 <div className="cell-header">
-                                    <div className="cell-controls">
-                                        <select
-                                            className="cell-type-select"
-                                            value={cell.cell_type}
-                                            onChange={(e) => changeCellType(index, e.target.value)}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <option value="code">Code</option>
-                                            <option value="markdown">Markdown</option>
-                                        </select>
-                                        <span className="cell-type">[{index + 1}]</span>
-                                    </div>
-                                    <div className="cell-controls">
-                                        {cell.cell_type === 'code' && (
-                                            <button
-                                                className="cell-run-btn"
-                                                onClick={(e) => { e.stopPropagation(); runCell(index); }}
-                                                disabled={pyodideStatus !== 'ready' || runningCell !== null}
-                                            >
-                                                {runningCell === index ? '...' : '▶ Run'}
-                                            </button>
-                                        )}
-                                        {cell.cell_type === 'markdown' && (
-                                            <button
-                                                className="cell-run-btn"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (selectedCell === index && editMode) {
-                                                        setEditMode(false);
-                                                        if (document.activeElement) document.activeElement.blur();
-                                                    } else {
-                                                        setSelectedCell(index);
-                                                        setEditMode(true);
-                                                        setTimeout(() => cellRefs.current[index]?.focus(), 0);
-                                                    }
-                                                }}
-                                                style={{ background: selectedCell === index && editMode ? '#4ecdc4' : '#666' }}
-                                            >
-                                                {selectedCell === index && editMode ? '✓ Render' : '✎ Edit'}
-                                            </button>
-                                        )}
-                                        <button className="cell-btn" onClick={(e) => { e.stopPropagation(); addCell(index + 1, 'code'); setSelectedCell(index + 1); }} title="Add cell below (B)">+</button>
-                                        <button className="cell-btn danger" onClick={(e) => { e.stopPropagation(); deleteCell(index); }} title="Delete (DD)" disabled={notebook.cells.length <= 1}>×</button>
-                                    </div>
-                                </div>
-                                <div className="cell-content">
-                                    {cell.cell_type === 'markdown' && !(selectedCell === index && editMode) ? (
-                                        <div
-                                            className="markdown-rendered"
-                                            style={{
-                                                padding: '12px',
-                                                minHeight: '50px',
-                                                cursor: 'pointer'
-                                            }}
-                                            dangerouslySetInnerHTML={{ __html: renderMarkdown(cell.source) }}
-                                        />
-                                    ) : (
-                                        <textarea
-                                            ref={(el) => cellRefs.current[index] = el}
-                                            value={getCellSource(cell)}
-                                            onChange={(e) => setCellSource(index, e.target.value)}
-                                            onFocus={() => { setSelectedCell(index); setEditMode(true); }}
-                                            onBlur={() => { /* Keep edit mode until Esc */ }}
-                                            spellCheck="false"
-                                            placeholder={cell.cell_type === 'code' ? '# Enter code...' : '## Enter markdown...'}
-                                            style={{
-                                                width: '100%',
-                                                minHeight: cell.cell_type === 'code' ? '150px' : '100px',
-                                                background: cell.cell_type === 'code' ? '#1e1e1e' : 'rgba(255,255,255,0.02)',
-                                                color: '#e0e0e0',
-                                                border: 'none',
-                                                padding: '12px',
-                                                fontFamily: cell.cell_type === 'code' ? "'Courier New', monospace" : "'Segoe UI', sans-serif",
-                                                fontSize: '0.9rem',
-                                                resize: 'vertical',
-                                                lineHeight: '1.5',
-                                                outline: 'none'
-                                            }}
-                                        />
+                                    <span className="cell-type-label">[{idx + 1}] {cell.cell_type}</span>
+                                    {cell.cell_type === 'code' && (
+                                        <button className="cell-run-btn" onClick={() => runCell(idx)} disabled={status !== 'ready' || running !== null}>
+                                            {running === idx ? '...' : '▶ Run'}
+                                        </button>
                                     )}
                                 </div>
-                                {cell.cell_type === 'code' && cellOutputs[index] && (
-                                    <div className={`cell-output ${cellOutputs[index].error ? 'error' : ''}`}>
-                                        {renderCellOutput(cellOutputs[index])}
+                                <div className="cell-content">
+                                    <textarea value={getSource(cell)} onChange={e => setSource(idx, e.target.value)} spellCheck="false" />
+                                </div>
+                                {cell.cell_type === 'code' && outputs[idx] && (
+                                    <div className={`cell-output ${outputs[idx].error ? 'error' : ''}`}>
+                                        <pre>{outputs[idx].output}</pre>
                                     </div>
                                 )}
                             </div>
                         ))}
-                        <div style={{padding: '20px', textAlign: 'center'}}>
-                            <button className="toolbar-btn" onClick={() => addCell(notebook.cells.length, 'code')}>+ Add Code Cell</button>
-                            <button className="toolbar-btn" onClick={() => addCell(notebook.cells.length, 'markdown')} style={{marginLeft: '8px'}}>+ Add Markdown Cell</button>
-                        </div>
                     </div>
                 </>
             );
         }
 
-        // Main App Component
+        // Main App
         function App() {
             const [user, setUser] = useState(null);
             const [showAuth, setShowAuth] = useState(false);
@@ -1189,130 +799,92 @@
             const [selectedItem, setSelectedItem] = useState(null);
             const [runningLab, setRunningLab] = useState(null);
             const [loading, setLoading] = useState(true);
-            const [urlRestored, setUrlRestored] = useState(false);
+            const [initialLoad, setInitialLoad] = useState(true);
 
-            // Parse URL and restore state on mount
-            const restoreFromUrl = (coursesData) => {
+            // Parse URL on load to restore state
+            const getStateFromUrl = () => {
                 const path = window.location.pathname;
-                const match = path.match(/^\/course\/([^\/]+)(?:\/(lab|item)\/([^\/]+))?/);
-                if (match) {
-                    const [, courseId, type, itemId] = match;
-                    const course = coursesData.find(c => c.id === courseId);
-                    if (course) {
-                        setSelectedCourse(course);
-                        if (type === 'lab' && itemId) {
-                            setRunningLab(itemId);
-                        } else if (type === 'item' && itemId) {
-                            // Item will be set after materials load
-                            window._pendingItemId = itemId;
-                        }
-                    }
-                }
-                setUrlRestored(true);
+                const match = path.match(/^\/course\/([^\/]+)(?:\/item\/([^\/]+))?/);
+                return match ? { courseId: match[1], itemId: match[2] } : null;
             };
 
-            // Sync state to URL
-            useEffect(() => {
-                if (!urlRestored) return;
-                let path = '/';
-                if (selectedCourse) {
-                    path = `/course/${selectedCourse.id}`;
-                    if (runningLab) {
-                        path += `/lab/${runningLab}`;
-                    } else if (selectedItem) {
-                        path += `/item/${selectedItem.id}`;
-                    }
+            // Update URL when state changes
+            const updateUrl = (course, item) => {
+                let newPath = '/';
+                if (course) {
+                    newPath = `/course/${course.id}`;
+                    if (item) newPath += `/item/${item.id}`;
                 }
-                if (window.location.pathname !== path) {
-                    window.history.pushState({ course: selectedCourse?.id, lab: runningLab, item: selectedItem?.id }, '', path);
+                if (window.location.pathname !== newPath) {
+                    window.history.pushState({}, '', newPath);
                 }
-            }, [selectedCourse, selectedItem, runningLab, urlRestored]);
+            };
 
-            // Handle browser back/forward
-            useEffect(() => {
-                const handlePopState = () => {
-                    const path = window.location.pathname;
-                    const match = path.match(/^\/course\/([^\/]+)(?:\/(lab|item)\/([^\/]+))?/);
-                    if (match) {
-                        const [, courseId, type, itemId] = match;
-                        const course = courses.find(c => c.id === courseId);
-                        if (course && course.id !== selectedCourse?.id) {
-                            setSelectedCourse(course);
-                        }
-                        if (type === 'lab') {
-                            setRunningLab(itemId);
-                            setSelectedItem(null);
-                        } else if (type === 'item') {
-                            setRunningLab(null);
-                            // Find item in materials
-                            if (materials) {
-                                for (const section of Object.values(materials)) {
-                                    const item = section.items.find(i => i.id === itemId);
-                                    if (item) { setSelectedItem(item); break; }
-                                }
-                            }
-                        } else {
-                            setRunningLab(null);
-                            setSelectedItem(null);
-                        }
-                    } else {
-                        setSelectedCourse(null);
-                        setSelectedItem(null);
-                        setRunningLab(null);
-                    }
-                };
-                window.addEventListener('popstate', handlePopState);
-                return () => window.removeEventListener('popstate', handlePopState);
-            }, [courses, materials, selectedCourse]);
-
-            // Check auth status on mount
             useEffect(() => {
                 fetch('/api/auth/me', { credentials: 'include' })
                     .then(res => res.json())
-                    .then(data => {
-                        if (data.user) setUser(data.user);
-                        setAuthChecked(true);
-                    })
+                    .then(data => { if (data.user) setUser(data.user); setAuthChecked(true); })
                     .catch(() => setAuthChecked(true));
             }, []);
 
-            // Load courses and restore URL state
             useEffect(() => {
                 fetch('/api/courses')
                     .then(res => res.json())
                     .then(data => {
                         setCourses(data);
-                        restoreFromUrl(data);
                         setLoading(false);
-                    })
-                    .catch(err => { console.error('Error:', err); setUrlRestored(true); setLoading(false); });
+                        // Restore state from URL on initial load
+                        const urlState = getStateFromUrl();
+                        if (urlState && initialLoad) {
+                            const course = data.find(c => c.id === urlState.courseId);
+                            if (course) setSelectedCourse(course);
+                        }
+                        setInitialLoad(false);
+                    });
             }, []);
 
-            // Load materials when course changes
             useEffect(() => {
                 if (selectedCourse) {
-                    setLoading(true);
                     fetch(`/api/course/${selectedCourse.id}/materials`)
                         .then(res => res.json())
                         .then(data => {
                             setMaterials(data);
-                            // Check for pending item from URL restoration
-                            if (window._pendingItemId) {
+                            // Restore selected item from URL
+                            const urlState = getStateFromUrl();
+                            if (urlState?.itemId) {
                                 for (const section of Object.values(data)) {
-                                    const item = section.items.find(i => i.id === window._pendingItemId);
+                                    const item = section.items.find(i => i.id === urlState.itemId);
                                     if (item) { setSelectedItem(item); break; }
                                 }
-                                delete window._pendingItemId;
-                            } else if (!runningLab) {
-                                setSelectedItem(null);
                             }
-                            setLoading(false);
-                        })
-                        .catch(err => { console.error('Error:', err); setLoading(false); });
+                        });
                 }
             }, [selectedCourse]);
 
-            const handleLogin = (userData) => { setUser(userData); setShowAuth(false); };
+            // Update URL when state changes
+            useEffect(() => {
+                if (!initialLoad) {
+                    updateUrl(selectedCourse, selectedItem);
+                }
+            }, [selectedCourse, selectedItem]);
+
+            // Handle browser back/forward
+            useEffect(() => {
+                const handlePopState = () => {
+                    const urlState = getStateFromUrl();
+                    if (urlState) {
+                        const course = courses.find(c => c.id === urlState.courseId);
+                        if (course) setSelectedCourse(course);
+                    } else {
+                        setSelectedCourse(null);
+                        setSelectedItem(null);
+                        setMaterials(null);
+                    }
+                };
+                window.addEventListener('popstate', handlePopState);
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, [courses]);
+
             const handleLogout = async () => {
                 await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
                 setUser(null);
@@ -1321,17 +893,11 @@
             const handleItemClick = async (item) => {
                 if (item.runnable && item.type === 'lab') {
                     if (!user) { setShowAuth(true); return; }
-                    // Start lab session
                     await fetch(`/api/lab/${item.id}/start`, { method: 'POST', credentials: 'include' });
                     setRunningLab(item.id);
                     setSelectedItem(null);
                 } else if (item.external) {
-                    // Open external/interactive demos in new tab
                     window.open(`/content/${item.file}`, '_blank');
-                } else if (item.printable) {
-                    // Open printable items (PDFs) - they can print from the iframe or new tab
-                    setSelectedItem(item);
-                    setRunningLab(null);
                 } else {
                     setSelectedItem(item);
                     setRunningLab(null);
@@ -1341,141 +907,166 @@
             const countItems = (type) => {
                 if (!materials) return 0;
                 let count = 0;
-                Object.values(materials).forEach(section => {
-                    section.items.forEach(item => { if (!type || item.type === type) count++; });
-                });
+                Object.values(materials).forEach(s => s.items.forEach(i => { if (!type || i.type === type) count++; }));
                 return count;
             };
 
-            if (!authChecked || (loading && courses.length === 0)) {
-                return (<div className="app-container"><div className="loading"><div className="spinner"></div>Loading...</div></div>);
+            if (!authChecked || loading) {
+                return <div className="loading-screen"><div className="spinner"></div>Loading...</div>;
             }
 
+            const UserControls = () => (
+                <div className="user-menu">
+                    {user ? (
+                        <>
+                            <div className="user-avatar">{user.username[0].toUpperCase()}</div>
+                            <span className="user-name">{user.full_name || user.username}</span>
+                            <button className="btn btn-ghost" onClick={handleLogout}>Logout</button>
+                        </>
+                    ) : (
+                        <>
+                            <span className="guest-label">Guest</span>
+                            <button className="btn btn-ghost" onClick={() => setShowAuth(true)}>Login</button>
+                        </>
+                    )}
+                </div>
+            );
+
             return (
-                <div className="app-container">
-                    {showAuth && <AuthModal onLogin={handleLogin} onSkip={() => setShowAuth(false)} />}
+                <div className={`app ${selectedCourse ? 'with-sidebar' : ''}`}>
+                    {showAuth && <AuthModal onLogin={(u) => { setUser(u); setShowAuth(false); }} onSkip={() => setShowAuth(false)} />}
 
-                    <aside className="sidebar">
-                        {user ? (
-                            <div className="user-menu">
-                                <div className="user-info">
-                                    <div className="user-avatar">{user.username[0].toUpperCase()}</div>
-                                    <span className="user-name">{user.full_name || user.username}</span>
+                    {!selectedCourse && (
+                        <header className="header">
+                            <div className="header-brand"><span>🎓</span> AI Elevate</div>
+                            <div className="header-actions"><UserControls /></div>
+                        </header>
+                    )}
+
+                    {selectedCourse && (
+                        <aside className="sidebar">
+                            <div className="sidebar-header">
+                                <div className="sidebar-brand">
+                                    <div className="sidebar-brand-text"><span>🎓</span> AI Elevate</div>
+                                    <button className="back-home" onClick={() => { setSelectedCourse(null); setMaterials(null); setSelectedItem(null); setRunningLab(null); }}>
+                                        ← Home
+                                    </button>
                                 </div>
-                                <button className="logout-btn" onClick={handleLogout}>Logout</button>
-                            </div>
-                        ) : (
-                            <div className="user-menu">
-                                <span style={{opacity: 0.7}}>Guest Mode</span>
-                                <button className="logout-btn" onClick={() => setShowAuth(true)}>Login</button>
-                            </div>
-                        )}
-
-                        <div className="sidebar-header">
-                            <h1>Course Viewer</h1>
-                            <div className="course-selector">
-                                <select className="course-dropdown" value={selectedCourse?.id || ''} onChange={e => {
-                                    const course = courses.find(c => c.id === e.target.value);
-                                    setSelectedCourse(course || null);
-                                    if (!course) setMaterials(null);
+                                <select className="course-select" value={selectedCourse.id} onChange={e => {
+                                    const c = courses.find(x => x.id === e.target.value);
+                                    if (c) { setSelectedCourse(c); setSelectedItem(null); setRunningLab(null); }
                                 }}>
-                                    <option value="">-- Select a Course --</option>
-                                    {courses.map(course => (
-                                        <option key={course.id} value={course.id}>{course.icon} {course.name}</option>
-                                    ))}
+                                    {courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
                                 </select>
-                                {selectedCourse && <p className="course-description">{selectedCourse.description}</p>}
                             </div>
-                        </div>
-
-                        {selectedCourse && (
-                            <div className="sidebar-download">
-                                <button className="sidebar-download-btn" onClick={() => window.location.href = `/api/course/${selectedCourse.id}/download`}>
-                                    📥 Download All Materials (.zip)
+                            <nav className="sidebar-nav">
+                                {materials && Object.entries(materials).map(([key, section]) => (
+                                    <div className="nav-section" key={key}>
+                                        <div className="nav-section-title">{section.title}</div>
+                                        {section.items.map(item => (
+                                            <button
+                                                key={item.id}
+                                                className={`nav-item ${selectedItem?.id === item.id || runningLab === item.id ? 'active' : ''}`}
+                                                onClick={() => handleItemClick(item)}
+                                            >
+                                                <span className="nav-item-icon">{icons[item.type]}</span>
+                                                <span className="nav-item-label">{item.name}</span>
+                                                <span className={`nav-badge badge-${item.type}`}>{item.type}</span>
+                                                {item.runnable && <span className="nav-badge badge-run">run</span>}
+                                                {item.printable && <span className="nav-badge badge-pdf">pdf</span>}
+                                                {item.external && <span className="nav-badge badge-live">live</span>}
+                                            </button>
+                                        ))}
+                                    </div>
+                                ))}
+                            </nav>
+                            <div className="sidebar-footer">
+                                <button className="download-all-btn" onClick={() => window.location.href = `/api/course/${selectedCourse.id}/download`}>
+                                    📥 Download All Materials
                                 </button>
                             </div>
-                        )}
+                        </aside>
+                    )}
 
-                        <div className="sidebar-content">
-                            {!selectedCourse && (
-                                <div className="no-materials">
-                                    <div className="no-materials-icon">📚</div>
-                                    <p>Select a course to view materials</p>
-                                </div>
-                            )}
-                            {materials && Object.entries(materials).map(([key, section]) => (
-                                <div className="section" key={key}>
-                                    <div className="section-title">{section.title}</div>
-                                    {section.items.map(item => (
-                                        <button key={item.id}
-                                            className={`nav-item ${selectedItem?.id === item.id || runningLab === item.id ? 'active' : ''}`}
-                                            onClick={() => handleItemClick(item)}>
-                                            <span className="nav-item-icon">{icons[item.type]}</span>
-                                            {item.name}
-                                            <span className={`type-badge type-${item.type}`}>{item.type}</span>
-                                            {item.runnable && <span className="type-badge runnable-badge">RUN</span>}
-                                            {item.printable && <span className="type-badge printable-badge">PDF</span>}
-                                            {item.external && <span className="type-badge external-badge">LIVE</span>}
-                                        </button>
-                                    ))}
-                                </div>
-                            ))}
-                        </div>
-                    </aside>
-
-                    <main className="content-area">
+                    <main className="main">
                         {runningLab ? (
                             <NotebookViewer labId={runningLab} onBack={() => setRunningLab(null)} />
                         ) : selectedItem ? (
                             <>
                                 <div className="content-header">
-                                    <h2 className="content-title">{icons[selectedItem.type]} {selectedItem.name}</h2>
+                                    <div className="content-title">
+                                        <span>{icons[selectedItem.type]}</span>
+                                        {selectedItem.name}
+                                    </div>
                                     <div className="content-actions">
-                                        {selectedItem.printable && (
-                                            <button className="action-btn" onClick={() => {
-                                                const iframe = document.querySelector('.content-frame');
-                                                if (iframe) iframe.contentWindow.print();
-                                            }}>🖨️ Print / Save PDF</button>
+                                        {selectedItem.type === 'slides' && (
+                                            <button className="btn btn-success" onClick={() => {
+                                                const frame = document.querySelector('.content-frame');
+                                                if (frame) {
+                                                    const goFullscreen = frame.requestFullscreen || frame.webkitRequestFullscreen;
+                                                    if (goFullscreen) {
+                                                        goFullscreen.call(frame).then(() => {
+                                                            frame.focus();
+                                                            frame.contentWindow?.focus();
+                                                        });
+                                                    }
+                                                }
+                                            }}>🎬 Present</button>
                                         )}
-                                        <button className="action-btn" onClick={() => window.open(`/content/${selectedItem.file}`, '_blank')}>Open in New Tab</button>
-                                        <button className="action-btn primary" onClick={() => setSelectedItem(null)}>Back to List</button>
+                                        {selectedItem.printable && <button className="btn btn-ghost" onClick={() => document.querySelector('.content-frame')?.contentWindow?.print()}>🖨️ Print</button>}
+                                        <button className="btn btn-ghost" onClick={() => window.open(`/content/${selectedItem.file}`, '_blank')}>↗ New Tab</button>
+                                        <button className="btn btn-primary" onClick={() => setSelectedItem(null)}>← Back</button>
                                     </div>
                                 </div>
-                                <iframe className="content-frame" src={`/content/${selectedItem.file}`} title={selectedItem.name} />
+                                <div className="content-body">
+                                    <iframe className="content-frame" src={`/content/${selectedItem.file}`} title={selectedItem.name} />
+                                </div>
                             </>
                         ) : selectedCourse ? (
-                            <div className="welcome-screen">
-                                <div className="welcome-icon">{selectedCourse.icon}</div>
+                            <div className="course-welcome">
+                                <div className="course-welcome-icon">{selectedCourse.icon}</div>
                                 <h2>{selectedCourse.name}</h2>
                                 <p>{selectedCourse.description}</p>
-                                <p style={{marginTop: '20px'}}>Select a material from the sidebar. Labs marked with <span style={{background:'#00cc66',padding:'2px 8px',borderRadius:'4px',fontSize:'0.8rem'}}>RUN</span> can be executed in your browser. Items marked <span style={{background:'#805ad5',padding:'2px 8px',borderRadius:'4px',fontSize:'0.8rem'}}>LIVE</span> are interactive demos. <span style={{background:'#2c5282',padding:'2px 8px',borderRadius:'4px',fontSize:'0.8rem'}}>PDF</span> items can be printed.</p>
+                                <p style={{fontSize: '0.875rem', color: '#64748b'}}>Select a material from the sidebar to get started.</p>
                                 {materials && (
-                                    <>
-                                        <div className="stats-grid">
-                                            <div className="stat-card"><div className="stat-number">{countItems('slides')}</div><div className="stat-label">Slides</div></div>
-                                            <div className="stat-card"><div className="stat-number">{countItems('demo')}</div><div className="stat-label">Demos</div></div>
-                                            <div className="stat-card"><div className="stat-number">{countItems('lab')}</div><div className="stat-label">Labs</div></div>
-                                        </div>
-                                        <button className="download-btn" onClick={() => window.location.href = `/api/course/${selectedCourse.id}/download`}>
-                                            📥 Download All Materials
-                                        </button>
-                                    </>
+                                    <div className="stats-row">
+                                        <div className="stat-box"><div className="stat-number">{countItems()}</div><div className="stat-label">Materials</div></div>
+                                        <div className="stat-box"><div className="stat-number">{countItems('lab')}</div><div className="stat-label">Labs</div></div>
+                                        <div className="stat-box"><div className="stat-number">{Object.keys(materials).length}</div><div className="stat-label">Sections</div></div>
+                                    </div>
                                 )}
                             </div>
                         ) : (
-                            <div className="welcome-screen">
-                                <div className="welcome-icon">🎓</div>
-                                <h2>Welcome to Course Viewer</h2>
-                                <p>Browse courses, view materials, and run interactive labs directly in your browser.</p>
-                                {!user && <p style={{marginTop:'16px',opacity:0.7}}>Login to save your progress!</p>}
-                                <div className="course-cards">
-                                    {courses.map(course => (
-                                        <div key={course.id} className="course-card" onClick={() => setSelectedCourse(course)}>
-                                            <div className="course-card-icon">{course.icon}</div>
-                                            <h3>{course.name}</h3>
-                                            <p>{course.description}</p>
+                            <div className="home">
+                                <div className="home-hero">
+                                    <div className="home-hero-icon">🎓</div>
+                                    <h1>AI Elevate</h1>
+                                    <p className="home-tagline">Professional AI & Technology Training</p>
+                                    <p style={{marginTop: '24px', maxWidth: '500px'}}>
+                                        Access interactive courses, hands-on labs, and comprehensive learning materials
+                                        to advance your skills in AI, Python, and cloud technologies.
+                                    </p>
+                                    {!user ? (
+                                        <div className="home-cta">
+                                            <button className="btn btn-primary btn-lg" onClick={() => setShowAuth(true)}>
+                                                Sign In to Access Courses
+                                            </button>
+                                            <p style={{marginTop: '16px', fontSize: '0.875rem', color: '#64748b'}}>
+                                                Or <button style={{background:'none',border:'none',color:'#38bdf8',cursor:'pointer',textDecoration:'underline'}} onClick={() => setShowAuth(true)}>create an account</button> to get started
+                                            </p>
                                         </div>
-                                    ))}
+                                    ) : (
+                                        <div className="home-cta">
+                                            <p style={{marginBottom: '24px', color: '#94a3b8'}}>Welcome back, {user.full_name || user.username}!</p>
+                                            <select className="course-picker" onChange={e => {
+                                                const c = courses.find(x => x.id === e.target.value);
+                                                if (c) setSelectedCourse(c);
+                                            }} defaultValue="">
+                                                <option value="" disabled>Select a course...</option>
+                                                {courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+                                            </select>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -1484,8 +1075,7 @@
             );
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>

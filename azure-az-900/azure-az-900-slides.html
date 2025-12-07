@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure AZ-900: Azure Fundamentals Certification Prep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .slide {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 60px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 120, 212, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 120, 212, 0.6); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-slide-left { animation: slideInLeft 0.6s ease-out forwards; }
+        .animate-slide-right { animation: slideInRight 0.6s ease-out forwards; }
+        .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+        .animate-glow { animation: glow 2s ease-in-out infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; animation-fill-mode: forwards; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; animation-fill-mode: forwards; }
+        .delay-5 { animation-delay: 0.5s; opacity: 0; animation-fill-mode: forwards; }
+        .delay-6 { animation-delay: 0.6s; opacity: 0; animation-fill-mode: forwards; }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            color: #00bcf2;
+        }
+
+        h3 {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            color: #50e6ff;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .four-column {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 188, 242, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 188, 242, 0.6);
+            box-shadow: 0 10px 40px rgba(0, 188, 242, 0.2);
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .azure-card {
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.2), rgba(0, 188, 242, 0.1));
+            border: 1px solid rgba(0, 120, 212, 0.4);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.2), rgba(0, 188, 242, 0.1));
+            border-left: 4px solid #0078d4;
+            padding: 20px 25px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .tip-box {
+            background: rgba(16, 124, 16, 0.2);
+            border-left: 4px solid #107c10;
+            padding: 20px 25px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 185, 0, 0.15);
+            border-left: 4px solid #ffb900;
+            padding: 20px 25px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .exam-tip {
+            background: rgba(134, 97, 193, 0.2);
+            border-left: 4px solid #8661c1;
+            padding: 20px 25px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .exam-tip::before {
+            content: "EXAM TIP: ";
+            font-weight: bold;
+            color: #8661c1;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            line-height: 1.8;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(0, 188, 242, 0.3);
+        }
+
+        .comparison-table th {
+            background: rgba(0, 120, 212, 0.3);
+            color: #50e6ff;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .day-badge {
+            display: inline-block;
+            background: rgba(0, 120, 212, 0.3);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+            border: 1px solid #0078d4;
+        }
+
+        .title-slide {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+
+        .microsoft-logo {
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .cert-badge {
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            margin-top: 30px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 188, 242, 0.4);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .service-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 5px;
+        }
+
+        .percentage-badge {
+            display: inline-block;
+            background: rgba(0, 188, 242, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #50e6ff;
+            margin-left: 10px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0078d4, #00bcf2);
+            border-radius: 10px;
+        }
+
+        .icon-item {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .icon-item:hover {
+            background: rgba(0, 120, 212, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .icon-item .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title -->
+    <div class="slide active title-slide" id="slide1">
+        <div class="microsoft-logo animate-float">☁️</div>
+        <h1 class="animate-fade-in-up">Azure AZ-900</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Microsoft Azure Fundamentals</p>
+        <p class="animate-fade-in-up delay-2" style="font-size: 1.2em; color: #a0a0a0;">Certification Preparation Course</p>
+        <div class="cert-badge animate-fade-in-up delay-3">3-Day Intensive Program</div>
+        <div class="animate-fade-in-up delay-4" style="margin-top: 40px; color: #666;">
+            <p>AI Elevate Training</p>
+        </div>
+    </div>
+
+    <!-- Slide 2: Course Overview -->
+    <div class="slide" id="slide2">
+        <h1 class="animate-fade-in-up">Course Overview</h1>
+        <p class="subtitle animate-fade-in-up delay-1">What You'll Learn in 3 Days</p>
+
+        <div class="three-column">
+            <div class="card azure-card animate-fade-in-up delay-2">
+                <div class="day-badge">Day 1</div>
+                <h3>Cloud Concepts</h3>
+                <ul>
+                    <li>Cloud computing benefits</li>
+                    <li>Cloud service types</li>
+                    <li>Cloud deployment models</li>
+                    <li>Shared responsibility</li>
+                </ul>
+            </div>
+            <div class="card azure-card animate-fade-in-up delay-3">
+                <div class="day-badge">Day 2</div>
+                <h3>Core Azure Services</h3>
+                <ul>
+                    <li>Compute services</li>
+                    <li>Networking</li>
+                    <li>Storage solutions</li>
+                    <li>Database services</li>
+                </ul>
+            </div>
+            <div class="card azure-card animate-fade-in-up delay-4">
+                <div class="day-badge">Day 3</div>
+                <h3>Management & Governance</h3>
+                <ul>
+                    <li>Cost management</li>
+                    <li>Governance & compliance</li>
+                    <li>Monitoring tools</li>
+                    <li>Exam preparation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-5">
+            The exam costs $165 USD and is the foundation for all other Azure certifications. No prerequisites required!
+        </div>
+    </div>
+
+    <!-- Slide 3: Exam Blueprint -->
+    <div class="slide" id="slide3">
+        <h1 class="animate-fade-in-up">AZ-900 Exam Blueprint</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Skills Measured & Weightings</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Cloud Concepts <span class="percentage-badge">25-30%</span></h3>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 30%;"></div></div>
+                    <ul>
+                        <li>Benefits of cloud computing</li>
+                        <li>Cloud service types (IaaS, PaaS, SaaS)</li>
+                        <li>Cloud models (Public, Private, Hybrid)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Azure Architecture <span class="percentage-badge">35-40%</span></h3>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+                    <ul>
+                        <li>Core Azure services</li>
+                        <li>Compute, networking, storage</li>
+                        <li>Azure solutions and services</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box animate-fade-in-up delay-4" style="margin-top: 20px;">
+            <h3>Management & Governance <span class="percentage-badge">30-35%</span></h3>
+            <div class="progress-bar"><div class="progress-fill" style="width: 35%;"></div></div>
+            <ul style="display: flex; gap: 40px; margin-top: 15px;">
+                <li>Cost management</li>
+                <li>Governance features</li>
+                <li>Privacy and compliance</li>
+                <li>Azure management tools</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 4: What is Cloud Computing? -->
+    <div class="slide" id="slide4">
+        <div class="day-badge">Day 1</div>
+        <h1 class="animate-fade-in-up">What is Cloud Computing?</h1>
+        <p class="subtitle animate-fade-in-up delay-1">The Foundation of Modern IT</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="highlight-box">
+                    <h3>Definition</h3>
+                    <p>Delivery of computing services over the internet, including:</p>
+                    <ul style="margin-top: 15px;">
+                        <li>Servers and compute power</li>
+                        <li>Storage and databases</li>
+                        <li>Networking</li>
+                        <li>Software and analytics</li>
+                        <li>AI and machine learning</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>Traditional vs Cloud</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Traditional</th>
+                            <th>Cloud</th>
+                        </tr>
+                        <tr>
+                            <td>Buy hardware upfront</td>
+                            <td>Pay for what you use</td>
+                        </tr>
+                        <tr>
+                            <td>Maintain your own servers</td>
+                            <td>Provider maintains</td>
+                        </tr>
+                        <tr>
+                            <td>Fixed capacity</td>
+                            <td>Scale on demand</td>
+                        </tr>
+                        <tr>
+                            <td>Weeks to provision</td>
+                            <td>Minutes to provision</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-4">
+            Cloud computing = on-demand delivery of IT resources via the internet with pay-as-you-go pricing.
+        </div>
+    </div>
+
+    <!-- Slide 5: Benefits of Cloud Computing -->
+    <div class="slide" id="slide5">
+        <div class="day-badge">Day 1</div>
+        <h1 class="animate-fade-in-up">Benefits of Cloud Computing</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Why Organizations Move to the Cloud</p>
+
+        <div class="three-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">📈</div>
+                <h3>High Availability</h3>
+                <p>Systems remain operational despite failures. SLAs guarantee uptime (99.9%, 99.99%).</p>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">⚡</div>
+                <h3>Scalability</h3>
+                <p><strong>Vertical:</strong> Add more power<br><strong>Horizontal:</strong> Add more instances</p>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">🔄</div>
+                <h3>Elasticity</h3>
+                <p>Automatically scale resources up/down based on demand.</p>
+            </div>
+        </div>
+        <div class="three-column" style="margin-top: 20px;">
+            <div class="card animate-fade-in-up delay-5">
+                <div class="card-icon">🌍</div>
+                <h3>Global Reach</h3>
+                <p>Deploy to data centers worldwide. Reduce latency for global users.</p>
+            </div>
+            <div class="card animate-fade-in-up delay-6">
+                <div class="card-icon">🛡️</div>
+                <h3>Disaster Recovery</h3>
+                <p>Backup and replicate data across regions for business continuity.</p>
+            </div>
+            <div class="card animate-fade-in-up delay-6">
+                <div class="card-icon">🏃</div>
+                <h3>Agility</h3>
+                <p>Deploy resources quickly. Experiment and innovate faster.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Cloud Service Types -->
+    <div class="slide" id="slide6">
+        <div class="day-badge">Day 1</div>
+        <h1 class="animate-fade-in-up">Cloud Service Types</h1>
+        <p class="subtitle animate-fade-in-up delay-1">IaaS, PaaS, SaaS</p>
+
+        <div class="three-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">🖥️</div>
+                <h3>IaaS</h3>
+                <p><strong>Infrastructure as a Service</strong></p>
+                <ul style="margin-top: 15px;">
+                    <li>Virtual machines</li>
+                    <li>Storage</li>
+                    <li>Networks</li>
+                    <li>You manage: OS, apps</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 15px;">Most Control</div>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">🔧</div>
+                <h3>PaaS</h3>
+                <p><strong>Platform as a Service</strong></p>
+                <ul style="margin-top: 15px;">
+                    <li>Development platforms</li>
+                    <li>Databases</li>
+                    <li>Web hosting</li>
+                    <li>You manage: Apps, data</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 15px;">Balanced</div>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">📱</div>
+                <h3>SaaS</h3>
+                <p><strong>Software as a Service</strong></p>
+                <ul style="margin-top: 15px;">
+                    <li>Email (Microsoft 365)</li>
+                    <li>CRM systems</li>
+                    <li>Collaboration tools</li>
+                    <li>Provider manages all</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 15px;">Least Control</div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-5">
+            Remember: IaaS = most flexibility/control, SaaS = least management, PaaS = for developers.
+        </div>
+    </div>
+
+    <!-- Slide 7: Shared Responsibility Model -->
+    <div class="slide" id="slide7">
+        <div class="day-badge">Day 1</div>
+        <h1 class="animate-fade-in-up">Shared Responsibility Model</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Who Manages What?</p>
+
+        <div class="animate-fade-in-up delay-2">
+            <table class="comparison-table">
+                <tr>
+                    <th>Responsibility</th>
+                    <th>On-Premises</th>
+                    <th>IaaS</th>
+                    <th>PaaS</th>
+                    <th>SaaS</th>
+                </tr>
+                <tr>
+                    <td>Data & Access</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                </tr>
+                <tr>
+                    <td>Applications</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #0078d4;">Provider</td>
+                </tr>
+                <tr>
+                    <td>Runtime</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #0078d4;">Provider</td>
+                    <td style="color: #0078d4;">Provider</td>
+                </tr>
+                <tr>
+                    <td>OS</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #0078d4;">Provider</td>
+                    <td style="color: #0078d4;">Provider</td>
+                </tr>
+                <tr>
+                    <td>VMs</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #0078d4;">Provider</td>
+                    <td style="color: #0078d4;">Provider</td>
+                    <td style="color: #0078d4;">Provider</td>
+                </tr>
+                <tr>
+                    <td>Physical Infrastructure</td>
+                    <td style="color: #50e6ff;">Customer</td>
+                    <td style="color: #0078d4;">Provider</td>
+                    <td style="color: #0078d4;">Provider</td>
+                    <td style="color: #0078d4;">Provider</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="tip-box animate-fade-in-up delay-3">
+                <strong>Customer Always Responsible For:</strong>
+                <ul>
+                    <li>Data classification</li>
+                    <li>Account & identity management</li>
+                    <li>Device security (endpoints)</li>
+                </ul>
+            </div>
+            <div class="highlight-box animate-fade-in-up delay-4">
+                <strong>Provider Always Responsible For:</strong>
+                <ul>
+                    <li>Physical data centers</li>
+                    <li>Physical network</li>
+                    <li>Physical hosts</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Cloud Deployment Models -->
+    <div class="slide" id="slide8">
+        <div class="day-badge">Day 1</div>
+        <h1 class="animate-fade-in-up">Cloud Deployment Models</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Public, Private, Hybrid</p>
+
+        <div class="three-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">🌐</div>
+                <h3>Public Cloud</h3>
+                <ul>
+                    <li>Owned by cloud provider</li>
+                    <li>Shared infrastructure</li>
+                    <li>Access via internet</li>
+                    <li>Pay-as-you-go</li>
+                    <li>No CapEx</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 15px;">Azure, AWS, GCP</div>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">🔒</div>
+                <h3>Private Cloud</h3>
+                <ul>
+                    <li>Owned by organization</li>
+                    <li>Dedicated infrastructure</li>
+                    <li>On-premises or hosted</li>
+                    <li>Full control</li>
+                    <li>Higher cost</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 15px;">Azure Stack</div>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">🔄</div>
+                <h3>Hybrid Cloud</h3>
+                <ul>
+                    <li>Combines public + private</li>
+                    <li>Data moves between</li>
+                    <li>Flexibility</li>
+                    <li>Compliance options</li>
+                    <li>Most common</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 15px;">Azure Arc</div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-5">
+            Hybrid cloud is most flexible - keep sensitive data on-premises while using public cloud for burst capacity.
+        </div>
+    </div>
+
+    <!-- Slide 9: CapEx vs OpEx -->
+    <div class="slide" id="slide9">
+        <div class="day-badge">Day 1</div>
+        <h1 class="animate-fade-in-up">CapEx vs OpEx</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Capital vs Operational Expenditure</p>
+
+        <div class="two-column">
+            <div class="card animate-slide-left delay-2">
+                <div class="card-icon">🏗️</div>
+                <h3>CapEx (Capital Expenditure)</h3>
+                <ul>
+                    <li>Upfront spending on infrastructure</li>
+                    <li>Buy servers, data centers</li>
+                    <li>Value reduces over time</li>
+                    <li>Fixed costs</li>
+                    <li>Traditional IT model</li>
+                </ul>
+                <div class="warning-box" style="margin-top: 15px;">
+                    Example: Buying $1M in servers
+                </div>
+            </div>
+            <div class="card azure-card animate-slide-right delay-3">
+                <div class="card-icon">💳</div>
+                <h3>OpEx (Operational Expenditure)</h3>
+                <ul>
+                    <li>Ongoing spending for services</li>
+                    <li>Pay for what you use</li>
+                    <li>No upfront investment</li>
+                    <li>Variable costs</li>
+                    <li>Cloud model</li>
+                </ul>
+                <div class="tip-box" style="margin-top: 15px;">
+                    Example: $10K/month cloud bill
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box animate-fade-in-up delay-4">
+            <h3>Cloud = Shift from CapEx to OpEx</h3>
+            <p>No large upfront costs. Pay monthly based on actual usage. Scale costs with business needs.</p>
+        </div>
+    </div>
+
+    <!-- Slide 10: Azure Global Infrastructure -->
+    <div class="slide" id="slide10">
+        <div class="day-badge">Day 1</div>
+        <h1 class="animate-fade-in-up">Azure Global Infrastructure</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Regions, Availability Zones, Data Centers</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>🌍 Regions</h3>
+                    <ul>
+                        <li>Geographic area with data centers</li>
+                        <li>60+ regions worldwide</li>
+                        <li>Region pairs for disaster recovery</li>
+                        <li>Some services region-specific</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🏢 Availability Zones</h3>
+                    <ul>
+                        <li>Physically separate locations within a region</li>
+                        <li>Independent power, cooling, networking</li>
+                        <li>Minimum 3 zones per enabled region</li>
+                        <li>99.99% VM uptime SLA</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card" style="height: 100%;">
+                    <h3>Hierarchy</h3>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="border: 3px solid #0078d4; border-radius: 20px; padding: 20px;">
+                            <strong>Geography</strong> (Americas, Europe...)
+                            <div style="border: 3px solid #00bcf2; border-radius: 15px; padding: 15px; margin-top: 15px;">
+                                <strong>Region Pair</strong> (East US ↔ West US)
+                                <div style="border: 3px solid #50e6ff; border-radius: 10px; padding: 10px; margin-top: 15px;">
+                                    <strong>Region</strong> (East US)
+                                    <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center;">
+                                        <span style="background: rgba(0,188,242,0.3); padding: 5px 10px; border-radius: 5px;">AZ 1</span>
+                                        <span style="background: rgba(0,188,242,0.3); padding: 5px 10px; border-radius: 5px;">AZ 2</span>
+                                        <span style="background: rgba(0,188,242,0.3); padding: 5px 10px; border-radius: 5px;">AZ 3</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 11: Azure Compute Services -->
+    <div class="slide" id="slide11">
+        <div class="day-badge">Day 2</div>
+        <h1 class="animate-fade-in-up">Azure Compute Services</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Running Your Applications</p>
+
+        <div class="four-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">🖥️</div>
+                <h3>Virtual Machines</h3>
+                <p>IaaS - Full control over OS and software</p>
+                <div class="service-badge" style="margin-top: 10px;">IaaS</div>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">📦</div>
+                <h3>App Service</h3>
+                <p>PaaS - Host web apps without managing infrastructure</p>
+                <div class="service-badge" style="margin-top: 10px;">PaaS</div>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">🐳</div>
+                <h3>Containers</h3>
+                <p>Container Instances, AKS for Kubernetes</p>
+                <div class="service-badge" style="margin-top: 10px;">PaaS</div>
+            </div>
+            <div class="card animate-fade-in-up delay-5">
+                <div class="card-icon">⚡</div>
+                <h3>Azure Functions</h3>
+                <p>Serverless - Run code on events</p>
+                <div class="service-badge" style="margin-top: 10px;">Serverless</div>
+            </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="card azure-card animate-fade-in-up delay-6">
+                <h3>Virtual Machine Scale Sets</h3>
+                <p>Create and manage a group of identical, load-balanced VMs that automatically scale.</p>
+            </div>
+            <div class="card azure-card animate-fade-in-up delay-6">
+                <h3>Azure Virtual Desktop</h3>
+                <p>Desktop and app virtualization in the cloud. Access from anywhere.</p>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-6">
+            Serverless (Functions) = pay only when code runs. No infrastructure management at all.
+        </div>
+    </div>
+
+    <!-- Slide 12: Azure Networking -->
+    <div class="slide" id="slide12">
+        <div class="day-badge">Day 2</div>
+        <h1 class="animate-fade-in-up">Azure Networking</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Connecting Your Resources</p>
+
+        <div class="three-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">🌐</div>
+                <h3>Virtual Network (VNet)</h3>
+                <ul>
+                    <li>Private network in Azure</li>
+                    <li>Isolate resources</li>
+                    <li>Subnets for segmentation</li>
+                    <li>Network Security Groups</li>
+                </ul>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">🔗</div>
+                <h3>VPN Gateway</h3>
+                <ul>
+                    <li>Connect on-premises to Azure</li>
+                    <li>Site-to-site VPN</li>
+                    <li>Point-to-site VPN</li>
+                    <li>Encrypted tunnel</li>
+                </ul>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">🚀</div>
+                <h3>ExpressRoute</h3>
+                <ul>
+                    <li>Private connection to Azure</li>
+                    <li>Doesn't go over internet</li>
+                    <li>Higher bandwidth</li>
+                    <li>More reliable</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="highlight-box animate-fade-in-up delay-5">
+                <h3>Azure Load Balancer</h3>
+                <p>Distributes incoming traffic across multiple VMs for high availability.</p>
+            </div>
+            <div class="tip-box animate-fade-in-up delay-6">
+                <h3>Azure DNS</h3>
+                <p>Host DNS domains and manage DNS records using Azure infrastructure.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 13: Azure Storage -->
+    <div class="slide" id="slide13">
+        <div class="day-badge">Day 2</div>
+        <h1 class="animate-fade-in-up">Azure Storage Services</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Storing Your Data</p>
+
+        <div class="four-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">📁</div>
+                <h3>Blob Storage</h3>
+                <p>Object storage for unstructured data (images, videos, backups)</p>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">📂</div>
+                <h3>File Storage</h3>
+                <p>Managed file shares accessible via SMB protocol</p>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">📋</div>
+                <h3>Queue Storage</h3>
+                <p>Message queue for async communication between apps</p>
+            </div>
+            <div class="card animate-fade-in-up delay-5">
+                <div class="card-icon">📊</div>
+                <h3>Table Storage</h3>
+                <p>NoSQL key-value store for structured data</p>
+            </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="card azure-card animate-fade-in-up delay-6">
+                <h3>Storage Tiers</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Tier</th>
+                        <th>Use Case</th>
+                    </tr>
+                    <tr>
+                        <td>Hot</td>
+                        <td>Frequently accessed data</td>
+                    </tr>
+                    <tr>
+                        <td>Cool</td>
+                        <td>Infrequent access (30+ days)</td>
+                    </tr>
+                    <tr>
+                        <td>Archive</td>
+                        <td>Rarely accessed (180+ days)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card azure-card animate-fade-in-up delay-6">
+                <h3>Storage Redundancy</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Option</th>
+                        <th>Copies</th>
+                    </tr>
+                    <tr>
+                        <td>LRS</td>
+                        <td>3 copies, single datacenter</td>
+                    </tr>
+                    <tr>
+                        <td>ZRS</td>
+                        <td>3 zones in region</td>
+                    </tr>
+                    <tr>
+                        <td>GRS</td>
+                        <td>6 copies, 2 regions</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 14: Azure Database Services -->
+    <div class="slide" id="slide14">
+        <div class="day-badge">Day 2</div>
+        <h1 class="animate-fade-in-up">Azure Database Services</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Managed Database Solutions</p>
+
+        <div class="three-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">🗃️</div>
+                <h3>Azure SQL Database</h3>
+                <ul>
+                    <li>Fully managed SQL Server</li>
+                    <li>Built-in HA and backups</li>
+                    <li>Serverless option</li>
+                    <li>Elastic pools</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 10px;">PaaS</div>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">🌍</div>
+                <h3>Cosmos DB</h3>
+                <ul>
+                    <li>Globally distributed</li>
+                    <li>Multi-model (SQL, MongoDB, etc.)</li>
+                    <li>Single-digit millisecond latency</li>
+                    <li>99.999% availability</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 10px;">NoSQL</div>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">🐘</div>
+                <h3>Azure Database for...</h3>
+                <ul>
+                    <li>MySQL</li>
+                    <li>PostgreSQL</li>
+                    <li>MariaDB</li>
+                    <li>Managed open-source</li>
+                </ul>
+                <div class="service-badge" style="margin-top: 10px;">PaaS</div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-5">
+            Cosmos DB = globally distributed, multi-model NoSQL. Azure SQL = managed SQL Server. Know when to use each!
+        </div>
+    </div>
+
+    <!-- Slide 15: Azure Identity Services -->
+    <div class="slide" id="slide15">
+        <div class="day-badge">Day 2</div>
+        <h1 class="animate-fade-in-up">Azure Identity Services</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Authentication & Authorization</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card azure-card" style="margin-bottom: 20px;">
+                    <h3>Microsoft Entra ID</h3>
+                    <p>(Formerly Azure Active Directory)</p>
+                    <ul style="margin-top: 15px;">
+                        <li>Cloud identity service</li>
+                        <li>Single Sign-On (SSO)</li>
+                        <li>Multi-Factor Authentication</li>
+                        <li>Conditional Access</li>
+                        <li>B2B and B2C scenarios</li>
+                    </ul>
+                </div>
+                <div class="tip-box">
+                    <strong>Entra ID vs AD DS:</strong> Entra ID is cloud-based identity. AD DS is on-premises directory service.
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card">
+                    <h3>Authentication Methods</h3>
+                    <ul>
+                        <li><strong>Password:</strong> Traditional</li>
+                        <li><strong>MFA:</strong> Multiple factors</li>
+                        <li><strong>Passwordless:</strong> FIDO2, Windows Hello</li>
+                        <li><strong>SSO:</strong> One login for all apps</li>
+                    </ul>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Conditional Access</h3>
+                    <p>Policies that control access based on:</p>
+                    <ul style="margin-top: 10px;">
+                        <li>User or group membership</li>
+                        <li>Location</li>
+                        <li>Device state</li>
+                        <li>Application</li>
+                        <li>Risk level</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 16: Azure Management Tools -->
+    <div class="slide" id="slide16">
+        <div class="day-badge">Day 2</div>
+        <h1 class="animate-fade-in-up">Azure Management Tools</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Ways to Manage Azure</p>
+
+        <div class="four-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">🌐</div>
+                <h3>Azure Portal</h3>
+                <p>Web-based GUI for managing resources</p>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">⌨️</div>
+                <h3>Azure CLI</h3>
+                <p>Command-line for Windows, Mac, Linux</p>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">💻</div>
+                <h3>PowerShell</h3>
+                <p>Azure PowerShell module for scripting</p>
+            </div>
+            <div class="card animate-fade-in-up delay-5">
+                <div class="card-icon">📱</div>
+                <h3>Mobile App</h3>
+                <p>Manage Azure on iOS and Android</p>
+            </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="card azure-card animate-fade-in-up delay-6">
+                <h3>Azure Cloud Shell</h3>
+                <p>Browser-based shell with CLI or PowerShell. No local installation needed.</p>
+            </div>
+            <div class="card azure-card animate-fade-in-up delay-6">
+                <h3>ARM Templates</h3>
+                <p>Infrastructure as Code. JSON templates for repeatable deployments.</p>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-6">
+            ARM (Azure Resource Manager) is the deployment and management layer for Azure. All tools use ARM.
+        </div>
+    </div>
+
+    <!-- Slide 17: Cost Management -->
+    <div class="slide" id="slide17">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Azure Cost Management</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Controlling Cloud Spending</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Factors Affecting Cost</h3>
+                    <ul>
+                        <li><strong>Resource type:</strong> VMs cost more than storage</li>
+                        <li><strong>Usage:</strong> Pay for what you use</li>
+                        <li><strong>Region:</strong> Prices vary by location</li>
+                        <li><strong>Tier:</strong> Premium vs Standard</li>
+                        <li><strong>Bandwidth:</strong> Egress charges</li>
+                    </ul>
+                </div>
+                <div class="warning-box">
+                    <strong>Ingress is Free:</strong> Data into Azure is free. Data out (egress) costs money.
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>Cost Optimization Tools</h3>
+                    <ul>
+                        <li><strong>Pricing Calculator:</strong> Estimate costs before deploying</li>
+                        <li><strong>TCO Calculator:</strong> Compare on-prem vs cloud</li>
+                        <li><strong>Cost Management:</strong> Monitor and analyze spending</li>
+                        <li><strong>Budgets:</strong> Set spending limits with alerts</li>
+                        <li><strong>Advisor:</strong> Cost recommendations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box animate-fade-in-up delay-4">
+            <h3>Cost Saving Options</h3>
+            <div style="display: flex; gap: 30px; margin-top: 15px;">
+                <div><strong>Reserved Instances:</strong> 1-3 year commitment = up to 72% savings</div>
+                <div><strong>Spot VMs:</strong> Use unused capacity at discount</div>
+                <div><strong>Hybrid Benefit:</strong> Use existing Windows/SQL licenses</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 18: Azure Governance -->
+    <div class="slide" id="slide18">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Azure Governance</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Managing Resources at Scale</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card">
+                    <h3>Management Hierarchy</h3>
+                    <div style="padding: 20px;">
+                        <div style="border: 2px solid #0078d4; padding: 15px; border-radius: 10px; text-align: center;">
+                            <strong>Management Groups</strong>
+                            <div style="border: 2px solid #00bcf2; padding: 12px; border-radius: 8px; margin-top: 10px;">
+                                <strong>Subscriptions</strong>
+                                <div style="border: 2px solid #50e6ff; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                    <strong>Resource Groups</strong>
+                                    <div style="background: rgba(80,230,255,0.2); padding: 8px; border-radius: 4px; margin-top: 10px;">
+                                        Resources
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>Governance Features</h3>
+                    <ul>
+                        <li><strong>Azure Policy:</strong> Enforce standards and compliance</li>
+                        <li><strong>RBAC:</strong> Role-based access control</li>
+                        <li><strong>Resource Locks:</strong> Prevent accidental deletion</li>
+                        <li><strong>Tags:</strong> Organize and track resources</li>
+                        <li><strong>Blueprints:</strong> Repeatable environment setup</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-4">
+            Policies are inherited down the hierarchy. A policy at Management Group applies to all subscriptions below it.
+        </div>
+    </div>
+
+    <!-- Slide 19: RBAC -->
+    <div class="slide" id="slide19">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Role-Based Access Control</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Who Can Do What</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card">
+                    <h3>RBAC Components</h3>
+                    <ul>
+                        <li><strong>Security Principal:</strong> Who (user, group, service principal)</li>
+                        <li><strong>Role Definition:</strong> What they can do (permissions)</li>
+                        <li><strong>Scope:</strong> Where it applies (subscription, RG, resource)</li>
+                    </ul>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(0,188,242,0.1); border-radius: 10px; text-align: center;">
+                        <strong>Role Assignment</strong> = Principal + Role + Scope
+                    </div>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>Built-in Roles</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Role</th>
+                            <th>Permissions</th>
+                        </tr>
+                        <tr>
+                            <td>Owner</td>
+                            <td>Full access + assign roles</td>
+                        </tr>
+                        <tr>
+                            <td>Contributor</td>
+                            <td>Full access, can't assign roles</td>
+                        </tr>
+                        <tr>
+                            <td>Reader</td>
+                            <td>View only</td>
+                        </tr>
+                        <tr>
+                            <td>User Access Admin</td>
+                            <td>Manage user access only</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tip-box animate-fade-in-up delay-4">
+            <strong>Principle of Least Privilege:</strong> Give users only the permissions they need to do their job.
+        </div>
+    </div>
+
+    <!-- Slide 20: Azure Policy -->
+    <div class="slide" id="slide20">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Azure Policy</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Enforce Organizational Standards</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card">
+                    <h3>What Azure Policy Does</h3>
+                    <ul>
+                        <li>Define rules resources must follow</li>
+                        <li>Evaluate existing resources</li>
+                        <li>Prevent non-compliant resources</li>
+                        <li>Auto-remediate violations</li>
+                        <li>Compliance reporting</li>
+                    </ul>
+                </div>
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <h3>Common Policy Examples</h3>
+                    <ul>
+                        <li>Require tags on resources</li>
+                        <li>Restrict VM sizes</li>
+                        <li>Enforce allowed regions</li>
+                        <li>Require encryption</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>Policy vs RBAC</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Azure Policy</th>
+                            <th>RBAC</th>
+                        </tr>
+                        <tr>
+                            <td>What resources can do</td>
+                            <td>What users can do</td>
+                        </tr>
+                        <tr>
+                            <td>Resource properties</td>
+                            <td>User actions</td>
+                        </tr>
+                        <tr>
+                            <td>Default allow</td>
+                            <td>Default deny</td>
+                        </tr>
+                        <tr>
+                            <td>Compliance focus</td>
+                            <td>Access focus</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-4">
+            Azure Policy = resource compliance. RBAC = user access. They work together but serve different purposes.
+        </div>
+    </div>
+
+    <!-- Slide 21: Resource Locks & Tags -->
+    <div class="slide" id="slide21">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Resource Locks & Tags</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Protect and Organize Resources</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card">
+                    <h3>🔒 Resource Locks</h3>
+                    <p>Prevent accidental changes or deletion</p>
+                    <table class="comparison-table" style="margin-top: 20px;">
+                        <tr>
+                            <th>Lock Type</th>
+                            <th>Effect</th>
+                        </tr>
+                        <tr>
+                            <td>CanNotDelete</td>
+                            <td>Can read/modify, cannot delete</td>
+                        </tr>
+                        <tr>
+                            <td>ReadOnly</td>
+                            <td>Can read only, no changes</td>
+                        </tr>
+                    </table>
+                    <div class="warning-box" style="margin-top: 15px;">
+                        Locks apply to all users, even Owners!
+                    </div>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>🏷️ Tags</h3>
+                    <p>Key-value pairs for organizing resources</p>
+                    <ul style="margin-top: 20px;">
+                        <li><strong>Cost tracking:</strong> Department: Marketing</li>
+                        <li><strong>Environment:</strong> Env: Production</li>
+                        <li><strong>Owner:</strong> Owner: John.Doe</li>
+                        <li><strong>Project:</strong> Project: WebApp</li>
+                    </ul>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        Tags are NOT inherited by default. Use Policy to enforce tagging.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-4">
+            Resource locks override RBAC permissions. Even an Owner cannot delete a locked resource without removing the lock first.
+        </div>
+    </div>
+
+    <!-- Slide 22: Compliance & Privacy -->
+    <div class="slide" id="slide22">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Compliance & Privacy</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Trust and Regulatory Compliance</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card">
+                    <h3>Microsoft Trust Center</h3>
+                    <ul>
+                        <li>Security practices</li>
+                        <li>Privacy policies</li>
+                        <li>Compliance offerings</li>
+                        <li>Data protection</li>
+                    </ul>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Key Compliance Standards</h3>
+                    <ul>
+                        <li><strong>GDPR:</strong> EU data protection</li>
+                        <li><strong>ISO 27001:</strong> Security management</li>
+                        <li><strong>SOC 1/2/3:</strong> Service organization controls</li>
+                        <li><strong>HIPAA:</strong> Healthcare data (US)</li>
+                        <li><strong>FedRAMP:</strong> US government</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>Azure Compliance Tools</h3>
+                    <ul>
+                        <li><strong>Compliance Manager:</strong> Track compliance posture</li>
+                        <li><strong>Service Trust Portal:</strong> Audit reports, certifications</li>
+                        <li><strong>Azure Security Center:</strong> Security recommendations</li>
+                        <li><strong>Microsoft Purview:</strong> Data governance</li>
+                    </ul>
+                </div>
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <h3>Data Residency</h3>
+                    <p>Choose where your data is stored. Azure has sovereign clouds for government (Azure Government, Azure China).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 23: Monitoring Services -->
+    <div class="slide" id="slide23">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Azure Monitoring Services</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Visibility Into Your Resources</p>
+
+        <div class="three-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">📊</div>
+                <h3>Azure Monitor</h3>
+                <ul>
+                    <li>Collect metrics and logs</li>
+                    <li>Visualize in dashboards</li>
+                    <li>Set up alerts</li>
+                    <li>Application Insights</li>
+                    <li>Log Analytics</li>
+                </ul>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">❤️</div>
+                <h3>Service Health</h3>
+                <ul>
+                    <li>Azure status</li>
+                    <li>Service issues</li>
+                    <li>Planned maintenance</li>
+                    <li>Health advisories</li>
+                    <li>Personalized view</li>
+                </ul>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">💡</div>
+                <h3>Azure Advisor</h3>
+                <ul>
+                    <li>Reliability recommendations</li>
+                    <li>Security suggestions</li>
+                    <li>Performance tips</li>
+                    <li>Cost optimization</li>
+                    <li>Operational excellence</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-5">
+            Azure Monitor = metrics and logs. Service Health = Azure platform status. Advisor = best practice recommendations.
+        </div>
+    </div>
+
+    <!-- Slide 24: Defense in Depth -->
+    <div class="slide" id="slide24">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Defense in Depth</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Layered Security Approach</p>
+
+        <div class="animate-fade-in-up delay-2" style="max-width: 700px; margin: 0 auto;">
+            <div style="text-align: center;">
+                <div style="background: rgba(255,0,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
+                    <strong>Physical Security</strong> - Data center access
+                </div>
+                <div style="background: rgba(255,100,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
+                    <strong>Identity & Access</strong> - Authentication, MFA
+                </div>
+                <div style="background: rgba(255,200,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
+                    <strong>Perimeter</strong> - DDoS protection, firewalls
+                </div>
+                <div style="background: rgba(100,255,0,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
+                    <strong>Network</strong> - NSGs, VNet segmentation
+                </div>
+                <div style="background: rgba(0,200,255,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
+                    <strong>Compute</strong> - VM security, patching
+                </div>
+                <div style="background: rgba(0,100,255,0.2); padding: 15px; border-radius: 10px; margin-bottom: 5px;">
+                    <strong>Application</strong> - Secure code, vulnerability scanning
+                </div>
+                <div style="background: rgba(100,0,255,0.2); padding: 15px; border-radius: 10px;">
+                    <strong>Data</strong> - Encryption at rest and in transit
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-tip animate-fade-in-up delay-3" style="margin-top: 30px;">
+            Defense in Depth = multiple layers of security. If one layer fails, others still protect your resources.
+        </div>
+    </div>
+
+    <!-- Slide 25: Security Services -->
+    <div class="slide" id="slide25">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Azure Security Services</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Protecting Your Resources</p>
+
+        <div class="three-column">
+            <div class="card animate-fade-in-up delay-2">
+                <div class="card-icon">🛡️</div>
+                <h3>Microsoft Defender for Cloud</h3>
+                <ul>
+                    <li>Security posture management</li>
+                    <li>Threat protection</li>
+                    <li>Secure score</li>
+                    <li>Compliance assessment</li>
+                </ul>
+            </div>
+            <div class="card animate-fade-in-up delay-3">
+                <div class="card-icon">🔥</div>
+                <h3>Azure Firewall</h3>
+                <ul>
+                    <li>Managed network firewall</li>
+                    <li>Threat intelligence</li>
+                    <li>Outbound filtering</li>
+                    <li>Built-in high availability</li>
+                </ul>
+            </div>
+            <div class="card animate-fade-in-up delay-4">
+                <div class="card-icon">🔑</div>
+                <h3>Azure Key Vault</h3>
+                <ul>
+                    <li>Secrets management</li>
+                    <li>Key management</li>
+                    <li>Certificate management</li>
+                    <li>HSM-backed</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="highlight-box animate-fade-in-up delay-5">
+                <h3>Azure DDoS Protection</h3>
+                <p>Basic (free) and Standard tiers. Protects against distributed denial-of-service attacks.</p>
+            </div>
+            <div class="tip-box animate-fade-in-up delay-6">
+                <h3>Network Security Groups</h3>
+                <p>Filter traffic to/from resources. Inbound and outbound rules based on source, destination, port.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 26: Exam Strategies -->
+    <div class="slide" id="slide26">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Exam Preparation Strategy</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Tips for AZ-900 Success</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <div class="card">
+                    <h3>📚 Study Resources</h3>
+                    <ul>
+                        <li><strong>Microsoft Learn:</strong> Free learning paths</li>
+                        <li><strong>Practice Assessments:</strong> Official MS tests</li>
+                        <li><strong>Azure Free Account:</strong> Hands-on practice</li>
+                        <li><strong>Documentation:</strong> Azure docs</li>
+                    </ul>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>⏱️ Exam Day Tips</h3>
+                    <ul>
+                        <li>40-60 questions in ~60 minutes</li>
+                        <li>Read questions carefully</li>
+                        <li>Mark uncertain answers for review</li>
+                        <li>Don't overthink - go with first instinct</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <div class="card azure-card">
+                    <h3>🎯 Focus Areas by Weight</h3>
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Azure Architecture & Services</span>
+                            <span>35-40%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Management & Governance</span>
+                            <span>30-35%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 35%;"></div></div>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Cloud Concepts</span>
+                            <span>25-30%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 30%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tip-box animate-fade-in-up delay-4">
+            <strong>Pro Tip:</strong> Create a free Azure account and explore the portal. Many questions reference the actual interface!
+        </div>
+    </div>
+
+    <!-- Slide 27: Quick Reference -->
+    <div class="slide" id="slide27">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Quick Reference: Services</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Know Your Azure Services</p>
+
+        <div class="two-column">
+            <div class="animate-slide-left delay-2">
+                <table class="comparison-table">
+                    <tr>
+                        <th>Need</th>
+                        <th>Service</th>
+                    </tr>
+                    <tr>
+                        <td>Run VMs</td>
+                        <td>Azure Virtual Machines</td>
+                    </tr>
+                    <tr>
+                        <td>Host web apps</td>
+                        <td>Azure App Service</td>
+                    </tr>
+                    <tr>
+                        <td>Run containers</td>
+                        <td>ACI, AKS</td>
+                    </tr>
+                    <tr>
+                        <td>Serverless code</td>
+                        <td>Azure Functions</td>
+                    </tr>
+                    <tr>
+                        <td>Object storage</td>
+                        <td>Blob Storage</td>
+                    </tr>
+                    <tr>
+                        <td>File shares</td>
+                        <td>Azure Files</td>
+                    </tr>
+                    <tr>
+                        <td>SQL database</td>
+                        <td>Azure SQL Database</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="animate-slide-right delay-3">
+                <table class="comparison-table">
+                    <tr>
+                        <th>Need</th>
+                        <th>Service</th>
+                    </tr>
+                    <tr>
+                        <td>Global NoSQL</td>
+                        <td>Cosmos DB</td>
+                    </tr>
+                    <tr>
+                        <td>Private network</td>
+                        <td>Virtual Network</td>
+                    </tr>
+                    <tr>
+                        <td>Load balancing</td>
+                        <td>Azure Load Balancer</td>
+                    </tr>
+                    <tr>
+                        <td>Identity</td>
+                        <td>Microsoft Entra ID</td>
+                    </tr>
+                    <tr>
+                        <td>Secrets</td>
+                        <td>Key Vault</td>
+                    </tr>
+                    <tr>
+                        <td>Monitoring</td>
+                        <td>Azure Monitor</td>
+                    </tr>
+                    <tr>
+                        <td>Security posture</td>
+                        <td>Defender for Cloud</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 28: Practice Questions -->
+    <div class="slide" id="slide28">
+        <div class="day-badge">Day 3</div>
+        <h1 class="animate-fade-in-up">Practice Questions</h1>
+        <p class="subtitle animate-fade-in-up delay-1">Test Your Knowledge</p>
+
+        <div class="card animate-fade-in-up delay-2" style="margin-bottom: 15px;">
+            <h3>Q1: Which cloud model combines on-premises and public cloud?</h3>
+            <p style="color: #a0a0a0; margin: 10px 0;">A) Public &nbsp; B) Private &nbsp; C) Hybrid &nbsp; D) Community</p>
+            <div class="tip-box" style="margin-top: 10px;"><strong>Answer: C</strong> - Hybrid cloud combines public and private</div>
+        </div>
+
+        <div class="card animate-fade-in-up delay-3" style="margin-bottom: 15px;">
+            <h3>Q2: Which service model requires you to manage the least?</h3>
+            <p style="color: #a0a0a0; margin: 10px 0;">A) IaaS &nbsp; B) PaaS &nbsp; C) SaaS &nbsp; D) On-premises</p>
+            <div class="tip-box" style="margin-top: 10px;"><strong>Answer: C</strong> - SaaS = provider manages everything</div>
+        </div>
+
+        <div class="card animate-fade-in-up delay-4" style="margin-bottom: 15px;">
+            <h3>Q3: What prevents accidental deletion of resources?</h3>
+            <p style="color: #a0a0a0; margin: 10px 0;">A) RBAC &nbsp; B) Azure Policy &nbsp; C) Resource Locks &nbsp; D) Tags</p>
+            <div class="tip-box" style="margin-top: 10px;"><strong>Answer: C</strong> - Resource locks prevent deletion/modification</div>
+        </div>
+
+        <div class="card animate-fade-in-up delay-5">
+            <h3>Q4: Which tool estimates costs before deployment?</h3>
+            <p style="color: #a0a0a0; margin: 10px 0;">A) Cost Management &nbsp; B) TCO Calculator &nbsp; C) Pricing Calculator &nbsp; D) Advisor</p>
+            <div class="tip-box" style="margin-top: 10px;"><strong>Answer: C</strong> - Pricing Calculator estimates costs before deployment</div>
+        </div>
+    </div>
+
+    <!-- Slide 29: Course Summary -->
+    <div class="slide" id="slide29">
+        <h1 class="animate-fade-in-up">Course Summary</h1>
+        <p class="subtitle animate-fade-in-up delay-1">AZ-900 Certification Prep Complete</p>
+
+        <div class="three-column">
+            <div class="card azure-card animate-fade-in-up delay-2">
+                <div class="day-badge">Day 1</div>
+                <h3>Cloud Concepts</h3>
+                <ul>
+                    <li>IaaS, PaaS, SaaS</li>
+                    <li>Public, Private, Hybrid</li>
+                    <li>Shared Responsibility</li>
+                    <li>CapEx vs OpEx</li>
+                    <li>Azure Global Infrastructure</li>
+                </ul>
+            </div>
+            <div class="card azure-card animate-fade-in-up delay-3">
+                <div class="day-badge">Day 2</div>
+                <h3>Core Services</h3>
+                <ul>
+                    <li>Compute (VMs, Functions)</li>
+                    <li>Networking (VNet, VPN)</li>
+                    <li>Storage (Blob, Files)</li>
+                    <li>Databases (SQL, Cosmos)</li>
+                    <li>Identity (Entra ID)</li>
+                </ul>
+            </div>
+            <div class="card azure-card animate-fade-in-up delay-4">
+                <div class="day-badge">Day 3</div>
+                <h3>Management</h3>
+                <ul>
+                    <li>Cost Management</li>
+                    <li>Governance (Policy, RBAC)</li>
+                    <li>Compliance</li>
+                    <li>Monitoring</li>
+                    <li>Security</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-box animate-fade-in-up delay-5" style="text-align: center; margin-top: 30px;">
+            <h3>Next Steps</h3>
+            <p>Complete Microsoft Learn modules -> Take practice assessments -> Schedule your exam -> Get certified!</p>
+        </div>
+
+        <div class="animate-fade-in-up delay-6" style="text-align: center; margin-top: 30px;">
+            <div class="cert-badge">Good Luck on Your AZ-900 Exam!</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+        <span class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">29</span>
+        </span>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 29;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+
+            document.getElementById('currentSlide').textContent = currentSlide;
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) {
+                changeSlide(1);
+            } else if (touchEndX - touchStartX > 50) {
+                changeSlide(-1);
+            }
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

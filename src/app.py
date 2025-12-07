@@ -561,6 +561,90 @@ COURSES = {
                 ]
             }
         }
+    },
+    "azure-ai-900": {
+        "id": "azure-ai-900",
+        "name": "Azure AI-900 Certification Prep",
+        "description": "3-day certification prep course for Microsoft Azure AI Fundamentals (AI-900) exam",
+        "icon": "🤖",
+        "duration": "3 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "ai900-slides", "name": "Presentation Slides", "file": "azure-ai-900/azure-ai-900-slides.html", "type": "slides"},
+                    {"id": "ai900-pdf", "name": "Slides (PDF Download)", "file": "azure-ai-900/azure-ai-900-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Study Materials",
+                "items": [
+                    {"id": "ai900-notes", "name": "Student Notes", "file": "azure-ai-900/student-notes.md", "type": "notes"},
+                ]
+            },
+            "practice": {
+                "title": "Practice Tests",
+                "items": [
+                    {"id": "ai900-practice", "name": "Practice Questions", "file": "azure-ai-900/practice-tests/practice-questions.md", "type": "lab"},
+                ]
+            }
+        }
+    },
+    "azure-az-900": {
+        "id": "azure-az-900",
+        "name": "Azure AZ-900 Certification Prep",
+        "description": "3-day certification prep course for Microsoft Azure Fundamentals (AZ-900) exam",
+        "icon": "☁️",
+        "duration": "3 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "az900-slides", "name": "Presentation Slides", "file": "azure-az-900/azure-az-900-slides.html", "type": "slides"},
+                    {"id": "az900-pdf", "name": "Slides (PDF Download)", "file": "azure-az-900/azure-az-900-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Study Materials",
+                "items": [
+                    {"id": "az900-notes", "name": "Student Notes", "file": "azure-az-900/student-notes.md", "type": "notes"},
+                ]
+            },
+            "practice": {
+                "title": "Practice Tests",
+                "items": [
+                    {"id": "az900-practice", "name": "Practice Questions", "file": "azure-az-900/practice-tests/practice-questions.md", "type": "lab"},
+                ]
+            }
+        }
+    },
+    "azure-sc-900": {
+        "id": "azure-sc-900",
+        "name": "Azure SC-900 Certification Prep",
+        "description": "3-day certification prep course for Microsoft Security, Compliance, and Identity Fundamentals (SC-900) exam",
+        "icon": "🛡️",
+        "duration": "3 days",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "sc900-slides", "name": "Presentation Slides", "file": "azure-sc-900/azure-sc-900-slides.html", "type": "slides"},
+                    {"id": "sc900-pdf", "name": "Slides (PDF Download)", "file": "azure-sc-900/azure-sc-900-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Study Materials",
+                "items": [
+                    {"id": "sc900-notes", "name": "Student Notes", "file": "azure-sc-900/student-notes.md", "type": "notes"},
+                ]
+            },
+            "practice": {
+                "title": "Practice Tests",
+                "items": [
+                    {"id": "sc900-practice", "name": "Practice Questions", "file": "azure-sc-900/practice-tests/practice-questions.md", "type": "lab"},
+                ]
+            }
+        }
     }
 }
 

@@ -281,13 +281,53 @@ def instructor_required(f):
 # Course Configuration
 # ============================================================================
 
+# Course categories for organized navigation
+COURSE_CATEGORIES = {
+    "python": {
+        "id": "python",
+        "name": "Python Programming",
+        "icon": "🐍",
+        "description": "Learn Python from basics to advanced concepts",
+        "order": 1
+    },
+    "ai-technical": {
+        "id": "ai-technical",
+        "name": "AI/ML Technical",
+        "icon": "🧠",
+        "description": "Deep-dive technical AI and machine learning courses",
+        "order": 2
+    },
+    "ai-business": {
+        "id": "ai-business",
+        "name": "AI for Business",
+        "icon": "💼",
+        "description": "AI strategy, adoption, and applications for business professionals",
+        "order": 3
+    },
+    "azure": {
+        "id": "azure",
+        "name": "Azure Certifications",
+        "icon": "☁️",
+        "description": "Microsoft Azure certification preparation courses",
+        "order": 4
+    },
+    "itag-skillnet": {
+        "id": "itag-skillnet",
+        "name": "ITAG Skillnet AI Advantage",
+        "icon": "🎯",
+        "description": "AI awareness and prompting seminars for ITAG Skillnet",
+        "order": 5
+    }
+}
+
 COURSES = {
     "ai-plain-english": {
         "id": "ai-plain-english",
         "name": "AI in Plain English",
-        "description": "Demystify AI and make informed decisions for your business - ITAG Skillnet AI Advantage",
+        "description": "Demystify AI and make informed decisions for your business",
         "icon": "💡",
         "duration": "90 minutes",
+        "category": "itag-skillnet",
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -304,6 +344,7 @@ COURSES = {
         "name": "Mastering AI",
         "description": "Complete course on AI and Large Language Models from fundamentals to advanced topics",
         "icon": "🤖",
+        "category": "ai-technical",
         "sections": {
             "part1": {
                 "title": "Part 1: ML Foundations & AI Introduction",
@@ -345,6 +386,7 @@ COURSES = {
         "description": "Introduction to Python programming for beginners",
         "icon": "🐍",
         "duration": "4 hours",
+        "category": "python",
         "sections": {
             "materials": {
                 "title": "Course Materials",
@@ -369,6 +411,7 @@ COURSES = {
         "description": "Advanced Python concepts including OOP, functional programming, decorators, and testing",
         "icon": "🐍",
         "duration": "8 hours",
+        "category": "python",
         "sections": {
             "materials": {
                 "title": "Course Materials",
@@ -392,6 +435,7 @@ COURSES = {
         "description": "5-day intensive course on adopting AI in enterprise environments - governance, workflows, and implementation",
         "icon": "🏢",
         "duration": "5 days",
+        "category": "ai-business",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -442,6 +486,7 @@ COURSES = {
         "description": "3-day intensive course on AI agents, agentic swarms, and Google's A2A protocol",
         "icon": "🤖",
         "duration": "3 days",
+        "category": "ai-technical",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -474,9 +519,10 @@ COURSES = {
     "use-case-prompting": {
         "id": "use-case-prompting",
         "name": "Use Case Lab & Prompting Foundations",
-        "description": "90-minute seminar on identifying AI use cases and mastering prompt engineering - ITAG Skillnet AI Advantage",
+        "description": "90-minute seminar on identifying AI use cases and mastering prompt engineering",
         "icon": "💬",
         "duration": "90 minutes",
+        "category": "itag-skillnet",
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -505,6 +551,7 @@ COURSES = {
         "description": "2-day practical course on AI applications for sales and marketing professionals - customer engagement, content generation, lead scoring, and campaign analytics",
         "icon": "📈",
         "duration": "2 days",
+        "category": "ai-business",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -539,6 +586,7 @@ COURSES = {
         "description": "3-day comprehensive course on modern AI/ML approaches and deployment for data scientists and business analysts",
         "icon": "🧠",
         "duration": "3 days",
+        "category": "ai-technical",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -568,6 +616,7 @@ COURSES = {
         "description": "3-day certification prep course for Microsoft Azure AI Fundamentals (AI-900) exam",
         "icon": "🤖",
         "duration": "3 days",
+        "category": "azure",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -596,6 +645,7 @@ COURSES = {
         "description": "3-day certification prep course for Microsoft Azure Fundamentals (AZ-900) exam",
         "icon": "☁️",
         "duration": "3 days",
+        "category": "azure",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -624,6 +674,7 @@ COURSES = {
         "description": "3-day certification prep course for Microsoft Security, Compliance, and Identity Fundamentals (SC-900) exam",
         "icon": "🛡️",
         "duration": "3 days",
+        "category": "azure",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -652,6 +703,7 @@ COURSES = {
         "description": "2-day technical workshop on customizing Large Language Models using LoRA, QLoRA, and PEFT methods",
         "icon": "🔧",
         "duration": "2 days",
+        "category": "ai-technical",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -810,16 +862,50 @@ def get_current_user():
 
 @app.route('/api/courses')
 def get_courses():
-    """Return list of all available courses"""
+    """Return list of all available courses with category info"""
     course_list = []
     for course_id, course in COURSES.items():
         course_list.append({
             "id": course["id"],
             "name": course["name"],
             "description": course["description"],
-            "icon": course["icon"]
+            "icon": course["icon"],
+            "category": course.get("category", "other"),
+            "duration": course.get("duration", "")
         })
     return jsonify(course_list)
+
+@app.route('/api/categories')
+def get_categories():
+    """Return list of all course categories with their courses"""
+    # Sort categories by order
+    sorted_categories = sorted(COURSE_CATEGORIES.values(), key=lambda x: x.get("order", 99))
+
+    result = []
+    for category in sorted_categories:
+        cat_id = category["id"]
+        # Get courses in this category
+        category_courses = []
+        for course_id, course in COURSES.items():
+            if course.get("category") == cat_id:
+                category_courses.append({
+                    "id": course["id"],
+                    "name": course["name"],
+                    "description": course["description"],
+                    "icon": course["icon"],
+                    "duration": course.get("duration", "")
+                })
+
+        if category_courses:  # Only include categories with courses
+            result.append({
+                "id": cat_id,
+                "name": category["name"],
+                "icon": category["icon"],
+                "description": category["description"],
+                "courses": category_courses
+            })
+
+    return jsonify(result)
 
 @app.route('/api/course/<course_id>')
 def get_course(course_id):

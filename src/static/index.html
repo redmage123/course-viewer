@@ -309,6 +309,87 @@
             color: #64748b;
         }
 
+        /* ========== CATEGORY SECTIONS (Accordion) ========== */
+        .categories-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .category-section {
+            margin-bottom: 8px;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            transition: all 0.2s ease;
+        }
+        .category-section:hover {
+            border-color: #475569;
+        }
+        .category-section.expanded {
+            border-color: #38bdf8;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
+        }
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+        .category-header:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .category-chevron {
+            font-size: 0.875rem;
+            color: #64748b;
+            transition: transform 0.3s ease;
+            margin-right: 4px;
+        }
+        .category-chevron.expanded {
+            transform: rotate(90deg);
+        }
+        .category-icon {
+            font-size: 1.5rem;
+        }
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            flex: 1;
+        }
+        .category-description {
+            font-size: 0.8rem;
+            color: #64748b;
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .category-count {
+            font-size: 0.7rem;
+            background: #334155;
+            color: #94a3b8;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .category-section.expanded .category-count {
+            background: #0ea5e9;
+            color: white;
+        }
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            padding: 0 20px;
+        }
+        .category-content.expanded {
+            max-height: 2000px;
+            padding: 0 20px 20px;
+        }
+
         /* ========== COURSE WELCOME ========== */
         .course-welcome {
             flex: 1;
@@ -522,32 +603,179 @@
             padding: 24px;
             background: #0f172a;
         }
+        .notebook-toolbar-container {
+            background: linear-gradient(180deg, #1e293b 0%, #172033 100%);
+            border-bottom: 1px solid #334155;
+        }
+        .toolbar-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toolbar-toggle:hover { background: rgba(255,255,255,0.03); }
+        .toolbar-toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .toolbar-toggle-arrow {
+            transition: transform 0.2s;
+            color: #64748b;
+        }
+        .toolbar-toggle-arrow.collapsed { transform: rotate(-90deg); }
         .notebook-toolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            padding: 12px 16px;
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
+            gap: 6px;
+            padding: 8px 16px 12px;
+            align-items: center;
         }
+        .notebook-toolbar.hidden { display: none; }
         .toolbar-group {
             display: flex;
-            gap: 4px;
-            padding-right: 12px;
-            border-right: 1px solid #334155;
+            gap: 2px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 4px;
+            border: 1px solid #334155;
         }
-        .toolbar-group:last-child { border-right: none; }
-        .toolbar-btn {
-            padding: 6px 10px;
+        .toolbar-divider {
+            width: 1px;
+            height: 28px;
             background: #334155;
+            margin: 0 4px;
+        }
+        .toolbar-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 10px;
+            background: transparent;
             border: none;
-            border-radius: 4px;
-            color: #cbd5e1;
+            border-radius: 6px;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            cursor: pointer;
+            min-width: 48px;
+            transition: all 0.15s;
+        }
+        .toolbar-btn:hover { background: #334155; color: #e2e8f0; }
+        .toolbar-btn:active { background: #475569; transform: scale(0.95); }
+        .toolbar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .toolbar-btn:disabled:hover { background: transparent; transform: none; }
+        .toolbar-btn-icon { font-size: 1.1rem; margin-bottom: 2px; }
+        .toolbar-btn-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.03em; }
+        .toolbar-btn.primary { background: #0ea5e9; color: white; }
+        .toolbar-btn.primary:hover { background: #0284c7; }
+        .toolbar-btn.success { background: #22c55e; color: white; }
+        .toolbar-btn.success:hover { background: #16a34a; }
+        .toolbar-btn.danger:hover { background: #dc2626; color: white; }
+        .toolbar-select {
+            padding: 6px 10px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
             font-size: 0.75rem;
             cursor: pointer;
+            min-width: 100px;
         }
-        .toolbar-btn:hover { background: #475569; }
-        .toolbar-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .toolbar-select:focus { outline: none; border-color: #38bdf8; }
+
+        /* Keyboard Shortcuts Panel */
+        .key-panel-container {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            border-bottom: 1px solid #334155;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .key-panel-container.collapsed { max-height: 32px; }
+        .key-panel-container.expanded { max-height: 200px; }
+        .key-panel-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .key-panel-toggle:hover { background: rgba(255,255,255,0.02); }
+        .key-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 8px 16px 12px;
+            justify-content: center;
+        }
+        .key-panel.hidden { display: none; }
+        .key-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .key-group-title {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        .key-group-keys {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .key-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .key-cap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 28px;
+            padding: 0 8px;
+            background: linear-gradient(180deg, #475569 0%, #334155 100%);
+            border: 1px solid #64748b;
+            border-bottom-width: 3px;
+            border-radius: 5px;
+            color: #f1f5f9;
+            font-size: 0.7rem;
+            font-weight: 600;
+            font-family: system-ui, -apple-system, sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .key-cap.small { min-width: 24px; font-size: 0.65rem; padding: 0 4px; }
+        .key-cap.wide { min-width: 48px; }
+        .key-cap.success { background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%); border-color: #4ade80; }
+        .key-cap.primary { background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%); border-color: #38bdf8; }
+        .key-cap.warning { background: linear-gradient(180deg, #eab308 0%, #ca8a04 100%); border-color: #facc15; color: #0f172a; }
+        .key-label {
+            font-size: 0.55rem;
+            color: #64748b;
+            text-align: center;
+            max-width: 48px;
+        }
+        .key-combo {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .key-plus {
+            color: #475569;
+            font-size: 0.6rem;
+        }
         .cell {
             margin-bottom: 16px;
             border: 1px solid #334155;
@@ -594,6 +822,21 @@
             white-space: pre-wrap;
         }
         .cell-output.error pre { color: #f43f5e; }
+        .markdown-rendered {
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .markdown-rendered h1 { font-size: 1.75rem; font-weight: 700; margin: 0.5em 0; color: #f1f5f9; }
+        .markdown-rendered h2 { font-size: 1.5rem; font-weight: 600; margin: 0.5em 0; color: #f1f5f9; }
+        .markdown-rendered h3 { font-size: 1.25rem; font-weight: 600; margin: 0.5em 0; color: #f1f5f9; }
+        .markdown-rendered p { margin: 0.5em 0; }
+        .markdown-rendered code { background: #334155; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.875rem; }
+        .markdown-rendered pre { background: #1e293b; padding: 12px; border-radius: 6px; overflow-x: auto; margin: 0.5em 0; }
+        .markdown-rendered pre code { background: none; padding: 0; }
+        .markdown-rendered a { color: #38bdf8; text-decoration: underline; }
+        .markdown-rendered li { margin-left: 1.5em; }
+        .markdown-rendered strong { color: #f1f5f9; }
+        .markdown-rendered em { font-style: italic; }
         .cell-run-btn {
             padding: 4px 10px;
             background: #22c55e;
@@ -697,7 +940,24 @@
             );
         }
 
-        // Notebook Viewer (simplified for readability)
+        // Simple markdown to HTML converter
+        function renderMarkdownToHtml(md) {
+            let html = md
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+                .replace(/^\- (.*$)/gm, '<li>$1</li>')
+                .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            return '<p>' + html + '</p>';
+        }
+
+        // Notebook Viewer - Full Featured
         function NotebookViewer({ labId, onBack }) {
             const [notebook, setNotebook] = useState(null);
             const [pyodide, setPyodide] = useState(null);
@@ -705,77 +965,809 @@
             const [outputs, setOutputs] = useState({});
             const [running, setRunning] = useState(null);
             const [selected, setSelected] = useState(0);
+            const [clipboard, setClipboard] = useState(null);
+            const [clipboardAction, setClipboardAction] = useState(null); // 'copy' or 'cut'
+            const [editMode, setEditMode] = useState(false);
+            const [showSaveAs, setShowSaveAs] = useState(false);
+            const [saveAsName, setSaveAsName] = useState('');
+            const [kernel, setKernel] = useState('pyodide');
+            const [dirty, setDirty] = useState(false);
+            const [renderedCells, setRenderedCells] = useState({}); // Track which markdown cells are rendered
+            const [commandMode, setCommandMode] = useState(true); // true = command mode, false = edit mode
+            const [showToolbar, setShowToolbar] = useState(true);
+            const [showShortcuts, setShowShortcuts] = useState(false);
+            const [showKeyPanel, setShowKeyPanel] = useState(true);
+            const containerRef = useRef(null);
+
+            const availableKernels = [
+                { id: 'pyodide', name: 'Python (Pyodide - Browser)', icon: '🐍' },
+                { id: 'server', name: 'Python (Server)', icon: '🖥️' }
+            ];
 
             useEffect(() => {
                 fetch(`/api/lab/${labId}/notebook`, { credentials: 'include' })
                     .then(res => res.json())
                     .then(data => {
                         setNotebook(data);
-                        loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" })
-                            .then(async py => {
-                                await py.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn']);
-                                setPyodide(py);
-                                setStatus('ready');
-                            })
-                            .catch(() => setStatus('error'));
+                        setSaveAsName(labId + '-copy');
+                        if (kernel === 'pyodide') {
+                            loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" })
+                                .then(async py => {
+                                    await py.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn']);
+                                    setPyodide(py);
+                                    setStatus('ready');
+                                })
+                                .catch(() => setStatus('error'));
+                        } else {
+                            fetch('/api/kernel/start', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include',
+                                body: JSON.stringify({ lab_id: labId })
+                            }).then(() => setStatus('ready')).catch(() => setStatus('error'));
+                        }
                     });
             }, [labId]);
 
+            // Execute cell (code or markdown)
+            const executeCell = (idx) => {
+                const cell = notebook.cells[idx];
+                if (cell.cell_type === 'code') {
+                    runCell(idx);
+                } else if (cell.cell_type === 'markdown') {
+                    // Toggle markdown render
+                    setRenderedCells(prev => ({ ...prev, [idx]: true }));
+                    setCommandMode(true);
+                    document.activeElement?.blur();
+                }
+            };
+
+            // Enter edit mode for a cell
+            const enterEditMode = (idx) => {
+                setCommandMode(false);
+                // For markdown cells, un-render them first
+                if (notebook.cells[idx]?.cell_type === 'markdown') {
+                    setRenderedCells(prev => ({ ...prev, [idx]: false }));
+                }
+                setTimeout(() => {
+                    containerRef.current?.querySelector('.cell.selected textarea')?.focus();
+                }, 0);
+            };
+
+            // Keyboard shortcuts
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (!notebook) return;
+                    const isEditing = document.activeElement?.tagName === 'TEXTAREA';
+
+                    // Global shortcuts (work in both modes)
+                    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                        e.preventDefault();
+                        if (e.shiftKey) setShowSaveAs(true);
+                        else saveNotebook();
+                        return;
+                    }
+
+                    // Ctrl+Enter or Shift+Enter - run/render cell (works in both modes)
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        executeCell(selected);
+                        return;
+                    }
+
+                    if (e.key === 'Enter' && e.shiftKey) {
+                        e.preventDefault();
+                        executeCell(selected);
+                        // Move to next cell after execution
+                        if (selected < notebook.cells.length - 1) {
+                            setSelected(selected + 1);
+                        }
+                        return;
+                    }
+
+                    // Edit mode shortcuts
+                    if (isEditing) {
+                        if (e.key === 'Escape') {
+                            e.preventDefault();
+                            setCommandMode(true);
+                            // Render markdown on escape
+                            if (notebook.cells[selected]?.cell_type === 'markdown') {
+                                setRenderedCells(prev => ({ ...prev, [selected]: true }));
+                            }
+                            document.activeElement?.blur();
+                        }
+                        return;
+                    }
+
+                    // Command mode shortcuts (when not editing)
+                    switch (e.key) {
+                        case 'ArrowUp': case 'k':
+                            e.preventDefault();
+                            if (selected > 0) setSelected(selected - 1);
+                            break;
+                        case 'ArrowDown': case 'j':
+                            e.preventDefault();
+                            if (selected < notebook.cells.length - 1) setSelected(selected + 1);
+                            break;
+                        case 'Enter':
+                            e.preventDefault();
+                            enterEditMode(selected);
+                            break;
+                        case 'a':
+                            e.preventDefault();
+                            insertCell(selected, 'code');
+                            break;
+                        case 'b':
+                            e.preventDefault();
+                            insertCell(selected + 1, 'code');
+                            setSelected(selected + 1);
+                            break;
+                        case 'c':
+                            e.preventDefault();
+                            copyCell();
+                            break;
+                        case 'x':
+                            e.preventDefault();
+                            cutCell();
+                            break;
+                        case 'v':
+                            e.preventDefault();
+                            pasteCell();
+                            break;
+                        case 'd':
+                            if (e.repeat || window._lastKey === 'd') {
+                                e.preventDefault();
+                                deleteCell(selected);
+                                window._lastKey = null;
+                            } else {
+                                window._lastKey = 'd';
+                                setTimeout(() => { window._lastKey = null; }, 500);
+                            }
+                            break;
+                        case 'm':
+                            e.preventDefault();
+                            changeCellType(selected, 'markdown');
+                            break;
+                        case 'y':
+                            e.preventDefault();
+                            changeCellType(selected, 'code');
+                            break;
+                        case 'r':
+                            if (e.shiftKey) {
+                                e.preventDefault();
+                                restartKernel();
+                            }
+                            break;
+                        case '?':
+                            e.preventDefault();
+                            setShowShortcuts(true);
+                            break;
+                        case 'h':
+                            e.preventDefault();
+                            setShowToolbar(!showToolbar);
+                            break;
+                        case 'k':
+                            if (e.shiftKey) {
+                                e.preventDefault();
+                                setShowKeyPanel(!showKeyPanel);
+                            }
+                            break;
+                    }
+                };
+
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [notebook, selected, clipboard, status, running, commandMode, renderedCells, showToolbar, showKeyPanel]);
+
             const getSource = (cell) => Array.isArray(cell.source) ? cell.source.join('') : cell.source;
+
             const setSource = (idx, val) => {
                 const cells = [...notebook.cells];
                 cells[idx] = { ...cells[idx], source: val.split('\n').map((l,i,a) => i < a.length-1 ? l+'\n' : l) };
                 setNotebook({ ...notebook, cells });
+                setDirty(true);
             };
 
             const runCell = async (idx) => {
-                if (status !== 'ready' || running !== null || !pyodide) return;
-                const code = getSource(notebook.cells[idx]);
+                if (status !== 'ready' || running !== null) return;
+                const cell = notebook.cells[idx];
+                if (cell.cell_type !== 'code') return;
+                const code = getSource(cell);
                 setRunning(idx);
+
                 try {
-                    pyodide.runPython('import sys; from io import StringIO; sys.stdout = StringIO()');
-                    const result = await pyodide.runPythonAsync(code);
-                    const stdout = pyodide.runPython('sys.stdout.getvalue()');
-                    setOutputs(prev => ({ ...prev, [idx]: { output: stdout || (result !== undefined ? String(result) : ''), error: false } }));
+                    if (kernel === 'pyodide' && pyodide) {
+                        pyodide.runPython('import sys; from io import StringIO; sys.stdout = StringIO()');
+                        const result = await pyodide.runPythonAsync(code);
+                        const stdout = pyodide.runPython('sys.stdout.getvalue()');
+                        setOutputs(prev => ({ ...prev, [idx]: { output: stdout || (result !== undefined ? String(result) : ''), error: false } }));
+                    } else {
+                        const res = await fetch('/api/kernel/execute', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ lab_id: labId, code })
+                        });
+                        const data = await res.json();
+                        const output = data.outputs?.map(o => o.text || o.data?.['text/plain'] || '').join('\n') || '';
+                        setOutputs(prev => ({ ...prev, [idx]: { output, error: data.status === 'error' } }));
+                    }
                 } catch (err) {
                     setOutputs(prev => ({ ...prev, [idx]: { output: err.message, error: true } }));
                 }
                 setRunning(null);
             };
 
+            const runAllCells = async () => {
+                for (let i = 0; i < notebook.cells.length; i++) {
+                    if (notebook.cells[i].cell_type === 'code') await runCell(i);
+                }
+            };
+
+            const insertCell = (idx, type = 'code') => {
+                const newCell = {
+                    cell_type: type,
+                    source: '',
+                    metadata: {},
+                    ...(type === 'code' ? { outputs: [], execution_count: null } : {})
+                };
+                const cells = [...notebook.cells];
+                cells.splice(idx, 0, newCell);
+                setNotebook({ ...notebook, cells });
+                setDirty(true);
+            };
+
+            const deleteCell = (idx) => {
+                if (notebook.cells.length <= 1) return;
+                const cells = [...notebook.cells];
+                cells.splice(idx, 1);
+                const newOutputs = { ...outputs };
+                delete newOutputs[idx];
+                // Reindex outputs
+                const reindexed = {};
+                Object.keys(newOutputs).forEach(k => {
+                    const ki = parseInt(k);
+                    reindexed[ki > idx ? ki - 1 : ki] = newOutputs[k];
+                });
+                setOutputs(reindexed);
+                setNotebook({ ...notebook, cells });
+                if (selected >= cells.length) setSelected(cells.length - 1);
+                setDirty(true);
+            };
+
+            const copyCell = () => {
+                setClipboard(JSON.parse(JSON.stringify(notebook.cells[selected])));
+                setClipboardAction('copy');
+            };
+
+            const cutCell = () => {
+                setClipboard(JSON.parse(JSON.stringify(notebook.cells[selected])));
+                setClipboardAction('cut');
+                deleteCell(selected);
+            };
+
+            const pasteCell = () => {
+                if (!clipboard) return;
+                const cells = [...notebook.cells];
+                cells.splice(selected + 1, 0, JSON.parse(JSON.stringify(clipboard)));
+                setNotebook({ ...notebook, cells });
+                setSelected(selected + 1);
+                setDirty(true);
+            };
+
+            const changeCellType = (idx, type) => {
+                const cells = [...notebook.cells];
+                cells[idx] = {
+                    ...cells[idx],
+                    cell_type: type,
+                    ...(type === 'code' ? { outputs: [], execution_count: null } : {})
+                };
+                setNotebook({ ...notebook, cells });
+                setDirty(true);
+            };
+
+            const moveCellUp = () => {
+                if (selected === 0) return;
+                const cells = [...notebook.cells];
+                [cells[selected - 1], cells[selected]] = [cells[selected], cells[selected - 1]];
+                const newOutputs = { ...outputs };
+                const tmp = newOutputs[selected];
+                newOutputs[selected] = newOutputs[selected - 1];
+                newOutputs[selected - 1] = tmp;
+                setOutputs(newOutputs);
+                setNotebook({ ...notebook, cells });
+                setSelected(selected - 1);
+                setDirty(true);
+            };
+
+            const moveCellDown = () => {
+                if (selected >= notebook.cells.length - 1) return;
+                const cells = [...notebook.cells];
+                [cells[selected], cells[selected + 1]] = [cells[selected + 1], cells[selected]];
+                const newOutputs = { ...outputs };
+                const tmp = newOutputs[selected];
+                newOutputs[selected] = newOutputs[selected + 1];
+                newOutputs[selected + 1] = tmp;
+                setOutputs(newOutputs);
+                setNotebook({ ...notebook, cells });
+                setSelected(selected + 1);
+                setDirty(true);
+            };
+
+            const saveNotebook = async () => {
+                try {
+                    await fetch(`/api/lab/${labId}/save`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(notebook)
+                    });
+                    setDirty(false);
+                } catch (e) { alert('Save failed'); }
+            };
+
+            const saveNotebookAs = async (newName) => {
+                try {
+                    await fetch(`/api/lab/${newName}/save`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(notebook)
+                    });
+                    setShowSaveAs(false);
+                    setDirty(false);
+                } catch (e) { alert('Save failed'); }
+            };
+
+            const restartKernel = async () => {
+                if (!confirm('Restart kernel? All variables will be lost.')) return;
+                setStatus('loading');
+                setOutputs({});
+                if (kernel === 'pyodide') {
+                    try {
+                        const py = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" });
+                        await py.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn']);
+                        setPyodide(py);
+                        setStatus('ready');
+                    } catch { setStatus('error'); }
+                } else {
+                    try {
+                        await fetch('/api/kernel/restart', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ lab_id: labId })
+                        });
+                        setStatus('ready');
+                    } catch { setStatus('error'); }
+                }
+            };
+
+            const switchKernel = async (newKernel) => {
+                if (newKernel === kernel) return;
+                setKernel(newKernel);
+                setStatus('loading');
+                setOutputs({});
+                if (newKernel === 'pyodide') {
+                    try {
+                        const py = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" });
+                        await py.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn']);
+                        setPyodide(py);
+                        setStatus('ready');
+                    } catch { setStatus('error'); }
+                } else {
+                    try {
+                        await fetch('/api/kernel/start', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ lab_id: labId })
+                        });
+                        setStatus('ready');
+                    } catch { setStatus('error'); }
+                }
+            };
+
             if (!notebook) return <div className="loading-screen"><div className="spinner"></div>Loading notebook...</div>;
 
             return (
                 <>
+                    {showSaveAs && (
+                        <div className="modal-overlay" onClick={() => setShowSaveAs(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()}>
+                                <h2>Save Notebook As</h2>
+                                <div className="form-group">
+                                    <label>New notebook name</label>
+                                    <input type="text" value={saveAsName} onChange={e => setSaveAsName(e.target.value)} />
+                                </div>
+                                <div style={{display:'flex',gap:'8px',marginTop:'16px'}}>
+                                    <button className="btn btn-primary" onClick={() => saveNotebookAs(saveAsName)}>Save</button>
+                                    <button className="btn btn-ghost" onClick={() => setShowSaveAs(false)}>Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {showShortcuts && (
+                        <div className="modal-overlay" onClick={() => setShowShortcuts(false)}>
+                            <div className="modal" onClick={e => e.stopPropagation()} style={{maxWidth:'600px'}}>
+                                <h2 style={{marginBottom:'16px'}}>⌨️ Keyboard Shortcuts</h2>
+                                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'24px'}}>
+                                    <div>
+                                        <h3 style={{fontSize:'0.875rem',color:'#38bdf8',marginBottom:'8px'}}>Command Mode (Esc)</h3>
+                                        <div style={{fontSize:'0.8rem',lineHeight:'1.8'}}>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Enter</kbd> Enter edit mode</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>↑/↓</kbd> or <kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>J/K</kbd> Navigate</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>A</kbd> Insert cell above</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>B</kbd> Insert cell below</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>X</kbd> Cut cell</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>C</kbd> Copy cell</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>V</kbd> Paste cell</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>DD</kbd> Delete cell</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>M</kbd> Change to Markdown</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Y</kbd> Change to Code</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>H</kbd> Toggle toolbar</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Shift+K</kbd> Toggle key panel</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 style={{fontSize:'0.875rem',color:'#eab308',marginBottom:'8px'}}>Edit Mode</h3>
+                                        <div style={{fontSize:'0.8rem',lineHeight:'1.8'}}>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Esc</kbd> Enter command mode</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Ctrl+Enter</kbd> Run/render cell</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Shift+Enter</kbd> Run & move next</div>
+                                        </div>
+                                        <h3 style={{fontSize:'0.875rem',color:'#94a3b8',marginBottom:'8px',marginTop:'16px'}}>Global</h3>
+                                        <div style={{fontSize:'0.8rem',lineHeight:'1.8'}}>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Ctrl+S</kbd> Save</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Ctrl+Shift+S</kbd> Save As</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>Shift+R</kbd> Restart kernel</div>
+                                            <div><kbd style={{background:'#334155',padding:'2px 6px',borderRadius:'3px',marginRight:'8px'}}>?</kbd> Show this help</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{marginTop:'20px',textAlign:'center'}}>
+                                    <button className="btn btn-primary" onClick={() => setShowShortcuts(false)}>Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div className="content-header">
-                        <div className="content-title"><span>🧪</span> Interactive Lab</div>
+                        <div className="content-title">
+                            <span>🧪</span> Interactive Lab {dirty && <span style={{color:'#eab308',fontSize:'0.75rem'}}>(unsaved)</span>}
+                        </div>
                         <div className="content-actions">
+                            <select className="course-select" style={{width:'auto',minWidth:'180px'}} value={kernel} onChange={e => switchKernel(e.target.value)}>
+                                {availableKernels.map(k => (
+                                    <option key={k.id} value={k.id}>{k.icon} {k.name}</option>
+                                ))}
+                            </select>
                             <div className="kernel-status">
                                 <div className={`kernel-dot ${status}`}></div>
-                                {status === 'ready' ? 'Python Ready' : status === 'loading' ? 'Loading...' : 'Error'}
+                                {status === 'ready' ? 'Ready' : status === 'loading' ? 'Loading...' : 'Error'}
                             </div>
                             <button className="btn btn-ghost" onClick={onBack}>← Back</button>
                         </div>
                     </div>
-                    <div className="notebook-toolbar">
-                        <div className="toolbar-group">
-                            <button className="toolbar-btn" onClick={() => runCell(selected)} disabled={status !== 'ready' || running !== null}>▶ Run</button>
+                    <div className="notebook-toolbar-container">
+                        <div className="toolbar-toggle" onClick={() => setShowToolbar(!showToolbar)}>
+                            <div className="toolbar-toggle-label">
+                                <span className={`toolbar-toggle-arrow ${!showToolbar ? 'collapsed' : ''}`}>▼</span>
+                                <span>Toolbar</span>
+                                <span style={{padding:'2px 8px',borderRadius:'4px',background: commandMode ? '#22c55e' : '#eab308',color:'#0f172a',fontWeight:'600',fontSize:'0.65rem'}}>
+                                    {commandMode ? 'COMMAND' : 'EDIT'}
+                                </span>
+                            </div>
+                            <div style={{fontSize:'0.65rem',color:'#475569'}}>
+                                {showToolbar ? 'Click to hide' : 'Click to show'} • Press <kbd style={{background:'#334155',padding:'1px 4px',borderRadius:'2px'}}>?</kbd> for shortcuts
+                            </div>
+                        </div>
+                        <div className={`notebook-toolbar ${!showToolbar ? 'hidden' : ''}`}>
+                            {/* Run Group */}
+                            <div className="toolbar-group">
+                                <button className="toolbar-btn success" onClick={() => executeCell(selected)} disabled={status !== 'ready' || running !== null} title="Run Cell (Ctrl+Enter)">
+                                    <span className="toolbar-btn-icon">▶</span>
+                                    <span className="toolbar-btn-label">Run</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={runAllCells} disabled={status !== 'ready' || running !== null} title="Run All Cells">
+                                    <span className="toolbar-btn-icon">⏩</span>
+                                    <span className="toolbar-btn-label">Run All</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={restartKernel} title="Restart Kernel (Shift+R)">
+                                    <span className="toolbar-btn-icon">🔄</span>
+                                    <span className="toolbar-btn-label">Restart</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={() => { restartKernel().then(runAllCells); }} disabled={status !== 'ready'} title="Restart & Run All">
+                                    <span className="toolbar-btn-icon">⚡</span>
+                                    <span className="toolbar-btn-label">Reset+Run</span>
+                                </button>
+                            </div>
+
+                            <div className="toolbar-divider"></div>
+
+                            {/* Cell Operations */}
+                            <div className="toolbar-group">
+                                <button className="toolbar-btn" onClick={() => insertCell(selected, 'code')} title="Insert Cell Above (A)">
+                                    <span className="toolbar-btn-icon">⬆️</span>
+                                    <span className="toolbar-btn-label">Above</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={() => { insertCell(selected + 1, 'code'); setSelected(selected + 1); }} title="Insert Cell Below (B)">
+                                    <span className="toolbar-btn-icon">⬇️</span>
+                                    <span className="toolbar-btn-label">Below</span>
+                                </button>
+                                <button className="toolbar-btn danger" onClick={() => deleteCell(selected)} disabled={notebook.cells.length <= 1} title="Delete Cell (DD)">
+                                    <span className="toolbar-btn-icon">🗑️</span>
+                                    <span className="toolbar-btn-label">Delete</span>
+                                </button>
+                            </div>
+
+                            <div className="toolbar-divider"></div>
+
+                            {/* Clipboard */}
+                            <div className="toolbar-group">
+                                <button className="toolbar-btn" onClick={cutCell} title="Cut Cell (X)">
+                                    <span className="toolbar-btn-icon">✂️</span>
+                                    <span className="toolbar-btn-label">Cut</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={copyCell} title="Copy Cell (C)">
+                                    <span className="toolbar-btn-icon">📋</span>
+                                    <span className="toolbar-btn-label">Copy</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={pasteCell} disabled={!clipboard} title="Paste Cell (V)">
+                                    <span className="toolbar-btn-icon">📄</span>
+                                    <span className="toolbar-btn-label">Paste</span>
+                                </button>
+                            </div>
+
+                            <div className="toolbar-divider"></div>
+
+                            {/* Move */}
+                            <div className="toolbar-group">
+                                <button className="toolbar-btn" onClick={moveCellUp} disabled={selected === 0} title="Move Cell Up">
+                                    <span className="toolbar-btn-icon">⏫</span>
+                                    <span className="toolbar-btn-label">Up</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={moveCellDown} disabled={selected >= notebook.cells.length - 1} title="Move Cell Down">
+                                    <span className="toolbar-btn-icon">⏬</span>
+                                    <span className="toolbar-btn-label">Down</span>
+                                </button>
+                            </div>
+
+                            <div className="toolbar-divider"></div>
+
+                            {/* Cell Type */}
+                            <div className="toolbar-group">
+                                <button className={`toolbar-btn ${notebook.cells[selected]?.cell_type === 'code' ? 'primary' : ''}`} onClick={() => changeCellType(selected, 'code')} title="Code Cell (Y)">
+                                    <span className="toolbar-btn-icon">🐍</span>
+                                    <span className="toolbar-btn-label">Code</span>
+                                </button>
+                                <button className={`toolbar-btn ${notebook.cells[selected]?.cell_type === 'markdown' ? 'primary' : ''}`} onClick={() => changeCellType(selected, 'markdown')} title="Markdown Cell (M)">
+                                    <span className="toolbar-btn-icon">📝</span>
+                                    <span className="toolbar-btn-label">Markdown</span>
+                                </button>
+                            </div>
+
+                            <div className="toolbar-divider"></div>
+
+                            {/* Save */}
+                            <div className="toolbar-group">
+                                <button className="toolbar-btn" onClick={saveNotebook} title="Save (Ctrl+S)">
+                                    <span className="toolbar-btn-icon">💾</span>
+                                    <span className="toolbar-btn-label">Save</span>
+                                </button>
+                                <button className="toolbar-btn" onClick={() => setShowSaveAs(true)} title="Save As (Ctrl+Shift+S)">
+                                    <span className="toolbar-btn-icon">📁</span>
+                                    <span className="toolbar-btn-label">Save As</span>
+                                </button>
+                            </div>
+
+                            <div className="toolbar-divider"></div>
+
+                            {/* Clear */}
+                            <div className="toolbar-group">
+                                <button className="toolbar-btn" onClick={() => setOutputs({})} title="Clear All Outputs">
+                                    <span className="toolbar-btn-icon">🧹</span>
+                                    <span className="toolbar-btn-label">Clear</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div className="notebook-container">
+
+                    {/* Graphical Keyboard Shortcuts Panel */}
+                    <div className={`key-panel-container ${showKeyPanel ? 'expanded' : 'collapsed'}`}>
+                        <div className="key-panel-toggle" onClick={() => setShowKeyPanel(!showKeyPanel)}>
+                            <div style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'0.7rem',color:'#64748b'}}>
+                                <span style={{transition:'transform 0.2s',transform: showKeyPanel ? 'rotate(0deg)' : 'rotate(-90deg)'}}>▼</span>
+                                <span>⌨️ Keyboard Shortcuts</span>
+                                <span style={{padding:'2px 8px',borderRadius:'4px',background: commandMode ? '#22c55e' : '#eab308',color:'#0f172a',fontWeight:'600',fontSize:'0.6rem'}}>
+                                    {commandMode ? 'COMMAND' : 'EDIT'}
+                                </span>
+                            </div>
+                            <div style={{fontSize:'0.6rem',color:'#475569'}}>
+                                Press <span className="key-cap small">?</span> for full reference
+                            </div>
+                        </div>
+                        <div className={`key-panel ${!showKeyPanel ? 'hidden' : ''}`}>
+                            {/* Navigation */}
+                            <div className="key-group">
+                                <div className="key-group-title">Navigate</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-cap">↑</div>
+                                        <div className="key-label">Up</div>
+                                    </div>
+                                    <div className="key-item">
+                                        <div className="key-cap">↓</div>
+                                        <div className="key-label">Down</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Mode */}
+                            <div className="key-group">
+                                <div className="key-group-title">Mode</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-cap warning wide">Enter</div>
+                                        <div className="key-label">Edit</div>
+                                    </div>
+                                    <div className="key-item">
+                                        <div className="key-cap primary wide">Esc</div>
+                                        <div className="key-label">Command</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Run */}
+                            <div className="key-group">
+                                <div className="key-group-title">Execute</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-combo">
+                                            <div className="key-cap small">Ctrl</div>
+                                            <span className="key-plus">+</span>
+                                            <div className="key-cap success small">↵</div>
+                                        </div>
+                                        <div className="key-label">Run</div>
+                                    </div>
+                                    <div className="key-item">
+                                        <div className="key-combo">
+                                            <div className="key-cap small">⇧</div>
+                                            <span className="key-plus">+</span>
+                                            <div className="key-cap success small">↵</div>
+                                        </div>
+                                        <div className="key-label">Run+Next</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Insert */}
+                            <div className="key-group">
+                                <div className="key-group-title">Insert Cell</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-cap">A</div>
+                                        <div className="key-label">Above</div>
+                                    </div>
+                                    <div className="key-item">
+                                        <div className="key-cap">B</div>
+                                        <div className="key-label">Below</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Clipboard */}
+                            <div className="key-group">
+                                <div className="key-group-title">Clipboard</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-cap">X</div>
+                                        <div className="key-label">Cut</div>
+                                    </div>
+                                    <div className="key-item">
+                                        <div className="key-cap">C</div>
+                                        <div className="key-label">Copy</div>
+                                    </div>
+                                    <div className="key-item">
+                                        <div className="key-cap">V</div>
+                                        <div className="key-label">Paste</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Cell Type */}
+                            <div className="key-group">
+                                <div className="key-group-title">Cell Type</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-cap primary">M</div>
+                                        <div className="key-label">Markdown</div>
+                                    </div>
+                                    <div className="key-item">
+                                        <div className="key-cap primary">Y</div>
+                                        <div className="key-label">Code</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Delete */}
+                            <div className="key-group">
+                                <div className="key-group-title">Delete</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-combo">
+                                            <div className="key-cap" style={{background:'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',borderColor:'#ef4444'}}>D</div>
+                                            <div className="key-cap" style={{background:'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',borderColor:'#ef4444'}}>D</div>
+                                        </div>
+                                        <div className="key-label">Delete</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Save */}
+                            <div className="key-group">
+                                <div className="key-group-title">Save</div>
+                                <div className="key-group-keys">
+                                    <div className="key-item">
+                                        <div className="key-combo">
+                                            <div className="key-cap small">Ctrl</div>
+                                            <span className="key-plus">+</span>
+                                            <div className="key-cap small">S</div>
+                                        </div>
+                                        <div className="key-label">Save</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="notebook-container" ref={containerRef}>
                         {notebook.cells.map((cell, idx) => (
                             <div key={idx} className={`cell ${selected === idx ? 'selected' : ''}`} onClick={() => setSelected(idx)}>
                                 <div className="cell-header">
-                                    <span className="cell-type-label">[{idx + 1}] {cell.cell_type}</span>
-                                    {cell.cell_type === 'code' && (
-                                        <button className="cell-run-btn" onClick={() => runCell(idx)} disabled={status !== 'ready' || running !== null}>
-                                            {running === idx ? '...' : '▶ Run'}
+                                    <div className="cell-controls">
+                                        <span className="cell-type-label">[{idx + 1}] {cell.cell_type}</span>
+                                        {running === idx && <span style={{color:'#eab308',marginLeft:'8px'}}>Running...</span>}
+                                    </div>
+                                    <div style={{display:'flex',gap:'4px',alignItems:'center'}}>
+                                        <select
+                                            className="toolbar-btn"
+                                            style={{padding:'2px 4px',fontSize:'0.65rem'}}
+                                            value={cell.cell_type}
+                                            onChange={(e) => { e.stopPropagation(); changeCellType(idx, e.target.value); }}
+                                        >
+                                            <option value="code">Code</option>
+                                            <option value="markdown">Markdown</option>
+                                            <option value="raw">Raw</option>
+                                        </select>
+                                        <button
+                                            className="cell-run-btn"
+                                            onClick={(e) => { e.stopPropagation(); executeCell(idx); }}
+                                            disabled={cell.cell_type === 'code' && (status !== 'ready' || running !== null)}
+                                            title={cell.cell_type === 'code' ? 'Run Code (Ctrl+Enter)' : 'Render Markdown (Ctrl+Enter)'}
+                                        >
+                                            {running === idx ? '⏳' : cell.cell_type === 'markdown' ? '✓' : '▶'}
                                         </button>
-                                    )}
+                                    </div>
                                 </div>
-                                <div className="cell-content">
-                                    <textarea value={getSource(cell)} onChange={e => setSource(idx, e.target.value)} spellCheck="false" />
-                                </div>
+                                {cell.cell_type === 'markdown' && renderedCells[idx] ? (
+                                    <div
+                                        className="cell-content markdown-rendered"
+                                        style={{padding:'16px',background:'#0f172a',cursor:'pointer',minHeight:'60px'}}
+                                        onDoubleClick={() => enterEditMode(idx)}
+                                        dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(getSource(cell)) }}
+                                    />
+                                ) : (
+                                    <div className="cell-content">
+                                        <textarea
+                                            value={getSource(cell)}
+                                            onChange={e => setSource(idx, e.target.value)}
+                                            spellCheck="false"
+                                            onFocus={() => setCommandMode(false)}
+                                            onBlur={() => setCommandMode(true)}
+                                            placeholder={cell.cell_type === 'markdown' ? 'Enter markdown text...' : 'Enter Python code...'}
+                                        />
+                                    </div>
+                                )}
                                 {cell.cell_type === 'code' && outputs[idx] && (
                                     <div className={`cell-output ${outputs[idx].error ? 'error' : ''}`}>
                                         <pre>{outputs[idx].output}</pre>
@@ -794,12 +1786,14 @@
             const [showAuth, setShowAuth] = useState(false);
             const [authChecked, setAuthChecked] = useState(false);
             const [courses, setCourses] = useState([]);
+            const [categories, setCategories] = useState([]);
             const [selectedCourse, setSelectedCourse] = useState(null);
             const [materials, setMaterials] = useState(null);
             const [selectedItem, setSelectedItem] = useState(null);
             const [runningLab, setRunningLab] = useState(null);
             const [loading, setLoading] = useState(true);
             const [initialLoad, setInitialLoad] = useState(true);
+            const [expandedCategories, setExpandedCategories] = useState({});
 
             // Parse URL on load to restore state
             const getStateFromUrl = () => {
@@ -828,19 +1822,25 @@
             }, []);
 
             useEffect(() => {
-                fetch('/api/courses')
-                    .then(res => res.json())
-                    .then(data => {
-                        setCourses(data);
-                        setLoading(false);
-                        // Restore state from URL on initial load
-                        const urlState = getStateFromUrl();
-                        if (urlState && initialLoad) {
-                            const course = data.find(c => c.id === urlState.courseId);
-                            if (course) setSelectedCourse(course);
-                        }
-                        setInitialLoad(false);
-                    });
+                Promise.all([
+                    fetch('/api/courses').then(res => res.json()),
+                    fetch('/api/categories').then(res => res.json())
+                ]).then(([coursesData, categoriesData]) => {
+                    setCourses(coursesData);
+                    setCategories(categoriesData);
+                    // Initialize first category as expanded
+                    if (categoriesData.length > 0) {
+                        setExpandedCategories({ [categoriesData[0].id]: true });
+                    }
+                    setLoading(false);
+                    // Restore state from URL on initial load
+                    const urlState = getStateFromUrl();
+                    if (urlState && initialLoad) {
+                        const course = coursesData.find(c => c.id === urlState.courseId);
+                        if (course) setSelectedCourse(course);
+                    }
+                    setInitialLoad(false);
+                });
             }, []);
 
             useEffect(() => {
@@ -911,6 +1911,23 @@
                 return count;
             };
 
+            const toggleCategory = (categoryId) => {
+                setExpandedCategories(prev => ({
+                    ...prev,
+                    [categoryId]: !prev[categoryId]
+                }));
+            };
+
+            const expandAllCategories = () => {
+                const all = {};
+                categories.forEach(cat => { all[cat.id] = true; });
+                setExpandedCategories(all);
+            };
+
+            const collapseAllCategories = () => {
+                setExpandedCategories({});
+            };
+
             if (!authChecked || loading) {
                 return <div className="loading-screen"><div className="spinner"></div>Loading...</div>;
             }
@@ -956,7 +1973,11 @@
                                     const c = courses.find(x => x.id === e.target.value);
                                     if (c) { setSelectedCourse(c); setSelectedItem(null); setRunningLab(null); }
                                 }}>
-                                    {courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+                                    {categories.map(cat => (
+                                        <optgroup key={cat.id} label={`${cat.icon} ${cat.name}`}>
+                                            {cat.courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+                                        </optgroup>
+                                    ))}
                                 </select>
                             </div>
                             <nav className="sidebar-nav">
@@ -1046,7 +2067,7 @@
                                         Access interactive courses, hands-on labs, and comprehensive learning materials
                                         to advance your skills in AI, Python, and cloud technologies.
                                     </p>
-                                    {!user ? (
+                                    {!user && (
                                         <div className="home-cta">
                                             <button className="btn btn-primary btn-lg" onClick={() => setShowAuth(true)}>
                                                 Sign In to Access Courses
@@ -1055,18 +2076,46 @@
                                                 Or <button style={{background:'none',border:'none',color:'#38bdf8',cursor:'pointer',textDecoration:'underline'}} onClick={() => setShowAuth(true)}>create an account</button> to get started
                                             </p>
                                         </div>
-                                    ) : (
-                                        <div className="home-cta">
-                                            <p style={{marginBottom: '24px', color: '#94a3b8'}}>Welcome back, {user.full_name || user.username}!</p>
-                                            <select className="course-picker" onChange={e => {
-                                                const c = courses.find(x => x.id === e.target.value);
-                                                if (c) setSelectedCourse(c);
-                                            }} defaultValue="">
-                                                <option value="" disabled>Select a course...</option>
-                                                {courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
-                                            </select>
-                                        </div>
                                     )}
+                                    {user && (
+                                        <p style={{marginTop: '24px', color: '#94a3b8'}}>Welcome back, {user.full_name || user.username}! Select a course below to get started.</p>
+                                    )}
+                                </div>
+                                <div className="categories-container">
+                                    <div style={{display:'flex',justifyContent:'flex-end',gap:'8px',marginBottom:'16px'}}>
+                                        <button className="btn btn-ghost" onClick={expandAllCategories} style={{fontSize:'0.75rem',padding:'6px 12px'}}>
+                                            Expand All
+                                        </button>
+                                        <button className="btn btn-ghost" onClick={collapseAllCategories} style={{fontSize:'0.75rem',padding:'6px 12px'}}>
+                                            Collapse All
+                                        </button>
+                                    </div>
+                                    {categories.map(cat => {
+                                        const isExpanded = expandedCategories[cat.id] || false;
+                                        return (
+                                            <div key={cat.id} className={`category-section ${isExpanded ? 'expanded' : ''}`}>
+                                                <div className="category-header" onClick={() => toggleCategory(cat.id)}>
+                                                    <span className={`category-chevron ${isExpanded ? 'expanded' : ''}`}>▶</span>
+                                                    <span className="category-icon">{cat.icon}</span>
+                                                    <span className="category-title">{cat.name}</span>
+                                                    {cat.description && <span className="category-description">{cat.description}</span>}
+                                                    <span className="category-count">{cat.courses.length} course{cat.courses.length !== 1 ? 's' : ''}</span>
+                                                </div>
+                                                <div className={`category-content ${isExpanded ? 'expanded' : ''}`}>
+                                                    <div className="course-grid">
+                                                        {cat.courses.map(course => (
+                                                            <div key={course.id} className="course-card" onClick={() => setSelectedCourse(courses.find(c => c.id === course.id))}>
+                                                                <div className="course-card-icon">{course.icon}</div>
+                                                                <h3>{course.name}</h3>
+                                                                <p>{course.description}</p>
+                                                                {course.duration && <div className="course-card-duration">{course.duration}</div>}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}

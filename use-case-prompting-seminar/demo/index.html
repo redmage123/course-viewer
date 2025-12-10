@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRAFT Prompt Builder - Interactive Demo</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--itag-light);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #334155;
+        }
+
+        .panel h2 {
+            color: var(--itag-light);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .craft-section {
+            margin-bottom: 20px;
+        }
+
+        .craft-section label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .craft-letter {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .craft-section textarea {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 70px;
+            font-family: inherit;
+        }
+
+        .craft-section textarea:focus {
+            outline: none;
+            border-color: var(--itag-light);
+        }
+
+        .craft-section .hint {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .output-area {
+            background: var(--bg-dark);
+            border: 2px solid var(--itag-blue);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 300px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .output-area .section-label {
+            color: var(--itag-light);
+            font-weight: bold;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #475569;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-green), #00994d);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 204, 102, 0.4);
+        }
+
+        .templates {
+            margin-top: 30px;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .template-card {
+            background: var(--bg-dark);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-card:hover {
+            border-color: var(--itag-light);
+            transform: translateY(-2px);
+        }
+
+        .template-card h4 {
+            color: var(--itag-light);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .template-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .tips {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            border-left: 4px solid var(--accent-green);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .tips h3 {
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        .tips ul {
+            margin-left: 20px;
+        }
+
+        .tips li {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .copy-notice {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+        }
+
+        .copy-notice.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .itag-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CRAFT Prompt Builder</h1>
+            <p class="subtitle">Build effective prompts using the CRAFT framework</p>
+        </header>
+
+        <div class="main-grid">
+            <div class="panel">
+                <h2>Build Your Prompt</h2>
+
+                <div class="craft-section">
+                    <label>
+                        <span class="craft-letter">C</span>
+                        Context
+                    </label>
+                    <textarea id="context" placeholder="Background information, situation, constraints..."></textarea>
+                    <div class="hint">What does the AI need to know about your situation?</div>
+                </div>
+
+                <div class="craft-section">
+                    <label>
+                        <span class="craft-letter">R</span>
+                        Role
+                    </label>
+                    <textarea id="role" placeholder="Who should the AI be? Expert, assistant, critic..."></textarea>
+                    <div class="hint">e.g., "Act as a senior marketing consultant"</div>
+                </div>
+
+                <div class="craft-section">
+                    <label>
+                        <span class="craft-letter">A</span>
+                        Action
+                    </label>
+                    <textarea id="action" placeholder="The specific task you want completed..."></textarea>
+                    <div class="hint">Be specific about what you want created or analyzed</div>
+                </div>
+
+                <div class="craft-section">
+                    <label>
+                        <span class="craft-letter">F</span>
+                        Format
+                    </label>
+                    <textarea id="format" placeholder="How should the output be structured?"></textarea>
+                    <div class="hint">e.g., "Bullet points, 3 paragraphs, table format"</div>
+                </div>
+
+                <div class="craft-section">
+                    <label>
+                        <span class="craft-letter">T</span>
+                        Tone
+                    </label>
+                    <textarea id="tone" placeholder="Professional, casual, formal, friendly..."></textarea>
+                    <div class="hint">What voice or style should the output have?</div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="buildPrompt()">Build Prompt</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Your Generated Prompt</h2>
+                <div class="output-area" id="output">
+                    <span style="color: var(--text-secondary);">Fill in the CRAFT fields and click "Build Prompt" to generate your structured prompt...</span>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-success" onclick="copyPrompt()">Copy to Clipboard</button>
+                    <button class="btn btn-secondary" onclick="openChatGPT()">Open ChatGPT</button>
+                </div>
+
+                <div class="tips">
+                    <h3>Pro Tips</h3>
+                    <ul>
+                        <li>Not all sections are required - use what's relevant</li>
+                        <li>More context generally = better results</li>
+                        <li>Be specific in your Action section</li>
+                        <li>Include examples when possible</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="templates">
+            <h2 style="color: var(--itag-light); margin-bottom: 15px;">Quick Start Templates</h2>
+            <div class="template-grid">
+                <div class="template-card" onclick="loadTemplate('email')">
+                    <h4>Email Drafting</h4>
+                    <p>Professional email responses and follow-ups</p>
+                </div>
+                <div class="template-card" onclick="loadTemplate('summary')">
+                    <h4>Meeting Summary</h4>
+                    <p>Summarize meeting notes and action items</p>
+                </div>
+                <div class="template-card" onclick="loadTemplate('analysis')">
+                    <h4>Data Analysis</h4>
+                    <p>Analyze and interpret business data</p>
+                </div>
+                <div class="template-card" onclick="loadTemplate('brainstorm')">
+                    <h4>Brainstorming</h4>
+                    <p>Generate creative ideas and solutions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="itag-footer">
+            ITAG Skillnet AI Advantage | Use Case Lab & Prompting Foundations
+        </div>
+    </div>
+
+    <div class="copy-notice" id="copyNotice">Copied to clipboard!</div>
+
+    <script>
+        const templates = {
+            email: {
+                context: "I'm a sales representative. I had a product demo with a potential client yesterday. They seemed interested but had concerns about pricing.",
+                role: "Act as an experienced B2B sales professional who excels at follow-up communications.",
+                action: "Write a follow-up email that addresses their pricing concerns, reinforces the value proposition, and proposes next steps.",
+                format: "Keep the email under 200 words. Include a clear subject line. Use short paragraphs. End with a specific call-to-action.",
+                tone: "Professional but warm. Confident without being pushy. Focus on value, not pressure."
+            },
+            summary: {
+                context: "This is a weekly product team meeting with engineering, design, and product management. The meeting lasted 45 minutes.",
+                role: "Act as an executive assistant preparing notes for the VP of Product who couldn't attend.",
+                action: "Summarize the meeting transcript, highlighting key decisions made, action items assigned, and any blockers discussed.",
+                format: "Structure as: 1) Key Decisions (bullets), 2) Action Items (with owner and deadline), 3) Open Questions, 4) Next Steps",
+                tone: "Concise and professional. Focus on actionable information."
+            },
+            analysis: {
+                context: "I'm a business analyst reviewing quarterly sales data. We're trying to understand why Q3 underperformed compared to Q2.",
+                role: "Act as a senior data analyst with expertise in sales performance analysis.",
+                action: "Analyze the provided sales data and identify the top 3 factors that likely contributed to the Q3 decline. Suggest data-driven recommendations.",
+                format: "Provide analysis in sections: 1) Executive Summary (2-3 sentences), 2) Key Findings (numbered list), 3) Recommendations (prioritized)",
+                tone: "Analytical and objective. Support conclusions with data references."
+            },
+            brainstorm: {
+                context: "Our company is launching a new mobile app for personal finance management targeting millennials. We need marketing ideas for the launch.",
+                role: "Act as a creative director at a digital marketing agency specializing in fintech products.",
+                action: "Generate 10 creative marketing campaign ideas for our app launch. Include both digital and experiential marketing approaches.",
+                format: "Present each idea with: Name, Brief Description (2-3 sentences), Primary Channel, Estimated Impact (High/Medium/Low)",
+                tone: "Creative and energetic. Think outside the box but keep ideas practical and executable."
+            }
+        };
+
+        function loadTemplate(type) {
+            const template = templates[type];
+            document.getElementById('context').value = template.context;
+            document.getElementById('role').value = template.role;
+            document.getElementById('action').value = template.action;
+            document.getElementById('format').value = template.format;
+            document.getElementById('tone').value = template.tone;
+            buildPrompt();
+        }
+
+        function buildPrompt() {
+            const context = document.getElementById('context').value.trim();
+            const role = document.getElementById('role').value.trim();
+            const action = document.getElementById('action').value.trim();
+            const format = document.getElementById('format').value.trim();
+            const tone = document.getElementById('tone').value.trim();
+
+            let prompt = '';
+
+            if (context) {
+                prompt += `<span class="section-label">[Context]</span>\n${context}\n\n`;
+            }
+            if (role) {
+                prompt += `<span class="section-label">[Role]</span>\n${role}\n\n`;
+            }
+            if (action) {
+                prompt += `<span class="section-label">[Action]</span>\n${action}\n\n`;
+            }
+            if (format) {
+                prompt += `<span class="section-label">[Format]</span>\n${format}\n\n`;
+            }
+            if (tone) {
+                prompt += `<span class="section-label">[Tone]</span>\n${tone}`;
+            }
+
+            if (!prompt) {
+                prompt = '<span style="color: var(--text-secondary);">Fill in at least one CRAFT field to generate your prompt...</span>';
+            }
+
+            document.getElementById('output').innerHTML = prompt;
+        }
+
+        function clearAll() {
+            document.getElementById('context').value = '';
+            document.getElementById('role').value = '';
+            document.getElementById('action').value = '';
+            document.getElementById('format').value = '';
+            document.getElementById('tone').value = '';
+            document.getElementById('output').innerHTML = '<span style="color: var(--text-secondary);">Fill in the CRAFT fields and click "Build Prompt" to generate your structured prompt...</span>';
+        }
+
+        function copyPrompt() {
+            const output = document.getElementById('output');
+            const text = output.innerText;
+
+            if (text.includes('Fill in')) {
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                const notice = document.getElementById('copyNotice');
+                notice.classList.add('show');
+                setTimeout(() => notice.classList.remove('show'), 2000);
+            });
+        }
+
+        function openChatGPT() {
+            window.open('https://chat.openai.com', '_blank');
+        }
+
+        // Auto-build on input
+        document.querySelectorAll('textarea').forEach(textarea => {
+            textarea.addEventListener('input', buildPrompt);
+        });
+    </script>
+</body>
+</html>

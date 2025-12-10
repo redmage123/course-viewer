@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive ChatGPT Demo Guide - Instructor</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--itag-light);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            border-bottom: 3px solid var(--itag-blue);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: var(--itag-light);
+            font-size: 1.5rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+
+        h3 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .meta {
+            background: var(--bg-card);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--itag-blue);
+        }
+
+        .meta strong {
+            color: var(--itag-light);
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .prompt-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .prompt-box.transcript {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+        }
+
+        .demo-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid #334155;
+        }
+
+        .demo-section h3 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+
+        .round-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .round-basic {
+            background: #4d2600;
+            color: var(--accent-orange);
+        }
+
+        .round-craft {
+            background: #0d3320;
+            color: var(--accent-green);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            background: var(--itag-blue);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 102, 204, 0.1);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #334155;
+            margin: 40px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .prompt-box {
+                border: 1px solid #ccc;
+                background: #f5f5f5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive ChatGPT Demo Guide</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">Instructor Guide for Live Prompting Demonstration</p>
+
+        <div class="meta">
+            <strong>Duration:</strong> 10-15 minutes<br>
+            <strong>Platform:</strong> ChatGPT (chat.openai.com) - works with free or Plus<br>
+            <strong>Goal:</strong> Show the dramatic difference between basic and optimized prompts
+        </div>
+
+        <h2>Setup Before the Session</h2>
+        <ol>
+            <li>Open ChatGPT in a browser tab</li>
+            <li>Have this guide open on a second screen/device</li>
+            <li>Start with a fresh chat (click "New chat")</li>
+            <li>Optional: Have the sample transcript pre-copied</li>
+        </ol>
+
+        <hr>
+
+        <h2>Demo 1: Meeting Summary (5 minutes)</h2>
+
+        <div class="demo-section">
+            <h3>Sample Meeting Transcript</h3>
+            <p>Use this sample or substitute a real (anonymized) transcript:</p>
+            <div class="prompt-box transcript">[Meeting: Q4 Planning - Product Team]
+[Attendees: Sarah (PM), Mike (Engineering), Lisa (Design), Tom (Marketing)]
+
+Sarah: Okay, let's go through priorities for Q4. We need to finalize the feature list.
+
+Mike: From engineering, we can realistically ship either the new dashboard OR the API improvements, not both. The dashboard is about 6 weeks, API is 4 weeks.
+
+Lisa: The dashboard redesign has been in the works for months. Users have been asking for it.
+
+Tom: From a marketing perspective, the dashboard is way more "launchable" - we can make a big splash. The API stuff is harder to message.
+
+Sarah: Good point. What if we do dashboard as the main Q4 launch, then API in early Q1?
+
+Mike: That works for us. We'd need final designs by October 15th to hit the December launch.
+
+Lisa: I can commit to that. I'll need the user research summary from last month though.
+
+Sarah: I'll send that over today. Tom, when do you need assets for the launch campaign?
+
+Tom: November 1st at the latest. Earlier is better.
+
+Sarah: Okay, let's lock this in. Dashboard for Q4, API for Q1. Lisa, designs by Oct 15. Tom, assets by Nov 1. Mike, let's sync on technical requirements this week.
+
+Mike: Sounds good. One flag - we might need to bring in a contractor for the frontend work.
+
+Sarah: Put together a proposal and let's discuss async.</div>
+        </div>
+
+        <div class="demo-section">
+            <span class="round-label round-basic">Round 1: Basic Prompt</span>
+            <h3>Type this prompt:</h3>
+            <div class="prompt-box">Summarize this meeting transcript.
+
+[paste the transcript]</div>
+            <div class="warning-box">
+                <h4>What to point out:</h4>
+                <ul>
+                    <li>Output is okay but generic</li>
+                    <li>No clear structure</li>
+                    <li>Misses some action items</li>
+                    <li>Doesn't prioritize information</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <span class="round-label round-craft">Round 2: CRAFT-Enhanced Prompt</span>
+            <h3>Type this prompt:</h3>
+            <div class="prompt-box">Context: This is a product team Q4 planning meeting. I need to share notes with the VP of Product who wasn't in attendance.
+
+Role: Act as an experienced executive assistant who creates clear, actionable meeting summaries.
+
+Action: Summarize this meeting transcript focusing on decisions made and commitments.
+
+Format your response as:
+## Key Decisions
+- [bullet points]
+
+## Action Items
+| Owner | Task | Deadline |
+|-------|------|----------|
+| ... | ... | ... |
+
+## Open Questions
+- [any unresolved items]
+
+## Risks & Dependencies
+- [anything flagged as a concern]
+
+Tone: Professional and concise. Highlight the most important items.
+
+[paste the transcript]</div>
+            <div class="tip-box">
+                <h4>What to point out:</h4>
+                <ul>
+                    <li>Clear structure makes it scannable</li>
+                    <li>Action items have owners and deadlines</li>
+                    <li>Captures the contractor risk flag</li>
+                    <li>Ready to send to VP as-is</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Demo 2: Email Drafting (3 minutes)</h2>
+
+        <div class="demo-section">
+            <span class="round-label round-basic">Round 1: Basic Prompt</span>
+            <div class="prompt-box">Write a follow-up email after a sales demo.</div>
+            <div class="warning-box">
+                <h4>What to point out:</h4>
+                <ul>
+                    <li>Very generic</li>
+                    <li>No personalization</li>
+                    <li>Missing key elements</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <span class="round-label round-craft">Round 2: CRAFT-Enhanced Prompt</span>
+            <div class="prompt-box">Context: I just completed a 30-minute product demo with Jennifer Chen, CTO of Acme Corp (mid-size retail company, 500 employees). She was interested in our inventory management features but concerned about implementation time. Her team uses Shopify and needs integration.
+
+Role: Act as a senior enterprise sales rep with 10 years of experience closing B2B SaaS deals.
+
+Action: Write a follow-up email to send within 2 hours of the demo.
+
+Format:
+- Subject line that encourages opens
+- Brief (under 150 words)
+- Reference specific points from our conversation
+- Include one resource/case study mention
+- Clear next step with specific time proposal
+
+Tone: Professional but warm. Confident but not pushy.</div>
+            <div class="tip-box">
+                <h4>Discussion points:</h4>
+                <ul>
+                    <li>How context transforms output</li>
+                    <li>Specificity yields relevance</li>
+                    <li>The "specific time proposal" detail</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Demo 3: Chain-of-Thought Reasoning (2 minutes)</h2>
+
+        <div class="demo-section">
+            <h3>Show the difference with complex analysis</h3>
+
+            <span class="round-label round-basic">Basic:</span>
+            <div class="prompt-box">Should we raise prices by 15%?</div>
+
+            <span class="round-label round-craft">Chain-of-Thought:</span>
+            <div class="prompt-box">I'm considering a 15% price increase for our SaaS product. Current price is $99/month, we have 500 customers, monthly churn is 3%.
+
+Think through this step-by-step:
+1. What's the potential revenue impact?
+2. How might this affect churn?
+3. What competitive factors should I consider?
+4. What are the risks?
+5. What's your recommendation and why?</div>
+            <div class="tip-box">
+                <h4>Point out:</h4>
+                <p>The reasoning process, not just the answer</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Demo 4: Few-Shot Learning (2 minutes)</h2>
+
+        <div class="demo-section">
+            <h3>Classification Task</h3>
+            <div class="prompt-box">Categorize these customer support tickets. Here are examples of how to categorize:
+
+Ticket: "Can't log in, keep getting error 401"
+Category: Technical - Authentication
+
+Ticket: "When does my subscription renew?"
+Category: Billing - Inquiry
+
+Ticket: "Your product is amazing, love the new features!"
+Category: Feedback - Positive
+
+Now categorize these:
+
+Ticket: "The export feature keeps timing out"
+Category:
+
+Ticket: "Can I get a refund for last month?"
+Category:
+
+Ticket: "How do I add team members to my account?"
+Category:</div>
+        </div>
+
+        <hr>
+
+        <h2>Interactive Exercise with Audience</h2>
+
+        <div class="demo-section">
+            <h3>Prompt: "Let's build one together"</h3>
+            <p><strong>Scenario:</strong> Draft a LinkedIn post announcing a new hire</p>
+
+            <h4 style="color: var(--itag-light); margin-top: 20px;">Ask the audience:</h4>
+            <ol>
+                <li>What's the context? (company, role, why this hire matters)</li>
+                <li>What role should ChatGPT play?</li>
+                <li>What specific action?</li>
+                <li>What format constraints? (word count, style)</li>
+                <li>What tone? (celebratory, professional, casual?)</li>
+            </ol>
+            <p><strong>Build the prompt live with their answers.</strong></p>
+        </div>
+
+        <hr>
+
+        <h2>Common Questions & Live Answers</h2>
+
+        <div class="demo-section">
+            <h3>"What if the output isn't what I want?"</h3>
+            <p>Demo the iteration technique:</p>
+            <div class="prompt-box">This is good, but:
+- Make it shorter (under 100 words)
+- Make the opening hook stronger
+- Remove the bullet points, use flowing prose instead</div>
+        </div>
+
+        <div class="demo-section">
+            <h3>"How do I save time on repeated tasks?"</h3>
+            <p>Show creating a template:</p>
+            <div class="prompt-box">I frequently need to write [type of content]. Create a reusable prompt template I can fill in with variables in brackets like [company name], [key point], etc.</div>
+        </div>
+
+        <div class="demo-section">
+            <h3>"Can it handle sensitive information?"</h3>
+            <p>Discuss:</p>
+            <ul>
+                <li>Don't paste confidential data</li>
+                <li>Anonymize when possible</li>
+                <li>Use placeholders: "[CUSTOMER NAME]", "[REVENUE FIGURE]"</li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2>Closing Points</h2>
+
+        <div class="tip-box">
+            <ol>
+                <li><strong>First prompt is a draft</strong> - Always iterate</li>
+                <li><strong>Specificity wins</strong> - More context = better output</li>
+                <li><strong>Save your best prompts</strong> - Build a personal library</li>
+                <li><strong>Verify facts</strong> - AI can hallucinate, especially with numbers and recent events</li>
+                <li><strong>Practice daily</strong> - Prompting is a skill that improves with use</li>
+            </ol>
+        </div>
+
+        <hr>
+
+        <h2>Backup Demos (if time permits)</h2>
+
+        <div class="demo-section">
+            <h3>Data Analysis Prompt</h3>
+            <div class="prompt-box">Act as a data analyst. I have sales data showing:
+- Q1: $1.2M (up 15% YoY)
+- Q2: $1.1M (up 8% YoY)
+- Q3: $1.4M (up 22% YoY)
+
+Analyze this trend, identify what might explain the Q3 spike, and suggest 3 questions I should investigate further. Present your analysis in a format suitable for a board presentation.</div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Document Review Prompt</h3>
+            <div class="prompt-box">Role: Act as a legal operations specialist with experience reviewing vendor contracts.
+
+Task: Review this contract excerpt and identify:
+1. Any unusual or potentially risky clauses
+2. Missing standard protections
+3. Items to negotiate before signing
+
+Format: Bullet points organized by risk level (High/Medium/Low)
+
+[paste contract section]</div>
+        </div>
+
+        <hr>
+
+        <h2>Tips for Live Demo Success</h2>
+
+        <div class="warning-box">
+            <ol>
+                <li><strong>Have a backup plan</strong> - If ChatGPT is slow, have screenshots ready</li>
+                <li><strong>Embrace imperfection</strong> - If output isn't perfect, use it as a teaching moment about iteration</li>
+                <li><strong>Engage the audience</strong> - Ask what they noticed between versions</li>
+                <li><strong>Keep it real</strong> - Use examples relevant to your audience's industry</li>
+                <li><strong>Time management</strong> - The meeting summary demo is the most impactful; prioritize it</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p>This guide supports the "Use Case Lab & Prompting Foundations" seminar for ITAG Skillnet AI Advantage.</p>
+        </div>
+    </div>
+</body>
+</html>

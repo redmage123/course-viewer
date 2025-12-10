@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audience Poll - Technical Skills & AI Experience</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: var(--itag-light);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .poll-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #334155;
+        }
+
+        .poll-section h2 {
+            color: var(--itag-light);
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .poll-section h2 .icon {
+            font-size: 1.6rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: var(--bg-dark);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            border-color: var(--itag-light);
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: var(--accent-green);
+            background: rgba(0, 204, 102, 0.1);
+        }
+
+        .option.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .option-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-label {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 3px;
+        }
+
+        .option-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .option-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 102, 204, 0.3), rgba(77, 166, 255, 0.1));
+            width: 0;
+            transition: width 0.5s ease-out;
+            z-index: 0;
+        }
+
+        .option > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .option-count {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--itag-light);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Multi-select options */
+        .multi-select .option.selected {
+            border-color: var(--itag-light);
+            background: rgba(0, 102, 204, 0.15);
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #475569;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .option.selected .checkbox {
+            background: var(--itag-light);
+            border-color: var(--itag-light);
+        }
+
+        .checkbox::after {
+            content: '\2713';
+            color: var(--bg-dark);
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .option.selected .checkbox::after {
+            opacity: 1;
+        }
+
+        .other-input {
+            flex: 1;
+            background: var(--bg-dark);
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            margin-left: 10px;
+            outline: none;
+            transition: border-color 0.2s;
+            resize: vertical;
+            min-height: 40px;
+            max-height: 120px;
+        }
+
+        .other-input:focus {
+            border-color: var(--itag-light);
+        }
+
+        .other-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .option.selected .other-input {
+            border-color: var(--itag-light);
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #475569;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent-green), #00994d);
+            color: white;
+        }
+
+        .total-responses {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .total-responses strong {
+            color: var(--itag-light);
+            font-size: 1.2rem;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            border-left: 4px solid var(--accent-green);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .submit-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            border: 2px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .success-message h2 {
+            color: var(--accent-green);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 2px solid #334155;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            border-color: var(--itag-light);
+            color: var(--itag-light);
+            background: rgba(0, 102, 204, 0.1);
+        }
+
+        .mode-btn:hover {
+            border-color: var(--itag-light);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            .option {
+                padding: 15px;
+            }
+            .option-icon {
+                font-size: 1.2rem;
+                width: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quick Poll</h1>
+            <p class="subtitle">Help us understand your background!</p>
+        </header>
+
+        <!-- Instructor mode toggle -->
+        <div class="mode-toggle">
+            <button class="mode-btn active" id="voteModeBtn" onclick="setMode('vote')">Vote Mode</button>
+            <button class="mode-btn" id="resultsModeBtn" onclick="setMode('results')">Results Mode (Instructor)</button>
+        </div>
+
+        <div id="voteSection">
+            <div class="instructions">
+                <p>Select your answers below and click Submit. Your response is anonymous.</p>
+            </div>
+
+            <!-- Poll 1: Technical Skill Level -->
+            <div class="poll-section" id="poll1">
+                <h2><span class="icon">💻</span> What is your level of technical skill?</h2>
+                <div class="options" data-poll="technical">
+                    <div class="option" data-value="none" onclick="selectOption('technical', 'none', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🆕</span>
+                        <div class="option-content">
+                            <div class="option-label">Non-Technical</div>
+                            <div class="option-desc">I don't work with technology day-to-day</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="beginner" onclick="selectOption('technical', 'beginner', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🌱</span>
+                        <div class="option-content">
+                            <div class="option-label">Basic User</div>
+                            <div class="option-desc">Comfortable with everyday software and apps</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="intermediate" onclick="selectOption('technical', 'intermediate', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">💪</span>
+                        <div class="option-content">
+                            <div class="option-label">Intermediate</div>
+                            <div class="option-desc">Work with data, spreadsheets, or basic automation</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="advanced" onclick="selectOption('technical', 'advanced', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🔧</span>
+                        <div class="option-content">
+                            <div class="option-label">Advanced</div>
+                            <div class="option-desc">Comfortable with coding, APIs, or system administration</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="expert" onclick="selectOption('technical', 'expert', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🚀</span>
+                        <div class="option-content">
+                            <div class="option-label">Expert</div>
+                            <div class="option-desc">Developer, data scientist, or IT professional</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="other-technical" onclick="selectOption('technical', 'other-technical', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">✏️</span>
+                        <div class="option-content">
+                            <div class="option-label">Other</div>
+                        </div>
+                        <textarea class="other-input" id="technicalOtherText" placeholder="Please specify..." onclick="event.stopPropagation(); selectOption('technical', 'other-technical', this.closest('.option'))" rows="1"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Poll 2: AI Tools Used -->
+            <div class="poll-section multi-select" id="poll2">
+                <h2><span class="icon">🤖</span> Which AI systems have you used? (Select all that apply)</h2>
+                <div class="options" data-poll="tools">
+                    <div class="option" data-value="frontier" onclick="toggleTool('frontier', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🚀</span>
+                        <div class="option-content">
+                            <div class="option-label">Frontier Models (Paid)</div>
+                            <div class="option-desc">ChatGPT, Claude, Gemini, Copilot</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="open-source" onclick="toggleTool('open-source', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🆓</span>
+                        <div class="option-content">
+                            <div class="option-label">Open/Free Models</div>
+                            <div class="option-desc">Mistral, DeepSeek, Qwen, Llama</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="image-ai" onclick="toggleTool('image-ai', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🎨</span>
+                        <div class="option-content">
+                            <div class="option-label">Image Generation AI</div>
+                            <div class="option-desc">DALL-E, Midjourney, Stable Diffusion</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="coding" onclick="toggleTool('coding', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">💻</span>
+                        <div class="option-content">
+                            <div class="option-label">Coding Assistants</div>
+                            <div class="option-desc">GitHub Copilot, Cursor, Codeium</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="search" onclick="toggleTool('search', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🔍</span>
+                        <div class="option-content">
+                            <div class="option-label">AI Search</div>
+                            <div class="option-desc">Perplexity, Bing Chat, Google AI Overview</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="none" onclick="toggleTool('none', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">❌</span>
+                        <div class="option-content">
+                            <div class="option-label">None yet</div>
+                            <div class="option-desc">Haven't used any AI tools</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="other-tool" onclick="toggleTool('other-tool', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">✏️</span>
+                        <div class="option-content">
+                            <div class="option-label">Other</div>
+                        </div>
+                        <textarea class="other-input" id="toolsOtherText" placeholder="Please specify..." onclick="event.stopPropagation(); if(!selectedTools.has('other-tool')) toggleTool('other-tool', this.closest('.option'))" rows="1"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button class="btn btn-primary" id="submitBtn" onclick="submitPoll()" disabled>Submit Response</button>
+            </div>
+        </div>
+
+        <!-- Success message after submission -->
+        <div id="successSection" class="hidden">
+            <div class="success-message">
+                <h2>Thank You!</h2>
+                <p>Your response has been recorded.</p>
+            </div>
+        </div>
+
+        <!-- Results section for instructor -->
+        <div id="resultsSection" class="hidden">
+            <div class="poll-section">
+                <h2><span class="icon">📊</span> Technical Skill Levels</h2>
+                <div class="options" id="technicalResults"></div>
+            </div>
+            <div class="poll-section">
+                <h2><span class="icon">🤖</span> AI Tools Used</h2>
+                <div class="options" id="toolsResults"></div>
+            </div>
+            <div class="total-responses">
+                Total Responses: <strong id="totalCount">0</strong>
+            </div>
+            <div class="submit-section">
+                <button class="btn btn-secondary" onclick="refreshResults()">Refresh Results</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>ITAG Skillnet AI Advantage | Use Case Lab & Prompting Foundations</p>
+        </div>
+    </div>
+
+    <script>
+        const POLL_ID = 'itag-skillnet-poll';
+        let selectedTechnical = null;
+        let selectedTools = new Set();
+        let currentMode = 'vote';
+
+        // Generate a unique session ID (fallback for older browsers)
+        function generateSessionId() {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                return crypto.randomUUID();
+            }
+            // Fallback for older browsers
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Check if already submitted
+        const hasSubmitted = localStorage.getItem(`poll_submitted_${POLL_ID}`);
+        if (hasSubmitted) {
+            document.getElementById('voteSection').classList.add('hidden');
+            document.getElementById('successSection').classList.remove('hidden');
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('voteModeBtn').classList.toggle('active', mode === 'vote');
+            document.getElementById('resultsModeBtn').classList.toggle('active', mode === 'results');
+
+            if (mode === 'results') {
+                document.getElementById('voteSection').classList.add('hidden');
+                document.getElementById('successSection').classList.add('hidden');
+                document.getElementById('resultsSection').classList.remove('hidden');
+                refreshResults();
+            } else {
+                document.getElementById('resultsSection').classList.add('hidden');
+                if (hasSubmitted) {
+                    document.getElementById('successSection').classList.remove('hidden');
+                } else {
+                    document.getElementById('voteSection').classList.remove('hidden');
+                }
+            }
+        }
+
+        function selectOption(poll, value, element) {
+            if (hasSubmitted) return;
+
+            // Deselect previous
+            document.querySelectorAll(`[data-poll="${poll}"] .option`).forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Select new
+            element.classList.add('selected');
+            selectedTechnical = value;
+            updateSubmitButton();
+        }
+
+        function toggleTool(value, element) {
+            if (hasSubmitted) return;
+
+            if (selectedTools.has(value)) {
+                selectedTools.delete(value);
+                element.classList.remove('selected');
+            } else {
+                // If selecting "none", clear others
+                if (value === 'none') {
+                    selectedTools.clear();
+                    document.querySelectorAll('[data-poll="tools"] .option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                } else {
+                    // If selecting a tool, remove "none"
+                    selectedTools.delete('none');
+                    document.querySelector('[data-poll="tools"] [data-value="none"]').classList.remove('selected');
+                }
+                selectedTools.add(value);
+                element.classList.add('selected');
+            }
+            updateSubmitButton();
+        }
+
+        function updateSubmitButton() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = !(selectedTechnical && selectedTools.size > 0);
+        }
+
+        async function submitPoll() {
+            if (!selectedTechnical || selectedTools.size === 0) return;
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            // Get "other" text values
+            let technicalValue = selectedTechnical;
+            if (selectedTechnical === 'other-technical') {
+                const otherText = document.getElementById('technicalOtherText').value.trim();
+                technicalValue = otherText ? `other: ${otherText}` : 'other';
+            }
+
+            // Build tools array with "other" text if selected
+            const toolsArray = Array.from(selectedTools).map(tool => {
+                if (tool === 'other-tool') {
+                    const otherText = document.getElementById('toolsOtherText').value.trim();
+                    return otherText ? `other: ${otherText}` : 'other';
+                }
+                return tool;
+            });
+
+            try {
+                const response = await fetch(`/api/poll/${POLL_ID}/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: generateSessionId(),
+                        technical_level: technicalValue,
+                        ai_tools: toolsArray
+                    })
+                });
+
+                if (response.ok) {
+                    localStorage.setItem(`poll_submitted_${POLL_ID}`, 'true');
+                    document.getElementById('voteSection').classList.add('hidden');
+                    document.getElementById('successSection').classList.remove('hidden');
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || `Server error: ${response.status}`);
+                }
+            } catch (err) {
+                console.error('Poll submission error:', err);
+                alert(`Failed to submit: ${err.message}\n\nPlease try again or contact the instructor.`);
+                btn.disabled = false;
+                btn.textContent = 'Submit Response';
+            }
+        }
+
+        async function refreshResults() {
+            try {
+                const response = await fetch(`/api/poll/${POLL_ID}/results`);
+                const data = await response.json();
+
+                document.getElementById('totalCount').textContent = data.total_responses;
+
+                // Render technical levels
+                const technicalContainer = document.getElementById('technicalResults');
+                const levels = [
+                    { value: 'none', label: 'Non-Technical', icon: '🆕' },
+                    { value: 'beginner', label: 'Basic User', icon: '🌱' },
+                    { value: 'intermediate', label: 'Intermediate', icon: '💪' },
+                    { value: 'advanced', label: 'Advanced', icon: '🔧' },
+                    { value: 'expert', label: 'Expert', icon: '🚀' }
+                ];
+
+                const totalTech = Object.values(data.technical_levels).reduce((a, b) => a + b, 0);
+                technicalContainer.innerHTML = levels.map(level => {
+                    const count = data.technical_levels[level.value] || 0;
+                    const percent = totalTech > 0 ? (count / totalTech * 100).toFixed(0) : 0;
+                    return `
+                        <div class="option disabled">
+                            <div class="option-bar" style="width: ${percent}%"></div>
+                            <span class="option-icon">${level.icon}</span>
+                            <div class="option-content">
+                                <div class="option-label">${level.label}</div>
+                            </div>
+                            <span class="option-count">${count} (${percent}%)</span>
+                        </div>
+                    `;
+                }).join('');
+
+                // Render tools
+                const toolsContainer = document.getElementById('toolsResults');
+                const tools = [
+                    { value: 'frontier', label: 'Frontier Models (Paid)', icon: '🚀' },
+                    { value: 'open-source', label: 'Open/Free Models', icon: '🆓' },
+                    { value: 'image-ai', label: 'Image Generation AI', icon: '🎨' },
+                    { value: 'coding', label: 'Coding Assistants', icon: '💻' },
+                    { value: 'search', label: 'AI Search', icon: '🔍' },
+                    { value: 'none', label: 'None yet', icon: '❌' }
+                ];
+
+                toolsContainer.innerHTML = tools.map(tool => {
+                    const count = data.ai_tools[tool.value] || 0;
+                    const percent = totalTech > 0 ? (count / totalTech * 100).toFixed(0) : 0;
+                    return `
+                        <div class="option disabled">
+                            <div class="option-bar" style="width: ${percent}%"></div>
+                            <span class="option-icon">${tool.icon}</span>
+                            <div class="option-content">
+                                <div class="option-label">${tool.label}</div>
+                            </div>
+                            <span class="option-count">${count} (${percent}%)</span>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error('Failed to load results:', err);
+            }
+        }
+    </script>
+</body>
+</html>

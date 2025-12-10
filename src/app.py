@@ -248,6 +248,15 @@ def init_db():
             completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
+
+        CREATE TABLE IF NOT EXISTS poll_responses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT NOT NULL,
+            poll_id TEXT NOT NULL,
+            technical_level TEXT,
+            ai_tools_used TEXT,
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
     ''')
     db.commit()
     db.close()
@@ -534,7 +543,9 @@ COURSES = {
             "demo": {
                 "title": "Interactive Demo",
                 "items": [
-                    {"id": "ucp-demo", "name": "ChatGPT Demo Guide (Instructor)", "file": "use-case-prompting-seminar/interactive-demo-guide.md", "type": "notes"},
+                    {"id": "ucp-demo-app", "name": "CRAFT Prompt Builder (Interactive)", "file": "use-case-prompting-seminar/demo/index.html", "type": "demo", "external": True},
+                    {"id": "ucp-poll", "name": "Audience Poll (AI Experience)", "file": "use-case-prompting-seminar/demo/poll.html", "type": "demo", "external": True},
+                    {"id": "ucp-demo", "name": "ChatGPT Demo Guide (Instructor)", "file": "use-case-prompting-seminar/interactive-demo-guide.html", "type": "notes"},
                 ]
             },
             "exercise": {
@@ -1450,7 +1461,7 @@ def serve_content(filename):
 
         # Only serve allowed file types
         allowed_extensions = {'.html', '.css', '.js', '.png', '.jpg', '.jpeg',
-                             '.gif', '.svg', '.ico', '.pdf', '.ipynb', '.json'}
+                             '.gif', '.svg', '.ico', '.pdf', '.ipynb', '.json', '.md', '.csv'}
         _, ext = os.path.splitext(safe_path)
         if ext.lower() not in allowed_extensions:
             return jsonify({'error': 'File type not allowed'}), 403
@@ -1522,6 +1533,101 @@ def get_user_progress(user_id):
         'enrollments': [dict(e) for e in enrollments],
         'lab_progress': [dict(p) for p in lab_progress]
     })
+
+# ============================================================================
+# Poll Routes
+# ============================================================================
+
+@app.route('/api/poll/<poll_id>/submit', methods=['POST'])
+def submit_poll_response(poll_id):
+    """Submit a poll response (no auth required for anonymous polls)"""
+    import re
+    if not re.match(r'^[\w\-]+$', poll_id):
+        return jsonify({'error': 'Invalid poll ID'}), 400
+
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    session_id = data.get('session_id', '')
+    technical_level = data.get('technical_level', '')
+    ai_tools = data.get('ai_tools', [])
+
+    # Validate technical_level (allow "other" or "other: text")
+    valid_levels = ['none', 'beginner', 'intermediate', 'advanced', 'expert']
+    if technical_level not in valid_levels and not technical_level.startswith('other'):
+        return jsonify({'error': 'Invalid technical level'}), 400
+    # Limit length of "other" text
+    if len(technical_level) > 200:
+        technical_level = technical_level[:200]
+
+    # Validate ai_tools (list of strings)
+    if not isinstance(ai_tools, list):
+        return jsonify({'error': 'ai_tools must be a list'}), 400
+    ai_tools_str = ','.join([str(t)[:50] for t in ai_tools[:20]])  # Limit
+
+    db = get_db()
+    db.execute(
+        '''INSERT INTO poll_responses (session_id, poll_id, technical_level, ai_tools_used)
+           VALUES (?, ?, ?, ?)''',
+        (session_id, poll_id, technical_level, ai_tools_str)
+    )
+    db.commit()
+    db.close()
+
+    return jsonify({'message': 'Response submitted successfully'})
+
+@app.route('/api/poll/<poll_id>/results')
+def get_poll_results(poll_id):
+    """Get aggregated poll results"""
+    import re
+    if not re.match(r'^[\w\-]+$', poll_id):
+        return jsonify({'error': 'Invalid poll ID'}), 400
+
+    db = get_db()
+    responses = db.execute(
+        'SELECT * FROM poll_responses WHERE poll_id = ? ORDER BY submitted_at DESC',
+        (poll_id,)
+    ).fetchall()
+    db.close()
+
+    # Aggregate results
+    technical_counts = {'none': 0, 'beginner': 0, 'intermediate': 0, 'advanced': 0, 'expert': 0}
+    tool_counts = {}
+    total = len(responses)
+
+    for r in responses:
+        level = r['technical_level']
+        if level in technical_counts:
+            technical_counts[level] += 1
+
+        tools = r['ai_tools_used'].split(',') if r['ai_tools_used'] else []
+        for tool in tools:
+            tool = tool.strip()
+            if tool:
+                tool_counts[tool] = tool_counts.get(tool, 0) + 1
+
+    return jsonify({
+        'total_responses': total,
+        'technical_levels': technical_counts,
+        'ai_tools': tool_counts,
+        'responses': [dict(r) for r in responses]  # Individual responses for review
+    })
+
+@app.route('/api/poll/<poll_id>/clear', methods=['POST'])
+@instructor_required
+def clear_poll_responses(poll_id):
+    """Clear all responses for a poll (instructor only)"""
+    import re
+    if not re.match(r'^[\w\-]+$', poll_id):
+        return jsonify({'error': 'Invalid poll ID'}), 400
+
+    db = get_db()
+    db.execute('DELETE FROM poll_responses WHERE poll_id = ?', (poll_id,))
+    db.commit()
+    db.close()
+
+    return jsonify({'message': 'Poll responses cleared'})
 
 # ============================================================================
 # Main

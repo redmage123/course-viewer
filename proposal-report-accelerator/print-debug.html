@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Proposal & Report Accelerator - ITAG Skillnet</title>
+    <style>
+    
+    @page {
+        size: 297mm 210mm;
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
+    }
+
+    .slide {
+        width: 297mm;
+        height: 210mm;
+        padding: 25px 35px;
+        page-break-after: always;
+        page-break-inside: avoid;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        font-size: 14pt;
+    }
+
+    .slide:last-child {
+        page-break-after: auto;
+    }
+
+    h1 {
+        color: #4da6ff;
+        font-size: 2.8em;
+        margin: 0 0 25px 0;
+        text-align: center;
+    }
+
+    h2 {
+        color: #4da6ff;
+        font-size: 2.2em;
+        margin: 0 0 25px 0;
+        text-align: center;
+    }
+
+    h3 {
+        color: #94a3b8;
+        font-size: 1.6em;
+        margin: 12px 0;
+    }
+
+    h4 {
+        color: #4da6ff;
+        font-size: 1.4em;
+        margin: 12px 0;
+    }
+
+    p {
+        margin: 12px 0;
+        line-height: 1.6;
+        font-size: 1.1em;
+    }
+
+    /* Override inline small font sizes to be readable */
+    p[style*="font-size: 0.7em"],
+    p[style*="font-size:0.7em"],
+    span[style*="font-size: 0.7em"],
+    span[style*="font-size:0.7em"] {
+        font-size: 1.2em !important;
+    }
+
+    /* Override dark grey text to be more visible */
+    p[style*="color: #666"],
+    p[style*="color:#666"],
+    span[style*="color: #666"],
+    span[style*="color:#666"] {
+        color: #94a3b8 !important;
+    }
+
+    ul, ol {
+        margin: 12px 0;
+        padding-left: 30px;
+    }
+
+    li {
+        margin: 8px 0;
+        line-height: 1.5;
+        font-size: 1.1em;
+    }
+
+    /* Two-column layout */
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .three-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        flex: 1;
+    }
+
+    /* Card styles */
+    .card {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 10px;
+        padding: 18px;
+        border: 1px solid #334155;
+        font-size: 1.1em;
+    }
+
+    /* Tip and warning boxes */
+    .tip-box {
+        background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+        border-left: 5px solid #00cc66;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    .warning-box {
+        background: linear-gradient(135deg, #3d2814 0%, #4d3318 100%);
+        border-left: 5px solid #ff9933;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    .exercise-box {
+        background: linear-gradient(135deg, #1a1a3d 0%, #2d2d5c 100%);
+        border-left: 5px solid #9966ff;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    /* Prompt example box */
+    .prompt-example {
+        background: #1a1a2e;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 18px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9em;
+        white-space: pre-wrap;
+        line-height: 1.5;
+    }
+
+    /* WRITE Framework circle - simplified for print */
+    .write-circle {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        padding: 30px;
+        max-width: 800px;
+        margin: 20px auto;
+    }
+
+    .write-center {
+        width: 140px;
+        height: 140px;
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2em;
+        font-weight: bold;
+        color: white;
+        order: 3;
+    }
+
+    .write-item {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        border: 2px solid #4da6ff;
+        border-radius: 10px;
+        padding: 15px 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 120px;
+        position: static !important;
+        transform: none !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+    }
+
+    .write-item span:first-child {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #4da6ff;
+    }
+
+    .write-item span:last-child {
+        font-size: 1.1em;
+        color: #94a3b8;
+    }
+
+    /* Guardrails container */
+    .guardrails-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .shield {
+        width: 120px;
+        height: 140px;
+        background: linear-gradient(135deg, #0066cc, #00cc66);
+        border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .shield-icon {
+        font-size: 2.5em;
+    }
+
+    .shield-text {
+        font-weight: bold;
+        margin-top: 8px;
+    }
+
+    .guardrail-list {
+        flex: 1;
+    }
+
+    .guardrail-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 15px;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 8px;
+        margin: 8px 0;
+        border-left: 3px solid #00cc66;
+        font-size: 1em;
+    }
+
+    .guardrail-icon {
+        font-size: 1.3em;
+    }
+
+    /* Pipeline */
+    .pipeline {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 15px;
+    }
+
+    .pipeline-stage {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid #4da6ff;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        min-width: 110px;
+    }
+
+    .pipeline-stage .icon {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+
+    .pipeline-stage h4 {
+        margin: 5px 0;
+        font-size: 1em;
+    }
+
+    .pipeline-stage p {
+        margin: 3px 0;
+        font-size: 0.85em;
+        color: #94a3b8;
+    }
+
+    .pipeline-arrow {
+        color: #00cc66;
+        font-size: 1.5em;
+    }
+
+    /* Document types grid */
+    .doc-types-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .doc-type {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid #4da6ff;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .doc-type .icon {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+
+    .doc-type h4 {
+        margin: 5px 0;
+        font-size: 1em;
+    }
+
+    .doc-type p {
+        margin: 3px 0;
+        font-size: 0.85em;
+        color: #888;
+    }
+
+    /* Technique cards */
+    .technique-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .technique-card {
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+    }
+
+    .technique-card .icon {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+    }
+
+    .technique-card h4 {
+        margin: 8px 0;
+        font-size: 1.1em;
+    }
+
+    .technique-card p {
+        font-size: 0.95em;
+        color: #94a3b8;
+        margin: 8px 0;
+    }
+
+    /* Agenda items */
+    .agenda-item {
+        display: flex;
+        align-items: center;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 8px;
+        padding: 14px 20px;
+        margin: 10px 0;
+        border-left: 4px solid #4da6ff;
+        font-size: 1.1em;
+    }
+
+    .agenda-time {
+        color: #4da6ff;
+        font-weight: bold;
+        min-width: 70px;
+        margin-right: 20px;
+        font-size: 1.1em;
+    }
+
+    /* Framework steps */
+    .framework-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin: 12px 0;
+        font-size: 1.1em;
+    }
+
+    .step-number {
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+        font-size: 1.1em;
+    }
+
+    /* Matrix for prioritization */
+    .matrix-animated {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 15px;
+        flex: 1;
+    }
+
+    .matrix-cell {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 8px;
+        padding: 18px;
+        border: 1px solid #334155;
+    }
+
+    .matrix-cell h4 {
+        margin: 0 0 10px 0;
+        font-size: 1.3em;
+    }
+
+    .matrix-cell p {
+        margin: 6px 0;
+        font-size: 1em;
+    }
+
+    /* Flow diagram - row-based layout for process flow */
+    .flow-diagram {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin: 20px auto;
+        max-width: 700px;
+    }
+
+    .flow-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .flow-row.flow-center-right {
+        width: 100%;
+        justify-content: flex-end;
+        padding-right: 80px;
+    }
+
+    .flow-box {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        border: 1px solid #4da6ff;
+        border-radius: 8px;
+        padding: 15px 20px;
+        text-align: center;
+        font-size: 1.1em;
+        min-width: 160px;
+    }
+
+    .flow-arrow {
+        color: #4da6ff;
+        font-size: 1.8em;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 1.05em;
+    }
+
+    th, td {
+        border: 1px solid #334155;
+        padding: 10px 14px;
+        text-align: left;
+    }
+
+    th {
+        background: rgba(0, 102, 204, 0.3);
+        color: #4da6ff;
+        font-size: 1.05em;
+    }
+
+    tr:nth-child(even) {
+        background: rgba(30, 41, 59, 0.5);
+    }
+
+    .comparison-table {
+        font-size: 1em;
+    }
+
+    /* Footer */
+    .itag-footer {
+        position: absolute;
+        bottom: 12px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 0.9em;
+        color: #64748b;
+    }
+
+    /* Slide number */
+    .slide-number {
+        position: absolute;
+        bottom: 12px;
+        right: 25px;
+        font-size: 1em;
+        color: #64748b;
+    }
+
+    /* Code blocks */
+    pre, code {
+        background: #0f172a;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 1em;
+    }
+
+    pre {
+        padding: 15px 20px;
+        overflow-x: auto;
+        font-size: 1em;
+    }
+
+    /* Hide animations and fragments */
+    .fragment {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    </style>
+</head>
+<body>
+
+        <div class="slide">
+            <h1>Proposal & Report Accelerator</h1>
+                <h3 style="color: #888;">Writing Faster with Guardrails</h3>
+                <p style="margin-top: 50px;">
+                    <span style="color: var(--itag-light);">ITAG Skillnet AI Advantage</span>
+                </p>
+                <p style="font-size: 0.8em; color: #666; margin-top: 30px;">
+                    90-Minute Interactive Seminar
+                </p>
+                <p style="font-size: 0.7em; color: #555; margin-top: 20px;">
+                    Transform Your Document Workflow | Maintain Quality & Compliance
+                </p>
+            <div class="slide-number">1</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Agenda</h2>
+                <div style="text-align: left; max-width: 700px; margin: 0 auto;">
+                    <div class="agenda-item">
+                        <span class="agenda-time">10 min</span>
+                        <span>The Document Challenge & AI Opportunity</span>
+                    </div>
+                    <div class="agenda-item">
+                        <span class="agenda-time">15 min</span>
+                        <span>Understanding AI Writing Assistants</span>
+                    </div>
+                    <div class="agenda-item">
+                        <span class="agenda-time">15 min</span>
+                        <span>The WRITE Framework for Structured Documents</span>
+                    </div>
+                    <div class="agenda-item">
+                        <span class="agenda-time">15 min</span>
+                        <span>Guardrails: Quality, Compliance & Consistency</span>
+                    </div>
+                    <div class="agenda-item">
+                        <span class="agenda-time">10 min</span>
+                        <span>Prompt Engineering for Business Documents</span>
+                    </div>
+                    <div class="agenda-item" style="background: linear-gradient(90deg, rgba(0,204,102,0.2) 0%, transparent 100%); border-radius: 8px; padding: 10px 15px; margin: 5px 0;">
+                        <span class="agenda-time" style="color: var(--accent-green);">20 min</span>
+                        <span><strong style="color: var(--accent-green);">Live Demo</strong> - Building a Proposal with AI</span>
+                    </div>
+                    <div class="agenda-item">
+                        <span class="agenda-time">5 min</span>
+                        <span>Wrap-up & Take-Home Resources</span>
+                    </div>
+                </div>
+            <div class="slide-number">2</div>
+        </div>
+        
+        <div class="slide">
+            <h2>The Document Challenge</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Time Drain</h4>
+                            <ul>
+                                <li>Proposals: 4-20 hours each</li>
+                                <li>Reports: 2-8 hours each</li>
+                                <li>80% is repetitive content</li>
+                                <li>Version control chaos</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Quality Risks</h4>
+                            <ul>
+                                <li>Inconsistent messaging</li>
+                                <li>Compliance gaps</li>
+                                <li>Tone variations</li>
+                                <li>Human error in details</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>The Goal:</strong> Write faster while maintaining (or improving) quality, consistency, and compliance.
+                    </div>
+            <div class="slide-number">3</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Document Types We'll Cover</h2>
+                    <div class="doc-types-grid">
+                        <div class="doc-type">
+                            <div class="icon">📋</div>
+                            <h4>Business Proposals</h4>
+                            <p>RFPs, bids, pitches</p>
+                        </div>
+                        <div class="doc-type">
+                            <div class="icon">📊</div>
+                            <h4>Reports</h4>
+                            <p>Status, analysis, research</p>
+                        </div>
+                        <div class="doc-type">
+                            <div class="icon">📝</div>
+                            <h4>Executive Summaries</h4>
+                            <p>Briefs, one-pagers</p>
+                        </div>
+                        <div class="doc-type">
+                            <div class="icon">📄</div>
+                            <h4>Case Studies</h4>
+                            <p>Success stories</p>
+                        </div>
+                        <div class="doc-type">
+                            <div class="icon">📑</div>
+                            <h4>SOWs & Contracts</h4>
+                            <p>Scope documents</p>
+                        </div>
+                        <div class="doc-type">
+                            <div class="icon">📧</div>
+                            <h4>Formal Communications</h4>
+                            <p>Letters, memos</p>
+                        </div>
+                    </div>
+            <div class="slide-number">4</div>
+        </div>
+        
+        <div class="slide">
+            <h2>The AI Writing Revolution</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Traditional Approach</th>
+                            <th>AI-Accelerated Approach</th>
+                        </tr>
+                        <tr>
+                            <td>Start from blank page or old template</td>
+                            <td>AI generates structured first draft</td>
+                        </tr>
+                        <tr>
+                            <td>Manual research and data gathering</td>
+                            <td>AI synthesizes inputs and context</td>
+                        </tr>
+                        <tr>
+                            <td>Multiple revision cycles</td>
+                            <td>Iterate rapidly with AI feedback</td>
+                        </tr>
+                        <tr>
+                            <td>Manual compliance checking</td>
+                            <td>Built-in guardrails and validation</td>
+                        </tr>
+                        <tr>
+                            <td>Hours per document</td>
+                            <td>Minutes to quality first draft</td>
+                        </tr>
+                    </table>
+                    <div class="tip-box">
+                        <strong>Key Insight:</strong> AI doesn't replace your expertise - it amplifies it by handling structure and boilerplate while you focus on strategy and nuance.
+                    </div>
+            <div class="slide-number">5</div>
+        </div>
+        
+        <div class="slide">
+            <h2>How AI Writing Assistants Work</h2>
+                    <div class="pipeline">
+                        <div class="pipeline-stage">
+                            <div class="icon">📥</div>
+                            <h4>Input</h4>
+                            <p>Your prompt + context</p>
+                        </div>
+                        <div class="pipeline-arrow">→</div>
+                        <div class="pipeline-stage">
+                            <div class="icon">🧠</div>
+                            <h4>Process</h4>
+                            <p>LLM understanding</p>
+                        </div>
+                        <div class="pipeline-arrow">→</div>
+                        <div class="pipeline-stage">
+                            <div class="icon">✍️</div>
+                            <h4>Generate</h4>
+                            <p>Draft content</p>
+                        </div>
+                        <div class="pipeline-arrow">→</div>
+                        <div class="pipeline-stage">
+                            <div class="icon">🔄</div>
+                            <h4>Refine</h4>
+                            <p>Your edits + feedback</p>
+                        </div>
+                        <div class="pipeline-arrow">→</div>
+                        <div class="pipeline-stage">
+                            <div class="icon">✅</div>
+                            <h4>Output</h4>
+                            <p>Final document</p>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>Remember:</strong> AI is a powerful assistant, not a replacement for human judgment. Always review, verify facts, and add your expertise.
+                    </div>
+            <div class="slide-number">6</div>
+        </div>
+        
+        <div class="slide">
+            <h2>AI Strengths & Limitations</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--accent-green);">AI Excels At</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Generating structured content</li>
+                                <li>Maintaining consistent tone</li>
+                                <li>Summarizing complex information</li>
+                                <li>Following templates precisely</li>
+                                <li>Suggesting alternative phrasings</li>
+                                <li>Expanding bullet points to prose</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-orange);">Requires Human Review</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Factual accuracy verification</li>
+                                <li>Company-specific details</li>
+                                <li>Strategic positioning</li>
+                                <li>Pricing and commitments</li>
+                                <li>Legal/compliance language</li>
+                                <li>Sensitive relationship context</li>
+                            </ul>
+                        </div>
+                    </div>
+            <div class="slide-number">7</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Available AI Tools</h2>
+                    <div class="three-column">
+                        <div class="card">
+                            <h4>General LLMs</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>ChatGPT / GPT-4</li>
+                                <li>Claude</li>
+                                <li>Google Gemini</li>
+                                <li>Microsoft Copilot</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: #888; margin-top: 10px;">Best for: Flexible drafting</p>
+                        </div>
+                        <div class="card">
+                            <h4>Integrated Tools</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Microsoft 365 Copilot</li>
+                                <li>Google Workspace AI</li>
+                                <li>Notion AI</li>
+                                <li>Grammarly</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: #888; margin-top: 10px;">Best for: In-app assistance</p>
+                        </div>
+                        <div class="card">
+                            <h4>Specialized Tools</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Jasper (marketing)</li>
+                                <li>Copy.ai</li>
+                                <li>Proposal software</li>
+                                <li>Industry-specific</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: #888; margin-top: 10px;">Best for: Specific workflows</p>
+                        </div>
+                    </div>
+            <div class="slide-number">8</div>
+        </div>
+        
+        <div class="slide">
+            <h2>The WRITE Framework</h2>
+                    <p>A structured approach to AI-assisted document creation</p>
+                    <div class="write-circle" style="margin-top: 20px;">
+                        <div class="write-center">WRITE</div>
+                        <div class="write-item">
+                            <span>W</span>
+                            <span>What & Why</span>
+                        </div>
+                        <div class="write-item">
+                            <span>R</span>
+                            <span>Requirements</span>
+                        </div>
+                        <div class="write-item">
+                            <span>I</span>
+                            <span>Information</span>
+                        </div>
+                        <div class="write-item">
+                            <span>T</span>
+                            <span>Tone & Template</span>
+                        </div>
+                        <div class="write-item">
+                            <span>E</span>
+                            <span>Examples</span>
+                        </div>
+                    </div>
+            <div class="slide-number">9</div>
+        </div>
+        
+        <div class="slide">
+            <h2>W - What & Why</h2>
+                    <div style="text-align: left;">
+                        <div class="framework-step">
+                            <div class="step-number">1</div>
+                            <div><strong>Document Type:</strong> What are you creating? (proposal, report, summary)</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">2</div>
+                            <div><strong>Purpose:</strong> What should this document achieve?</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">3</div>
+                            <div><strong>Audience:</strong> Who will read this? What do they need?</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">4</div>
+                            <div><strong>Outcome:</strong> What action should the reader take?</div>
+                        </div>
+                    </div>
+                    <div class="prompt-example" style="margin-top: 20px;">
+                        <strong style="color: var(--itag-light);">Example:</strong><br>
+                        "I need to write a <span style="color: var(--accent-green);">business proposal</span> for <span style="color: var(--accent-green);">a mid-sized healthcare company</span> to convince them to <span style="color: var(--accent-green);">implement our data analytics platform</span>. The primary reader is the <span style="color: var(--accent-green);">CTO</span> who needs to <span style="color: var(--accent-green);">approve the budget</span>."
+                    </div>
+            <div class="slide-number">10</div>
+        </div>
+        
+        <div class="slide">
+            <h2>R - Requirements</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Structural Requirements</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Required sections/headings</li>
+                                <li>Page/word count limits</li>
+                                <li>Format specifications</li>
+                                <li>Mandatory inclusions</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Compliance Requirements</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Legal disclaimers</li>
+                                <li>Regulatory language</li>
+                                <li>Brand guidelines</li>
+                                <li>Approval workflows</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="prompt-example" style="margin-top: 20px;">
+                        <strong style="color: var(--itag-light);">Example:</strong><br>
+                        "The proposal must include: Executive Summary, Problem Statement, Proposed Solution, Implementation Timeline, Pricing, and Terms. Maximum 10 pages. Must include GDPR compliance statement and standard liability disclaimer."
+                    </div>
+            <div class="slide-number">11</div>
+        </div>
+        
+        <div class="slide">
+            <h2>I - Information</h2>
+                    <p>Provide the AI with relevant context and data</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div class="card">
+                            <h4>Client/Audience Info</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Company background</li>
+                                <li>Current challenges</li>
+                                <li>Previous interactions</li>
+                                <li>Decision criteria</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Your Offering Info</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Product/service details</li>
+                                <li>Key differentiators</li>
+                                <li>Relevant case studies</li>
+                                <li>Pricing structure</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Pro Tip:</strong> The more specific context you provide, the more tailored and accurate the output will be.
+                    </div>
+            <div class="slide-number">12</div>
+        </div>
+        
+        <div class="slide">
+            <h2>T - Tone & Template</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Tone Descriptors</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Professional</strong> - formal, corporate</li>
+                                <li><strong>Consultative</strong> - advisory, expert</li>
+                                <li><strong>Persuasive</strong> - compelling, urgent</li>
+                                <li><strong>Technical</strong> - detailed, precise</li>
+                                <li><strong>Accessible</strong> - clear, jargon-free</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Template Elements</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Document structure</li>
+                                <li>Section order</li>
+                                <li>Standard language blocks</li>
+                                <li>Formatting conventions</li>
+                                <li>Visual elements</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="prompt-example" style="margin-top: 20px;">
+                        <strong style="color: var(--itag-light);">Example:</strong><br>
+                        "Use a professional but approachable tone. Write in active voice. Keep sentences concise (max 25 words). Use bullet points for lists. Follow our standard proposal template with blue headers and grey body text."
+                    </div>
+            <div class="slide-number">13</div>
+        </div>
+        
+        <div class="slide">
+            <h2>E - Examples</h2>
+                    <p>Show the AI what good looks like</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div class="card">
+                            <h4>What to Include</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Excerpts from winning proposals</li>
+                                <li>Approved language samples</li>
+                                <li>Style guide references</li>
+                                <li>Successful document sections</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>How to Use</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>"Write in this style: [example]"</li>
+                                <li>"Match this tone: [example]"</li>
+                                <li>"Structure like this: [example]"</li>
+                                <li>"Avoid this approach: [example]"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Best Practice:</strong> Build a library of approved examples for different document types that you can quickly reference.
+                    </div>
+            <div class="slide-number">14</div>
+        </div>
+        
+        <div class="slide">
+            <h2>What Are Guardrails?</h2>
+                    <div class="guardrails-container">
+                        <div class="shield">
+                            <div class="shield-icon">🛡️</div>
+                            <div class="shield-text">Guardrails</div>
+                        </div>
+                        <div class="guardrail-list">
+                            <div class="guardrail-item">
+                                <span class="guardrail-icon">✅</span>
+                                <span><strong>Quality Standards</strong> - Ensure output meets expectations</span>
+                            </div>
+                            <div class="guardrail-item">
+                                <span class="guardrail-icon">⚖️</span>
+                                <span><strong>Compliance Rules</strong> - Meet regulatory requirements</span>
+                            </div>
+                            <div class="guardrail-item">
+                                <span class="guardrail-icon">🎯</span>
+                                <span><strong>Consistency Checks</strong> - Maintain brand voice</span>
+                            </div>
+                            <div class="guardrail-item">
+                                <span class="guardrail-icon">🔒</span>
+                                <span><strong>Security Boundaries</strong> - Protect sensitive info</span>
+                            </div>
+                            <div class="guardrail-item">
+                                <span class="guardrail-icon">📋</span>
+                                <span><strong>Review Workflows</strong> - Approval processes</span>
+                            </div>
+                        </div>
+                    </div>
+            <div class="slide-number">15</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Quality Guardrails</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Built into Prompts</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Specify required sections</li>
+                                <li>Define minimum detail level</li>
+                                <li>Request fact-checking flags</li>
+                                <li>Ask for source citations</li>
+                                <li>Include quality criteria</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Post-Generation Checks</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Completeness review</li>
+                                <li>Accuracy verification</li>
+                                <li>Readability scoring</li>
+                                <li>Grammar/style check</li>
+                                <li>Peer review step</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="prompt-example" style="margin-top: 20px;">
+                        <strong style="color: var(--itag-light);">Quality Guardrail Prompt:</strong><br>
+                        "Before finalizing, verify that: (1) All required sections are complete, (2) No placeholder text remains, (3) All claims have supporting evidence, (4) Numbers and dates are marked for verification, (5) Tone is consistent throughout."
+                    </div>
+            <div class="slide-number">16</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Compliance Guardrails</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Compliance Area</th>
+                            <th>Guardrail Approach</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Legal Disclaimers</strong></td>
+                            <td>Pre-approved text blocks that must be included verbatim</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Privacy (GDPR)</strong></td>
+                            <td>Checklist of required privacy statements; sensitive data handling</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Industry Regulations</strong></td>
+                            <td>Sector-specific language requirements; prohibited claims</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Contract Terms</strong></td>
+                            <td>Standard T&Cs that cannot be modified; approval triggers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Brand Guidelines</strong></td>
+                            <td>Approved terminology; prohibited phrases; tone standards</td>
+                        </tr>
+                    </table>
+                    <div class="warning-box" style="margin-top: 15px;">
+                        <strong>Critical:</strong> Never let AI generate or modify legal, contractual, or compliance language without expert review.
+                    </div>
+            <div class="slide-number">17</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Consistency Guardrails</h2>
+                    <div class="three-column">
+                        <div class="card">
+                            <h4>Terminology</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Product names</li>
+                                <li>Feature descriptions</li>
+                                <li>Technical terms</li>
+                                <li>Company naming</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Voice & Style</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Brand personality</li>
+                                <li>Writing conventions</li>
+                                <li>Formatting rules</li>
+                                <li>Visual standards</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Messaging</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Value propositions</li>
+                                <li>Key differentiators</li>
+                                <li>Approved claims</li>
+                                <li>Competitive positioning</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Pro Tip:</strong> Create a "style guide prompt" that you prepend to all document generation requests to ensure consistency.
+                    </div>
+            <div class="slide-number">18</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Security Guardrails</h2>
+                    <div class="two-column">
+                        <div class="card" style="border-left-color: #ff6666;">
+                            <h4 style="color: #ff6666;">Never Share with AI</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Customer personal data</li>
+                                <li>Financial details</li>
+                                <li>Passwords/credentials</li>
+                                <li>Confidential strategy</li>
+                                <li>Trade secrets</li>
+                                <li>Unreleased product info</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4 style="color: var(--accent-green);">Safe to Share</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Public company info</li>
+                                <li>General requirements</li>
+                                <li>Anonymized examples</li>
+                                <li>Generic templates</li>
+                                <li>Published case studies</li>
+                                <li>Standard procedures</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>Security Rule:</strong> When in doubt, anonymize or generalize. Replace specific names, numbers, and details with placeholders that you fill in manually later.
+                    </div>
+            <div class="slide-number">19</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Review Workflow Guardrails</h2>
+                    <div class="pipeline">
+                        <div class="pipeline-stage">
+                            <div class="icon">✍️</div>
+                            <h4>Draft</h4>
+                            <p>AI generates</p>
+                        </div>
+                        <div class="pipeline-arrow">→</div>
+                        <div class="pipeline-stage">
+                            <div class="icon">👤</div>
+                            <h4>Self-Review</h4>
+                            <p>Author checks</p>
+                        </div>
+                        <div class="pipeline-arrow">→</div>
+                        <div class="pipeline-stage">
+                            <div class="icon">👥</div>
+                            <h4>Peer Review</h4>
+                            <p>Colleague checks</p>
+                        </div>
+                        <div class="pipeline-arrow">→</div>
+                        <div class="pipeline-stage">
+                            <div class="icon">✅</div>
+                            <h4>Approval</h4>
+                            <p>Manager sign-off</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Best Practice:</strong> Use AI to generate a review checklist specific to each document type. Include it with every draft for reviewers.
+                    </div>
+            <div class="slide-number">20</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Prompt Engineering Essentials</h2>
+                    <p>Crafting effective prompts for document generation</p>
+                    <div class="technique-cards" style="margin-top: 30px;">
+                        <div class="technique-card">
+                            <div class="icon">🎯</div>
+                            <h4>Be Specific</h4>
+                            <p>Clear instructions = better output</p>
+                        </div>
+                        <div class="technique-card">
+                            <div class="icon">📋</div>
+                            <h4>Structure It</h4>
+                            <p>Break into sections</p>
+                        </div>
+                        <div class="technique-card">
+                            <div class="icon">🔄</div>
+                            <h4>Iterate</h4>
+                            <p>Refine through feedback</p>
+                        </div>
+                        <div class="technique-card">
+                            <div class="icon">📚</div>
+                            <h4>Context Is Key</h4>
+                            <p>More info = better results</p>
+                        </div>
+                    </div>
+            <div class="slide-number">21</div>
+        </div>
+        
+        <div class="slide">
+            <h2>The Proposal Prompt Template</h2>
+                    <div class="prompt-example" style="font-size: 0.7em;">
+<strong style="color: var(--accent-green);"># ROLE</strong>
+You are an expert business proposal writer with 15 years of experience in [INDUSTRY].
+
+<strong style="color: var(--accent-green);"># TASK</strong>
+Write a compelling proposal for [CLIENT NAME] to [OBJECTIVE].
+
+<strong style="color: var(--accent-green);"># CONTEXT</strong>
+- Client: [Company description, size, industry]
+- Challenge: [Their specific problem/need]
+- Our Solution: [What we're proposing]
+- Budget Range: [If known]
+- Timeline: [Expected delivery]
+
+<strong style="color: var(--accent-green);"># REQUIREMENTS</strong>
+Include these sections:
+1. Executive Summary (max 200 words)
+2. Understanding of Needs
+3. Proposed Solution
+4. Implementation Approach
+5. Timeline & Milestones
+6. Investment & ROI
+7. Why Choose Us
+8. Next Steps
+
+<strong style="color: var(--accent-green);"># STYLE</strong>
+- Professional but approachable tone
+- Active voice
+- Quantify benefits where possible
+- Include call-to-action in each section
+                    </div>
+            <div class="slide-number">22</div>
+        </div>
+        
+        <div class="slide">
+            <h2>The Report Prompt Template</h2>
+                    <div class="prompt-example" style="font-size: 0.7em;">
+<strong style="color: var(--accent-green);"># ROLE</strong>
+You are a senior analyst preparing a [TYPE] report for [AUDIENCE LEVEL] readers.
+
+<strong style="color: var(--accent-green);"># TASK</strong>
+Create a comprehensive report on [TOPIC] covering [TIME PERIOD].
+
+<strong style="color: var(--accent-green);"># DATA & INPUTS</strong>
+[Paste relevant data, metrics, observations, or findings here]
+
+<strong style="color: var(--accent-green);"># STRUCTURE</strong>
+1. Executive Summary (key findings in 3 bullets)
+2. Background/Context
+3. Methodology (if applicable)
+4. Key Findings (with supporting data)
+5. Analysis & Implications
+6. Recommendations
+7. Appendix (detailed data)
+
+<strong style="color: var(--accent-green);"># GUIDELINES</strong>
+- Lead with insights, not data
+- Use charts/tables where helpful (describe what to visualize)
+- Highlight risks and opportunities
+- Include confidence levels for projections
+- Flag items needing verification with [VERIFY]
+                    </div>
+            <div class="slide-number">23</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Iterative Refinement Prompts</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Expand & Enrich</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>"Expand section 3 with more detail on implementation"</li>
+                                <li>"Add specific examples to support the key claims"</li>
+                                <li>"Include industry statistics to strengthen the argument"</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Refine & Tighten</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>"Shorten the executive summary to 150 words"</li>
+                                <li>"Make the tone more confident and direct"</li>
+                                <li>"Remove jargon and simplify for non-technical readers"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Power Move:</strong> After generating a draft, ask AI to "Review this document and identify 5 ways to make it more compelling and persuasive."
+                    </div>
+            <div class="slide-number">24</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Section-by-Section Generation</h2>
+                    <p>For complex documents, build piece by piece</p>
+                    <div style="text-align: left; margin-top: 20px;">
+                        <div class="framework-step">
+                            <div class="step-number">1</div>
+                            <div><strong>Outline First:</strong> "Create a detailed outline for a proposal about [X]"</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">2</div>
+                            <div><strong>Generate Sections:</strong> "Now write section 2: Understanding of Needs"</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">3</div>
+                            <div><strong>Review & Refine:</strong> "Make this section more specific to healthcare"</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">4</div>
+                            <div><strong>Assemble & Polish:</strong> "Review all sections for consistency and flow"</div>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Why This Works:</strong> Keeps context focused, allows for targeted refinement, and maintains quality across longer documents.
+                    </div>
+            <div class="slide-number">25</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Live Demo</h2>
+                    <h3 style="color: var(--accent-green);">Building a Proposal with AI</h3>
+                    <div class="two-column" style="margin-top: 40px;">
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>What We'll Create</h4>
+                            <ul>
+                                <li>A consulting services proposal</li>
+                                <li>For a fictional client</li>
+                                <li>Using the WRITE framework</li>
+                                <li>With guardrails in place</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-purple);">
+                            <h4>Tools We'll Use</h4>
+                            <ul>
+                                <li>ChatGPT or Claude</li>
+                                <li>Structured prompts</li>
+                                <li>Iterative refinement</li>
+                                <li>Quality checklist</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p style="margin-top: 30px; color: var(--accent-green);">Follow along or watch - we'll share the prompts!</p>
+            <div class="slide-number">26</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Demo Step 1: Set the Context</h2>
+                    <div class="prompt-example" style="font-size: 0.75em;">
+<strong style="color: var(--accent-green);">CONTEXT PROMPT:</strong>
+
+I need to create a business proposal. Here's the context:
+
+<strong>Client:</strong> TechFlow Solutions - a 200-person software company struggling with data silos and manual reporting processes. They spend 20+ hours/week on manual data consolidation.
+
+<strong>Our Company:</strong> DataBridge Consulting - we specialize in data integration and automation solutions. We've helped similar companies reduce reporting time by 80%.
+
+<strong>Opportunity:</strong> They need a data integration platform and consulting services to unify their systems and automate reporting.
+
+<strong>Budget:</strong> Approximately €75,000
+<strong>Timeline:</strong> 3-month implementation
+
+Please acknowledge this context and let me know when you're ready to help draft the proposal.
+                    </div>
+            <div class="slide-number">27</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Demo Step 2: Generate Outline</h2>
+                    <div class="prompt-example" style="font-size: 0.75em;">
+<strong style="color: var(--accent-green);">OUTLINE PROMPT:</strong>
+
+Based on the context provided, create a detailed outline for a compelling proposal.
+
+Include these required sections:
+1. Executive Summary
+2. Understanding TechFlow's Challenges
+3. Proposed Solution
+4. Implementation Approach & Timeline
+5. Investment & Expected ROI
+6. Why DataBridge
+7. Next Steps
+
+For each section, include:
+- Main points to cover
+- Key messages to emphasize
+- Approximate word count
+
+Make it persuasive and focused on their specific pain points around data silos and manual reporting.
+                    </div>
+            <div class="slide-number">28</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Demo Step 3: Generate Key Section</h2>
+                    <div class="prompt-example" style="font-size: 0.75em;">
+<strong style="color: var(--accent-green);">SECTION PROMPT:</strong>
+
+Now write section 3: Proposed Solution
+
+Guidelines:
+- Start with a clear overview of the solution
+- Break into 3-4 key components
+- For each component, explain WHAT it is and WHY it matters to TechFlow
+- Include specific benefits with quantified outcomes where possible
+- Reference their specific challenges (data silos, 20+ hours manual work)
+- Use professional but accessible language
+- Include a brief mention of technology/approach without being overly technical
+- End with a transition to implementation
+
+Target: 400-500 words
+Tone: Consultative, confident, solution-focused
+                    </div>
+            <div class="slide-number">29</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Demo Step 4: Apply Guardrails</h2>
+                    <div class="prompt-example" style="font-size: 0.75em;">
+<strong style="color: var(--accent-green);">GUARDRAILS CHECK PROMPT:</strong>
+
+Review the proposal section you just created and verify:
+
+<strong>Quality Guardrails:</strong>
+□ All claims are supportable (flag any that need evidence)
+□ No vague language ("significant improvement" → specific %)
+□ Benefits clearly tied to their stated challenges
+□ No technical jargon without explanation
+
+<strong>Consistency Guardrails:</strong>
+□ Client name used correctly throughout
+□ Tone is consistent (professional, consultative)
+□ Our company positioning aligns with "trusted advisor"
+
+<strong>Compliance Guardrails:</strong>
+□ No guarantees that could be construed as contractual
+□ No specific SLAs without [VERIFY] flag
+□ ROI projections marked as estimates
+
+List any issues found and suggest corrections.
+                    </div>
+            <div class="slide-number">30</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Demo Step 5: Final Polish</h2>
+                    <div class="prompt-example" style="font-size: 0.75em;">
+<strong style="color: var(--accent-green);">POLISH PROMPT:</strong>
+
+Now that we have the main content, please:
+
+1. Write a compelling Executive Summary (150 words max) that:
+   - Opens with their key challenge
+   - Summarizes our solution in one sentence
+   - Highlights the main benefit (quantified)
+   - Ends with a confident next step
+
+2. Create a "Why DataBridge" section (200 words) focusing on:
+   - Relevant experience with similar companies
+   - Specific differentiators
+   - Risk mitigation (how we ensure success)
+
+3. Draft the "Next Steps" section with:
+   - Clear call to action
+   - Proposed timeline for decision
+   - Contact information placeholder [INSERT CONTACT]
+   - Meeting request
+
+Keep the consultative tone throughout.
+                    </div>
+            <div class="slide-number">31</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Key Takeaways</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">The WRITE Framework</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>W</strong>hat & Why - Purpose & audience</li>
+                                <li><strong>R</strong>equirements - Structure & compliance</li>
+                                <li><strong>I</strong>nformation - Context & data</li>
+                                <li><strong>T</strong>one & Template - Style guide</li>
+                                <li><strong>E</strong>xamples - Show good output</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Guardrails Matter</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Quality - Completeness & accuracy</li>
+                                <li>Compliance - Legal & regulatory</li>
+                                <li>Consistency - Brand & voice</li>
+                                <li>Security - Sensitive data</li>
+                                <li>Review - Approval workflows</li>
+                            </ul>
+                        </div>
+                    </div>
+            <div class="slide-number">32</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Your Action Plan</h2>
+                    <div style="text-align: left; max-width: 700px; margin: 0 auto;">
+                        <div class="framework-step">
+                            <div class="step-number" style="background: var(--accent-green);">1</div>
+                            <div><strong>This Week:</strong> Create a WRITE framework template for your most common document type</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number" style="background: var(--itag-blue);">2</div>
+                            <div><strong>Next Week:</strong> Build your guardrails checklist (quality, compliance, consistency)</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number" style="background: var(--accent-purple);">3</div>
+                            <div><strong>Week 3:</strong> Collect 3-5 examples of excellent documents for your prompt library</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number" style="background: var(--accent-orange);">4</div>
+                            <div><strong>Ongoing:</strong> Track time saved and quality improvements to build the business case</div>
+                        </div>
+                    </div>
+            <div class="slide-number">33</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Resources & Next Steps</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Take-Home Materials</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>WRITE Framework Template</li>
+                                <li>Guardrails Checklist</li>
+                                <li>Prompt Library Starter</li>
+                                <li>Practice Exercise</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Continue Learning</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>ITAG AI Advantage Programs</li>
+                                <li>AI Writing Communities</li>
+                                <li>Tool-specific tutorials</li>
+                                <li>Industry best practices</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>Remember:</strong> Start small, build confidence, then scale. Your first AI-assisted document might take longer as you learn - but it gets dramatically faster!
+                    </div>
+            <div class="slide-number">34</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Questions & Discussion</h2>
+                    <div style="margin-top: 50px;">
+                        <p style="font-size: 1.3em; color: var(--itag-light);">What document would you like to accelerate first?</p>
+                        <p style="margin-top: 30px; color: #888;">Share your challenges - we'll problem-solve together!</p>
+                    </div>
+                    <div style="margin-top: 50px; padding: 20px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 10px;">
+                        <p style="margin: 0; font-size: 0.9em;">
+                            <strong style="color: var(--itag-light);">ITAG Skillnet AI Advantage</strong><br>
+                            <span style="color: #888;">Empowering Irish businesses with practical AI skills</span>
+                        </p>
+                    </div>
+            <div class="slide-number">35</div>
+        </div>
+        
+        <div class="slide">
+            <h1>Thank You!</h1>
+                    <h3 style="color: var(--accent-green);">Go Write Faster - With Guardrails!</h3>
+                    <p style="margin-top: 50px; color: #888;">
+                        Proposal & Report Accelerator<br>
+                        ITAG Skillnet AI Advantage
+                    </p>
+                    <p style="margin-top: 30px; font-size: 0.8em; color: #666;">
+                        Connect with us for more AI training programs
+                    </p>
+            <div class="slide-number">36</div>
+        </div>
+        
+</body>
+</html>

@@ -16,3 +16,8 @@ venv/
 
 # User workspaces (generated data)
 src/workspaces/
+
+# Environment variables (secrets)
+.env
+.env.local
+.env.*.local

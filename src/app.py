@@ -14,7 +14,11 @@ import io
 from datetime import datetime, timedelta
 from functools import wraps
 import secrets
+from dotenv import load_dotenv
 from kernel_manager import kernel_pool
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = secrets.token_hex(32)
@@ -254,10 +258,26 @@ def init_db():
             session_id TEXT NOT NULL,
             poll_id TEXT NOT NULL,
             technical_level TEXT,
+            use_cases TEXT,
             ai_tools_used TEXT,
             submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
+
+    # Migration: Add use_cases column if it doesn't exist
+    try:
+        db.execute('SELECT use_cases FROM poll_responses LIMIT 1')
+    except:
+        db.execute('ALTER TABLE poll_responses ADD COLUMN use_cases TEXT')
+
+    # Create default admin user if not exists
+    existing = db.execute('SELECT id FROM users WHERE username = ?', ('bbrelin',)).fetchone()
+    if not existing:
+        db.execute(
+            'INSERT INTO users (username, email, password_hash, full_name, role) VALUES (?, ?, ?, ?, ?)',
+            ('bbrelin', 'bbrelin@ai-elevate.ai', generate_password_hash('f00bar123!'), 'Braun Brelin', 'instructor')
+        )
+
     db.commit()
     db.close()
 
@@ -552,6 +572,68 @@ COURSES = {
                 "title": "Take-Home Exercise",
                 "items": [
                     {"id": "ucp-exercise", "name": "Take-Home Practice Exercise (PDF)", "file": "use-case-prompting-seminar/take-home-exercise.pdf", "type": "notes", "printable": True},
+                ]
+            }
+        }
+    },
+    "ai-copilot-seminar": {
+        "id": "ai-copilot-seminar",
+        "name": "Build Your Own AI Copilot",
+        "description": "90-minute seminar on turning your content into an AI-powered assistant using RAG and knowledge bases",
+        "icon": "🤖",
+        "duration": "90 minutes",
+        "category": "itag-skillnet",
+        "sections": {
+            "workshop": {
+                "title": "Workshop Materials",
+                "items": [
+                    {"id": "aic-slides", "name": "Presentation Slides", "file": "ai-copilot-seminar/ai-copilot-slides.html", "type": "slides"},
+                    {"id": "aic-pdf", "name": "Slides (PDF Download)", "file": "ai-copilot-seminar/ai-copilot-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "demo": {
+                "title": "Interactive Demo",
+                "items": [
+                    {"id": "aic-rag-demo", "name": "RAG Simulator (Interactive)", "file": "ai-copilot-seminar/demo/index.html", "type": "demo", "external": True},
+                    {"id": "aic-poll", "name": "Audience Poll (AI Experience)", "file": "use-case-prompting-seminar/demo/poll.html", "type": "demo", "external": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "aic-notes", "name": "Student Notes", "file": "ai-copilot-seminar/student-notes.html", "type": "notes"},
+                    {"id": "aic-demo-guide", "name": "Instructor Demo Guide", "file": "ai-copilot-seminar/interactive-demo-guide.html", "type": "notes"},
+                    {"id": "aic-exercise", "name": "Take-Home Exercise (PDF)", "file": "ai-copilot-seminar/take-home-exercise.pdf", "type": "notes", "printable": True},
+                ]
+            }
+        }
+    },
+    "proposal-report-accelerator": {
+        "id": "proposal-report-accelerator",
+        "name": "Proposal & Report Accelerator",
+        "description": "90-minute seminar on using AI to write proposals and reports faster while maintaining quality, compliance, and consistency",
+        "icon": "📝",
+        "duration": "90 minutes",
+        "category": "itag-skillnet",
+        "sections": {
+            "workshop": {
+                "title": "Workshop Materials",
+                "items": [
+                    {"id": "pra-slides", "name": "Presentation Slides", "file": "proposal-report-accelerator/proposal-report-accelerator-slides.html", "type": "slides"},
+                    {"id": "pra-pdf", "name": "Slides (PDF Download)", "file": "proposal-report-accelerator/proposal-report-accelerator-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "demo": {
+                "title": "Interactive Demo",
+                "items": [
+                    {"id": "pra-prompt-builder", "name": "WRITE Framework Prompt Builder (Interactive)", "file": "proposal-report-accelerator/demo/index.html", "type": "demo", "external": True},
+                    {"id": "pra-poll", "name": "Audience Poll (AI Experience)", "file": "use-case-prompting-seminar/demo/poll.html", "type": "demo", "external": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "pra-notes", "name": "Student Notes", "file": "proposal-report-accelerator/student-notes.html", "type": "notes"},
                 ]
             }
         }
@@ -1443,6 +1525,160 @@ def openai_proxy():
     except Exception as e:
         return jsonify({'error': {'message': str(e)}}), 500
 
+
+@app.route('/api/generate-report', methods=['POST'])
+def generate_report():
+    """Generate a report/proposal using AI based on the WRITE framework prompt"""
+    import urllib.request
+    import urllib.error
+
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    prompt = data.get('prompt')
+    if not prompt:
+        return jsonify({'error': 'No prompt provided'}), 400
+
+    model = data.get('model', 'gpt-5.2')
+    doc_type = data.get('doc_type', 'proposal')
+
+    # Check for API key in environment or request
+    api_key = os.environ.get('OPENAI_API_KEY') or data.get('api_key')
+    anthropic_key = os.environ.get('ANTHROPIC_API_KEY') or data.get('anthropic_key')
+
+    # Determine which API to use based on model selection
+    if model.startswith('claude') and anthropic_key:
+        # Use Anthropic API
+        return _generate_with_anthropic(prompt, model, anthropic_key, doc_type)
+    elif api_key:
+        # Use OpenAI API
+        return _generate_with_openai(prompt, model, api_key, doc_type)
+    else:
+        return jsonify({'error': 'No API key configured. Set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable, or provide api_key in the request.'}), 400
+
+
+def _generate_with_openai(prompt, model, api_key, doc_type):
+    """Generate report using OpenAI API"""
+    import urllib.request
+    import urllib.error
+
+    selected_model = model if model in ['gpt-5.2', 'gpt-4', 'gpt-3.5-turbo', 'gpt-4o'] else 'gpt-5.2'
+
+    openai_payload = {
+        'model': selected_model,
+        'messages': [
+            {
+                'role': 'system',
+                'content': f'You are an expert {doc_type} writer. Generate professional, well-structured documents based on the provided requirements.'
+            },
+            {
+                'role': 'user',
+                'content': prompt
+            }
+        ],
+        'temperature': 0.7
+    }
+
+    # GPT-5.2 uses max_completion_tokens, older models use max_tokens
+    if selected_model == 'gpt-5.2':
+        openai_payload['max_completion_tokens'] = 4000
+    else:
+        openai_payload['max_tokens'] = 4000
+
+    try:
+        req = urllib.request.Request(
+            'https://api.openai.com/v1/chat/completions',
+            data=json.dumps(openai_payload).encode('utf-8'),
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_key}'
+            }
+        )
+
+        with urllib.request.urlopen(req, timeout=120) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            content = result.get('choices', [{}])[0].get('message', {}).get('content', '')
+            return jsonify({
+                'report': content,
+                'model': model,
+                'doc_type': doc_type
+            })
+
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode('utf-8')
+        try:
+            error_json = json.loads(error_body)
+            return jsonify({'error': error_json.get('error', {}).get('message', 'API error')}), e.code
+        except:
+            return jsonify({'error': error_body}), e.code
+    except urllib.error.URLError as e:
+        return jsonify({'error': f'Network error: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+def _generate_with_anthropic(prompt, model, api_key, doc_type):
+    """Generate report using Anthropic API"""
+    import urllib.request
+    import urllib.error
+
+    # Map model names to Anthropic model IDs
+    model_map = {
+        'claude-3': 'claude-3-sonnet-20240229',
+        'claude-2': 'claude-2.1',
+        'claude-3-opus': 'claude-3-opus-20240229',
+        'claude-3-sonnet': 'claude-3-sonnet-20240229',
+        'claude-3-haiku': 'claude-3-haiku-20240307'
+    }
+
+    anthropic_model = model_map.get(model, 'claude-3-sonnet-20240229')
+
+    anthropic_payload = {
+        'model': anthropic_model,
+        'max_tokens': 4000,
+        'messages': [
+            {
+                'role': 'user',
+                'content': prompt
+            }
+        ],
+        'system': f'You are an expert {doc_type} writer. Generate professional, well-structured documents based on the provided requirements.'
+    }
+
+    try:
+        req = urllib.request.Request(
+            'https://api.anthropic.com/v1/messages',
+            data=json.dumps(anthropic_payload).encode('utf-8'),
+            headers={
+                'Content-Type': 'application/json',
+                'x-api-key': api_key,
+                'anthropic-version': '2023-06-01'
+            }
+        )
+
+        with urllib.request.urlopen(req, timeout=120) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            content = result.get('content', [{}])[0].get('text', '')
+            return jsonify({
+                'report': content,
+                'model': model,
+                'doc_type': doc_type
+            })
+
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode('utf-8')
+        try:
+            error_json = json.loads(error_body)
+            return jsonify({'error': error_json.get('error', {}).get('message', 'API error')}), e.code
+        except:
+            return jsonify({'error': error_body}), e.code
+    except urllib.error.URLError as e:
+        return jsonify({'error': f'Network error: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 # ============================================================================
 # Content Serving (Sandboxed)
 # ============================================================================
@@ -1461,7 +1697,8 @@ def serve_content(filename):
 
         # Only serve allowed file types
         allowed_extensions = {'.html', '.css', '.js', '.png', '.jpg', '.jpeg',
-                             '.gif', '.svg', '.ico', '.pdf', '.ipynb', '.json', '.md', '.csv'}
+                             '.gif', '.svg', '.ico', '.pdf', '.ipynb', '.json', '.md', '.csv',
+                             '.mp4', '.webm', '.ogg', '.mp3', '.wav'}
         _, ext = os.path.splitext(safe_path)
         if ext.lower() not in allowed_extensions:
             return jsonify({'error': 'File type not allowed'}), 403
@@ -1551,6 +1788,7 @@ def submit_poll_response(poll_id):
 
     session_id = data.get('session_id', '')
     technical_level = data.get('technical_level', '')
+    use_cases = data.get('use_cases', [])
     ai_tools = data.get('ai_tools', [])
 
     # Validate technical_level (allow "other" or "other: text")
@@ -1561,6 +1799,11 @@ def submit_poll_response(poll_id):
     if len(technical_level) > 200:
         technical_level = technical_level[:200]
 
+    # Validate use_cases (list of strings)
+    if not isinstance(use_cases, list):
+        return jsonify({'error': 'use_cases must be a list'}), 400
+    use_cases_str = ','.join([str(u)[:50] for u in use_cases[:20]])  # Limit
+
     # Validate ai_tools (list of strings)
     if not isinstance(ai_tools, list):
         return jsonify({'error': 'ai_tools must be a list'}), 400
@@ -1568,9 +1811,9 @@ def submit_poll_response(poll_id):
 
     db = get_db()
     db.execute(
-        '''INSERT INTO poll_responses (session_id, poll_id, technical_level, ai_tools_used)
-           VALUES (?, ?, ?, ?)''',
-        (session_id, poll_id, technical_level, ai_tools_str)
+        '''INSERT INTO poll_responses (session_id, poll_id, technical_level, use_cases, ai_tools_used)
+           VALUES (?, ?, ?, ?, ?)''',
+        (session_id, poll_id, technical_level, use_cases_str, ai_tools_str)
     )
     db.commit()
     db.close()
@@ -1593,6 +1836,7 @@ def get_poll_results(poll_id):
 
     # Aggregate results
     technical_counts = {'none': 0, 'beginner': 0, 'intermediate': 0, 'advanced': 0, 'expert': 0}
+    use_case_counts = {}
     tool_counts = {}
     total = len(responses)
 
@@ -1600,6 +1844,13 @@ def get_poll_results(poll_id):
         level = r['technical_level']
         if level in technical_counts:
             technical_counts[level] += 1
+
+        # Aggregate use cases
+        use_cases = r['use_cases'].split(',') if r.get('use_cases') else []
+        for use_case in use_cases:
+            use_case = use_case.strip()
+            if use_case:
+                use_case_counts[use_case] = use_case_counts.get(use_case, 0) + 1
 
         tools = r['ai_tools_used'].split(',') if r['ai_tools_used'] else []
         for tool in tools:
@@ -1610,6 +1861,7 @@ def get_poll_results(poll_id):
     return jsonify({
         'total_responses': total,
         'technical_levels': technical_counts,
+        'use_cases': use_case_counts,
         'ai_tools': tool_counts,
         'responses': [dict(r) for r in responses]  # Individual responses for review
     })

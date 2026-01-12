@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WRITE Framework Prompt Builder - Proposal & Report Accelerator</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --dark-bg: #1a1a2e;
+            --darker-bg: #0d1117;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--itag-blue);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--itag-light);
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #888;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .builder-panel {
+            background: var(--dark-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+
+        .output-panel {
+            background: var(--dark-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .panel-title {
+            color: var(--itag-light);
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--itag-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--itag-blue);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .section-letter {
+            width: 35px;
+            height: 35px;
+            background: var(--itag-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .section-title {
+            color: var(--itag-light);
+            font-size: 1.1em;
+        }
+
+        label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: var(--darker-bg);
+            color: #f0f0f0;
+            font-size: 0.95em;
+            font-family: inherit;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--itag-light);
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--darker-bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--itag-blue);
+        }
+
+        .checkbox-item input {
+            accent-color: var(--itag-blue);
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .output-area {
+            background: var(--darker-bg);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            color: #e0e0e0;
+        }
+
+        .output-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .output-area::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+            border-radius: 4px;
+        }
+
+        .output-area::-webkit-scrollbar-thumb {
+            background: var(--itag-blue);
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--itag-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--itag-light);
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #f0f0f0;
+            border: 1px solid #444;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #00dd77;
+        }
+
+        .btn-warning {
+            background: var(--accent-orange);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #ffaa44;
+        }
+
+        .btn-danger {
+            background: #cc3366;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dd4477;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hint {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        .doc-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .doc-type-btn {
+            flex: 1;
+            padding: 15px;
+            background: var(--darker-bg);
+            border: 2px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .doc-type-btn:hover {
+            border-color: var(--itag-blue);
+        }
+
+        .doc-type-btn.active {
+            border-color: var(--itag-light);
+            background: rgba(77, 166, 255, 0.1);
+        }
+
+        .doc-type-btn .icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .doc-type-btn .label {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .highlight {
+            color: var(--accent-green);
+        }
+
+        .section-label {
+            color: var(--itag-light);
+        }
+
+        .guardrails-box {
+            background: linear-gradient(135deg, rgba(0, 204, 102, 0.1) 0%, rgba(0, 153, 68, 0.1) 100%);
+            border: 1px solid var(--accent-green);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .guardrails-box h4 {
+            color: var(--accent-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+        }
+
+        /* Preset input styling */
+        .preset-input-group {
+            margin-bottom: 15px;
+        }
+
+        .preset-select {
+            margin-bottom: 8px;
+        }
+
+        .manual-input {
+            display: none;
+        }
+
+        .manual-input.visible {
+            display: block;
+        }
+
+        /* Generated Report Section */
+        .report-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .report-area {
+            background: var(--darker-bg);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.8;
+            color: #e0e0e0;
+        }
+
+        .report-area h1, .report-area h2, .report-area h3 {
+            color: var(--itag-light);
+            margin: 1em 0 0.5em 0;
+        }
+
+        .report-area h1 { font-size: 1.4em; }
+        .report-area h2 { font-size: 1.2em; }
+        .report-area h3 { font-size: 1.1em; }
+
+        .report-area p {
+            margin-bottom: 1em;
+        }
+
+        .report-area ul, .report-area ol {
+            margin-left: 20px;
+            margin-bottom: 1em;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .api-config {
+            background: rgba(255, 153, 51, 0.1);
+            border: 1px solid var(--accent-orange);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .api-config h4 {
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .status-badge.success { background: var(--accent-green); }
+        .status-badge.error { background: #cc3366; }
+        .status-badge.pending { background: #666; }
+
+        /* Tabs for output */
+        .output-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .output-tab {
+            padding: 8px 16px;
+            background: var(--darker-bg);
+            border: 1px solid #333;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            color: #888;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .output-tab:hover {
+            color: #f0f0f0;
+            border-color: var(--itag-blue);
+        }
+
+        .output-tab.active {
+            background: var(--dark-bg);
+            color: var(--itag-light);
+            border-color: var(--itag-blue);
+            border-bottom-color: var(--dark-bg);
+        }
+
+        .output-content {
+            display: none;
+        }
+
+        .output-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>WRITE Framework Prompt Builder</h1>
+            <p>Build structured prompts for proposals and reports</p>
+        </header>
+
+        <div class="main-content">
+            <div class="builder-panel">
+                <div class="panel-title">
+                    <span>Build Your Prompt</span>
+                </div>
+
+                <!-- Document Type Selection -->
+                <div style="margin-bottom: 25px;">
+                    <label style="margin-bottom: 15px;">Select Document Type</label>
+                    <div class="doc-type-selector">
+                        <div class="doc-type-btn active" data-type="proposal" onclick="selectDocType('proposal')">
+                            <div class="icon">📋</div>
+                            <div class="label">Proposal</div>
+                        </div>
+                        <div class="doc-type-btn" data-type="report" onclick="selectDocType('report')">
+                            <div class="icon">📊</div>
+                            <div class="label">Report</div>
+                        </div>
+                        <div class="doc-type-btn" data-type="executive" onclick="selectDocType('executive')">
+                            <div class="icon">📝</div>
+                            <div class="label">Executive Summary</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- W - What & Why -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-letter">W</div>
+                        <div class="section-title">What & Why</div>
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="purpose-select">Purpose / Objective</label>
+                        <select id="purpose-select" class="preset-select" onchange="handlePresetChange('purpose')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="Secure approval for a new technology implementation project">Secure approval for technology implementation</option>
+                            <option value="Convince stakeholders to invest in digital transformation initiatives">Convince stakeholders for digital transformation</option>
+                            <option value="Present findings and recommendations from a strategic analysis">Present strategic analysis findings</option>
+                            <option value="Propose cost reduction measures while maintaining quality">Propose cost reduction measures</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <input type="text" id="purpose" class="manual-input" placeholder="e.g., Convince them to implement our data analytics platform" oninput="generatePrompt()">
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="audience-select">Primary Audience</label>
+                        <select id="audience-select" class="preset-select" onchange="handlePresetChange('audience')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="C-Suite executives (CEO, CFO, CTO)">C-Suite executives</option>
+                            <option value="IT leadership team and technical decision makers">IT leadership team</option>
+                            <option value="Board of Directors and investors">Board of Directors</option>
+                            <option value="Department heads and middle management">Department heads</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <input type="text" id="audience" class="manual-input" placeholder="e.g., CTO and IT leadership team" oninput="generatePrompt()">
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="outcome-select">Desired Outcome</label>
+                        <select id="outcome-select" class="preset-select" onchange="handlePresetChange('outcome')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="Approve the budget and schedule project kickoff meeting">Approve budget and schedule kickoff</option>
+                            <option value="Sign contract and proceed to implementation phase">Sign contract and begin implementation</option>
+                            <option value="Accept recommendations and allocate resources for next steps">Accept recommendations</option>
+                            <option value="Schedule follow-up meeting to discuss detailed proposal">Schedule follow-up meeting</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <input type="text" id="outcome" class="manual-input" placeholder="e.g., Approve the budget and schedule kickoff meeting" oninput="generatePrompt()">
+                    </div>
+                </div>
+
+                <!-- R - Requirements -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-letter">R</div>
+                        <div class="section-title">Requirements</div>
+                    </div>
+
+                    <label>Required Sections (select all that apply)</label>
+                    <div class="checkbox-group" id="sections-proposal">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sec-exec" checked onchange="generatePrompt()">
+                            <label for="sec-exec">Executive Summary</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sec-needs" checked onchange="generatePrompt()">
+                            <label for="sec-needs">Understanding of Needs</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sec-solution" checked onchange="generatePrompt()">
+                            <label for="sec-solution">Proposed Solution</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sec-timeline" checked onchange="generatePrompt()">
+                            <label for="sec-timeline">Timeline</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sec-investment" checked onchange="generatePrompt()">
+                            <label for="sec-investment">Investment/Pricing</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sec-why" checked onchange="generatePrompt()">
+                            <label for="sec-why">Why Choose Us</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sec-next" checked onchange="generatePrompt()">
+                            <label for="sec-next">Next Steps</label>
+                        </div>
+                    </div>
+
+                    <label for="wordcount">Target Length</label>
+                    <select id="wordcount" onchange="generatePrompt()">
+                        <option value="brief">Brief (1-2 pages)</option>
+                        <option value="standard" selected>Standard (3-5 pages)</option>
+                        <option value="comprehensive">Comprehensive (6-10 pages)</option>
+                    </select>
+                </div>
+
+                <!-- I - Information -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-letter">I</div>
+                        <div class="section-title">Information</div>
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="client-name-select">Client/Company Name</label>
+                        <select id="client-name-select" class="preset-select" onchange="handlePresetChange('client-name')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="TechFlow Solutions">TechFlow Solutions</option>
+                            <option value="Global Innovations Inc.">Global Innovations Inc.</option>
+                            <option value="Meridian Healthcare Group">Meridian Healthcare Group</option>
+                            <option value="Atlas Financial Services">Atlas Financial Services</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <input type="text" id="client-name" class="manual-input" placeholder="e.g., TechFlow Solutions" oninput="generatePrompt()">
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="client-desc-select">Client Description</label>
+                        <select id="client-desc-select" class="preset-select" onchange="handlePresetChange('client-desc')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="Mid-sized technology company with 200+ employees, operating in the SaaS space with growing data management needs">Mid-sized technology company (SaaS)</option>
+                            <option value="Large healthcare organization with multiple facilities, focused on improving patient care through digital innovation">Large healthcare organization</option>
+                            <option value="Financial services firm managing assets over $500M, seeking operational efficiency improvements">Financial services firm ($500M+ AUM)</option>
+                            <option value="Manufacturing company with global operations, looking to modernize legacy systems and processes">Global manufacturing company</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <textarea id="client-desc" class="manual-input" placeholder="e.g., 200-person software company in healthcare sector, struggling with data silos and manual reporting" oninput="generatePrompt()"></textarea>
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="challenge-select">Their Challenge/Problem</label>
+                        <select id="challenge-select" class="preset-select" onchange="handlePresetChange('challenge')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="Data silos across multiple systems causing 20+ hours/week in manual reporting and reconciliation efforts">Data silos and manual reporting (20+ hrs/week)</option>
+                            <option value="Legacy systems hampering growth, with significant technical debt and integration challenges">Legacy systems and technical debt</option>
+                            <option value="Inefficient processes leading to customer dissatisfaction and competitive disadvantage">Inefficient processes affecting customer satisfaction</option>
+                            <option value="Compliance and security concerns requiring immediate attention and modernization">Compliance and security concerns</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <textarea id="challenge" class="manual-input" placeholder="e.g., Spending 20+ hours/week on manual data consolidation across 5 different systems" oninput="generatePrompt()"></textarea>
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="solution-select">Your Solution/Offering</label>
+                        <select id="solution-select" class="preset-select" onchange="handlePresetChange('solution')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="Comprehensive data integration platform with automated reporting dashboards and real-time analytics">Data integration platform with analytics</option>
+                            <option value="Cloud migration and modernization services with managed infrastructure support">Cloud migration and modernization</option>
+                            <option value="AI-powered automation solution to streamline workflows and reduce manual effort by 60%">AI-powered automation solution</option>
+                            <option value="End-to-end digital transformation consulting with implementation support">Digital transformation consulting</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <textarea id="solution" class="manual-input" placeholder="e.g., Data integration platform with automated reporting dashboards" oninput="generatePrompt()"></textarea>
+                    </div>
+
+                    <div class="preset-input-group">
+                        <label for="budget-select">Budget Range (if known)</label>
+                        <select id="budget-select" class="preset-select" onchange="handlePresetChange('budget')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="$25,000 - $50,000 (Small project)">$25K - $50K (Small project)</option>
+                            <option value="$50,000 - $150,000 (Medium project)">$50K - $150K (Medium project)</option>
+                            <option value="$150,000 - $500,000 (Large project)">$150K - $500K (Large project)</option>
+                            <option value="$500,000+ (Enterprise initiative)">$500K+ (Enterprise initiative)</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <input type="text" id="budget" class="manual-input" placeholder="e.g., Approximately $75,000" oninput="generatePrompt()">
+                    </div>
+                </div>
+
+                <!-- T - Tone & Template -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-letter">T</div>
+                        <div class="section-title">Tone & Template</div>
+                    </div>
+
+                    <label for="tone">Document Tone</label>
+                    <select id="tone" onchange="generatePrompt()">
+                        <option value="professional">Professional - Formal, corporate</option>
+                        <option value="consultative" selected>Consultative - Advisory, expert</option>
+                        <option value="persuasive">Persuasive - Compelling, urgent</option>
+                        <option value="technical">Technical - Detailed, precise</option>
+                        <option value="accessible">Accessible - Clear, jargon-free</option>
+                    </select>
+
+                    <div class="preset-input-group">
+                        <label for="industry-select">Industry Context</label>
+                        <select id="industry-select" class="preset-select" onchange="handlePresetChange('industry')">
+                            <option value="">-- Select a preset or enter custom --</option>
+                            <option value="Healthcare and Life Sciences">Healthcare and Life Sciences</option>
+                            <option value="Financial Services and Banking">Financial Services and Banking</option>
+                            <option value="Technology and Software">Technology and Software</option>
+                            <option value="Manufacturing and Industrial">Manufacturing and Industrial</option>
+                            <option value="custom">Enter custom value...</option>
+                        </select>
+                        <input type="text" id="industry" class="manual-input" placeholder="e.g., Healthcare technology" oninput="generatePrompt()">
+                    </div>
+                </div>
+
+                <!-- E - Examples -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-letter">E</div>
+                        <div class="section-title">Examples (Optional)</div>
+                    </div>
+
+                    <label for="examples">Sample Text or Style Reference</label>
+                    <textarea id="examples" placeholder="Paste an excerpt from a successful document you want to emulate, or describe the style..." oninput="generatePrompt()"></textarea>
+                    <p class="hint">This helps the AI match your preferred writing style</p>
+                </div>
+
+                <!-- Guardrails -->
+                <div class="guardrails-box">
+                    <h4>Guardrails</h4>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="guard-verify" checked onchange="generatePrompt()">
+                            <label for="guard-verify">Flag items for verification</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="guard-evidence" checked onchange="generatePrompt()">
+                            <label for="guard-evidence">Request evidence for claims</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="guard-active" checked onchange="generatePrompt()">
+                            <label for="guard-active">Use active voice</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="guard-quantify" onchange="generatePrompt()">
+                            <label for="guard-quantify">Quantify all benefits</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Configuration -->
+                <div class="api-config">
+                    <h4>AI Generation Settings</h4>
+                    <label for="api-endpoint">API Endpoint</label>
+                    <input type="text" id="api-endpoint" value="/api/generate-report" placeholder="e.g., /api/generate-report">
+                    <label for="api-model">Model</label>
+                    <select id="api-model">
+                        <option value="gpt-5.2" selected>GPT-5.2</option>
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="claude-3">Claude 3</option>
+                        <option value="claude-2">Claude 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="output-panel">
+                <div class="panel-title">
+                    <span>Output</span>
+                </div>
+
+                <!-- Output Tabs -->
+                <div class="output-tabs">
+                    <div class="output-tab active" data-tab="prompt" onclick="switchTab('prompt')">Prompt</div>
+                    <div class="output-tab" data-tab="report" onclick="switchTab('report')">Generated Report</div>
+                </div>
+
+                <!-- Prompt Output -->
+                <div class="output-content active" id="prompt-content">
+                    <div class="output-area" id="output">
+                        <span class="section-label"># ROLE</span>
+You are an expert business proposal writer.
+
+<span class="section-label"># TASK</span>
+Create a compelling proposal...
+
+<span class="highlight">Fill in the form to generate your prompt!</span>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-success" onclick="copyToClipboard()">
+                            <span>Copy Prompt</span>
+                        </button>
+                        <button class="btn-primary" onclick="generateReport()" id="generate-btn">
+                            <span>Generate Report</span>
+                        </button>
+                        <button class="btn-secondary" onclick="resetForm()">
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Output -->
+                <div class="output-content" id="report-content">
+                    <div class="report-area" id="report-output">
+                        <p style="color: #888; text-align: center; padding: 40px;">
+                            Click "Generate Report" to create your document using AI.
+                        </p>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-success" onclick="copyReport()">
+                            <span>Copy Report</span>
+                        </button>
+                        <button class="btn-warning" onclick="saveAsPDF()">
+                            <span>Save as PDF</span>
+                        </button>
+                        <button class="btn-primary" onclick="regenerateReport()" id="regenerate-btn">
+                            <span>Regenerate</span>
+                        </button>
+                        <button class="btn-secondary" onclick="switchTab('prompt')">
+                            <span>Edit Prompt</span>
+                        </button>
+                    </div>
+
+                    <div id="generation-status" style="margin-top: 15px; display: none;">
+                        <span class="status-badge pending" id="status-badge">Generating...</span>
+                        <span id="status-text" style="margin-left: 10px; color: #888;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>WRITE Framework Prompt Builder</p>
+            <p style="font-size: 0.9em; margin-top: 5px;">Proposal & Report Accelerator - ITAG Skillnet AI Advantage</p>
+        </footer>
+    </div>
+
+    <div class="copy-notification" id="copyNotification">
+        Copied to clipboard!
+    </div>
+
+    <script>
+        let currentDocType = 'proposal';
+        let lastGeneratedReport = '';
+
+        // Preset handling
+        function handlePresetChange(fieldId) {
+            const selectEl = document.getElementById(fieldId + '-select');
+            const inputEl = document.getElementById(fieldId);
+            const value = selectEl.value;
+
+            if (value === 'custom') {
+                inputEl.classList.add('visible');
+                inputEl.value = '';
+                inputEl.focus();
+            } else if (value === '') {
+                inputEl.classList.remove('visible');
+                inputEl.value = '';
+            } else {
+                inputEl.classList.remove('visible');
+                inputEl.value = value;
+            }
+            generatePrompt();
+        }
+
+        function getFieldValue(fieldId) {
+            const selectEl = document.getElementById(fieldId + '-select');
+            const inputEl = document.getElementById(fieldId);
+
+            if (selectEl) {
+                const selectValue = selectEl.value;
+                if (selectValue === 'custom' || selectValue === '') {
+                    return inputEl.value;
+                }
+                return selectValue;
+            }
+            return inputEl ? inputEl.value : '';
+        }
+
+        function selectDocType(type) {
+            currentDocType = type;
+            document.querySelectorAll('.doc-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            generatePrompt();
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.output-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            document.querySelectorAll('.output-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + '-content').classList.add('active');
+        }
+
+        function generatePrompt() {
+            const purpose = getFieldValue('purpose');
+            const audience = getFieldValue('audience');
+            const outcome = getFieldValue('outcome');
+            const clientName = getFieldValue('client-name') || '[CLIENT NAME]';
+            const clientDesc = getFieldValue('client-desc');
+            const challenge = getFieldValue('challenge');
+            const solution = getFieldValue('solution');
+            const budget = getFieldValue('budget');
+            const tone = document.getElementById('tone').value;
+            const industry = getFieldValue('industry');
+            const examples = document.getElementById('examples').value;
+            const wordcount = document.getElementById('wordcount').value;
+
+            // Get selected sections
+            const sections = [];
+            if (document.getElementById('sec-exec').checked) sections.push('Executive Summary');
+            if (document.getElementById('sec-needs').checked) sections.push('Understanding of Needs');
+            if (document.getElementById('sec-solution').checked) sections.push('Proposed Solution');
+            if (document.getElementById('sec-timeline').checked) sections.push('Timeline & Milestones');
+            if (document.getElementById('sec-investment').checked) sections.push('Investment & ROI');
+            if (document.getElementById('sec-why').checked) sections.push('Why Choose Us');
+            if (document.getElementById('sec-next').checked) sections.push('Next Steps');
+
+            // Get guardrails
+            const guardrails = [];
+            if (document.getElementById('guard-verify').checked) guardrails.push('Flag any facts, numbers, or dates that need verification with [VERIFY]');
+            if (document.getElementById('guard-evidence').checked) guardrails.push('Ensure all claims have supporting evidence or rationale');
+            if (document.getElementById('guard-active').checked) guardrails.push('Use active voice throughout');
+            if (document.getElementById('guard-quantify').checked) guardrails.push('Quantify benefits with specific numbers or percentages where possible');
+
+            // Tone descriptions
+            const toneDescs = {
+                'professional': 'professional and formal',
+                'consultative': 'consultative and advisory - position as a trusted expert',
+                'persuasive': 'persuasive and compelling with clear calls to action',
+                'technical': 'technical and detailed with precise language',
+                'accessible': 'accessible and clear - avoid jargon'
+            };
+
+            // Length descriptions
+            const lengthDescs = {
+                'brief': 'Keep it concise - aim for 1-2 pages total',
+                'standard': 'Standard length - aim for 3-5 pages total',
+                'comprehensive': 'Comprehensive coverage - 6-10 pages with detailed sections'
+            };
+
+            // Build the prompt
+            let prompt = '';
+
+            // Role
+            prompt += `<span class="section-label"># ROLE</span>\n`;
+            if (currentDocType === 'proposal') {
+                prompt += `You are an expert business proposal writer${industry ? ` with deep experience in ${industry}` : ''}.\n\n`;
+            } else if (currentDocType === 'report') {
+                prompt += `You are a senior business analyst${industry ? ` specializing in ${industry}` : ''}.\n\n`;
+            } else {
+                prompt += `You are an executive communications specialist${industry ? ` with expertise in ${industry}` : ''}.\n\n`;
+            }
+
+            // Task
+            prompt += `<span class="section-label"># TASK</span>\n`;
+            if (currentDocType === 'proposal') {
+                prompt += `Create a compelling business proposal for ${clientName}`;
+                if (purpose) prompt += ` to ${purpose}`;
+                prompt += `.\n\n`;
+            } else if (currentDocType === 'report') {
+                prompt += `Create a comprehensive business report`;
+                if (purpose) prompt += ` about ${purpose}`;
+                prompt += `.\n\n`;
+            } else {
+                prompt += `Create an executive summary`;
+                if (purpose) prompt += ` about ${purpose}`;
+                prompt += `.\n\n`;
+            }
+
+            // Context
+            prompt += `<span class="section-label"># CONTEXT</span>\n`;
+            if (audience) prompt += `<span class="highlight">Audience:</span> ${audience}\n`;
+            if (outcome) prompt += `<span class="highlight">Desired Outcome:</span> ${outcome}\n`;
+            if (clientDesc) prompt += `<span class="highlight">Client/Subject:</span> ${clientDesc}\n`;
+            if (challenge) prompt += `<span class="highlight">Challenge/Problem:</span> ${challenge}\n`;
+            if (solution) prompt += `<span class="highlight">Our Solution:</span> ${solution}\n`;
+            if (budget) prompt += `<span class="highlight">Budget:</span> ${budget}\n`;
+            prompt += `\n`;
+
+            // Requirements
+            prompt += `<span class="section-label"># REQUIREMENTS</span>\n`;
+            prompt += `${lengthDescs[wordcount]}\n\n`;
+            if (sections.length > 0) {
+                prompt += `Include these sections:\n`;
+                sections.forEach((section, i) => {
+                    prompt += `${i + 1}. ${section}\n`;
+                });
+                prompt += `\n`;
+            }
+
+            // Style
+            prompt += `<span class="section-label"># STYLE</span>\n`;
+            prompt += `- Tone: ${toneDescs[tone]}\n`;
+            guardrails.forEach(g => {
+                prompt += `- ${g}\n`;
+            });
+            prompt += `\n`;
+
+            // Examples
+            if (examples) {
+                prompt += `<span class="section-label"># STYLE REFERENCE</span>\n`;
+                prompt += `Match this style/approach:\n"${examples}"\n\n`;
+            }
+
+            // Final instruction
+            prompt += `<span class="section-label"># OUTPUT</span>\n`;
+            prompt += `Generate the complete document following the structure above. Begin each section with a clear heading.`;
+
+            document.getElementById('output').innerHTML = prompt;
+        }
+
+        function getPlainPrompt() {
+            const output = document.getElementById('output');
+            return output.innerText;
+        }
+
+        async function generateReport() {
+            const btn = document.getElementById('generate-btn');
+            const statusDiv = document.getElementById('generation-status');
+            const statusBadge = document.getElementById('status-badge');
+            const statusText = document.getElementById('status-text');
+            const reportOutput = document.getElementById('report-output');
+            const apiEndpoint = document.getElementById('api-endpoint').value;
+            const model = document.getElementById('api-model').value;
+
+            // Switch to report tab
+            switchTab('report');
+
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Generating...';
+            statusDiv.style.display = 'block';
+            statusBadge.className = 'status-badge pending';
+            statusBadge.textContent = 'Generating...';
+            statusText.textContent = 'Sending request to AI...';
+            reportOutput.innerHTML = '<p style="color: #888; text-align: center; padding: 40px;"><span class="loading-spinner"></span><br><br>Generating your report...</p>';
+
+            try {
+                const prompt = getPlainPrompt();
+
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        model: model,
+                        doc_type: currentDocType
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                lastGeneratedReport = data.report || data.content || data.text || '';
+
+                // Format and display the report
+                reportOutput.innerHTML = formatReport(lastGeneratedReport);
+
+                statusBadge.className = 'status-badge success';
+                statusBadge.textContent = 'Complete';
+                statusText.textContent = 'Report generated successfully!';
+
+            } catch (error) {
+                console.error('Generation error:', error);
+                statusBadge.className = 'status-badge error';
+                statusBadge.textContent = 'Error';
+                statusText.textContent = error.message;
+
+                reportOutput.innerHTML = `
+                    <div style="color: #cc3366; padding: 20px;">
+                        <h3>Generation Failed</h3>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 15px; color: #888;">
+                            Please check your API endpoint settings and try again.
+                            <br><br>
+                            <strong>Tip:</strong> You can copy the prompt and paste it into ChatGPT, Claude, or any other AI assistant.
+                        </p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Generate Report</span>';
+            }
+        }
+
+        function regenerateReport() {
+            generateReport();
+        }
+
+        function formatReport(text) {
+            // Convert markdown-style formatting to HTML
+            let formatted = text
+                // Escape HTML
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                // Headers
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                // Bold
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                // Italic
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                // Lists
+                .replace(/^\* (.+)$/gm, '<li>$1</li>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+                // Paragraphs
+                .replace(/\n\n/g, '</p><p>')
+                // Line breaks
+                .replace(/\n/g, '<br>');
+
+            return '<p>' + formatted + '</p>';
+        }
+
+        function copyToClipboard() {
+            const text = getPlainPrompt();
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Prompt copied to clipboard!');
+            });
+        }
+
+        function copyReport() {
+            const reportOutput = document.getElementById('report-output');
+            const text = reportOutput.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Report copied to clipboard!');
+            });
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('copyNotification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        function saveAsPDF() {
+            const reportOutput = document.getElementById('report-output');
+            const content = reportOutput.innerHTML;
+
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+
+            const clientName = getFieldValue('client-name') || 'Document';
+            const docType = currentDocType.charAt(0).toUpperCase() + currentDocType.slice(1);
+
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${docType} - ${clientName}</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            line-height: 1.6;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 40px;
+                            color: #333;
+                        }
+                        h1 { font-size: 24px; color: #0066cc; margin-top: 30px; }
+                        h2 { font-size: 20px; color: #333; margin-top: 25px; }
+                        h3 { font-size: 16px; color: #555; margin-top: 20px; }
+                        p { margin-bottom: 15px; }
+                        ul, ol { margin-left: 20px; margin-bottom: 15px; }
+                        li { margin-bottom: 5px; }
+                        .header {
+                            border-bottom: 2px solid #0066cc;
+                            padding-bottom: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .header h1 {
+                            margin: 0;
+                            font-size: 28px;
+                        }
+                        .header p {
+                            color: #666;
+                            margin: 10px 0 0 0;
+                        }
+                        .footer {
+                            margin-top: 50px;
+                            padding-top: 20px;
+                            border-top: 1px solid #ddd;
+                            color: #888;
+                            font-size: 12px;
+                            text-align: center;
+                        }
+                        @media print {
+                            body { padding: 20px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${docType}</h1>
+                        <p>Prepared for: ${clientName}</p>
+                        <p>Date: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    <div class="content">
+                        ${content}
+                    </div>
+                    <div class="footer">
+                        <p>Generated with WRITE Framework Prompt Builder</p>
+                        <p>ITAG Skillnet AI Advantage</p>
+                    </div>
+                </body>
+                </html>
+            `);
+
+            printWindow.document.close();
+
+            // Wait for content to load then trigger print
+            printWindow.onload = function() {
+                printWindow.print();
+            };
+        }
+
+        function resetForm() {
+            // Reset all select elements
+            document.querySelectorAll('.preset-select').forEach(el => el.value = '');
+
+            // Reset and hide all manual inputs
+            document.querySelectorAll('.manual-input').forEach(el => {
+                el.value = '';
+                el.classList.remove('visible');
+            });
+
+            // Reset other inputs
+            document.getElementById('examples').value = '';
+
+            // Reset checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = true);
+            document.getElementById('guard-quantify').checked = false;
+
+            // Reset selects
+            document.getElementById('tone').value = 'consultative';
+            document.getElementById('wordcount').value = 'standard';
+
+            // Reset report output
+            document.getElementById('report-output').innerHTML = '<p style="color: #888; text-align: center; padding: 40px;">Click "Generate Report" to create your document using AI.</p>';
+            document.getElementById('generation-status').style.display = 'none';
+
+            // Switch to prompt tab
+            switchTab('prompt');
+
+            generatePrompt();
+        }
+
+        // Initialize
+        generatePrompt();
+    </script>
+</body>
+</html>

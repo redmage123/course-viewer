@@ -1,0 +1,1709 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --accent-red: #ff4444;
+            --accent-purple: #9966ff;
+        }
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            color: var(--itag-light);
+        }
+        .reveal h1 {
+            font-size: 2.2em;
+        }
+        .reveal h2 {
+            font-size: 1.6em;
+            border-bottom: 3px solid var(--itag-blue);
+            padding-bottom: 10px;
+        }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.55em;
+            border: 2px solid var(--itag-blue);
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #1a1a2e;
+            overflow: auto;
+            max-height: 500px;
+        }
+        .reveal pre code {
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            display: block;
+            overflow-x: auto;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            text-align: left;
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
+        .four-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+        }
+        .card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--itag-blue);
+        }
+        .card h4 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .danger-box {
+            background: linear-gradient(135deg, #4d1a1a 0%, #661a1a 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-red);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .highlight {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .highlight-orange {
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+        .highlight-red {
+            color: var(--accent-red);
+            font-weight: bold;
+        }
+        .highlight-purple {
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+        .exercise-box {
+            background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--itag-light);
+            margin: 20px 0;
+            text-align: left;
+        }
+        .exercise-box h4 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+        .prompt-example {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            text-align: left;
+            overflow: auto;
+            max-height: 400px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.7em;
+        }
+        .comparison-table th {
+            background: var(--itag-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: rgba(0,102,204,0.1);
+        }
+        .framework-step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .step-number {
+            background: var(--itag-blue);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .agenda-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.95em;
+        }
+        .agenda-time {
+            color: var(--itag-light);
+            font-weight: bold;
+            min-width: 70px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        ul {
+            text-align: left;
+        }
+        li {
+            margin: 10px 0;
+        }
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--itag-blue);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+        }
+        .fullscreen-btn:hover {
+            background: var(--itag-light);
+        }
+        .slide-content {
+            width: 100%;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px 20px 20px 20px;
+            box-sizing: border-box;
+        }
+        .slide-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .slide-content::-webkit-scrollbar-track {
+            background: #1a1a2e;
+            border-radius: 5px;
+        }
+        .slide-content::-webkit-scrollbar-thumb {
+            background: var(--itag-blue);
+            border-radius: 5px;
+        }
+        .shield-framework {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .shield-letter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 10px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 6px;
+            border-left: 4px solid var(--itag-blue);
+            font-size: 0.85em;
+        }
+        .shield-letter .letter {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--itag-light);
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .risk-example {
+            background: linear-gradient(135deg, #2d1a1a 0%, #3d2020 100%);
+            border: 2px solid var(--accent-red);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .safe-example {
+            background: linear-gradient(135deg, #1a2d1a 0%, #203d20 100%);
+            border: 2px solid var(--accent-green);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 10px;
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--itag-light);
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        .regulation-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .gdpr { background: #1a4d80; color: #4da6ff; }
+        .ai-act { background: #4d1a80; color: #b366ff; }
+        .ccpa { background: #804d1a; color: #ffb366; }
+    
+            
+        @page {
+            size: A4 landscape;
+            margin: 0.5cm;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .slide-page {
+            width: 297mm;
+            height: 210mm;
+            padding: 15mm;
+            box-sizing: border-box;
+            page-break-after: always;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .slide-page:last-child {
+            page-break-after: auto;
+        }
+
+        .slide-content {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: #4da6ff;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            color: #4da6ff;
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3, h4 {
+            color: #4da6ff;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .four-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #00cc66;
+            margin: 10px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9933;
+            margin: 10px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #4d1a1a 0%, #661a1a 100%);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #ff4444;
+            margin: 10px 0;
+        }
+
+        .exercise-box {
+            background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #4da6ff;
+            margin: 10px 0;
+        }
+
+        .shield-framework {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .shield-letter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 6px;
+            border-left: 4px solid #0066cc;
+            font-size: 0.9em;
+        }
+
+        .shield-letter .letter {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4da6ff;
+            min-width: 25px;
+        }
+
+        .risk-example {
+            background: linear-gradient(135deg, #2d1a1a 0%, #3d2020 100%);
+            border: 2px solid #ff4444;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+        }
+
+        .safe-example {
+            background: linear-gradient(135deg, #1a2d1a 0%, #203d20 100%);
+            border: 2px solid #00cc66;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4da6ff;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75em;
+        }
+
+        .comparison-table th {
+            background: #0066cc;
+            color: white;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #333;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: rgba(0,102,204,0.1);
+        }
+
+        .framework-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .step-number {
+            background: #0066cc;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .agenda-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.9em;
+        }
+
+        .agenda-time {
+            color: #4da6ff;
+            font-weight: bold;
+            min-width: 60px;
+            margin-right: 15px;
+        }
+
+        .prompt-example {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.75em;
+            white-space: pre-wrap;
+        }
+
+        .regulation-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin: 3px;
+        }
+
+        .gdpr { background: #1a4d80; color: #4da6ff; }
+        .ai-act { background: #4d1a80; color: #b366ff; }
+        .ccpa { background: #804d1a; color: #ffb366; }
+
+        .highlight { color: #00cc66; font-weight: bold; }
+        .highlight-orange { color: #ff9933; font-weight: bold; }
+        .highlight-red { color: #ff4444; font-weight: bold; }
+        .highlight-purple { color: #9966ff; font-weight: bold; }
+
+        ul, ol {
+            margin-left: 20px;
+        }
+
+        li {
+            margin: 6px 0;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 8mm;
+            right: 10mm;
+            font-size: 0.8em;
+            color: #666;
+        }
+    
+        </style>
+    </head>
+    <body>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h1>Data Safety & Ethics</h1>
+                    <h2 style="border-bottom: none;">Use AI Responsibly</h2>
+                    <p style="color: var(--itag-light); font-size: 1.2em;">ITAG Skillnet AI Advantage</p>
+                    <p style="color: #888; margin-top: 40px;">90-Minute Lunch & Learn</p>
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(0,102,204,0.1); border-radius: 10px;">
+                        <p style="font-size: 0.9em; color: #aaa;">Protect your data, respect privacy, and use AI ethically in your organization</p>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">1 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Today's Agenda</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>Why Data Safety Matters in AI</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>Understanding AI Data Risks</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>The SHIELD Framework</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">20 min</span>
+                            <span>Hands-On: Ethical AI Assessment</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>Compliance & Best Practices</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>Building an AI Ethics Culture</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">5 min</span>
+                            <span>Q&A and Wrap-Up</span>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">2 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Learning Objectives</h2>
+                    <div class="two-column" style="margin-top: 30px;">
+                        <div class="card">
+                            <h4>Understand</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Key data safety risks when using AI tools</li>
+                                <li>Ethical considerations in AI adoption</li>
+                                <li>Regulatory landscape (GDPR, AI Act)</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Apply</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>The SHIELD framework for safe AI use</li>
+                                <li>Data protection best practices</li>
+                                <li>Ethical decision-making processes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>By the end:</strong> You'll have practical skills to use AI tools safely while protecting sensitive data and maintaining ethical standards.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">3 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>The AI Data Dilemma</h2>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <p style="font-size: 1.3em; color: var(--itag-light);">AI tools are powerful, but they come with risks:</p>
+                    </div>
+                    <div class="three-column">
+                        <div class="card" style="text-align: center;">
+                            <h4>Data Exposure</h4>
+                            <p style="font-size: 0.85em;">What you input may be stored, logged, or used for training</p>
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F50D;</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Privacy Violations</h4>
+                            <p style="font-size: 0.85em;">Personal data can be inadvertently shared or exposed</p>
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F6AB;</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Ethical Blind Spots</h4>
+                            <p style="font-size: 0.85em;">AI can perpetuate bias or make unfair decisions</p>
+                            <p style="font-size: 2em; margin: 10px 0;">&#x26A0;</p>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 30px;">
+                        <strong>Key Insight:</strong> Every prompt you send to an AI system is data that leaves your control. Think before you type.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">4 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Real-World AI Data Incidents</h2>
+                    <div class="two-column">
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; Samsung Semiconductor Leak</h4>
+                            <p style="font-size: 0.85em;"><strong>April 2023:</strong> Samsung engineers pasted proprietary semiconductor source code and internal meeting notes into ChatGPT within 20 days of company approval.</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>Result: Company-wide ChatGPT ban</em></p>
+                            <p style="font-size: 0.65em; color: #888;">Source: Bloomberg, The Economist (April 2023)</p>
+                        </div>
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; ChatGPT Payment Data Bug</h4>
+                            <p style="font-size: 0.85em;"><strong>March 2023:</strong> OpenAI bug exposed chat histories and payment info (credit card digits, emails) of ~1.2% of ChatGPT Plus subscribers to other users.</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>Result: 9-hour service shutdown</em></p>
+                            <p style="font-size: 0.65em; color: #888;">Source: OpenAI Blog (March 24, 2023)</p>
+                        </div>
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; Amazon Internal Data Warning</h4>
+                            <p style="font-size: 0.85em;"><strong>January 2023:</strong> Amazon lawyers warned employees after ChatGPT responses were found to closely resemble confidential Amazon internal data.</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>Result: Restricted AI use policy</em></p>
+                            <p style="font-size: 0.65em; color: #888;">Source: Business Insider (January 2023)</p>
+                        </div>
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; Italy GDPR ChatGPT Ban</h4>
+                            <p style="font-size: 0.85em;"><strong>March 2023:</strong> Italian DPA temporarily banned ChatGPT citing GDPR violations - lack of age verification, no legal basis for mass data collection.</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>Result: 1-month service ban in Italy</em></p>
+                            <p style="font-size: 0.65em; color: #888;">Source: Garante (Italian DPA) ruling</p>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">5 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>The Stakes Are High</h2>
+                    <div class="three-column" style="margin-top: 30px;">
+                        <div class="stat-box">
+                            <div class="stat-number">$4.88M</div>
+                            <div class="stat-label">Average cost of a<br>data breach (2024)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">10.7%</div>
+                            <div class="stat-label">Of employee ChatGPT inputs<br>contain sensitive data</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">4%</div>
+                            <div class="stat-label">Maximum GDPR fine as<br>% of global revenue</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.7em; color: #888; margin-top: 15px; text-align: center;">
+                        Sources: IBM Cost of a Data Breach Report 2024 | Cyberhaven AI Data Security Report 2024 | GDPR Article 83
+                    </p>
+                    <div class="danger-box" style="margin-top: 15px;">
+                        <strong>Beyond Fines:</strong> Reputation damage, loss of customer trust, competitive disadvantage, and personal liability for decision-makers.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">6 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Types of AI Data Risks</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Risk Type</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-red">Data Leakage</span></td>
+                            <td>Sensitive info shared with AI provider</td>
+                            <td>Pasting customer database records</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-red">Training Data Use</span></td>
+                            <td>Your inputs used to train the model</td>
+                            <td>Proprietary strategies in responses</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-orange">Model Extraction</span></td>
+                            <td>AI reveals patterns from other users</td>
+                            <td>Memorized PII in outputs</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-orange">Unauthorized Access</span></td>
+                            <td>Third parties viewing your interactions</td>
+                            <td>Shared API keys or accounts</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-purple">Bias Amplification</span></td>
+                            <td>AI perpetuates existing biases</td>
+                            <td>Discriminatory hiring recommendations</td>
+                        </tr>
+                    </table>
+                </div>
+            
+            </div>
+            <div class="slide-number">7 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>What NOT to Share with AI</h2>
+                    <div class="three-column">
+                        <div class="card" style="border-left-color: var(--accent-red);">
+                            <h4 style="color: var(--accent-red);">Never Share</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Passwords & API keys</li>
+                                <li>Social Security numbers</li>
+                                <li>Credit card details</li>
+                                <li>Medical records</li>
+                                <li>Personal addresses</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-orange);">
+                            <h4 style="color: var(--accent-orange);">Use Caution</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Customer names/emails</li>
+                                <li>Internal strategies</li>
+                                <li>Financial projections</li>
+                                <li>Employee information</li>
+                                <li>Unpublished research</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4 style="color: var(--accent-green);">Generally Safe</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Public information</li>
+                                <li>Generic questions</li>
+                                <li>Anonymized examples</li>
+                                <li>Hypothetical scenarios</li>
+                                <li>Open-source code</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Rule of Thumb:</strong> If you wouldn't post it publicly on social media, don't put it in an AI prompt.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">8 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>The Regulatory Landscape</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Key Regulations</h4>
+                            <div style="margin: 15px 0;">
+                                <span class="regulation-badge gdpr">GDPR</span>
+                                <p style="font-size: 0.8em; margin-top: 5px;">EU data protection - consent, right to erasure, data minimization</p>
+                            </div>
+                            <div style="margin: 15px 0;">
+                                <span class="regulation-badge ai-act">EU AI Act</span>
+                                <p style="font-size: 0.8em; margin-top: 5px;">Risk-based AI regulation - transparency, human oversight</p>
+                            </div>
+                            <div style="margin: 15px 0;">
+                                <span class="regulation-badge ccpa">CCPA/CPRA</span>
+                                <p style="font-size: 0.8em; margin-top: 5px;">California privacy - opt-out rights, disclosure requirements</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Common Requirements</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><span class="highlight">Consent</span> - Get permission before processing</li>
+                                <li><span class="highlight">Transparency</span> - Explain how AI is used</li>
+                                <li><span class="highlight">Data minimization</span> - Only collect what's needed</li>
+                                <li><span class="highlight">Purpose limitation</span> - Use data only as stated</li>
+                                <li><span class="highlight">Accountability</span> - Document your practices</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">9 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>The SHIELD Framework</h2>
+                    <p style="text-align: center; margin-bottom: 10px; font-size: 0.9em;">A systematic approach to safe and ethical AI use</p>
+                    <div class="shield-framework">
+                        <div class="shield-letter">
+                            <span class="letter">S</span>
+                            <div><strong>Sanitize Data</strong> - Remove or mask sensitive information before sharing</div>
+                        </div>
+                        <div class="shield-letter">
+                            <span class="letter">H</span>
+                            <div><strong>Human Oversight</strong> - Keep humans in the loop for important decisions</div>
+                        </div>
+                        <div class="shield-letter">
+                            <span class="letter">I</span>
+                            <div><strong>Informed Consent</strong> - Ensure data subjects know about AI processing</div>
+                        </div>
+                        <div class="shield-letter">
+                            <span class="letter">E</span>
+                            <div><strong>Evaluate Ethics</strong> - Consider fairness, bias, and impact before use</div>
+                        </div>
+                        <div class="shield-letter">
+                            <span class="letter">L</span>
+                            <div><strong>Legal Compliance</strong> - Follow GDPR, AI Act, and industry regulations</div>
+                        </div>
+                        <div class="shield-letter">
+                            <span class="letter">D</span>
+                            <div><strong>Document Everything</strong> - Record AI decisions, data flows, and rationale</div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">10 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>S - Sanitize Data</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Techniques</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Anonymization</strong> - Remove identifying info entirely</li>
+                                <li><strong>Pseudonymization</strong> - Replace with fake identifiers</li>
+                                <li><strong>Data masking</strong> - Hide portions (****1234)</li>
+                                <li><strong>Aggregation</strong> - Use summaries, not individuals</li>
+                                <li><strong>Generalization</strong> - "30s" instead of "age 32"</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Before & After</h4>
+                            <div class="risk-example" style="font-size: 0.75em;">
+                                <strong>Before:</strong><br>
+                                "Write an email to John Smith (john.smith@company.com) about his $50,000 salary review"
+                            </div>
+                            <div class="safe-example" style="font-size: 0.75em;">
+                                <strong>After:</strong><br>
+                                "Write a salary review email template for a mid-level employee"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Quick Check:</strong> Before sending any prompt, ask: "Does this contain names, numbers, or details that could identify a real person or company?"
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">11 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>H - Human Oversight</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>When Humans Must Decide</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Hiring and firing decisions</li>
+                                <li>Credit and loan approvals</li>
+                                <li>Medical diagnoses</li>
+                                <li>Legal judgments</li>
+                                <li>Customer complaints escalation</li>
+                                <li>Disciplinary actions</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Human-in-the-Loop Levels</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Level 1:</strong> AI suggests, human approves</li>
+                                <li><strong>Level 2:</strong> AI acts, human reviews</li>
+                                <li><strong>Level 3:</strong> AI acts, human audits</li>
+                                <li><strong>Level 4:</strong> Fully automated (low-risk only)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>EU AI Act Requirement:</strong> High-risk AI systems must include human oversight capabilities. Decisions significantly affecting individuals cannot be fully automated.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">12 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>I - Informed Consent</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">What People Need to Know</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>That AI is being used</li>
+                                <li>What data is collected</li>
+                                <li>How their data will be processed</li>
+                                <li>Who has access to outputs</li>
+                                <li>Their rights to opt out</li>
+                                <li>How to request deletion</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Transparency Examples</h4>
+                            <div class="safe-example" style="font-size: 0.8em;">
+                                <strong>Good:</strong> "This chatbot uses AI to assist you. Your conversation may be reviewed to improve service."
+                            </div>
+                            <div class="risk-example" style="font-size: 0.8em;">
+                                <strong>Bad:</strong> Hidden AI use with no disclosure
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>GDPR Article 22:</strong> Individuals have the right not to be subject to decisions based solely on automated processing that significantly affects them.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">13 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>E - Evaluate Ethics</h2>
+                    <h4 style="color: var(--itag-light);">The Ethics Checklist</h4>
+                    <div class="three-column" style="margin-top: 20px;">
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x2696;</p>
+                            <h4>Fairness</h4>
+                            <p style="font-size: 0.8em;">Does the AI treat all groups equitably?</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F50E;</p>
+                            <h4>Transparency</h4>
+                            <p style="font-size: 0.8em;">Can we explain how it works?</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F6E1;</p>
+                            <h4>Safety</h4>
+                            <p style="font-size: 0.8em;">What harm could this cause?</p>
+                        </div>
+                    </div>
+                    <div class="exercise-box" style="margin-top: 20px;">
+                        <h4>Quick Ethics Test</h4>
+                        <p style="font-size: 0.9em;">Before deploying AI, ask:</p>
+                        <ol style="font-size: 0.85em;">
+                            <li>Would I be comfortable if this appeared in the news?</li>
+                            <li>Would I want this done to me or my family?</li>
+                            <li>Does this align with our stated values?</li>
+                        </ol>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">14 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Understanding AI Bias</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Sources of Bias</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Training data</strong> - Historical discrimination baked in</li>
+                                <li><strong>Sampling bias</strong> - Unrepresentative datasets</li>
+                                <li><strong>Label bias</strong> - Human prejudices in annotations</li>
+                                <li><strong>Feedback loops</strong> - AI reinforces existing patterns</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Real Examples</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Hiring AI that favored male candidates</li>
+                                <li>Facial recognition less accurate for darker skin</li>
+                                <li>Credit scoring discriminating by zip code</li>
+                                <li>Healthcare AI under-treating minority groups</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="danger-box" style="margin-top: 20px;">
+                        <strong>Key Point:</strong> AI doesn't create bias - it reflects and amplifies biases in data and society. The responsibility to check for bias is human.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">15 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>L - Legal Compliance</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>GDPR Essentials</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>Lawful basis</strong> - Have a legal reason to process</li>
+                                <li><strong>Data minimization</strong> - Collect only what's needed</li>
+                                <li><strong>Storage limitation</strong> - Delete when no longer needed</li>
+                                <li><strong>Subject rights</strong> - Access, rectification, erasure</li>
+                                <li><strong>DPIAs</strong> - Assess high-risk processing</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>EU AI Act Risk Levels</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li><span class="highlight-red">Unacceptable</span> - Banned (social scoring)</li>
+                                <li><span class="highlight-orange">High-risk</span> - Strict requirements (HR, credit)</li>
+                                <li><span class="highlight">Limited risk</span> - Transparency obligations</li>
+                                <li>Minimal risk - No restrictions</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Action Item:</strong> Check if your AI use case is classified as "high-risk" under the EU AI Act. If so, additional compliance steps are required.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">16 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>D - Document Everything</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">What to Document</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>AI systems used and their purposes</li>
+                                <li>Data inputs and sources</li>
+                                <li>Decision-making processes</li>
+                                <li>Human review procedures</li>
+                                <li>Risk assessments conducted</li>
+                                <li>Incidents and remediation</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Why Document?</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Compliance</strong> - Required by GDPR/AI Act</li>
+                                <li><strong>Accountability</strong> - Show you did due diligence</li>
+                                <li><strong>Auditability</strong> - Enable reviews and investigations</li>
+                                <li><strong>Learning</strong> - Improve processes over time</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="exercise-box" style="margin-top: 20px;">
+                        <h4>AI Usage Log Template</h4>
+                        <p style="font-size: 0.85em;">Date | AI Tool | Purpose | Data Types | Human Review | Outcome</p>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">17 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Scenario: Customer Support AI</h2>
+                    <div class="card" style="margin-bottom: 20px;">
+                        <p style="font-size: 0.9em;"><strong>Situation:</strong> Your company wants to use AI to automatically respond to customer emails about order status.</p>
+                    </div>
+                    <div class="two-column">
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">Risks</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Customer emails contain PII</li>
+                                <li>Order details are sensitive</li>
+                                <li>AI might give wrong information</li>
+                                <li>No human verification</li>
+                            </ul>
+                        </div>
+                        <div class="safe-example">
+                            <h4 style="color: var(--accent-green);">SHIELD Application</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>S:</strong> Use order ID only, not full details</li>
+                                <li><strong>H:</strong> Human reviews before send</li>
+                                <li><strong>I:</strong> Disclose AI use in signature</li>
+                                <li><strong>E:</strong> Test for bias in responses</li>
+                                <li><strong>L:</strong> Process under contract basis</li>
+                                <li><strong>D:</strong> Log all AI-generated replies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">18 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Scenario: AI Resume Screening</h2>
+                    <div class="card" style="margin-bottom: 20px;">
+                        <p style="font-size: 0.9em;"><strong>Situation:</strong> HR wants to use AI to screen 500 job applications and shortlist the top 50.</p>
+                    </div>
+                    <div class="two-column">
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">High-Risk Concerns</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>EU AI Act: Employment = High-risk</li>
+                                <li>Potential for discrimination</li>
+                                <li>Significant impact on individuals</li>
+                                <li>Training data biases</li>
+                            </ul>
+                        </div>
+                        <div class="safe-example">
+                            <h4 style="color: var(--accent-green);">Required Safeguards</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Human review of all rejections</li>
+                                <li>Regular bias audits</li>
+                                <li>Transparency to candidates</li>
+                                <li>Right to human review on request</li>
+                                <li>Detailed documentation (DPIA)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="danger-box" style="margin-top: 15px;">
+                        <strong>Warning:</strong> AI hiring tools are under intense regulatory scrutiny. Several have been banned or penalized for discrimination.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">19 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Scenario: Using ChatGPT at Work</h2>
+                    <div class="card" style="margin-bottom: 20px;">
+                        <p style="font-size: 0.9em;"><strong>Situation:</strong> An employee wants to use ChatGPT to help write a client proposal.</p>
+                    </div>
+                    <div class="two-column">
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">What Could Go Wrong</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Client name and project details shared</li>
+                                <li>Pricing and strategy exposed</li>
+                                <li>Proprietary methods revealed</li>
+                                <li>Data retained by OpenAI</li>
+                            </ul>
+                        </div>
+                        <div class="safe-example">
+                            <h4 style="color: var(--accent-green);">Safe Approach</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Use "Client X" instead of real name</li>
+                                <li>Describe project generically</li>
+                                <li>Don't include pricing/numbers</li>
+                                <li>Use enterprise version with data controls</li>
+                                <li>Or: Use on-premise AI solution</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Best Practice:</strong> Create a company-approved AI use policy with clear guidelines on what can and cannot be shared.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">20 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Enterprise AI vs Consumer AI</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Feature</th>
+                            <th>Consumer (Free ChatGPT)</th>
+                            <th>Enterprise (ChatGPT Enterprise)</th>
+                        </tr>
+                        <tr>
+                            <td>Data Training</td>
+                            <td><span class="highlight-red">May use your data</span></td>
+                            <td><span class="highlight">Never trains on your data</span></td>
+                        </tr>
+                        <tr>
+                            <td>Data Retention</td>
+                            <td>30+ days</td>
+                            <td>Configurable / zero retention</td>
+                        </tr>
+                        <tr>
+                            <td>Compliance</td>
+                            <td>Basic</td>
+                            <td>SOC 2, GDPR, BAA available</td>
+                        </tr>
+                        <tr>
+                            <td>Admin Controls</td>
+                            <td>None</td>
+                            <td>Full visibility and control</td>
+                        </tr>
+                        <tr>
+                            <td>Audit Logs</td>
+                            <td>None</td>
+                            <td>Complete audit trail</td>
+                        </tr>
+                    </table>
+                    <div class="warning-box" style="margin-top: 15px;">
+                        <strong>Recommendation:</strong> For business use with any sensitive data, use enterprise-grade AI tools with proper data protection agreements.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">21 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Building an AI Use Policy</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Essential Elements</h4>
+                            <ol style="font-size: 0.8em;">
+                                <li>Approved AI tools list</li>
+                                <li>Data classification rules</li>
+                                <li>Prohibited use cases</li>
+                                <li>Approval workflows</li>
+                                <li>Training requirements</li>
+                                <li>Incident reporting</li>
+                            </ol>
+                        </div>
+                        <div class="card">
+                            <h4>Sample Policy Statement</h4>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+"Employees may use approved AI tools for work tasks. Confidential data (as defined in our data classification policy) must never be input into AI systems. All AI-generated content must be reviewed by a human before external use."
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Start Simple:</strong> A basic policy today is better than a perfect policy never. Iterate and improve over time.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">22 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Creating an AI Ethics Culture</h2>
+                    <div class="three-column">
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F4DA;</p>
+                            <h4>Educate</h4>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Regular training sessions</li>
+                                <li>Share case studies</li>
+                                <li>Update on regulations</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F4AC;</p>
+                            <h4>Empower</h4>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Safe reporting channels</li>
+                                <li>Ethics champions</li>
+                                <li>No blame culture</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F3AF;</p>
+                            <h4>Embed</h4>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Include in processes</li>
+                                <li>Make it part of reviews</li>
+                                <li>Lead by example</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 25px; padding: 15px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 10px;">
+                        <p style="font-size: 1em; color: var(--itag-light);">"Ethics isn't a department - it's everyone's responsibility."</p>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">23 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>5 Questions Before Using AI</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="framework-step">
+                            <span class="step-number">1</span>
+                            <div><strong>What data am I sharing?</strong><br><span style="font-size: 0.85em; color: #aaa;">Could any of it identify a person or reveal secrets?</span></div>
+                        </div>
+                        <div class="framework-step">
+                            <span class="step-number">2</span>
+                            <div><strong>Who might be affected?</strong><br><span style="font-size: 0.85em; color: #aaa;">Customers, employees, the public?</span></div>
+                        </div>
+                        <div class="framework-step">
+                            <span class="step-number">3</span>
+                            <div><strong>What could go wrong?</strong><br><span style="font-size: 0.85em; color: #aaa;">Bias, errors, privacy breaches?</span></div>
+                        </div>
+                        <div class="framework-step">
+                            <span class="step-number">4</span>
+                            <div><strong>Is human review needed?</strong><br><span style="font-size: 0.85em; color: #aaa;">Should a person check this before acting?</span></div>
+                        </div>
+                        <div class="framework-step">
+                            <span class="step-number">5</span>
+                            <div><strong>Can I justify this decision?</strong><br><span style="font-size: 0.85em; color: #aaa;">Would I be comfortable explaining it publicly?</span></div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">24 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Safe Prompt Engineering</h2>
+                    <div class="two-column">
+                        <div class="risk-example">
+                            <h4 style="color: var(--accent-red);">Risky Prompt</h4>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+"Here's our customer list with names and emails. Write personalized marketing emails for each:
+
+John Smith - john@email.com - bought Product A
+Mary Jones - mary@email.com - bought Product B
+..."
+                            </div>
+                        </div>
+                        <div class="safe-example">
+                            <h4 style="color: var(--accent-green);">Safe Prompt</h4>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+"Create a marketing email template for customers who purchased [PRODUCT_TYPE]. Include:
+- Personalization placeholder for [NAME]
+- Reference to their purchase
+- Upsell for related products
+
+Do not use any real customer data."
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Template Approach:</strong> Create AI-generated templates, then use your own secure systems to fill in real data.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">25 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Data Anonymization Techniques</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Technique</th>
+                            <th>Original</th>
+                            <th>Anonymized</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Masking</strong></td>
+                            <td>john.smith@company.com</td>
+                            <td>j***@***.com</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pseudonymization</strong></td>
+                            <td>John Smith, Dublin</td>
+                            <td>User_A4X7, City_1</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Generalization</strong></td>
+                            <td>Age: 34, Salary: $52,340</td>
+                            <td>Age: 30-40, Salary: $50-60K</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Synthetic Data</strong></td>
+                            <td>Real customer records</td>
+                            <td>Statistically similar fake data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aggregation</strong></td>
+                            <td>Individual transactions</td>
+                            <td>"Average order: $45"</td>
+                        </tr>
+                    </table>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Rule:</strong> If you can identify an individual from the anonymized data (even combined with other info), it's not truly anonymous.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">26 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Interactive Demo</h2>
+                    <h3 style="color: var(--itag-light);">Data Safety Assessment Tool</h3>
+                    <div class="card" style="margin: 20px 0;">
+                        <p>Try our interactive tool to assess the safety of your AI use cases.</p>
+                        <ul style="font-size: 0.9em;">
+                            <li>Input your use case scenario</li>
+                            <li>Get a SHIELD framework analysis</li>
+                            <li>Identify risks and mitigations</li>
+                            <li>Generate a compliance checklist</li>
+                        </ul>
+                    </div>
+                    <div class="exercise-box">
+                        <h4>Access the Demo</h4>
+                        <p>Navigate to the <strong>Demo</strong> section in the course materials</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: #aaa;">Use it to evaluate your own workplace AI scenarios</p>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">27 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Take-Home Exercise</h2>
+                    <div class="exercise-box">
+                        <h4>AI Safety Audit</h4>
+                        <ol style="font-size: 0.9em;">
+                            <li><strong>Inventory</strong> - List all AI tools used in your team/department</li>
+                            <li><strong>Classify</strong> - Identify what data each tool processes</li>
+                            <li><strong>Assess</strong> - Apply the SHIELD framework to each</li>
+                            <li><strong>Document</strong> - Note any gaps or concerns</li>
+                            <li><strong>Recommend</strong> - Propose improvements to your manager</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Bonus Challenge:</strong> Draft a one-page AI use policy for your team based on today's learnings.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">28 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Key Takeaways</h2>
+                    <div class="four-column">
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F6E1;</p>
+                            <h4 style="font-size: 0.9em;">SHIELD</h4>
+                            <p style="font-size: 0.75em;">Apply the framework to every AI use case</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F50F;</p>
+                            <h4 style="font-size: 0.9em;">Sanitize</h4>
+                            <p style="font-size: 0.75em;">Never share sensitive data with AI</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F465;</p>
+                            <h4 style="font-size: 0.9em;">Human Loop</h4>
+                            <p style="font-size: 0.75em;">Keep humans in control of decisions</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F4DD;</p>
+                            <h4 style="font-size: 0.9em;">Document</h4>
+                            <p style="font-size: 0.75em;">Record AI usage for compliance</p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 10px;">
+                        <p style="font-size: 1.1em; color: var(--itag-light);">"With great AI power comes great responsibility."</p>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">29 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Resources</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Regulations & Guidance</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>EU AI Act Official Text</li>
+                                <li>GDPR Guidelines (edpb.europa.eu)</li>
+                                <li>ICO AI Guidance (ico.org.uk)</li>
+                                <li>NIST AI Risk Framework</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Tools & Checklists</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Microsoft Responsible AI Toolkit</li>
+                                <li>Google AI Principles</li>
+                                <li>AI Ethics Canvas</li>
+                                <li>Data Privacy Impact Assessment Templates</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>Stay Updated:</strong> AI regulations are evolving rapidly. Follow your data protection authority for updates.
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">30 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h2>Questions & Discussion</h2>
+                    <div style="text-align: center; margin: 40px 0;">
+                        <p style="font-size: 1.3em; color: var(--itag-light);">What data safety challenges have you encountered?</p>
+                    </div>
+                    <div class="three-column">
+                        <div class="card" style="text-align: center;">
+                            <h4>Share</h4>
+                            <p style="font-size: 0.85em;">Your AI use cases and concerns</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Ask</h4>
+                            <p style="font-size: 0.85em;">About specific scenarios</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Discuss</h4>
+                            <p style="font-size: 0.85em;">Industry-specific challenges</p>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">31 / 32</div>
+        </div>
+        
+        <div class="slide-page">
+            <div class="slide-content">
+                
+                <div class="slide-content">
+                    <h1>Thank You!</h1>
+                    <div style="margin: 40px 0;">
+                        <p style="font-size: 1.2em; color: var(--itag-light);">Data Safety & Ethics: Use AI Responsibly</p>
+                        <p style="color: #888;">ITAG Skillnet AI Advantage</p>
+                    </div>
+                    <div class="card" style="max-width: 500px; margin: 30px auto;">
+                        <h4>Remember the SHIELD Framework</h4>
+                        <p style="font-size: 0.9em;"><strong>S</strong>anitize - <strong>H</strong>uman Oversight - <strong>I</strong>nformed Consent - <strong>E</strong>valuate Ethics - <strong>L</strong>egal Compliance - <strong>D</strong>ocument</p>
+                    </div>
+                    <div style="margin-top: 40px;">
+                        <p style="font-size: 0.9em; color: #666;">Access course materials and the interactive demo through the course portal</p>
+                    </div>
+                </div>
+            
+            </div>
+            <div class="slide-number">32 / 32</div>
+        </div>
+        
+    </body>
+    </html>
+    

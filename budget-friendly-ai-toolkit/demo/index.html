@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Toolkit Budget Calculator - ITAG Skillnet</title>
+    <style>
+        :root {
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-input: #21262d;
+            --border-color: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-blue: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-gold: #ffd700;
+            --accent-orange: #ff9933;
+            --accent-red: #ff4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #1a2332 100%);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1000px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .panel h2 {
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-blue);
+            font-size: 1.3em;
+        }
+
+        .panel h3 {
+            color: var(--text-primary);
+            margin: 20px 0 15px 0;
+            font-size: 1.1em;
+        }
+
+        /* Need Selection */
+        .need-category {
+            margin-bottom: 25px;
+        }
+
+        .need-category h4 {
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .need-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .need-chip {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85em;
+        }
+
+        .need-chip:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .need-chip.selected {
+            border-color: var(--accent-green);
+            background: rgba(0, 204, 102, 0.15);
+            color: var(--accent-green);
+        }
+
+        /* Budget Slider */
+        .budget-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: var(--bg-input);
+            border-radius: 10px;
+        }
+
+        .budget-display {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .budget-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .budget-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--border-color);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Recommendations */
+        .recommendation-card {
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .recommendation-card.recommended {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .recommendation-card.free {
+            border-color: var(--accent-green);
+        }
+
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .rec-name {
+            font-weight: bold;
+            color: var(--text-primary);
+            font-size: 1.1em;
+        }
+
+        .rec-price {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .rec-price.free { color: var(--accent-green); }
+        .rec-price.budget { color: var(--accent-blue); }
+        .rec-price.premium { color: var(--accent-orange); }
+
+        .rec-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .rec-badge.best { background: rgba(255, 215, 0, 0.2); color: var(--accent-gold); }
+        .rec-badge.free-option { background: rgba(0, 204, 102, 0.2); color: var(--accent-green); }
+
+        .rec-description {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+
+        .rec-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .feature-tag {
+            padding: 3px 8px;
+            background: rgba(77, 166, 255, 0.1);
+            border-radius: 4px;
+            font-size: 0.75em;
+            color: var(--accent-blue);
+        }
+
+        /* Budget Summary */
+        .summary-section {
+            background: linear-gradient(135deg, #1a2332 0%, var(--bg-card) 100%);
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--accent-gold);
+            padding-top: 15px;
+        }
+
+        .summary-row.under-budget .total-value {
+            color: var(--accent-green);
+        }
+
+        .summary-row.over-budget .total-value {
+            color: var(--accent-red);
+        }
+
+        /* VALUE Framework */
+        .value-check {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .value-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            gap: 10px;
+        }
+
+        .value-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .value-text {
+            font-size: 0.85em;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3d95ee;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            margin-top: 10px;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 204, 102, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Savings highlight */
+        .savings-highlight {
+            background: linear-gradient(135deg, rgba(0, 204, 102, 0.1) 0%, rgba(0, 204, 102, 0.05) 100%);
+            border: 2px solid var(--accent-green);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .savings-amount {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .savings-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Toolkit Budget Calculator</h1>
+            <p>Build your personalized AI toolkit within budget using the VALUE framework</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left Panel: Needs Selection -->
+            <div class="panel">
+                <h2>Step 1: Select Your Needs</h2>
+
+                <div class="need-category">
+                    <h4>Text & Chat AI</h4>
+                    <div class="need-options">
+                        <div class="need-chip" data-category="chat" data-need="general-chat">General Q&A</div>
+                        <div class="need-chip" data-category="chat" data-need="writing">Writing Assistance</div>
+                        <div class="need-chip" data-category="chat" data-need="research">Research & Analysis</div>
+                        <div class="need-chip" data-category="chat" data-need="coding-help">Coding Help</div>
+                        <div class="need-chip" data-category="chat" data-need="long-docs">Long Document Analysis</div>
+                    </div>
+                </div>
+
+                <div class="need-category">
+                    <h4>Image Generation</h4>
+                    <div class="need-options">
+                        <div class="need-chip" data-category="image" data-need="quick-images">Quick Social Images</div>
+                        <div class="need-chip" data-category="image" data-need="professional-images">Professional Graphics</div>
+                        <div class="need-chip" data-category="image" data-need="marketing-visuals">Marketing Visuals</div>
+                        <div class="need-chip" data-category="image" data-need="product-mockups">Product Mockups</div>
+                    </div>
+                </div>
+
+                <div class="need-category">
+                    <h4>Productivity</h4>
+                    <div class="need-options">
+                        <div class="need-chip" data-category="productivity" data-need="meeting-notes">Meeting Transcription</div>
+                        <div class="need-chip" data-category="productivity" data-need="presentations">Presentation Creation</div>
+                        <div class="need-chip" data-category="productivity" data-need="grammar">Grammar & Style</div>
+                        <div class="need-chip" data-category="productivity" data-need="email">Email Writing</div>
+                    </div>
+                </div>
+
+                <div class="need-category">
+                    <h4>Development</h4>
+                    <div class="need-options">
+                        <div class="need-chip" data-category="dev" data-need="code-completion">Code Completion</div>
+                        <div class="need-chip" data-category="dev" data-need="code-review">Code Review</div>
+                        <div class="need-chip" data-category="dev" data-need="debugging">Debugging Help</div>
+                        <div class="need-chip" data-category="dev" data-need="documentation">Documentation</div>
+                    </div>
+                </div>
+
+                <div class="budget-section">
+                    <h3>Step 2: Set Your Budget</h3>
+                    <div class="budget-display">
+                        <div class="budget-amount">€<span id="budget-value">30</span></div>
+                        <div class="budget-label">per month</div>
+                    </div>
+                    <input type="range" id="budget-slider" min="0" max="100" value="30" step="5">
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generateRecommendations()">Generate Toolkit</button>
+                    <button class="btn btn-secondary" onclick="clearSelections()">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Recommendations -->
+            <div class="panel">
+                <h2>Your Recommended Toolkit</h2>
+
+                <div id="recommendations">
+                    <div class="empty-state">
+                        <p style="font-size: 3em;">🛠️</p>
+                        <p>Select your needs and click "Generate Toolkit" to get personalized recommendations</p>
+                    </div>
+                </div>
+
+                <div id="summary-container" style="display: none;">
+                    <div class="summary-section">
+                        <h3 style="margin-bottom: 15px; color: var(--accent-gold);">Budget Summary</h3>
+                        <div id="summary-items"></div>
+                        <div class="summary-row" id="total-row">
+                            <span>Total Monthly Cost</span>
+                            <span class="total-value" id="total-cost">€0</span>
+                        </div>
+                    </div>
+
+                    <div class="savings-highlight" id="savings-section" style="display: none;">
+                        <div class="savings-amount" id="savings-amount">€0</div>
+                        <div class="savings-label">saved vs. subscribing to all premium options</div>
+                    </div>
+
+                    <div class="value-check">
+                        <h4 style="color: var(--accent-gold); margin-bottom: 10px;">VALUE Framework Check</h4>
+                        <div class="value-item">
+                            <span class="value-letter">V</span>
+                            <span class="value-text">Verify: Test each tool with YOUR use cases before committing</span>
+                        </div>
+                        <div class="value-item">
+                            <span class="value-letter">A</span>
+                            <span class="value-text">Assess: Check for hidden costs and usage overages</span>
+                        </div>
+                        <div class="value-item">
+                            <span class="value-letter">L</span>
+                            <span class="value-text">Look: Free alternatives included where possible</span>
+                        </div>
+                        <div class="value-item">
+                            <span class="value-letter">U</span>
+                            <span class="value-text">Understand: Review usage limits match your needs</span>
+                        </div>
+                        <div class="value-item">
+                            <span class="value-letter">E</span>
+                            <span class="value-text">Evaluate: Calculate ROI before subscribing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Tool database
+        const tools = {
+            chat: [
+                { name: 'ChatGPT Plus', price: 20, tier: 'budget', badge: 'Best Value', description: 'GPT-4o, DALL-E 3, Code Interpreter, Custom GPTs', features: ['GPT-4o', 'DALL-E 3', 'Web Browse', 'Code'], needs: ['general-chat', 'writing', 'research', 'coding-help'] },
+                { name: 'Claude Pro', price: 18, tier: 'budget', badge: 'Best Writing', description: 'Claude 3.5 Sonnet, 200K context, great for long documents', features: ['Claude 3.5', '200K context', 'Artifacts', 'Analysis'], needs: ['writing', 'long-docs', 'research'] },
+                { name: 'Perplexity Pro', price: 17, tier: 'budget', badge: 'Best Research', description: 'Real-time web search with citations, multiple AI models', features: ['Live Search', 'Citations', 'Multi-model'], needs: ['research'] },
+                { name: 'ChatGPT Free', price: 0, tier: 'free', badge: 'Free', description: 'GPT-4o mini unlimited, GPT-4o limited', features: ['GPT-4o mini', 'Basic Chat'], needs: ['general-chat', 'writing'] },
+                { name: 'Claude.ai Free', price: 0, tier: 'free', badge: 'Free', description: 'Claude 3.5 Sonnet with daily limits', features: ['Claude 3.5', 'Limited'], needs: ['writing', 'long-docs'] },
+                { name: 'Gemini', price: 0, tier: 'free', badge: 'Free', description: 'Google AI, unlimited with Google account', features: ['Unlimited', 'Google Integrated'], needs: ['general-chat', 'research'] },
+            ],
+            image: [
+                { name: 'Midjourney', price: 10, tier: 'budget', badge: 'Best Quality', description: 'Industry-leading image quality, ~200 images/month', features: ['Best Quality', '200 imgs', 'Commercial'], needs: ['professional-images', 'marketing-visuals', 'product-mockups'] },
+                { name: 'Canva Pro', price: 12, tier: 'budget', badge: 'All-in-One', description: 'AI image gen + design tools + presentations', features: ['AI Images', 'Design', 'Templates'], needs: ['quick-images', 'marketing-visuals', 'product-mockups'] },
+                { name: 'Bing Image Creator', price: 0, tier: 'free', badge: 'Free DALL-E 3', description: 'DALL-E 3 powered, 15 fast/day unlimited slow', features: ['DALL-E 3', 'Free', 'Quick'], needs: ['quick-images'] },
+                { name: 'Leonardo.ai Free', price: 0, tier: 'free', badge: 'Free', description: '150 tokens daily, multiple models', features: ['Multi-model', '150/day'], needs: ['quick-images', 'professional-images'] },
+            ],
+            productivity: [
+                { name: 'Otter.ai Pro', price: 13, tier: 'budget', description: 'Unlimited transcription, AI summaries', features: ['Unlimited', 'AI Summary', 'Search'], needs: ['meeting-notes'] },
+                { name: 'Gamma Pro', price: 10, tier: 'budget', description: 'AI presentations with beautiful templates', features: ['AI Slides', 'Templates', 'Export'], needs: ['presentations'] },
+                { name: 'Grammarly Premium', price: 12, tier: 'budget', description: 'AI rewrite, tone detection, plagiarism check', features: ['AI Rewrite', 'Tone', 'Plagiarism'], needs: ['grammar', 'email'] },
+                { name: 'Otter.ai Free', price: 0, tier: 'free', badge: 'Free', description: '300 minutes/month transcription', features: ['300 min/mo', 'Basic'], needs: ['meeting-notes'] },
+                { name: 'Gamma Free', price: 0, tier: 'free', badge: 'Free', description: '400 AI credits for presentations', features: ['400 credits', 'Basic'], needs: ['presentations'] },
+                { name: 'LanguageTool Free', price: 0, tier: 'free', badge: 'Free', description: 'Good grammar checking, unlimited', features: ['Grammar', 'Unlimited'], needs: ['grammar'] },
+                { name: 'Fathom Free', price: 0, tier: 'free', badge: 'Free', description: 'Unlimited meeting recording and notes', features: ['Unlimited', 'AI Notes'], needs: ['meeting-notes'] },
+            ],
+            dev: [
+                { name: 'GitHub Copilot', price: 10, tier: 'budget', badge: 'Industry Standard', description: 'IDE integration, real-time code suggestions', features: ['IDE Plugin', 'Real-time', 'Multi-lang'], needs: ['code-completion', 'documentation'] },
+                { name: 'Cursor Pro', price: 20, tier: 'budget', badge: 'Best IDE', description: 'Full AI IDE, chat with codebase', features: ['AI IDE', 'Codebase Chat', 'Multi-file'], needs: ['code-completion', 'code-review', 'debugging'] },
+                { name: 'Codeium', price: 0, tier: 'free', badge: 'Free', description: 'Free code completion for individuals', features: ['Free', 'IDE Plugin', '70+ langs'], needs: ['code-completion'] },
+                { name: 'Phind', price: 0, tier: 'free', badge: 'Free', description: 'Developer AI search with explanations', features: ['Free', 'Search', 'Explain'], needs: ['debugging', 'documentation'] },
+            ]
+        };
+
+        // Selected needs
+        let selectedNeeds = new Set();
+        let budget = 30;
+
+        // Initialize chips
+        document.querySelectorAll('.need-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('selected');
+                const need = chip.dataset.need;
+                if (selectedNeeds.has(need)) {
+                    selectedNeeds.delete(need);
+                } else {
+                    selectedNeeds.add(need);
+                }
+            });
+        });
+
+        // Budget slider
+        const budgetSlider = document.getElementById('budget-slider');
+        const budgetValue = document.getElementById('budget-value');
+
+        budgetSlider.addEventListener('input', () => {
+            budget = parseInt(budgetSlider.value);
+            budgetValue.textContent = budget;
+        });
+
+        function generateRecommendations() {
+            if (selectedNeeds.size === 0) {
+                showNotification('Please select at least one need');
+                return;
+            }
+
+            const recommendations = [];
+            const needsArray = Array.from(selectedNeeds);
+            const coveredNeeds = new Set();
+
+            // For each category, find best tools that match needs
+            Object.entries(tools).forEach(([category, categoryTools]) => {
+                const relevantTools = categoryTools.filter(tool =>
+                    tool.needs.some(n => needsArray.includes(n))
+                );
+
+                if (relevantTools.length === 0) return;
+
+                // Sort by value (paid tools that cover more needs first, then free)
+                relevantTools.sort((a, b) => {
+                    const aMatchCount = a.needs.filter(n => needsArray.includes(n)).length;
+                    const bMatchCount = b.needs.filter(n => needsArray.includes(n)).length;
+
+                    // Prefer paid tools that cover multiple needs (better value)
+                    if (a.price > 0 && b.price > 0) {
+                        return bMatchCount - aMatchCount;
+                    }
+                    // Free tools come after paid recommendations
+                    if (a.price === 0 && b.price > 0) return 1;
+                    if (a.price > 0 && b.price === 0) return -1;
+                    return bMatchCount - aMatchCount;
+                });
+
+                // Add best paid option if within budget
+                const paidOption = relevantTools.find(t => t.price > 0);
+                if (paidOption) {
+                    recommendations.push({ ...paidOption, category, recommended: true });
+                    paidOption.needs.forEach(n => coveredNeeds.add(n));
+                }
+
+                // Add best free alternative
+                const freeOption = relevantTools.find(t => t.price === 0);
+                if (freeOption) {
+                    recommendations.push({ ...freeOption, category, recommended: false });
+                }
+            });
+
+            displayRecommendations(recommendations);
+        }
+
+        function displayRecommendations(recommendations) {
+            const container = document.getElementById('recommendations');
+            const summaryContainer = document.getElementById('summary-container');
+
+            if (recommendations.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No tools match your selected needs</p></div>';
+                summaryContainer.style.display = 'none';
+                return;
+            }
+
+            // Group by category
+            const grouped = {};
+            recommendations.forEach(rec => {
+                if (!grouped[rec.category]) grouped[rec.category] = [];
+                grouped[rec.category].push(rec);
+            });
+
+            const categoryNames = {
+                chat: 'Text & Chat AI',
+                image: 'Image Generation',
+                productivity: 'Productivity',
+                dev: 'Development'
+            };
+
+            let html = '';
+            let totalCost = 0;
+            let premiumTotal = 0;
+            const selectedTools = [];
+
+            Object.entries(grouped).forEach(([category, tools]) => {
+                html += `<h3 style="margin-top: 20px;">${categoryNames[category]}</h3>`;
+
+                tools.forEach(tool => {
+                    const priceClass = tool.price === 0 ? 'free' : tool.price <= 15 ? 'budget' : 'premium';
+                    const cardClass = tool.recommended ? 'recommended' : (tool.price === 0 ? 'free' : '');
+                    const badgeHtml = tool.badge ? `<span class="rec-badge ${tool.price === 0 ? 'free-option' : 'best'}">${tool.badge}</span>` : '';
+
+                    html += `
+                        <div class="recommendation-card ${cardClass}">
+                            <div class="rec-header">
+                                <span class="rec-name">${tool.name}${badgeHtml}</span>
+                                <span class="rec-price ${priceClass}">${tool.price === 0 ? 'Free' : '€' + tool.price + '/mo'}</span>
+                            </div>
+                            <div class="rec-description">${tool.description}</div>
+                            <div class="rec-features">
+                                ${tool.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                    // Track costs for recommended paid tools
+                    if (tool.recommended && tool.price > 0) {
+                        totalCost += tool.price;
+                        selectedTools.push({ name: tool.name, price: tool.price });
+                    }
+
+                    // Track what full premium would cost
+                    if (tool.price > 0) {
+                        premiumTotal += tool.price;
+                    }
+                });
+            });
+
+            container.innerHTML = html;
+
+            // Update summary
+            let summaryHtml = '';
+            selectedTools.forEach(tool => {
+                summaryHtml += `
+                    <div class="summary-row">
+                        <span>${tool.name}</span>
+                        <span>€${tool.price}/mo</span>
+                    </div>
+                `;
+            });
+
+            if (selectedTools.length === 0) {
+                summaryHtml = `
+                    <div class="summary-row">
+                        <span>All Free Tier Toolkit</span>
+                        <span style="color: var(--accent-green);">€0/mo</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('summary-items').innerHTML = summaryHtml;
+            document.getElementById('total-cost').textContent = '€' + totalCost + '/mo';
+
+            // Check if under budget
+            const totalRow = document.getElementById('total-row');
+            totalRow.classList.remove('under-budget', 'over-budget');
+            totalRow.classList.add(totalCost <= budget ? 'under-budget' : 'over-budget');
+
+            // Show savings
+            const savingsSection = document.getElementById('savings-section');
+            const savings = premiumTotal - totalCost;
+            if (savings > 0) {
+                document.getElementById('savings-amount').textContent = '€' + savings + '/mo';
+                savingsSection.style.display = 'block';
+            } else {
+                savingsSection.style.display = 'none';
+            }
+
+            summaryContainer.style.display = 'block';
+            showNotification('Toolkit generated! Review recommendations below.');
+        }
+
+        function clearSelections() {
+            selectedNeeds.clear();
+            document.querySelectorAll('.need-chip').forEach(chip => {
+                chip.classList.remove('selected');
+            });
+            document.getElementById('recommendations').innerHTML = `
+                <div class="empty-state">
+                    <p style="font-size: 3em;">🛠️</p>
+                    <p>Select your needs and click "Generate Toolkit" to get personalized recommendations</p>
+                </div>
+            `;
+            document.getElementById('summary-container').style.display = 'none';
+            showNotification('Selections cleared');
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

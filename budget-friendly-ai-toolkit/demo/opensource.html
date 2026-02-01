@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free & Open Source AI Toolkit - ITAG Skillnet</title>
+    <style>
+        :root {
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-input: #21262d;
+            --border-color: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-blue: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-gold: #ffd700;
+            --accent-orange: #ff9933;
+            --accent-purple: #9966ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #1a4d30 0%, #0d3320 100%);
+            border-radius: 15px;
+            border: 2px solid var(--accent-green);
+        }
+
+        header h1 {
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 204, 102, 0.2);
+            color: var(--accent-green);
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            padding: 12px 25px;
+            border-radius: 25px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+        .tab:hover {
+            border-color: var(--accent-green);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            border-color: var(--accent-green);
+            background: rgba(0, 204, 102, 0.15);
+            color: var(--accent-green);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 204, 102, 0.2);
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .tool-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .tool-badges {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tool-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .badge-free { background: rgba(0, 204, 102, 0.2); color: var(--accent-green); }
+        .badge-opensource { background: rgba(153, 102, 255, 0.2); color: var(--accent-purple); }
+        .badge-local { background: rgba(255, 153, 51, 0.2); color: var(--accent-orange); }
+        .badge-web { background: rgba(77, 166, 255, 0.2); color: var(--accent-blue); }
+
+        .tool-description {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .tool-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .feature {
+            padding: 5px 12px;
+            background: var(--bg-input);
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: var(--accent-blue);
+        }
+
+        .tool-requirements {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .tool-requirements h4 {
+            color: var(--accent-orange);
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .tool-requirements ul {
+            list-style: none;
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        .tool-requirements li {
+            padding: 3px 0;
+        }
+
+        .tool-requirements li:before {
+            content: "• ";
+            color: var(--accent-orange);
+        }
+
+        .tool-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-link {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .link-primary {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+        }
+
+        .link-primary:hover {
+            background: #00e673;
+        }
+
+        .link-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .link-secondary:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .section-intro {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .section-intro h2 {
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+
+        .section-intro p {
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quick-start {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #1a2332 100%);
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .quick-start h2 {
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+        }
+
+        .quick-start-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .step {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .step h4 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: var(--accent-green);
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .comparison-note {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+
+        .comparison-note h3 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+
+        .comparison-table th {
+            background: var(--bg-card);
+            color: var(--accent-blue);
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(77, 166, 255, 0.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-start-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🆓 Free & Open Source AI Toolkit</h1>
+            <p>100% free AI tools - no subscriptions, no limits, complete privacy</p>
+            <span class="badge">€0/month Forever</span>
+        </header>
+
+        <div class="quick-start">
+            <h2>🚀 Quick Start: Run AI Locally in 5 Minutes</h2>
+            <div class="quick-start-steps">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <h4>Download Ollama</h4>
+                    <p>The easiest way to run LLMs locally on Mac, Windows, or Linux.</p>
+                    <div class="code-block">curl -fsSL https://ollama.com/install.sh | sh</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <h4>Pull a Model</h4>
+                    <p>Download Llama 3.1 (8B) - great balance of speed and quality.</p>
+                    <div class="code-block">ollama pull llama3.1</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <h4>Start Chatting</h4>
+                    <p>Run the model and start an interactive chat session.</p>
+                    <div class="code-block">ollama run llama3.1</div>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <h4>Add a GUI (Optional)</h4>
+                    <p>Install Open WebUI for a ChatGPT-like interface.</p>
+                    <div class="code-block">docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui ghcr.io/open-webui/open-webui:main</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-tabs">
+            <div class="tab active" data-category="all">All Tools</div>
+            <div class="tab" data-category="llm">Chat & Text</div>
+            <div class="tab" data-category="image">Image Gen</div>
+            <div class="tab" data-category="audio">Audio & Voice</div>
+            <div class="tab" data-category="code">Coding</div>
+            <div class="tab" data-category="productivity">Productivity</div>
+        </div>
+
+        <div class="tools-grid" id="tools-container">
+            <!-- LLM Tools -->
+            <div class="tool-card" data-category="llm">
+                <div class="tool-header">
+                    <span class="tool-name">Ollama</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Run large language models locally. Supports Llama 3.1, Mistral, Gemma, Phi, and many more. Simple CLI and API.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">100+ Models</span>
+                    <span class="feature">Mac/Win/Linux</span>
+                    <span class="feature">API Compatible</span>
+                    <span class="feature">No Internet Needed</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>8GB+ RAM (16GB recommended)</li>
+                        <li>7B models: ~4GB disk space</li>
+                        <li>GPU optional but faster</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://ollama.com" target="_blank" class="tool-link link-primary">Download</a>
+                    <a href="https://github.com/ollama/ollama" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="llm">
+                <div class="tool-header">
+                    <span class="tool-name">LM Studio</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Beautiful GUI for running local LLMs. Discover, download, and chat with models. Built-in model browser and chat interface.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Easy GUI</span>
+                    <span class="feature">Model Browser</span>
+                    <span class="feature">Local API Server</span>
+                    <span class="feature">GGUF Support</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Mac (Apple Silicon or Intel) / Windows</li>
+                        <li>8GB+ RAM for smaller models</li>
+                        <li>SSD recommended for model loading</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://lmstudio.ai" target="_blank" class="tool-link link-primary">Download</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="llm">
+                <div class="tool-header">
+                    <span class="tool-name">Jan.ai</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    ChatGPT-like interface for local AI. Beautiful UI, conversation history, model management. 100% offline capable.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">ChatGPT-like UI</span>
+                    <span class="feature">Conversation History</span>
+                    <span class="feature">Extensions</span>
+                    <span class="feature">100% Offline</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Mac / Windows / Linux</li>
+                        <li>8GB+ RAM</li>
+                        <li>GPU acceleration supported</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://jan.ai" target="_blank" class="tool-link link-primary">Download</a>
+                    <a href="https://github.com/janhq/jan" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="llm">
+                <div class="tool-header">
+                    <span class="tool-name">Open WebUI</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Self-hosted web UI for Ollama and OpenAI-compatible APIs. Multi-user support, RAG, web search, and more.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Web Interface</span>
+                    <span class="feature">Multi-User</span>
+                    <span class="feature">RAG Built-in</span>
+                    <span class="feature">Plugin System</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Docker or Python 3.11+</li>
+                        <li>Ollama running locally</li>
+                        <li>2GB+ RAM for UI</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://openwebui.com" target="_blank" class="tool-link link-primary">Website</a>
+                    <a href="https://github.com/open-webui/open-webui" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <!-- Image Tools -->
+            <div class="tool-card" data-category="image">
+                <div class="tool-header">
+                    <span class="tool-name">Stable Diffusion (AUTOMATIC1111)</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    The most popular local image generation tool. Full control over generation, hundreds of models, extensions, and LoRAs.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Unlimited Images</span>
+                    <span class="feature">Custom Models</span>
+                    <span class="feature">ControlNet</span>
+                    <span class="feature">Inpainting</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>NVIDIA GPU with 6GB+ VRAM (or CPU, slower)</li>
+                        <li>8GB+ RAM</li>
+                        <li>10GB+ disk space per model</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui" target="_blank" class="tool-link link-primary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="image">
+                <div class="tool-header">
+                    <span class="tool-name">ComfyUI</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Node-based UI for advanced image generation workflows. More powerful than A1111 for complex pipelines.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Node-Based</span>
+                    <span class="feature">Advanced Workflows</span>
+                    <span class="feature">Video Support</span>
+                    <span class="feature">Efficient Memory</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>NVIDIA GPU recommended (AMD/Intel possible)</li>
+                        <li>4GB+ VRAM minimum</li>
+                        <li>Python 3.10+</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://github.com/comfyanonymous/ComfyUI" target="_blank" class="tool-link link-primary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="image">
+                <div class="tool-header">
+                    <span class="tool-name">Fooocus</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Simplified Stable Diffusion with Midjourney-like quality. One-click install, minimal settings, great defaults.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Easy Setup</span>
+                    <span class="feature">Great Defaults</span>
+                    <span class="feature">Inpainting</span>
+                    <span class="feature">Upscaling</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>NVIDIA GPU with 4GB+ VRAM</li>
+                        <li>One-click Windows installer available</li>
+                        <li>~10GB disk space</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://github.com/lllyasviel/Fooocus" target="_blank" class="tool-link link-primary">GitHub</a>
+                </div>
+            </div>
+
+            <!-- Audio Tools -->
+            <div class="tool-card" data-category="audio">
+                <div class="tool-header">
+                    <span class="tool-name">Whisper (OpenAI)</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Best-in-class speech-to-text. Transcribe audio/video in 99 languages. Runs locally with no limits.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">99 Languages</span>
+                    <span class="feature">High Accuracy</span>
+                    <span class="feature">Translation</span>
+                    <span class="feature">Timestamps</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Python 3.8+</li>
+                        <li>GPU speeds up processing 10x</li>
+                        <li>Models: 39MB to 2.9GB</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://github.com/openai/whisper" target="_blank" class="tool-link link-primary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="audio">
+                <div class="tool-header">
+                    <span class="tool-name">Whisper.cpp</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Optimized C++ port of Whisper. Faster and lighter than original. Runs on CPU efficiently.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">CPU Optimized</span>
+                    <span class="feature">Low Memory</span>
+                    <span class="feature">Fast</span>
+                    <span class="feature">CLI & Library</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>C++ compiler</li>
+                        <li>Works great on CPU-only machines</li>
+                        <li>Apple Silicon optimized</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://github.com/ggerganov/whisper.cpp" target="_blank" class="tool-link link-primary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="audio">
+                <div class="tool-header">
+                    <span class="tool-name">Coqui TTS</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Text-to-speech with voice cloning. Create custom voices from short audio samples. Multiple languages.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Voice Cloning</span>
+                    <span class="feature">16+ Languages</span>
+                    <span class="feature">Multiple Models</span>
+                    <span class="feature">Real-time</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Python 3.9+</li>
+                        <li>GPU recommended for voice cloning</li>
+                        <li>~2GB per model</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://github.com/coqui-ai/TTS" target="_blank" class="tool-link link-primary">GitHub</a>
+                </div>
+            </div>
+
+            <!-- Coding Tools -->
+            <div class="tool-card" data-category="code">
+                <div class="tool-header">
+                    <span class="tool-name">Continue</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Open source GitHub Copilot alternative. Works with VS Code and JetBrains. Use with local models via Ollama.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">VS Code</span>
+                    <span class="feature">JetBrains</span>
+                    <span class="feature">Chat</span>
+                    <span class="feature">Autocomplete</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>VS Code or JetBrains IDE</li>
+                        <li>Ollama (or other LLM backend)</li>
+                        <li>Works with any local model</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://continue.dev" target="_blank" class="tool-link link-primary">Website</a>
+                    <a href="https://github.com/continuedev/continue" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="code">
+                <div class="tool-header">
+                    <span class="tool-name">Tabby</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Self-Hosted</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Self-hosted AI coding assistant. Code completion with your own data. Supports fine-tuning on your codebase.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Self-Hosted</span>
+                    <span class="feature">Fine-Tuning</span>
+                    <span class="feature">RAG</span>
+                    <span class="feature">Team Features</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Docker or direct install</li>
+                        <li>GPU recommended (NVIDIA/AMD)</li>
+                        <li>4GB+ VRAM for smaller models</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://tabby.tabbyml.com" target="_blank" class="tool-link link-primary">Website</a>
+                    <a href="https://github.com/TabbyML/tabby" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="code">
+                <div class="tool-header">
+                    <span class="tool-name">Aider</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    AI pair programming in your terminal. Edits code directly in your git repo. Works with local models.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Git Integration</span>
+                    <span class="feature">Multi-File Edits</span>
+                    <span class="feature">Voice Support</span>
+                    <span class="feature">Local Models</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Python 3.9+</li>
+                        <li>Git repository</li>
+                        <li>Works with Ollama or API</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://aider.chat" target="_blank" class="tool-link link-primary">Website</a>
+                    <a href="https://github.com/paul-gauthier/aider" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <!-- Productivity Tools -->
+            <div class="tool-card" data-category="productivity">
+                <div class="tool-header">
+                    <span class="tool-name">AnythingLLM</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Chat with your documents locally. Built-in RAG, supports PDFs, Word docs, websites. Full privacy.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Document Chat</span>
+                    <span class="feature">RAG Built-in</span>
+                    <span class="feature">Multi-User</span>
+                    <span class="feature">Agents</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Docker or desktop app</li>
+                        <li>Ollama for local LLM</li>
+                        <li>4GB+ RAM</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://anythingllm.com" target="_blank" class="tool-link link-primary">Website</a>
+                    <a href="https://github.com/Mintplex-Labs/anything-llm" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="productivity">
+                <div class="tool-header">
+                    <span class="tool-name">PrivateGPT</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    100% private document Q&A. No data leaves your machine. Production-ready API included.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">100% Private</span>
+                    <span class="feature">API Included</span>
+                    <span class="feature">Multiple Formats</span>
+                    <span class="feature">Embeddings</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Python 3.11</li>
+                        <li>Poetry package manager</li>
+                        <li>GPU optional but recommended</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://privategpt.dev" target="_blank" class="tool-link link-primary">Website</a>
+                    <a href="https://github.com/zylon-ai/private-gpt" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+
+            <div class="tool-card" data-category="productivity">
+                <div class="tool-header">
+                    <span class="tool-name">Khoj</span>
+                    <div class="tool-badges">
+                        <span class="tool-badge badge-free">Free</span>
+                        <span class="tool-badge badge-opensource">Open Source</span>
+                        <span class="tool-badge badge-local">Local</span>
+                    </div>
+                </div>
+                <div class="tool-description">
+                    Personal AI assistant that learns from your notes, documents, and data. Obsidian and Emacs integration.
+                </div>
+                <div class="tool-features">
+                    <span class="feature">Personal AI</span>
+                    <span class="feature">Obsidian Plugin</span>
+                    <span class="feature">Web Search</span>
+                    <span class="feature">Image Gen</span>
+                </div>
+                <div class="tool-requirements">
+                    <h4>Requirements</h4>
+                    <ul>
+                        <li>Docker or Python</li>
+                        <li>Works with local or cloud LLMs</li>
+                        <li>Obsidian optional</li>
+                    </ul>
+                </div>
+                <div class="tool-links">
+                    <a href="https://khoj.dev" target="_blank" class="tool-link link-primary">Website</a>
+                    <a href="https://github.com/khoj-ai/khoj" target="_blank" class="tool-link link-secondary">GitHub</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-note">
+            <h3>Local vs Cloud AI: Quick Comparison</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>Aspect</th>
+                    <th>Local/Open Source</th>
+                    <th>Cloud Services</th>
+                </tr>
+                <tr>
+                    <td><strong>Cost</strong></td>
+                    <td style="color: var(--accent-green);">Free (electricity only)</td>
+                    <td>€10-50+/month</td>
+                </tr>
+                <tr>
+                    <td><strong>Privacy</strong></td>
+                    <td style="color: var(--accent-green);">100% private, data never leaves</td>
+                    <td>Data sent to provider</td>
+                </tr>
+                <tr>
+                    <td><strong>Usage Limits</strong></td>
+                    <td style="color: var(--accent-green);">Unlimited</td>
+                    <td>Rate limited/metered</td>
+                </tr>
+                <tr>
+                    <td><strong>Quality</strong></td>
+                    <td>Good (7B-70B models)</td>
+                    <td style="color: var(--accent-green);">Best (GPT-4, Claude 3.5)</td>
+                </tr>
+                <tr>
+                    <td><strong>Setup</strong></td>
+                    <td>Some technical knowledge</td>
+                    <td style="color: var(--accent-green);">Instant, no setup</td>
+                </tr>
+                <tr>
+                    <td><strong>Hardware</strong></td>
+                    <td>Need decent PC/Mac</td>
+                    <td style="color: var(--accent-green);">Any device with browser</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Tab filtering
+        const tabs = document.querySelectorAll('.tab');
+        const tools = document.querySelectorAll('.tool-card');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Filter tools
+                const category = tab.dataset.category;
+                tools.forEach(tool => {
+                    if (category === 'all' || tool.dataset.category === category) {
+                        tool.classList.remove('hidden');
+                    } else {
+                        tool.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget-Friendly AI Toolkit - ITAG Skillnet AI Advantage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/night.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --accent-red: #ff4444;
+            --accent-purple: #9966ff;
+            --accent-gold: #ffd700;
+        }
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            color: var(--itag-light);
+        }
+        .reveal h1 {
+            font-size: 2.2em;
+        }
+        .reveal h2 {
+            font-size: 1.6em;
+            border-bottom: 3px solid var(--itag-blue);
+            padding-bottom: 10px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            text-align: left;
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
+        .four-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+        }
+        .card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--itag-blue);
+        }
+        .card h4 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .danger-box {
+            background: linear-gradient(135deg, #4d1a1a 0%, #661a1a 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-red);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .highlight {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .highlight-orange {
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+        .highlight-red {
+            color: var(--accent-red);
+            font-weight: bold;
+        }
+        .highlight-purple {
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+        .highlight-gold {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.7em;
+        }
+        .comparison-table th {
+            background: var(--itag-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: rgba(0,102,204,0.1);
+        }
+        .agenda-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.95em;
+        }
+        .agenda-time {
+            color: var(--itag-light);
+            font-weight: bold;
+            min-width: 70px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        ul {
+            text-align: left;
+        }
+        li {
+            margin: 10px 0;
+        }
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--itag-blue);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+        }
+        .fullscreen-btn:hover {
+            background: var(--itag-light);
+        }
+        .slide-content {
+            width: 100%;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px 20px 20px 20px;
+            box-sizing: border-box;
+        }
+        .slide-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .slide-content::-webkit-scrollbar-track {
+            background: #1a1a2e;
+            border-radius: 5px;
+        }
+        .slide-content::-webkit-scrollbar-thumb {
+            background: var(--itag-blue);
+            border-radius: 5px;
+        }
+        .value-framework {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .value-letter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 6px;
+            border-left: 4px solid var(--accent-gold);
+            font-size: 0.85em;
+        }
+        .value-letter .letter {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--accent-gold);
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .price-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .price-free { background: #1a4d30; color: #00cc66; }
+        .price-budget { background: #1a3d4d; color: #4da6ff; }
+        .price-mid { background: #4d3d1a; color: #ffb366; }
+        .price-premium { background: #4d1a4d; color: #cc66cc; }
+        .tool-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #333;
+            text-align: center;
+        }
+        .tool-card.recommended {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+        .tool-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--itag-light);
+            margin-bottom: 5px;
+        }
+        .tool-price {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 10px;
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--itag-light);
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        .roi-positive {
+            color: var(--accent-green);
+        }
+        .roi-negative {
+            color: var(--accent-red);
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: Title -->
+            <section>
+                <div class="slide-content">
+                    <h1>Budget-Friendly AI Toolkit</h1>
+                    <h2 style="border-bottom: none;">Practical Tools Under €50/Month</h2>
+                    <p style="color: var(--itag-light); font-size: 1.2em;">ITAG Skillnet AI Advantage</p>
+                    <p style="color: #888; margin-top: 40px;">90-Minute Lunch & Learn</p>
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(0,102,204,0.1); border-radius: 10px;">
+                        <p style="font-size: 0.9em; color: #aaa;">Build a powerful AI toolkit without breaking the bank</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 2: Agenda -->
+            <section>
+                <div class="slide-content">
+                    <h2>Today's Agenda</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>The AI Tool Landscape</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>The VALUE Framework</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">20 min</span>
+                            <span>Tool Categories & Recommendations</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>Hands-On: Build Your Toolkit</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>Maximizing Free Tiers</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>ROI & Making the Case</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">5 min</span>
+                            <span>Q&A and Wrap-Up</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: Learning Objectives -->
+            <section>
+                <div class="slide-content">
+                    <h2>Learning Objectives</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Discover</h4>
+                            <ul>
+                                <li>Powerful free and low-cost AI tools</li>
+                                <li>Hidden gems that rival expensive options</li>
+                                <li>How to evaluate tools objectively</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Apply</h4>
+                            <ul>
+                                <li>The VALUE framework for tool selection</li>
+                                <li>Strategies to maximize free tiers</li>
+                                <li>Build a complete toolkit under €50/month</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>By the end:</strong> You'll have a personalized AI toolkit plan and the confidence to make smart purchasing decisions.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: The AI Tool Explosion -->
+            <section>
+                <div class="slide-content">
+                    <h2>The AI Tool Explosion</h2>
+                    <div class="three-column" style="margin-top: 30px;">
+                        <div class="stat-box">
+                            <div class="stat-number">14,000+</div>
+                            <div class="stat-label">AI tools available<br>as of 2024</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">3x</div>
+                            <div class="stat-label">Growth in AI tools<br>since ChatGPT launch</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">67%</div>
+                            <div class="stat-label">Offer free tiers<br>or trials</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.7em; color: #888; margin-top: 15px; text-align: center;">
+                        Sources: There's An AI For That Database 2024 | Sequoia Capital AI Report
+                    </p>
+                    <div class="warning-box" style="margin-top: 15px;">
+                        <strong>The Challenge:</strong> With so many options, how do you choose wisely without wasting money on subscriptions you don't need?
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: The Budget Reality -->
+            <section>
+                <div class="slide-content">
+                    <h2>The Budget Reality</h2>
+                    <div class="two-column">
+                        <div class="danger-box">
+                            <h4 style="color: var(--accent-red); margin-top: 0;">The Subscription Trap</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>ChatGPT Plus: €20/month</li>
+                                <li>Claude Pro: €18/month</li>
+                                <li>Midjourney: €10/month</li>
+                                <li>Grammarly: €12/month</li>
+                                <li>Notion AI: €10/month</li>
+                                <li><strong>Total: €70+/month</strong></li>
+                            </ul>
+                        </div>
+                        <div class="tip-box">
+                            <h4 style="color: var(--accent-green); margin-top: 0;">The Smart Approach</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Use free tiers strategically</li>
+                                <li>Pay only for what you truly need</li>
+                                <li>Combine tools for coverage</li>
+                                <li>Evaluate ROI before subscribing</li>
+                                <li><strong>Target: Under €50/month</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Key Insight:</strong> Most professionals only need 2-3 paid subscriptions. The rest can be covered by free tiers.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: The VALUE Framework -->
+            <section>
+                <div class="slide-content">
+                    <h2>The VALUE Framework</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">A systematic approach to evaluating AI tools on a budget</p>
+                    <div class="value-framework">
+                        <div class="value-letter">
+                            <span class="letter">V</span>
+                            <span><strong>Verify Capabilities</strong> - Does it actually do what you need?</span>
+                        </div>
+                        <div class="value-letter">
+                            <span class="letter">A</span>
+                            <span><strong>Assess Total Cost</strong> - Including hidden fees, usage limits, add-ons</span>
+                        </div>
+                        <div class="value-letter">
+                            <span class="letter">L</span>
+                            <span><strong>Look for Free Alternatives</strong> - Always check free options first</span>
+                        </div>
+                        <div class="value-letter">
+                            <span class="letter">U</span>
+                            <span><strong>Understand Usage Limits</strong> - Will free tier actually cover your needs?</span>
+                        </div>
+                        <div class="value-letter">
+                            <span class="letter">E</span>
+                            <span><strong>Evaluate ROI</strong> - Calculate time saved vs. cost before subscribing</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: V - Verify Capabilities -->
+            <section>
+                <div class="slide-content">
+                    <h2>V - Verify Capabilities</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Before You Pay, Test:</h4>
+                            <ul>
+                                <li>Use free trials fully (don't just sign up)</li>
+                                <li>Test with YOUR actual use cases</li>
+                                <li>Compare output quality across tools</li>
+                                <li>Check if features match marketing claims</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Red Flags</h4>
+                            <ul>
+                                <li style="color: var(--accent-red);">No free trial available</li>
+                                <li style="color: var(--accent-red);">Vague feature descriptions</li>
+                                <li style="color: var(--accent-red);">Only showing "best case" demos</li>
+                                <li style="color: var(--accent-red);">No user reviews or testimonials</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>Pro Tip:</strong> Create a standard test prompt/task and run it through multiple tools before deciding. Document the results.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: A - Assess Total Cost -->
+            <section>
+                <div class="slide-content">
+                    <h2>A - Assess Total Cost</h2>
+                    <h4 style="color: var(--accent-orange);">Hidden Costs to Watch For:</h4>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Cost Type</th>
+                            <th>Example</th>
+                            <th>How to Avoid</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Usage Overages</strong></td>
+                            <td>API calls beyond limit charged per use</td>
+                            <td>Set usage alerts, monitor weekly</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Feature Tiers</strong></td>
+                            <td>"Advanced" features only in higher plans</td>
+                            <td>List must-have features first</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Seat Licenses</strong></td>
+                            <td>Per-user pricing adds up quickly</td>
+                            <td>Consider team vs. individual plans</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Annual Lock-in</strong></td>
+                            <td>Monthly rate only with yearly commitment</td>
+                            <td>Start monthly, switch if committed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Export Fees</strong></td>
+                            <td>Charged to export your own data</td>
+                            <td>Check data portability upfront</td>
+                        </tr>
+                    </table>
+                    <div class="tip-box">
+                        <strong>Calculate True Monthly Cost:</strong> (Annual Price ÷ 12) + (Average Overages) + (Add-on Features)
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: L - Look for Free Alternatives -->
+            <section>
+                <div class="slide-content">
+                    <h2>L - Look for Free Alternatives</h2>
+                    <div class="three-column">
+                        <div class="card">
+                            <h4 style="color: var(--accent-green);">Text/Chat AI</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>ChatGPT Free</strong> - GPT-4o mini</li>
+                                <li><strong>Claude.ai Free</strong> - Claude 3.5</li>
+                                <li><strong>Gemini</strong> - Google's AI</li>
+                                <li><strong>Perplexity</strong> - Research AI</li>
+                                <li><strong>HuggingChat</strong> - Open source</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-green);">Image AI</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>Bing Image Creator</strong> - DALL-E 3</li>
+                                <li><strong>Leonardo.ai</strong> - 150 free/day</li>
+                                <li><strong>Playground AI</strong> - 500 free/day</li>
+                                <li><strong>Canva AI</strong> - Limited free</li>
+                                <li><strong>Ideogram</strong> - Great for text</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-green);">Productivity AI</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>Notion AI</strong> - Trial available</li>
+                                <li><strong>Otter.ai</strong> - 300 min/month</li>
+                                <li><strong>Gamma</strong> - Presentations</li>
+                                <li><strong>Tome</strong> - Slide decks</li>
+                                <li><strong>Fireflies</strong> - Meeting notes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Strategy:</strong> Rotate between free tiers of similar tools to effectively multiply your free usage.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: U - Understand Usage Limits -->
+            <section>
+                <div class="slide-content">
+                    <h2>U - Understand Usage Limits</h2>
+                    <h4>Common Free Tier Limits (as of 2024)</h4>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Tool</th>
+                            <th>Free Tier Limit</th>
+                            <th>Enough For?</th>
+                        </tr>
+                        <tr>
+                            <td><strong>ChatGPT</strong></td>
+                            <td>~80 messages/3 hours (GPT-4o mini unlimited)</td>
+                            <td style="color: var(--accent-green);">Most casual users</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Claude.ai</strong></td>
+                            <td>~30-50 messages/day (varies)</td>
+                            <td style="color: var(--accent-orange);">Light to moderate use</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gemini</strong></td>
+                            <td>Unlimited (with Google account)</td>
+                            <td style="color: var(--accent-green);">Most users</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bing Image Creator</strong></td>
+                            <td>15 boosts/day, unlimited slow</td>
+                            <td style="color: var(--accent-green);">Casual image creation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Otter.ai</strong></td>
+                            <td>300 minutes/month</td>
+                            <td style="color: var(--accent-orange);">~10 meetings/month</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 0.7em; color: #888; text-align: center;">Note: Limits change frequently. Always verify current limits before planning.</p>
+                </div>
+            </section>
+
+            <!-- Slide 11: E - Evaluate ROI -->
+            <section>
+                <div class="slide-content">
+                    <h2>E - Evaluate ROI</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Simple ROI Formula</h4>
+                            <p style="font-size: 0.9em;">Hours Saved × Your Hourly Rate = Value</p>
+                            <p style="font-size: 0.9em;">Value - Tool Cost = Monthly ROI</p>
+                            <div style="background: #0d1117; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                <p style="font-size: 0.85em; margin: 0;"><strong>Example:</strong></p>
+                                <p style="font-size: 0.8em; margin: 5px 0;">5 hours saved × €30/hour = €150 value</p>
+                                <p style="font-size: 0.8em; margin: 5px 0;">€150 - €20 (ChatGPT Plus) = <span class="roi-positive">€130 ROI</span></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>When to Pay vs. Stay Free</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><span class="highlight">Pay:</span> Tool saves 2+ hours/month</li>
+                                <li><span class="highlight">Pay:</span> Free tier causes workflow friction</li>
+                                <li><span class="highlight-orange">Stay Free:</span> Occasional use only</li>
+                                <li><span class="highlight-orange">Stay Free:</span> Free tier covers 80%+ needs</li>
+                                <li><span class="highlight-red">Never:</span> Paying "just in case"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>The 2-Hour Rule:</strong> If a paid tool doesn't save you at least 2 hours per month, the free tier is probably sufficient.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 12: Category 1 - Chat/Text AI -->
+            <section>
+                <div class="slide-content">
+                    <h2>Chat & Text AI Tools</h2>
+                    <div class="three-column">
+                        <div class="tool-card recommended">
+                            <div class="tool-name">ChatGPT Plus</div>
+                            <span class="price-tag price-budget">Best Value</span>
+                            <div class="tool-price" style="color: var(--accent-gold);">€20/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>GPT-4o access</li>
+                                <li>DALL-E 3 included</li>
+                                <li>Code interpreter</li>
+                                <li>Custom GPTs</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Claude Pro</div>
+                            <span class="price-tag price-budget">Best Writing</span>
+                            <div class="tool-price" style="color: var(--itag-light);">€18/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Claude 3.5 Sonnet</li>
+                                <li>200K context window</li>
+                                <li>Artifacts (code/docs)</li>
+                                <li>5x more usage</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Perplexity Pro</div>
+                            <span class="price-tag price-budget">Best Research</span>
+                            <div class="tool-price" style="color: var(--itag-light);">€17/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Real-time web search</li>
+                                <li>Source citations</li>
+                                <li>Multiple AI models</li>
+                                <li>File uploads</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Recommendation:</strong> Pick ONE paid chat AI. Use free tiers of others for variety.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 13: Category 2 - Image AI -->
+            <section>
+                <div class="slide-content">
+                    <h2>Image Generation AI</h2>
+                    <div class="three-column">
+                        <div class="tool-card recommended">
+                            <div class="tool-name">Midjourney</div>
+                            <span class="price-tag price-budget">Best Quality</span>
+                            <div class="tool-price" style="color: var(--accent-gold);">€10/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Industry-leading quality</li>
+                                <li>~200 images/month</li>
+                                <li>Discord-based</li>
+                                <li>Commercial license</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Leonardo.ai</div>
+                            <span class="price-tag price-free">Free Option</span>
+                            <div class="tool-price" style="color: var(--accent-green);">€0/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>150 tokens/day free</li>
+                                <li>Multiple models</li>
+                                <li>Web-based UI</li>
+                                <li>Good for variety</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Bing Image Creator</div>
+                            <span class="price-tag price-free">Free Option</span>
+                            <div class="tool-price" style="color: var(--accent-green);">€0/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>DALL-E 3 powered</li>
+                                <li>15 fast/day, unlimited slow</li>
+                                <li>Microsoft account</li>
+                                <li>Great for quick images</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 15px;">
+                        <strong>Budget Tip:</strong> Use Bing Image Creator (free DALL-E 3) for 80% of needs. Subscribe to Midjourney only for professional/client work.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 14: Category 3 - Writing & Productivity -->
+            <section>
+                <div class="slide-content">
+                    <h2>Writing & Productivity AI</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Writing Assistants</h4>
+                            <table class="comparison-table" style="font-size: 0.75em;">
+                                <tr>
+                                    <th>Tool</th>
+                                    <th>Free</th>
+                                    <th>Paid</th>
+                                </tr>
+                                <tr>
+                                    <td>Grammarly</td>
+                                    <td>Basic grammar</td>
+                                    <td>€12/mo - AI rewrite</td>
+                                </tr>
+                                <tr>
+                                    <td>LanguageTool</td>
+                                    <td>Good grammar</td>
+                                    <td>€5/mo - Style</td>
+                                </tr>
+                                <tr>
+                                    <td>Hemingway</td>
+                                    <td>Web free</td>
+                                    <td>€20 one-time</td>
+                                </tr>
+                                <tr>
+                                    <td>ProWritingAid</td>
+                                    <td>500 words</td>
+                                    <td>€10/mo - Full</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="card">
+                            <h4>Meeting & Notes AI</h4>
+                            <table class="comparison-table" style="font-size: 0.75em;">
+                                <tr>
+                                    <th>Tool</th>
+                                    <th>Free</th>
+                                    <th>Paid</th>
+                                </tr>
+                                <tr>
+                                    <td>Otter.ai</td>
+                                    <td>300 min/mo</td>
+                                    <td>€13/mo - Unlimited</td>
+                                </tr>
+                                <tr>
+                                    <td>Fireflies</td>
+                                    <td>800 min/mo</td>
+                                    <td>€10/mo - More</td>
+                                </tr>
+                                <tr>
+                                    <td>tl;dv</td>
+                                    <td>Unlimited record</td>
+                                    <td>€20/mo - AI notes</td>
+                                </tr>
+                                <tr>
+                                    <td>Fathom</td>
+                                    <td>Unlimited</td>
+                                    <td>€15/mo - CRM sync</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Best Free Combo:</strong> LanguageTool (grammar) + Fathom (meetings) + ChatGPT free (rewriting) = €0/month
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 15: Category 4 - Coding AI -->
+            <section>
+                <div class="slide-content">
+                    <h2>Coding & Development AI</h2>
+                    <div class="three-column">
+                        <div class="tool-card recommended">
+                            <div class="tool-name">GitHub Copilot</div>
+                            <span class="price-tag price-budget">Industry Standard</span>
+                            <div class="tool-price" style="color: var(--accent-gold);">€10/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>IDE integration</li>
+                                <li>Real-time suggestions</li>
+                                <li>Multiple languages</li>
+                                <li>Free for students</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Cursor</div>
+                            <span class="price-tag price-budget">Best for Beginners</span>
+                            <div class="tool-price" style="color: var(--itag-light);">€20/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Full AI IDE</li>
+                                <li>Chat with codebase</li>
+                                <li>Multi-file edits</li>
+                                <li>Free tier available</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Codeium</div>
+                            <span class="price-tag price-free">Free Option</span>
+                            <div class="tool-price" style="color: var(--accent-green);">€0/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Free for individuals</li>
+                                <li>IDE extensions</li>
+                                <li>Good completions</li>
+                                <li>70+ languages</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Budget Strategy:</strong> Start with Codeium (free). Upgrade to GitHub Copilot only when coding 10+ hours/week.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 16: Category 5 - Presentation & Design -->
+            <section>
+                <div class="slide-content">
+                    <h2>Presentation & Design AI</h2>
+                    <div class="three-column">
+                        <div class="tool-card">
+                            <div class="tool-name">Gamma</div>
+                            <span class="price-tag price-free">Generous Free</span>
+                            <div class="tool-price" style="color: var(--accent-green);">€0-10/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>AI presentations</li>
+                                <li>400 credits free</li>
+                                <li>Beautiful templates</li>
+                                <li>Easy export</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card recommended">
+                            <div class="tool-name">Canva Pro</div>
+                            <span class="price-tag price-budget">All-in-One</span>
+                            <div class="tool-price" style="color: var(--accent-gold);">€12/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>AI image generation</li>
+                                <li>Magic Write</li>
+                                <li>Background remover</li>
+                                <li>Brand kit</li>
+                            </ul>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Beautiful.ai</div>
+                            <span class="price-tag price-mid">Premium</span>
+                            <div class="tool-price" style="color: var(--accent-orange);">€12/mo</div>
+                            <ul style="font-size: 0.75em; text-align: left;">
+                                <li>Smart templates</li>
+                                <li>Auto-formatting</li>
+                                <li>Team features</li>
+                                <li>PowerPoint export</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Best Value:</strong> Canva Pro at €12/mo replaces multiple tools (image editing, presentations, social graphics, AI generation).
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 17: Sample Budget Toolkits -->
+            <section>
+                <div class="slide-content">
+                    <h2>Sample Budget Toolkits</h2>
+                    <div class="three-column">
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4 style="color: var(--accent-green);">€0/month</h4>
+                            <p style="font-size: 0.75em; color: #888;">The Free Tier Master</p>
+                            <ul style="font-size: 0.8em;">
+                                <li>ChatGPT Free</li>
+                                <li>Claude.ai Free</li>
+                                <li>Bing Image Creator</li>
+                                <li>Codeium</li>
+                                <li>Gamma Free</li>
+                                <li>Otter.ai Free</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-gold);">
+                            <h4 style="color: var(--accent-gold);">€20/month</h4>
+                            <p style="font-size: 0.75em; color: #888;">The Smart Professional</p>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>ChatGPT Plus - €20</strong></li>
+                                <li>Claude.ai Free</li>
+                                <li>Bing Image Creator</li>
+                                <li>Codeium Free</li>
+                                <li>Gamma Free</li>
+                                <li>Fathom Free</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--itag-light);">
+                            <h4 style="color: var(--itag-light);">€42/month</h4>
+                            <p style="font-size: 0.75em; color: #888;">The Power User</p>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>ChatGPT Plus - €20</strong></li>
+                                <li><strong>Midjourney - €10</strong></li>
+                                <li><strong>Canva Pro - €12</strong></li>
+                                <li>Codeium Free</li>
+                                <li>Perplexity Free</li>
+                                <li>Otter.ai Free</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 18: Interactive Demo -->
+            <section>
+                <div class="slide-content">
+                    <h2>Interactive Demo</h2>
+                    <h3>AI Toolkit Budget Calculator</h3>
+                    <div class="card" style="max-width: 600px; margin: 0 auto;">
+                        <p>Try our interactive tool to build your personalized AI toolkit:</p>
+                        <ul>
+                            <li>Select your use cases and needs</li>
+                            <li>Get tool recommendations</li>
+                            <li>Calculate total monthly cost</li>
+                            <li>Compare against alternatives</li>
+                        </ul>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <h4 style="margin-top: 0;">Access the Demo</h4>
+                        <p>Navigate to the <strong>Demo</strong> section in the course materials to use the interactive Budget Calculator.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 19: Maximizing Free Tiers -->
+            <section>
+                <div class="slide-content">
+                    <h2>Maximizing Free Tiers</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4 style="color: var(--accent-green);">Smart Strategies</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Rotate tools:</strong> Use ChatGPT, then Claude, then Gemini</li>
+                                <li><strong>Batch requests:</strong> Combine multiple questions in one</li>
+                                <li><strong>Use wisely:</strong> Save AI for complex tasks</li>
+                                <li><strong>Time it right:</strong> Reset periods vary by tool</li>
+                                <li><strong>Multiple accounts:</strong> Work + personal (ethically)</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-orange);">Common Mistakes</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li style="color: var(--accent-red);">Using AI for simple Google searches</li>
+                                <li style="color: var(--accent-red);">Not checking if free tier reset</li>
+                                <li style="color: var(--accent-red);">Subscribing before hitting limits</li>
+                                <li style="color: var(--accent-red);">Paying for features you don't use</li>
+                                <li style="color: var(--accent-red);">Forgetting to cancel trials</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 15px;">
+                        <strong>Pro Tip:</strong> Set calendar reminders for trial end dates. Most tools don't warn before charging.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 20: The Free Tier Rotation Strategy -->
+            <section>
+                <div class="slide-content">
+                    <h2>The Free Tier Rotation Strategy</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Day/Situation</th>
+                            <th>Primary Tool</th>
+                            <th>Backup Tool</th>
+                            <th>Why</th>
+                        </tr>
+                        <tr>
+                            <td>Complex analysis</td>
+                            <td>Claude (best reasoning)</td>
+                            <td>ChatGPT</td>
+                            <td>Claude excels at nuance</td>
+                        </tr>
+                        <tr>
+                            <td>Current events</td>
+                            <td>Perplexity (real-time)</td>
+                            <td>Gemini</td>
+                            <td>Live web search</td>
+                        </tr>
+                        <tr>
+                            <td>Quick questions</td>
+                            <td>Gemini (unlimited)</td>
+                            <td>ChatGPT</td>
+                            <td>Save limits for complex</td>
+                        </tr>
+                        <tr>
+                            <td>Long documents</td>
+                            <td>Claude (200K context)</td>
+                            <td>ChatGPT</td>
+                            <td>Handles more text</td>
+                        </tr>
+                        <tr>
+                            <td>Creative writing</td>
+                            <td>Claude (natural tone)</td>
+                            <td>ChatGPT</td>
+                            <td>Less robotic output</td>
+                        </tr>
+                        <tr>
+                            <td>Code generation</td>
+                            <td>ChatGPT (reliable)</td>
+                            <td>Claude</td>
+                            <td>Better code quality</td>
+                        </tr>
+                    </table>
+                    <div class="tip-box">
+                        <strong>Result:</strong> Using this rotation, you can effectively get 3x the free usage across tools.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 21: Making the Business Case -->
+            <section>
+                <div class="slide-content">
+                    <h2>Making the Business Case</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>ROI Calculation Template</h4>
+                            <div style="background: #0d1117; padding: 15px; border-radius: 8px; font-size: 0.8em;">
+                                <p><strong>Monthly Time Saved:</strong> ___ hours</p>
+                                <p><strong>Your Hourly Rate:</strong> €___</p>
+                                <p><strong>Value Created:</strong> €___ (hours × rate)</p>
+                                <p><strong>Tool Cost:</strong> €___/month</p>
+                                <p style="border-top: 1px solid #333; padding-top: 10px;"><strong>Net ROI:</strong> €___ (value - cost)</p>
+                                <p><strong>ROI %:</strong> ___% ((value-cost)/cost×100)</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>Example Business Case</h4>
+                            <div style="font-size: 0.85em;">
+                                <p><strong>Request:</strong> ChatGPT Plus (€20/month)</p>
+                                <p><strong>Time saved:</strong> 8 hours/month</p>
+                                <p><strong>At €40/hour:</strong> €320 value</p>
+                                <p><strong>Net benefit:</strong> <span class="roi-positive">€300/month</span></p>
+                                <p><strong>Annual savings:</strong> <span class="roi-positive">€3,600</span></p>
+                                <p style="color: var(--accent-gold);"><strong>ROI: 1,500%</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Key Message:</strong> Frame AI tools as productivity investments, not expenses. Focus on hours saved and quality improved.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 22: Hidden Gems Under €10 -->
+            <section>
+                <div class="slide-content">
+                    <h2>Hidden Gems Under €10/month</h2>
+                    <div class="three-column">
+                        <div class="tool-card">
+                            <div class="tool-name">Poe</div>
+                            <div class="tool-price" style="color: var(--accent-green);">€0-8/mo</div>
+                            <p style="font-size: 0.75em;">Access to Claude, GPT-4, Gemini, and custom bots in one interface. Great for testing multiple AIs.</p>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Rix by Hashnode</div>
+                            <div class="tool-price" style="color: var(--accent-green);">€0/mo</div>
+                            <p style="font-size: 0.75em;">AI coding assistant with web search. Trained on documentation. Free forever tier.</p>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Phind</div>
+                            <div class="tool-price" style="color: var(--accent-green);">€0/mo</div>
+                            <p style="font-size: 0.75em;">Developer-focused AI search. Explains code, finds solutions, cites sources.</p>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">You.com</div>
+                            <div class="tool-price" style="color: var(--accent-green);">€0-8/mo</div>
+                            <p style="font-size: 0.75em;">AI search + chat + image generation. Generous free tier with multiple AI models.</p>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Writesonic</div>
+                            <div class="tool-price" style="color: var(--itag-light);">€9/mo</div>
+                            <p style="font-size: 0.75em;">AI writing with SEO features. Good for content marketers. 10K words free.</p>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Murf.ai</div>
+                            <div class="tool-price" style="color: var(--accent-green);">€0/mo</div>
+                            <p style="font-size: 0.75em;">AI voice generation. 10 min free/month. Great for quick voiceovers.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 23: Open Source Alternatives -->
+            <section>
+                <div class="slide-content">
+                    <h2>Open Source & Self-Hosted Options</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4 style="color: var(--accent-green);">For Technical Users</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Ollama</strong> - Run LLMs locally (Llama, Mistral)</li>
+                                <li><strong>LM Studio</strong> - GUI for local models</li>
+                                <li><strong>Jan.ai</strong> - ChatGPT-like interface, local</li>
+                                <li><strong>Stable Diffusion</strong> - Local image generation</li>
+                                <li><strong>Whisper</strong> - Free speech-to-text</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: #888; margin-top: 15px;">Requires: Decent GPU (8GB+ VRAM) or patience</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-orange);">Considerations</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><span class="highlight">Pro:</span> Completely free forever</li>
+                                <li><span class="highlight">Pro:</span> No usage limits</li>
+                                <li><span class="highlight">Pro:</span> Full privacy/control</li>
+                                <li><span class="highlight-orange">Con:</span> Setup time required</li>
+                                <li><span class="highlight-orange">Con:</span> Hardware requirements</li>
+                                <li><span class="highlight-orange">Con:</span> Lower quality than GPT-4</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 15px;">
+                        <strong>Best For:</strong> Developers, privacy-conscious users, or anyone with a gaming PC who wants unlimited AI access.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 24: Student & Educator Discounts -->
+            <section>
+                <div class="slide-content">
+                    <h2>Student & Educator Discounts</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Tool</th>
+                            <th>Regular Price</th>
+                            <th>Student/Educator Price</th>
+                            <th>How to Get</th>
+                        </tr>
+                        <tr>
+                            <td><strong>GitHub Copilot</strong></td>
+                            <td>€10/month</td>
+                            <td style="color: var(--accent-green);"><strong>FREE</strong></td>
+                            <td>GitHub Education pack</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Notion</strong></td>
+                            <td>€10/month</td>
+                            <td style="color: var(--accent-green);"><strong>FREE</strong></td>
+                            <td>Education email</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Canva Pro</strong></td>
+                            <td>€12/month</td>
+                            <td style="color: var(--accent-green);"><strong>FREE</strong></td>
+                            <td>Education verification</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Figma</strong></td>
+                            <td>€12/month</td>
+                            <td style="color: var(--accent-green);"><strong>FREE</strong></td>
+                            <td>Education email</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Microsoft Copilot</strong></td>
+                            <td>€20/month</td>
+                            <td style="color: var(--accent-green);">Included in A3/A5</td>
+                            <td>Through institution</td>
+                        </tr>
+                    </table>
+                    <div class="tip-box">
+                        <strong>Tip:</strong> Many discounts remain valid for years after verification. Check if your company offers learning budgets or education partnerships.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 25: Annual vs Monthly -->
+            <section>
+                <div class="slide-content">
+                    <h2>Annual vs Monthly: When to Commit</h2>
+                    <div class="two-column">
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4 style="color: var(--accent-green);">Choose Annual When:</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>You've used the tool 3+ months already</li>
+                                <li>It's core to your daily workflow</li>
+                                <li>Savings exceed 15% (typical: 20%)</li>
+                                <li>The company is stable/established</li>
+                                <li>You've maxed out the free tier</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-orange);">
+                            <h4 style="color: var(--accent-orange);">Stay Monthly When:</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Still evaluating the tool</li>
+                                <li>AI landscape changing rapidly</li>
+                                <li>Usage is inconsistent</li>
+                                <li>Better alternatives might emerge</li>
+                                <li>Budget might change</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>Current Advice (2024):</strong> The AI market is evolving so fast that annual commitments are risky. Consider staying monthly for at least another year unless savings are significant.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 26: Tool Evaluation Checklist -->
+            <section>
+                <div class="slide-content">
+                    <h2>Tool Evaluation Checklist</h2>
+                    <div class="card" style="max-width: 700px; margin: 0 auto;">
+                        <h4 style="color: var(--accent-gold);">Before Subscribing, Check:</h4>
+                        <div style="font-size: 0.85em;">
+                            <p>☐ <strong>Tested with MY actual use cases</strong> (not just demos)</p>
+                            <p>☐ <strong>Calculated true monthly cost</strong> (including overages)</p>
+                            <p>☐ <strong>Checked for free alternatives</strong> that meet 80%+ needs</p>
+                            <p>☐ <strong>Understood usage limits</strong> and what happens when exceeded</p>
+                            <p>☐ <strong>Calculated ROI</strong> (saves 2+ hours/month minimum)</p>
+                            <p>☐ <strong>Checked cancellation policy</strong> and data export options</p>
+                            <p>☐ <strong>Read recent reviews</strong> (not just testimonials)</p>
+                            <p>☐ <strong>Set calendar reminder</strong> for trial end date</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>The 1-Week Rule:</strong> Never subscribe on the same day you discover a tool. Give yourself a week to evaluate properly.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 27: Take-Home Exercise -->
+            <section>
+                <div class="slide-content">
+                    <h2>Take-Home Exercise</h2>
+                    <div class="card">
+                        <h4 style="color: var(--accent-gold);">Build Your Personal AI Toolkit</h4>
+                        <ol style="font-size: 0.9em;">
+                            <li><strong>Audit Current Tools</strong> - List all AI subscriptions and their actual monthly usage</li>
+                            <li><strong>Identify Needs</strong> - What tasks do you actually need AI for daily?</li>
+                            <li><strong>Apply VALUE</strong> - Run each tool through the framework</li>
+                            <li><strong>Find Alternatives</strong> - For each paid tool, identify a free alternative</li>
+                            <li><strong>Calculate Savings</strong> - How much could you save while maintaining productivity?</li>
+                            <li><strong>Set a Budget</strong> - What's your maximum monthly AI spend?</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Challenge:</strong> Can you build a toolkit that does everything you need for under €20/month?
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 28: Key Takeaways -->
+            <section>
+                <div class="slide-content">
+                    <h2>Key Takeaways</h2>
+                    <div class="four-column">
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em;">💰</p>
+                            <h4>VALUE</h4>
+                            <p style="font-size: 0.8em;">Apply the framework before every subscription</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em;">🔄</p>
+                            <h4>Rotate</h4>
+                            <p style="font-size: 0.8em;">Use multiple free tiers to multiply access</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em;">📊</p>
+                            <h4>ROI First</h4>
+                            <p style="font-size: 0.8em;">Calculate time saved before paying</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em;">🎯</p>
+                            <h4>2-3 Max</h4>
+                            <p style="font-size: 0.8em;">Most people need just 2-3 paid tools</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px; text-align: center;">
+                        <p style="font-size: 1.1em; margin: 0;">"The best AI toolkit isn't the most expensive—it's the one that fits your actual needs."</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 29: Resources -->
+            <section>
+                <div class="slide-content">
+                    <h2>Resources</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Tool Discovery</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>There's An AI For That</strong> - theresanaiforthat.com</li>
+                                <li><strong>Future Tools</strong> - futuretools.io</li>
+                                <li><strong>AI Tool Directory</strong> - aitool.directory</li>
+                                <li><strong>Product Hunt AI</strong> - producthunt.com/topics/ai</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Price Tracking & Reviews</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>G2</strong> - Verified user reviews</li>
+                                <li><strong>Capterra</strong> - Comparison features</li>
+                                <li><strong>Reddit r/AItools</strong> - Community insights</li>
+                                <li><strong>AI Tool Report</strong> - Newsletter</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Stay Updated:</strong> The AI tool landscape changes weekly. Subscribe to one AI newsletter to stay current without overwhelm.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 30: Questions & Discussion -->
+            <section>
+                <div class="slide-content">
+                    <h2>Questions & Discussion</h2>
+                    <div class="card" style="text-align: center; max-width: 600px; margin: 0 auto;">
+                        <p style="font-size: 1.1em;">What AI tools are you currently paying for?</p>
+                    </div>
+                    <div class="three-column" style="margin-top: 30px;">
+                        <div class="card" style="text-align: center;">
+                            <h4>Share</h4>
+                            <p style="font-size: 0.85em;">Your favorite budget-friendly tools</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Ask</h4>
+                            <p style="font-size: 0.85em;">About specific tool recommendations</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Discuss</h4>
+                            <p style="font-size: 0.85em;">Industry-specific needs and solutions</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 31: Thank You -->
+            <section>
+                <div class="slide-content">
+                    <h1>Thank You!</h1>
+                    <div style="margin: 30px 0;">
+                        <p style="color: var(--itag-light); font-size: 1.1em;">Budget-Friendly AI Toolkit</p>
+                        <p style="color: #888;">ITAG Skillnet AI Advantage</p>
+                    </div>
+                    <div class="card" style="max-width: 500px; margin: 30px auto;">
+                        <h4 style="margin-top: 0;">Remember the VALUE Framework</h4>
+                        <p style="font-size: 0.9em;">
+                            <strong style="color: var(--accent-gold);">V</strong>erify -
+                            <strong style="color: var(--accent-gold);">A</strong>ssess -
+                            <strong style="color: var(--accent-gold);">L</strong>ook -
+                            <strong style="color: var(--accent-gold);">U</strong>nderstand -
+                            <strong style="color: var(--accent-gold);">E</strong>valuate
+                        </p>
+                    </div>
+                    <p style="font-size: 0.9em; color: #888; margin-top: 30px;">Access course materials and the interactive toolkit builder through the course portal</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            plugins: [ RevealHighlight ],
+            width: 960,
+            height: 700,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0,
+            keyboard: {
+                38: function() {
+                    const currentSlide = Reveal.getCurrentSlide();
+                    const slideContent = currentSlide.querySelector('.slide-content');
+                    if (slideContent && slideContent.scrollHeight > slideContent.clientHeight) {
+                        slideContent.scrollBy({ top: -100, behavior: 'smooth' });
+                    }
+                },
+                40: function() {
+                    const currentSlide = Reveal.getCurrentSlide();
+                    const slideContent = currentSlide.querySelector('.slide-content');
+                    if (slideContent && slideContent.scrollHeight > slideContent.clientHeight) {
+                        slideContent.scrollBy({ top: 100, behavior: 'smooth' });
+                    }
+                }
+            }
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>

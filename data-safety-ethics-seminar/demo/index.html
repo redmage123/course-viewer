@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Safety Assessment - AI Ethics Tool</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --accent-red: #ff4444;
+            --accent-purple: #9966ff;
+            --dark-bg: #1a1a2e;
+            --darker-bg: #0d1117;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--itag-blue);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--itag-light);
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #888;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--dark-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+
+        .panel-title {
+            color: var(--itag-light);
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--itag-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        textarea, select, input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: var(--darker-bg);
+            color: #f0f0f0;
+            font-size: 0.95em;
+            font-family: inherit;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        textarea:focus, select:focus, input:focus {
+            outline: none;
+            border-color: var(--itag-light);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--itag-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--itag-light);
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #f0f0f0;
+            border: 1px solid #444;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #00dd77;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sample-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .sample-btn {
+            padding: 8px 12px;
+            font-size: 0.8em;
+            background: var(--darker-bg);
+            border: 1px solid #444;
+            color: #aaa;
+        }
+
+        .sample-btn:hover {
+            border-color: var(--itag-light);
+            color: #fff;
+        }
+
+        .risk-meter {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--darker-bg);
+            border-radius: 10px;
+        }
+
+        .risk-bar {
+            height: 30px;
+            border-radius: 15px;
+            background: linear-gradient(to right, var(--accent-green), var(--accent-orange), var(--accent-red));
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .risk-indicator {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background: white;
+            border-radius: 5px;
+            top: -5px;
+            transform: translateX(-50%);
+            transition: left 0.5s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .risk-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .shield-analysis {
+            margin-top: 20px;
+        }
+
+        .shield-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: var(--darker-bg);
+            border-radius: 8px;
+            border-left: 4px solid #444;
+        }
+
+        .shield-item.pass {
+            border-left-color: var(--accent-green);
+        }
+
+        .shield-item.warning {
+            border-left-color: var(--accent-orange);
+        }
+
+        .shield-item.fail {
+            border-left-color: var(--accent-red);
+        }
+
+        .shield-letter {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--itag-light);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--dark-bg);
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .shield-content h4 {
+            color: var(--itag-light);
+            margin-bottom: 5px;
+        }
+
+        .shield-content p {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .status-badge {
+            font-size: 0.75em;
+            padding: 3px 10px;
+            border-radius: 10px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .status-badge.pass { background: var(--accent-green); }
+        .status-badge.warning { background: var(--accent-orange); }
+        .status-badge.fail { background: var(--accent-red); }
+
+        .checklist {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--darker-bg);
+            border-radius: 10px;
+        }
+
+        .checklist h4 {
+            color: var(--itag-light);
+            margin-bottom: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.9em;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            flex-shrink: 0;
+        }
+
+        .check-icon.required { background: var(--accent-orange); }
+        .check-icon.recommended { background: var(--itag-blue); }
+        .check-icon.optional { background: #555; }
+
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #4d1a1a 0%, #661a1a 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-red);
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+        }
+
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+        }
+
+        .prompt-template {
+            background: var(--darker-bg);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 0.85em;
+            white-space: pre-wrap;
+        }
+
+        .data-type-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .data-chip {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            cursor: pointer;
+            border: 1px solid #444;
+            background: var(--darker-bg);
+            color: #aaa;
+            transition: all 0.3s;
+        }
+
+        .data-chip:hover {
+            border-color: var(--itag-light);
+        }
+
+        .data-chip.selected {
+            background: var(--itag-blue);
+            color: white;
+            border-color: var(--itag-blue);
+        }
+
+        .data-chip.high-risk.selected {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        .data-chip.medium-risk.selected {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            border-top-color: var(--itag-light);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .summary-score {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .score-number {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Data Safety Assessment Tool</h1>
+            <p>Evaluate AI use cases against the SHIELD framework</p>
+        </header>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <span>Describe Your AI Use Case</span>
+                </div>
+
+                <label>Load a sample scenario or describe your own:</label>
+                <div class="sample-buttons">
+                    <button class="sample-btn" onclick="loadSample('email')">Customer Emails</button>
+                    <button class="sample-btn" onclick="loadSample('hiring')">Resume Screening</button>
+                    <button class="sample-btn" onclick="loadSample('analytics')">Sales Analytics</button>
+                    <button class="sample-btn" onclick="loadSample('content')">Content Creation</button>
+                </div>
+
+                <textarea id="use-case-input" placeholder="Describe your AI use case. For example: 'Using ChatGPT to help draft customer support responses based on their complaint emails...'"></textarea>
+
+                <label>What data types are involved? (Select all that apply)</label>
+                <div class="data-type-chips">
+                    <span class="data-chip high-risk" data-type="pii" onclick="toggleChip(this)">Personal Names</span>
+                    <span class="data-chip high-risk" data-type="email" onclick="toggleChip(this)">Email Addresses</span>
+                    <span class="data-chip high-risk" data-type="financial" onclick="toggleChip(this)">Financial Data</span>
+                    <span class="data-chip high-risk" data-type="health" onclick="toggleChip(this)">Health Info</span>
+                    <span class="data-chip medium-risk" data-type="employee" onclick="toggleChip(this)">Employee Data</span>
+                    <span class="data-chip medium-risk" data-type="customer" onclick="toggleChip(this)">Customer Records</span>
+                    <span class="data-chip medium-risk" data-type="proprietary" onclick="toggleChip(this)">Trade Secrets</span>
+                    <span class="data-chip" data-type="public" onclick="toggleChip(this)">Public Info</span>
+                    <span class="data-chip" data-type="anonymous" onclick="toggleChip(this)">Anonymous Data</span>
+                </div>
+
+                <label>AI Tool Being Used</label>
+                <select id="ai-tool">
+                    <option value="chatgpt">ChatGPT (Free)</option>
+                    <option value="chatgpt-plus">ChatGPT Plus</option>
+                    <option value="chatgpt-enterprise">ChatGPT Enterprise</option>
+                    <option value="claude">Claude</option>
+                    <option value="gemini">Google Gemini</option>
+                    <option value="copilot">Microsoft Copilot</option>
+                    <option value="internal">Internal/Self-hosted AI</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label>Decision Impact Level</label>
+                <select id="impact-level">
+                    <option value="low">Low - Informational/drafts only</option>
+                    <option value="medium">Medium - Influences decisions</option>
+                    <option value="high">High - Direct impact on individuals</option>
+                    <option value="critical">Critical - Legal/financial/health decisions</option>
+                </select>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="assessRisk()" id="assess-btn">
+                        Assess Data Safety
+                    </button>
+                    <button class="btn-secondary" onclick="clearAll()">
+                        Clear
+                    </button>
+                </div>
+
+                <div class="tip-box" style="margin-top: 20px;">
+                    <strong>SHIELD Framework:</strong> Sanitize, Human oversight, Informed consent, Evaluate ethics, Legal compliance, Document everything
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">
+                    <span>Safety Assessment Results</span>
+                </div>
+
+                <div id="results-area">
+                    <div class="warning-box">
+                        <strong>How to use:</strong> Describe your AI use case, select the data types involved, and click "Assess" to get a SHIELD framework analysis with recommendations.
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>Remember:</strong> This tool provides guidance, not legal advice. Consult your data protection officer for high-risk use cases.
+                    </div>
+                </div>
+
+                <div id="prompt-section" style="margin-top: 20px; display: none;">
+                    <h4 style="color: var(--itag-light); margin-bottom: 10px;">Safe Prompt Template</h4>
+                    <p style="font-size: 0.85em; color: #aaa; margin-bottom: 10px;">Use this template to safely interact with AI:</p>
+                    <div class="prompt-template" id="safe-prompt"></div>
+                    <button class="btn-success" onclick="copyPrompt()" style="margin-top: 10px;">
+                        Use This Prompt
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Data Safety Assessment Tool - Data Safety & Ethics Seminar</p>
+            <p style="font-size: 0.9em; margin-top: 5px;">ITAG Skillnet AI Advantage</p>
+        </footer>
+    </div>
+
+    <div class="copy-notification" id="copyNotification">
+        Copied to clipboard!
+    </div>
+
+    <script>
+        const samples = {
+            email: {
+                text: `I want to use ChatGPT to help write responses to customer support emails. Customers send us emails with their complaints, and I'd paste the email content into ChatGPT to get a draft response.`,
+                dataTypes: ['pii', 'email', 'customer'],
+                tool: 'chatgpt',
+                impact: 'medium'
+            },
+            hiring: {
+                text: `Our HR team wants to use AI to screen job applications. We'd upload resumes and ask the AI to rank candidates based on their qualifications for the role.`,
+                dataTypes: ['pii', 'email', 'employee'],
+                tool: 'chatgpt-plus',
+                impact: 'high'
+            },
+            analytics: {
+                text: `I need to analyze our sales data and create insights. I want to paste our quarterly sales figures with customer names and purchase amounts into an AI to get trend analysis.`,
+                dataTypes: ['pii', 'customer', 'financial'],
+                tool: 'gemini',
+                impact: 'medium'
+            },
+            content: {
+                text: `Our marketing team wants to use AI to generate blog posts and social media content about our products. We'd provide product specifications and target audience info.`,
+                dataTypes: ['proprietary', 'public'],
+                tool: 'claude',
+                impact: 'low'
+            }
+        };
+
+        let selectedDataTypes = [];
+
+        function loadSample(type) {
+            const sample = samples[type];
+            document.getElementById('use-case-input').value = sample.text;
+            document.getElementById('ai-tool').value = sample.tool;
+            document.getElementById('impact-level').value = sample.impact;
+
+            // Reset and set data chips
+            document.querySelectorAll('.data-chip').forEach(chip => {
+                chip.classList.remove('selected');
+            });
+            selectedDataTypes = [...sample.dataTypes];
+            sample.dataTypes.forEach(type => {
+                const chip = document.querySelector(`.data-chip[data-type="${type}"]`);
+                if (chip) chip.classList.add('selected');
+            });
+        }
+
+        function toggleChip(chip) {
+            chip.classList.toggle('selected');
+            const type = chip.dataset.type;
+            if (chip.classList.contains('selected')) {
+                if (!selectedDataTypes.includes(type)) {
+                    selectedDataTypes.push(type);
+                }
+            } else {
+                selectedDataTypes = selectedDataTypes.filter(t => t !== type);
+            }
+        }
+
+        function assessRisk() {
+            const useCase = document.getElementById('use-case-input').value.trim();
+            if (!useCase) {
+                alert('Please describe your AI use case.');
+                return;
+            }
+
+            const resultsArea = document.getElementById('results-area');
+            resultsArea.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 15px;">Analyzing data safety risks...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const assessment = performAssessment(useCase);
+                displayResults(assessment);
+            }, 1500);
+        }
+
+        function performAssessment(useCase) {
+            const tool = document.getElementById('ai-tool').value;
+            const impact = document.getElementById('impact-level').value;
+
+            // Calculate risk score based on inputs
+            let riskScore = 0;
+            let shieldResults = {};
+
+            // S - Sanitize Data
+            const highRiskData = selectedDataTypes.filter(t =>
+                ['pii', 'email', 'financial', 'health'].includes(t)
+            );
+            const mediumRiskData = selectedDataTypes.filter(t =>
+                ['employee', 'customer', 'proprietary'].includes(t)
+            );
+
+            if (highRiskData.length > 0) {
+                riskScore += 30;
+                shieldResults.sanitize = {
+                    status: 'fail',
+                    title: 'Sanitize Data',
+                    message: `High-risk data detected: ${highRiskData.join(', ')}. This data should be anonymized or removed before sharing with AI.`,
+                    actions: [
+                        'Remove or mask personal identifiers',
+                        'Use placeholder names (e.g., "Customer A")',
+                        'Aggregate data instead of individual records',
+                        'Consider synthetic data for testing'
+                    ]
+                };
+            } else if (mediumRiskData.length > 0) {
+                riskScore += 15;
+                shieldResults.sanitize = {
+                    status: 'warning',
+                    title: 'Sanitize Data',
+                    message: `Medium-risk data detected: ${mediumRiskData.join(', ')}. Consider anonymizing before use.`,
+                    actions: [
+                        'Review what details are truly necessary',
+                        'Use generic descriptions where possible',
+                        'Remove company-specific identifiers'
+                    ]
+                };
+            } else {
+                shieldResults.sanitize = {
+                    status: 'pass',
+                    title: 'Sanitize Data',
+                    message: 'No high-risk personal data detected. Continue with standard precautions.',
+                    actions: ['Maintain awareness of any sensitive info that might be inferred']
+                };
+            }
+
+            // H - Human Oversight
+            if (impact === 'critical' || impact === 'high') {
+                riskScore += 25;
+                shieldResults.human = {
+                    status: impact === 'critical' ? 'fail' : 'warning',
+                    title: 'Human Oversight',
+                    message: `${impact === 'critical' ? 'Critical' : 'High'} impact decisions require mandatory human review.`,
+                    actions: [
+                        'Implement human approval before any action',
+                        'Create review workflows for AI outputs',
+                        'Document human review decisions',
+                        'Enable appeal/override mechanisms'
+                    ]
+                };
+            } else {
+                shieldResults.human = {
+                    status: 'pass',
+                    title: 'Human Oversight',
+                    message: 'Lower impact use case - standard review practices sufficient.',
+                    actions: ['Spot-check AI outputs regularly', 'Have escalation path for issues']
+                };
+            }
+
+            // I - Informed Consent
+            const needsConsent = selectedDataTypes.some(t =>
+                ['pii', 'email', 'health', 'customer', 'employee'].includes(t)
+            );
+            if (needsConsent) {
+                riskScore += 20;
+                shieldResults.informed = {
+                    status: 'warning',
+                    title: 'Informed Consent',
+                    message: 'Processing personal data may require consent or disclosure to data subjects.',
+                    actions: [
+                        'Review privacy policy for AI processing mention',
+                        'Consider notifying affected individuals',
+                        'Update consent forms if needed',
+                        'Provide opt-out mechanism'
+                    ]
+                };
+            } else {
+                shieldResults.informed = {
+                    status: 'pass',
+                    title: 'Informed Consent',
+                    message: 'No personal data subjects directly affected.',
+                    actions: ['Ensure transparency about AI use in general communications']
+                };
+            }
+
+            // E - Evaluate Ethics
+            const biasRisk = selectedDataTypes.some(t => ['employee', 'customer'].includes(t)) &&
+                            (impact === 'high' || impact === 'critical');
+            if (biasRisk) {
+                riskScore += 20;
+                shieldResults.ethics = {
+                    status: 'warning',
+                    title: 'Evaluate Ethics',
+                    message: 'This use case has potential for bias affecting individuals.',
+                    actions: [
+                        'Test for discriminatory patterns',
+                        'Review outputs for fairness across groups',
+                        'Consider diverse perspectives in review',
+                        'Apply the "newspaper test" - would this look bad if reported?'
+                    ]
+                };
+            } else {
+                shieldResults.ethics = {
+                    status: 'pass',
+                    title: 'Evaluate Ethics',
+                    message: 'Lower risk for bias issues, but maintain ethical awareness.',
+                    actions: ['Periodically review for unintended effects']
+                };
+            }
+
+            // L - Legal Compliance
+            const enterpriseTools = ['chatgpt-enterprise', 'internal'];
+            const isEnterprise = enterpriseTools.includes(tool);
+            const hasHighRiskData = highRiskData.length > 0;
+
+            if (hasHighRiskData && !isEnterprise) {
+                riskScore += 25;
+                shieldResults.legal = {
+                    status: 'fail',
+                    title: 'Legal Compliance',
+                    message: 'Using high-risk data with consumer AI tools may violate GDPR/data protection laws.',
+                    actions: [
+                        'Switch to enterprise AI with data protection agreement',
+                        'Conduct Data Protection Impact Assessment (DPIA)',
+                        'Consult with legal/DPO before proceeding',
+                        'Review AI provider terms of service'
+                    ]
+                };
+            } else if (impact === 'high' || impact === 'critical') {
+                riskScore += 10;
+                shieldResults.legal = {
+                    status: 'warning',
+                    title: 'Legal Compliance',
+                    message: 'High-impact AI use may fall under EU AI Act requirements.',
+                    actions: [
+                        'Check if use case is classified as high-risk AI',
+                        'Review EU AI Act compliance requirements',
+                        'Ensure audit trails are maintained'
+                    ]
+                };
+            } else {
+                shieldResults.legal = {
+                    status: 'pass',
+                    title: 'Legal Compliance',
+                    message: 'Lower regulatory risk with current configuration.',
+                    actions: ['Stay updated on evolving AI regulations']
+                };
+            }
+
+            // D - Document
+            shieldResults.document = {
+                status: riskScore > 50 ? 'warning' : 'pass',
+                title: 'Document Everything',
+                message: riskScore > 50
+                    ? 'Given the risk level, comprehensive documentation is essential.'
+                    : 'Standard documentation practices recommended.',
+                actions: [
+                    'Log AI tool usage and purposes',
+                    'Record data types processed',
+                    'Document human review decisions',
+                    'Maintain audit trail for compliance'
+                ]
+            };
+
+            // Cap risk score at 100
+            riskScore = Math.min(riskScore, 100);
+
+            return {
+                riskScore,
+                riskLevel: riskScore >= 70 ? 'high' : (riskScore >= 40 ? 'medium' : 'low'),
+                shield: shieldResults,
+                tool,
+                impact,
+                dataTypes: selectedDataTypes
+            };
+        }
+
+        function displayResults(assessment) {
+            const resultsArea = document.getElementById('results-area');
+
+            // Determine score color
+            let scoreColor = 'var(--accent-green)';
+            if (assessment.riskScore >= 70) scoreColor = 'var(--accent-red)';
+            else if (assessment.riskScore >= 40) scoreColor = 'var(--accent-orange)';
+
+            let html = `
+                <div class="summary-score">
+                    <div class="score-number" style="color: ${scoreColor}">${assessment.riskScore}</div>
+                    <div class="score-label">Risk Score (0-100)</div>
+                </div>
+
+                <div class="risk-meter">
+                    <h4 style="color: var(--itag-light); margin-bottom: 10px;">Overall Risk Level</h4>
+                    <div class="risk-bar">
+                        <div class="risk-indicator" style="left: ${assessment.riskScore}%"></div>
+                    </div>
+                    <div class="risk-labels">
+                        <span>Low Risk</span>
+                        <span>Medium Risk</span>
+                        <span>High Risk</span>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--itag-light); margin: 20px 0 15px 0;">SHIELD Analysis</h4>
+                <div class="shield-analysis">
+            `;
+
+            const letters = ['S', 'H', 'I', 'E', 'L', 'D'];
+            const keys = ['sanitize', 'human', 'informed', 'ethics', 'legal', 'document'];
+
+            keys.forEach((key, i) => {
+                const item = assessment.shield[key];
+                html += `
+                    <div class="shield-item ${item.status}">
+                        <div class="shield-letter">${letters[i]}</div>
+                        <div class="shield-content">
+                            <h4>${item.title}</h4>
+                            <p>${item.message}</p>
+                        </div>
+                        <span class="status-badge ${item.status}">${item.status.toUpperCase()}</span>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+
+            // Add checklist
+            const failedItems = keys.filter(k => assessment.shield[k].status === 'fail');
+            const warningItems = keys.filter(k => assessment.shield[k].status === 'warning');
+
+            if (failedItems.length > 0 || warningItems.length > 0) {
+                html += `
+                    <div class="checklist">
+                        <h4>Action Items</h4>
+                `;
+
+                failedItems.forEach(key => {
+                    assessment.shield[key].actions.forEach(action => {
+                        html += `
+                            <div class="checklist-item">
+                                <span class="check-icon required">!</span>
+                                <span>${action}</span>
+                            </div>
+                        `;
+                    });
+                });
+
+                warningItems.forEach(key => {
+                    assessment.shield[key].actions.slice(0, 2).forEach(action => {
+                        html += `
+                            <div class="checklist-item">
+                                <span class="check-icon recommended">?</span>
+                                <span>${action}</span>
+                            </div>
+                        `;
+                    });
+                });
+
+                html += '</div>';
+            }
+
+            // Add appropriate alert box
+            if (assessment.riskScore >= 70) {
+                html += `
+                    <div class="danger-box" style="margin-top: 20px;">
+                        <strong>High Risk:</strong> This use case requires significant safeguards. Consider consulting your DPO or legal team before proceeding.
+                    </div>
+                `;
+            } else if (assessment.riskScore >= 40) {
+                html += `
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>Medium Risk:</strong> Address the warning items above before proceeding. Implement additional safeguards.
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Lower Risk:</strong> This use case appears relatively safe. Follow standard best practices and maintain awareness.
+                    </div>
+                `;
+            }
+
+            resultsArea.innerHTML = html;
+
+            // Show safe prompt template
+            const promptSection = document.getElementById('prompt-section');
+            promptSection.style.display = 'block';
+
+            const safePrompt = generateSafePrompt(assessment);
+            document.getElementById('safe-prompt').textContent = safePrompt;
+        }
+
+        function generateSafePrompt(assessment) {
+            let prompt = `I need help with [DESCRIBE TASK].
+
+Important guidelines for this request:
+`;
+            if (assessment.shield.sanitize.status !== 'pass') {
+                prompt += `- I have NOT included any real names, emails, or identifying information
+- All examples use placeholder data (e.g., "Customer A", "Company X")
+`;
+            }
+
+            if (assessment.shield.human.status !== 'pass') {
+                prompt += `- Your response will be reviewed by a human before any action is taken
+- Please highlight any areas of uncertainty
+`;
+            }
+
+            prompt += `- Do not assume or infer any real personal information
+- If you need more context, ask rather than assume
+- Flag any potential concerns with your response
+
+[YOUR SPECIFIC REQUEST HERE]`;
+
+            return prompt;
+        }
+
+        function clearAll() {
+            document.getElementById('use-case-input').value = '';
+            document.getElementById('ai-tool').value = 'chatgpt';
+            document.getElementById('impact-level').value = 'low';
+            document.querySelectorAll('.data-chip').forEach(chip => {
+                chip.classList.remove('selected');
+            });
+            selectedDataTypes = [];
+
+            document.getElementById('results-area').innerHTML = `
+                <div class="warning-box">
+                    <strong>How to use:</strong> Describe your AI use case, select the data types involved, and click "Assess" to get a SHIELD framework analysis with recommendations.
+                </div>
+
+                <div class="tip-box">
+                    <strong>Remember:</strong> This tool provides guidance, not legal advice. Consult your data protection officer for high-risk use cases.
+                </div>
+            `;
+            document.getElementById('prompt-section').style.display = 'none';
+        }
+
+        function copyPrompt() {
+            const prompt = document.getElementById('safe-prompt').textContent;
+            const contentInput = document.getElementById('use-case-input');
+
+            // Clear old content and paste the new prompt
+            contentInput.value = prompt;
+
+            // Scroll to the input area and focus it
+            contentInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            contentInput.focus();
+
+            // Also copy to clipboard
+            navigator.clipboard.writeText(prompt).then(() => {
+                showNotification('Prompt pasted to input & copied to clipboard!');
+            });
+
+            // Highlight the input briefly
+            contentInput.style.borderColor = 'var(--accent-green)';
+            contentInput.style.boxShadow = '0 0 10px var(--accent-green)';
+            setTimeout(() => {
+                contentInput.style.borderColor = '';
+                contentInput.style.boxShadow = '';
+            }, 1500);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('copyNotification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

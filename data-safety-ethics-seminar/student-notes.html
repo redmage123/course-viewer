@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Safety & Ethics - Student Notes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            color: #333;
+        }
+        h1 { color: #0066cc; border-bottom: 3px solid #0066cc; padding-bottom: 10px; }
+        h2 { color: #0066cc; margin-top: 30px; }
+        h3 { color: #333; margin-top: 20px; }
+        .highlight { background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .danger { background: #f8d7da; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .success { background: #d4edda; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .framework { background: #e7f3ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0066cc; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #0066cc; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .checklist { list-style: none; padding-left: 0; }
+        .checklist li { padding: 8px 0; border-bottom: 1px solid #eee; }
+        .checklist li:before { content: "☐ "; color: #0066cc; }
+        @media print {
+            body { padding: 20px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Safety & Ethics: Use AI Responsibly</h1>
+    <p><strong>ITAG Skillnet AI Advantage</strong> | 90-Minute Lunch & Learn</p>
+
+    <h2>The SHIELD Framework</h2>
+    <div class="framework">
+        <p><strong>S</strong> - <strong>Sanitize Data</strong>: Remove or mask sensitive information before sharing with AI</p>
+        <p><strong>H</strong> - <strong>Human Oversight</strong>: Keep humans in the loop for important decisions</p>
+        <p><strong>I</strong> - <strong>Informed Consent</strong>: Ensure data subjects know about AI processing</p>
+        <p><strong>E</strong> - <strong>Evaluate Ethics</strong>: Consider fairness, bias, and impact before use</p>
+        <p><strong>L</strong> - <strong>Legal Compliance</strong>: Follow GDPR, AI Act, and industry regulations</p>
+        <p><strong>D</strong> - <strong>Document Everything</strong>: Record AI decisions, data flows, and rationale</p>
+    </div>
+
+    <h2>Key Statistics</h2>
+    <div class="danger">
+        <ul style="margin: 0;">
+            <li><strong>$4.88M</strong> - Average cost of a data breach (IBM Cost of a Data Breach Report 2024)</li>
+            <li><strong>10.7%</strong> - Of employee ChatGPT inputs contain sensitive data (Cyberhaven AI Data Security Report 2024)</li>
+            <li><strong>4%</strong> - Maximum GDPR fine as percentage of global annual revenue (GDPR Article 83)</li>
+        </ul>
+    </div>
+
+    <h2>Real-World AI Data Incidents</h2>
+    <table>
+        <tr>
+            <th>Incident</th>
+            <th>Details</th>
+            <th>Source</th>
+        </tr>
+        <tr>
+            <td><strong>Samsung Semiconductor Leak</strong><br>(April 2023)</td>
+            <td>Engineers pasted proprietary source code and meeting notes into ChatGPT within 20 days of approval. <em>Result: Company-wide ChatGPT ban.</em></td>
+            <td>Bloomberg, The Economist</td>
+        </tr>
+        <tr>
+            <td><strong>ChatGPT Payment Data Bug</strong><br>(March 2023)</td>
+            <td>OpenAI bug exposed chat histories and payment info of ~1.2% of Plus subscribers. <em>Result: 9-hour shutdown.</em></td>
+            <td>OpenAI Blog (March 24, 2023)</td>
+        </tr>
+        <tr>
+            <td><strong>Amazon Internal Data Warning</strong><br>(January 2023)</td>
+            <td>Lawyers warned employees after ChatGPT responses resembled confidential Amazon data. <em>Result: Restricted AI policy.</em></td>
+            <td>Business Insider</td>
+        </tr>
+        <tr>
+            <td><strong>Italy GDPR ChatGPT Ban</strong><br>(March 2023)</td>
+            <td>Italian DPA banned ChatGPT citing GDPR violations - no age verification, no legal basis for data collection. <em>Result: 1-month ban.</em></td>
+            <td>Garante (Italian DPA)</td>
+        </tr>
+    </table>
+
+    <h2>What NOT to Share with AI</h2>
+    <table>
+        <tr>
+            <th>Risk Level</th>
+            <th>Data Types</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <td style="color: red;"><strong>Never Share</strong></td>
+            <td>Passwords, API keys, SSN, credit cards, medical records, personal addresses</td>
+            <td>Absolutely prohibited</td>
+        </tr>
+        <tr>
+            <td style="color: orange;"><strong>Use Caution</strong></td>
+            <td>Customer names/emails, internal strategies, financial projections, employee data</td>
+            <td>Anonymize first</td>
+        </tr>
+        <tr>
+            <td style="color: green;"><strong>Generally Safe</strong></td>
+            <td>Public information, generic questions, anonymized examples, hypothetical scenarios</td>
+            <td>Standard precautions</td>
+        </tr>
+    </table>
+
+    <h2>Key Regulations</h2>
+
+    <h3>GDPR (EU General Data Protection Regulation)</h3>
+    <ul>
+        <li><strong>Lawful basis</strong> - Need a legal reason to process personal data</li>
+        <li><strong>Data minimization</strong> - Only collect what's necessary</li>
+        <li><strong>Storage limitation</strong> - Delete when no longer needed</li>
+        <li><strong>Subject rights</strong> - Access, rectification, erasure</li>
+        <li><strong>Article 22</strong> - Right not to be subject to automated decision-making</li>
+    </ul>
+
+    <h3>EU AI Act</h3>
+    <table>
+        <tr>
+            <th>Risk Level</th>
+            <th>Examples</th>
+            <th>Requirements</th>
+        </tr>
+        <tr>
+            <td style="color: red;">Unacceptable</td>
+            <td>Social scoring, manipulative AI</td>
+            <td>Banned</td>
+        </tr>
+        <tr>
+            <td style="color: orange;">High-Risk</td>
+            <td>HR/recruitment, credit scoring, law enforcement</td>
+            <td>Strict compliance, human oversight, audits</td>
+        </tr>
+        <tr>
+            <td style="color: blue;">Limited Risk</td>
+            <td>Chatbots, emotion recognition</td>
+            <td>Transparency obligations</td>
+        </tr>
+        <tr>
+            <td style="color: green;">Minimal Risk</td>
+            <td>Spam filters, games</td>
+            <td>No specific requirements</td>
+        </tr>
+    </table>
+
+    <h2>Data Anonymization Techniques</h2>
+    <table>
+        <tr>
+            <th>Technique</th>
+            <th>Before</th>
+            <th>After</th>
+        </tr>
+        <tr>
+            <td>Masking</td>
+            <td>john.smith@company.com</td>
+            <td>j***@***.com</td>
+        </tr>
+        <tr>
+            <td>Pseudonymization</td>
+            <td>John Smith, Dublin</td>
+            <td>User_A4X7, City_1</td>
+        </tr>
+        <tr>
+            <td>Generalization</td>
+            <td>Age: 34, Salary: $52,340</td>
+            <td>Age: 30-40, Salary: $50-60K</td>
+        </tr>
+        <tr>
+            <td>Aggregation</td>
+            <td>Individual transactions</td>
+            <td>"Average order: $45"</td>
+        </tr>
+    </table>
+
+    <h2>Enterprise vs Consumer AI</h2>
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Consumer (Free)</th>
+            <th>Enterprise</th>
+        </tr>
+        <tr>
+            <td>Data Training</td>
+            <td style="color: red;">May use your data</td>
+            <td style="color: green;">Never trains on your data</td>
+        </tr>
+        <tr>
+            <td>Data Retention</td>
+            <td>30+ days</td>
+            <td>Configurable / zero</td>
+        </tr>
+        <tr>
+            <td>Compliance</td>
+            <td>Basic</td>
+            <td>SOC 2, GDPR, BAA</td>
+        </tr>
+        <tr>
+            <td>Admin Controls</td>
+            <td>None</td>
+            <td>Full visibility</td>
+        </tr>
+    </table>
+
+    <h2>5 Questions Before Using AI</h2>
+    <div class="highlight">
+        <ol>
+            <li><strong>What data am I sharing?</strong> Could any of it identify a person or reveal secrets?</li>
+            <li><strong>Who might be affected?</strong> Customers, employees, the public?</li>
+            <li><strong>What could go wrong?</strong> Bias, errors, privacy breaches?</li>
+            <li><strong>Is human review needed?</strong> Should a person check this before acting?</li>
+            <li><strong>Can I justify this decision?</strong> Would I be comfortable explaining it publicly?</li>
+        </ol>
+    </div>
+
+    <h2>Safe Prompt Template</h2>
+    <div class="success">
+        <pre style="white-space: pre-wrap; font-family: monospace;">
+I need help with [DESCRIBE TASK].
+
+Important guidelines for this request:
+- I have NOT included any real names, emails, or identifying information
+- All examples use placeholder data (e.g., "Customer A", "Company X")
+- Your response will be reviewed by a human before any action is taken
+- Please highlight any areas of uncertainty
+- Do not assume or infer any real personal information
+- If you need more context, ask rather than assume
+
+[YOUR SPECIFIC REQUEST HERE]
+        </pre>
+    </div>
+
+    <h2>AI Use Policy Checklist</h2>
+    <ul class="checklist">
+        <li>Approved AI tools list defined</li>
+        <li>Data classification rules established</li>
+        <li>Prohibited use cases documented</li>
+        <li>Approval workflows created</li>
+        <li>Training requirements set</li>
+        <li>Incident reporting process defined</li>
+        <li>Regular audit schedule established</li>
+    </ul>
+
+    <h2>Take-Home Exercise: AI Safety Audit</h2>
+    <div class="highlight">
+        <ol>
+            <li><strong>Inventory</strong> - List all AI tools used in your team/department</li>
+            <li><strong>Classify</strong> - Identify what data each tool processes</li>
+            <li><strong>Assess</strong> - Apply the SHIELD framework to each use case</li>
+            <li><strong>Document</strong> - Note any gaps or concerns</li>
+            <li><strong>Recommend</strong> - Propose improvements to your manager</li>
+        </ol>
+    </div>
+
+    <h2>Key Resources</h2>
+    <ul>
+        <li>EU AI Act Official Text - artificialintelligenceact.eu</li>
+        <li>GDPR Guidelines - edpb.europa.eu</li>
+        <li>ICO AI Guidance - ico.org.uk</li>
+        <li>NIST AI Risk Framework - nist.gov/itl/ai-risk-management-framework</li>
+        <li>Microsoft Responsible AI Toolkit</li>
+        <li>Google AI Principles</li>
+    </ul>
+
+    <div class="framework" style="margin-top: 40px;">
+        <h3>Remember the SHIELD Framework</h3>
+        <p style="font-size: 1.2em; text-align: center;">
+            <strong>S</strong>anitize - <strong>H</strong>uman Oversight - <strong>I</strong>nformed Consent - <strong>E</strong>valuate Ethics - <strong>L</strong>egal Compliance - <strong>D</strong>ocument
+        </p>
+        <p style="text-align: center; font-style: italic;">"With great AI power comes great responsibility."</p>
+    </div>
+
+    <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 0.9em;">
+        <p>Data Safety & Ethics: Use AI Responsibly | ITAG Skillnet AI Advantage</p>
+        <p>These notes are for educational purposes. Consult your legal/compliance team for specific guidance.</p>
+    </footer>
+</body>
+</html>

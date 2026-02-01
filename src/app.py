@@ -638,6 +638,97 @@ COURSES = {
             }
         }
     },
+    "handling-hallucinations": {
+        "id": "handling-hallucinations",
+        "name": "Handling Hallucinations: Fact-Checking AI",
+        "description": "90-minute seminar on identifying, preventing, and verifying AI-generated content using the VERIFY framework",
+        "icon": "🔍",
+        "duration": "90 minutes",
+        "category": "itag-skillnet",
+        "sections": {
+            "workshop": {
+                "title": "Workshop Materials",
+                "items": [
+                    {"id": "hh-slides", "name": "Presentation Slides", "file": "handling-hallucinations-seminar/handling-hallucinations-slides.html", "type": "slides"},
+                    {"id": "hh-pdf", "name": "Slides (PDF Download)", "file": "handling-hallucinations-seminar/handling-hallucinations-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "demo": {
+                "title": "Interactive Demo",
+                "items": [
+                    {"id": "hh-fact-checker", "name": "Hallucination Detector (Interactive)", "file": "handling-hallucinations-seminar/demo/index.html", "type": "demo", "external": True},
+                    {"id": "hh-poll", "name": "Audience Poll (AI Experience)", "file": "use-case-prompting-seminar/demo/poll.html", "type": "demo", "external": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "hh-notes", "name": "Student Notes", "file": "handling-hallucinations-seminar/student-notes.html", "type": "notes"},
+                ]
+            }
+        }
+    },
+    "data-safety-ethics": {
+        "id": "data-safety-ethics",
+        "name": "Data Safety & Ethics: Use AI Responsibly",
+        "description": "90-minute seminar on data protection, privacy, and ethical AI use with the SHIELD framework",
+        "icon": "🛡️",
+        "duration": "90 minutes",
+        "category": "itag-skillnet",
+        "sections": {
+            "slides": {
+                "title": "Workshop Materials",
+                "items": [
+                    {"id": "dse-slides", "name": "Presentation Slides", "file": "data-safety-ethics-seminar/data-safety-ethics-slides.html", "type": "slides"},
+                    {"id": "dse-pdf", "name": "Slides (PDF Download)", "file": "data-safety-ethics-seminar/data-safety-ethics-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "demo": {
+                "title": "Interactive Demo",
+                "items": [
+                    {"id": "dse-assessment", "name": "Data Safety Assessment Tool (Interactive)", "file": "data-safety-ethics-seminar/demo/index.html", "type": "demo", "external": True},
+                    {"id": "dse-poll", "name": "Audience Poll (AI Experience)", "file": "use-case-prompting-seminar/demo/poll.html", "type": "demo", "external": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "dse-notes", "name": "Student Notes", "file": "data-safety-ethics-seminar/student-notes.html", "type": "notes"},
+                ]
+            }
+        }
+    },
+    "budget-friendly-ai-toolkit": {
+        "id": "budget-friendly-ai-toolkit",
+        "name": "Budget-Friendly AI Toolkit: Practical Tools Under €50/Month",
+        "description": "90-minute seminar on building a powerful AI toolkit without breaking the bank using the VALUE framework",
+        "icon": "💰",
+        "duration": "90 minutes",
+        "category": "itag-skillnet",
+        "sections": {
+            "slides": {
+                "title": "Workshop Materials",
+                "items": [
+                    {"id": "bfat-slides", "name": "Presentation Slides", "file": "budget-friendly-ai-toolkit/budget-friendly-ai-toolkit-slides.html", "type": "slides"},
+                    {"id": "bfat-pdf", "name": "Slides (PDF Download)", "file": "budget-friendly-ai-toolkit/budget-friendly-ai-toolkit-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "demo": {
+                "title": "Interactive Demos",
+                "items": [
+                    {"id": "bfat-calculator", "name": "AI Toolkit Budget Calculator", "file": "budget-friendly-ai-toolkit/demo/index.html", "type": "demo", "external": True},
+                    {"id": "bfat-opensource", "name": "Free & Open Source AI Toolkit", "file": "budget-friendly-ai-toolkit/demo/opensource.html", "type": "demo", "external": True},
+                    {"id": "bfat-poll", "name": "Audience Poll (AI Experience)", "file": "use-case-prompting-seminar/demo/poll.html", "type": "demo", "external": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "bfat-notes", "name": "Student Notes", "file": "budget-friendly-ai-toolkit/student-notes.html", "type": "notes"},
+                ]
+            }
+        }
+    },
     "ai-sales-marketing": {
         "id": "ai-sales-marketing",
         "name": "AI for Sales and Marketing",

@@ -629,6 +629,11 @@
         .stack-tokens { font-size: 0.75em; color: #888; }
 
         /* ========== PRINT / PDF STYLES ========== */
+        @page {
+            size: landscape;
+            margin: 0;
+        }
+
         @media print {
             /* Reset reveal.js constraints for print */
             .reveal .slides {
@@ -641,9 +646,10 @@
             .reveal .slides > section,
             .reveal .slides > section > section {
                 width: 100% !important;
-                height: auto !important;
-                min-height: 680px !important;
-                overflow: visible !important;
+                height: 100vh !important;
+                min-height: 100vh !important;
+                max-height: 100vh !important;
+                overflow: hidden !important;
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
                 transform: none !important;
@@ -664,21 +670,61 @@
             .two-column {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 20px !important;
+                gap: 15px !important;
                 page-break-inside: avoid !important;
+                height: auto !important;
+                flex: none !important;
+                align-content: start !important;
             }
 
             .three-column {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr 1fr !important;
-                gap: 15px !important;
+                gap: 10px !important;
                 page-break-inside: avoid !important;
+                height: auto !important;
+                flex: none !important;
+                align-content: start !important;
+            }
+
+            /* Cards should not stretch */
+            .card {
+                height: auto !important;
+                align-self: start !important;
             }
 
             /* Cards and boxes */
-            .card, .tip-box, .warning-box, .exercise-box, .prompt-example {
+            .card, .tip-box, .warning-box, .exercise-box, .prompt-example, .demo-flow, .checklist-container {
                 page-break-inside: avoid !important;
+                page-break-before: avoid !important;
                 overflow: visible !important;
+            }
+
+            /* Checklist container - keep grid layout in print */
+            .checklist-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 15px !important;
+                height: auto !important;
+                flex: none !important;
+            }
+
+            /* Demo flow - horizontal layout for print */
+            .demo-flow {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 10px !important;
+            }
+
+            .demo-flow .flow-box {
+                min-width: auto !important;
+                padding: 10px 15px !important;
+            }
+
+            .demo-flow .flow-arrow {
+                font-size: 1.2em !important;
             }
 
             /* Tables - ensure all rows print */
@@ -1378,24 +1424,33 @@
                     <h2>AI Use Case Identification Framework</h2>
                     <p>A structured approach to finding high-value AI opportunities</p>
                     <div class="flow-diagram" style="margin-top: 40px;">
-                        <div class="flow-box">
-                            <h4>🔍 Discover</h4>
-                            <p>Find pain points</p>
+                        <!-- Top row: Discover → Evaluate -->
+                        <div class="flow-row">
+                            <div class="flow-box">
+                                <h4>🔍 Discover</h4>
+                                <p>Find pain points</p>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-box">
+                                <h4>📊 Evaluate</h4>
+                                <p>Assess feasibility</p>
+                            </div>
                         </div>
-                        <div class="flow-arrow">→</div>
-                        <div class="flow-box">
-                            <h4>📊 Evaluate</h4>
-                            <p>Assess feasibility</p>
+                        <!-- Down arrow on right side -->
+                        <div class="flow-row flow-center-right">
+                            <div class="flow-arrow">↓</div>
                         </div>
-                        <div class="flow-arrow down">↓</div>
-                        <div class="flow-box">
-                            <h4>🎯 Prioritize</h4>
-                            <p>Rank & select</p>
-                        </div>
-                        <div class="flow-arrow left">←</div>
-                        <div class="flow-box">
-                            <h4>🚀 Implement</h4>
-                            <p>Start with wins</p>
+                        <!-- Bottom row: Implement ← Prioritize -->
+                        <div class="flow-row">
+                            <div class="flow-box">
+                                <h4>🚀 Implement</h4>
+                                <p>Start with wins</p>
+                            </div>
+                            <div class="flow-arrow">←</div>
+                            <div class="flow-box">
+                                <h4>🎯 Prioritize</h4>
+                                <p>Rank & select</p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -2230,29 +2285,33 @@ Write a check-in email to Sarah. Acknowledge the reporting issues, mention we're
 
                 <section>
                     <h2>Context Engineering Checklist</h2>
-                    <div class="two-column">
-                        <div class="card">
-                            <h4>Before You Prompt</h4>
-                            <ul style="font-size: 0.85em;">
-                                <li>What's the minimum context needed?</li>
-                                <li>Is reference material relevant?</li>
-                                <li>Can I pre-filter or summarize inputs?</li>
-                                <li>What format will get best results?</li>
-                            </ul>
-                        </div>
-                        <div class="card">
-                            <h4>Optimization Tips</h4>
-                            <ul style="font-size: 0.85em;">
-                                <li>Lead with the task, not background</li>
-                                <li>Use clear section headers</li>
-                                <li>Remove redundant information</li>
-                                <li>Test with less context first</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="tip-box" style="margin-top: 20px;">
-                        <strong>Pro Tip:</strong> Think of context like a briefing for a new employee. What do they <em>need</em> to know vs. what's nice to know?
-                    </div>
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 15px; margin-top: 10px;">
+                        <tr>
+                            <td style="width: 50%; vertical-align: top; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; border-left: 4px solid var(--itag-blue);">
+                                <h4 style="color: var(--itag-light); margin: 0 0 10px 0;">Before You Prompt</h4>
+                                <ul style="font-size: 0.85em; margin: 0; padding-left: 20px;">
+                                    <li>What's the minimum context needed?</li>
+                                    <li>Is reference material relevant?</li>
+                                    <li>Can I pre-filter or summarize inputs?</li>
+                                    <li>What format will get best results?</li>
+                                </ul>
+                            </td>
+                            <td style="width: 50%; vertical-align: top; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; border-left: 4px solid var(--itag-blue);">
+                                <h4 style="color: var(--itag-light); margin: 0 0 10px 0;">Optimization Tips</h4>
+                                <ul style="font-size: 0.85em; margin: 0; padding-left: 20px;">
+                                    <li>Lead with the task, not background</li>
+                                    <li>Use clear section headers</li>
+                                    <li>Remove redundant information</li>
+                                    <li>Test with less context first</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%); padding: 15px 20px; border-radius: 8px; border-left: 4px solid var(--accent-green); text-align: center;">
+                                <strong>Pro Tip:</strong> Think of context like a briefing for a new employee. What do they <em>need</em> to know vs. what's nice to know?
+                            </td>
+                        </tr>
+                    </table>
                 </section>
             </section>
 
@@ -2261,28 +2320,28 @@ Write a check-in email to Sarah. Acknowledge the reporting issues, mention we're
                 <section>
                     <h2>🎮 Interactive Live Demo</h2>
                     <p style="font-size: 1.1em;">Let's put theory into practice — together!</p>
-                    <div class="flow-diagram" style="margin-top: 30px;">
-                        <div class="flow-box">
-                            <h4>📝 Basic</h4>
-                            <p>Start simple</p>
+                    <div class="demo-flow" style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px;">
+                        <div class="flow-box" style="text-align: center; padding: 12px 20px;">
+                            <h4 style="margin: 0;">📝 Basic</h4>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85em;">Start simple</p>
                         </div>
-                        <div class="flow-arrow">→</div>
-                        <div class="flow-box">
-                            <h4>🎯 CRAFT</h4>
-                            <p>Apply framework</p>
+                        <div class="flow-arrow" style="font-size: 1.5em;">→</div>
+                        <div class="flow-box" style="text-align: center; padding: 12px 20px;">
+                            <h4 style="margin: 0;">🎯 CRAFT</h4>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85em;">Apply framework</p>
                         </div>
-                        <div class="flow-arrow">→</div>
-                        <div class="flow-box">
-                            <h4>⚡ Refine</h4>
-                            <p>Iterate & improve</p>
+                        <div class="flow-arrow" style="font-size: 1.5em;">→</div>
+                        <div class="flow-box" style="text-align: center; padding: 12px 20px;">
+                            <h4 style="margin: 0;">⚡ Refine</h4>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85em;">Iterate & improve</p>
                         </div>
-                        <div class="flow-arrow">→</div>
-                        <div class="flow-box">
-                            <h4>✨ Compare</h4>
-                            <p>See the difference</p>
+                        <div class="flow-arrow" style="font-size: 1.5em;">→</div>
+                        <div class="flow-box" style="text-align: center; padding: 12px 20px;">
+                            <h4 style="margin: 0;">✨ Compare</h4>
+                            <p style="margin: 5px 0 0 0; font-size: 0.85em;">See the difference</p>
                         </div>
                     </div>
-                    <div class="tip-box" style="margin-top: 30px;">
+                    <div class="tip-box" style="margin-top: 20px;">
                         <strong>Follow along:</strong> Open <a href="https://chat.openai.com" target="_blank" style="color: var(--itag-light);">chat.openai.com</a> on your device
                     </div>
                 </section>

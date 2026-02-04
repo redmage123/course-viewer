@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your Own AI Copilot - ITAG Skillnet AI Advantage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/night.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --accent-purple: #9933ff;
+        }
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            color: var(--itag-light);
+        }
+        .reveal h1 {
+            font-size: 2.2em;
+        }
+        .reveal h2 {
+            font-size: 1.6em;
+            border-bottom: 3px solid var(--itag-blue);
+            padding-bottom: 10px;
+        }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.55em;
+            border: 2px solid var(--itag-blue);
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #1a1a2e;
+            overflow: auto;
+            max-height: 500px;
+        }
+        .reveal pre code {
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            display: block;
+            overflow-x: auto;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            text-align: left;
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
+        .card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--itag-blue);
+        }
+        .card h4 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 15px 0;
+            text-align: left;
+        }
+        .highlight {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .exercise-box {
+            background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--itag-light);
+            margin: 20px 0;
+            text-align: left;
+        }
+        .exercise-box h4 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+        .prompt-example {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            text-align: left;
+            overflow: auto;
+            max-height: 400px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.7em;
+        }
+        .comparison-table th {
+            background: var(--itag-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: rgba(0,102,204,0.1);
+        }
+        .framework-step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .step-number {
+            background: var(--itag-blue);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .agenda-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+        .agenda-time {
+            color: var(--itag-light);
+            font-weight: bold;
+            width: 80px;
+        }
+        ul {
+            text-align: left;
+        }
+        li {
+            margin: 10px 0;
+        }
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--itag-blue);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+        }
+        .fullscreen-btn:hover {
+            background: var(--itag-light);
+        }
+
+        /* Slide scrollbar styles */
+        .reveal .slides section {
+            overflow: visible !important;
+        }
+        .slide-content {
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px 20px 40px 20px;
+            box-sizing: border-box;
+        }
+        .slide-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .slide-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+        .slide-content::-webkit-scrollbar-thumb {
+            background: var(--itag-blue);
+            border-radius: 5px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+        }
+        .slide-content::-webkit-scrollbar-thumb:hover {
+            background: var(--itag-light);
+        }
+        .slide-content {
+            scrollbar-width: auto;
+            scrollbar-color: var(--itag-blue) rgba(0, 0, 0, 0.3);
+        }
+        .itag-logo {
+            font-size: 0.6em;
+            color: #888;
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes flowRight {
+            0% { transform: translateX(-10px); opacity: 0.3; }
+            50% { transform: translateX(10px); opacity: 1; }
+            100% { transform: translateX(-10px); opacity: 0.3; }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--itag-blue); }
+            50% { box-shadow: 0 0 20px var(--itag-light), 0 0 30px var(--itag-blue); }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes flowDown {
+            0%, 100% { transform: translateY(0); opacity: 0.7; }
+            50% { transform: translateY(5px); opacity: 1; }
+        }
+        @keyframes flowLeft {
+            0%, 100% { transform: translateX(0); opacity: 0.7; }
+            50% { transform: translateX(-5px); opacity: 1; }
+        }
+        @keyframes dataFlow {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        /* RAG Pipeline Animation */
+        .rag-pipeline {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            padding: 10px 0 !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+            transform: scale(0.92);
+            transform-origin: center center;
+        }
+        .pipeline-stage {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 15px 10px;
+            border-radius: 10px;
+            border: 2px solid var(--itag-blue);
+            text-align: center;
+            flex: 0 0 auto !important;
+            width: 155px !important;
+            min-width: 155px !important;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .pipeline-stage:nth-child(1) { animation-delay: 0.1s; }
+        .pipeline-stage:nth-child(3) { animation-delay: 0.3s; }
+        .pipeline-stage:nth-child(5) { animation-delay: 0.5s; }
+        .pipeline-stage:nth-child(7) { animation-delay: 0.7s; }
+        .pipeline-stage:nth-child(9) { animation-delay: 0.9s; }
+        .pipeline-stage .icon { font-size: 1.8em; margin-bottom: 8px; }
+        .pipeline-stage h4 { margin: 0 0 5px 0; color: var(--itag-light); font-size: 1.1em; white-space: nowrap; }
+        .pipeline-stage p { margin: 0; font-size: 0.75em; color: #aaa; }
+        .pipeline-arrow {
+            flex-shrink: 0;
+            font-size: 1.2em;
+            color: var(--accent-green);
+            animation: flowRight 1.5s ease-in-out infinite;
+        }
+
+        /* Vector Space Visualization */
+        .vector-space {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 2px solid var(--itag-blue);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .vector-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        .vector-dot.doc { background: var(--itag-light); }
+        .vector-dot.query { background: var(--accent-green); width: 16px; height: 16px; animation: pulse 2s ease-in-out infinite; }
+        .vector-dot.similar { background: var(--accent-orange); }
+        .vector-label {
+            position: absolute;
+            font-size: 0.7em;
+            color: #888;
+        }
+        .similarity-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-orange));
+            transform-origin: left center;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+            animation-delay: 1s;
+        }
+
+        /* Document Processing Flow */
+        .doc-flow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+        .doc-step {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+            position: relative;
+        }
+        .doc-step:nth-child(1) { animation-delay: 0.1s; border-left: 4px solid #ff6b6b; }
+        .doc-step:nth-child(2) { animation-delay: 0.2s; border-left: 4px solid #ffd93d; }
+        .doc-step:nth-child(3) { animation-delay: 0.3s; border-left: 4px solid var(--itag-light); }
+        .doc-step:nth-child(4) { animation-delay: 0.4s; border-left: 4px solid var(--accent-green); }
+        .doc-step .icon { font-size: 2em; margin-bottom: 10px; }
+        .doc-step h4 { color: var(--itag-light); margin: 0 0 8px 0; font-size: 0.95em; }
+        .doc-step p { margin: 0; font-size: 0.75em; color: #aaa; }
+        .doc-step::after {
+            content: '→';
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: var(--accent-green);
+        }
+        .doc-step:last-child::after { display: none; }
+
+        /* Copilot Architecture */
+        .copilot-arch {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .arch-layer {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            opacity: 0;
+            animation: fadeInLeft 0.6s ease-out forwards;
+        }
+        .arch-layer:nth-child(1) { background: linear-gradient(135deg, #1a4d30, #2d7a4d); animation-delay: 0.1s; }
+        .arch-layer:nth-child(2) { background: linear-gradient(135deg, #0d3366, #1a5599); animation-delay: 0.3s; }
+        .arch-layer:nth-child(3) { background: linear-gradient(135deg, #4d1a66, #7a2d99); animation-delay: 0.5s; }
+        .arch-layer:nth-child(4) { background: linear-gradient(135deg, #664d00, #997300); animation-delay: 0.7s; }
+        .arch-layer .icon { font-size: 2.5em; }
+        .arch-layer .content { flex: 1; }
+        .arch-layer h4 { margin: 0 0 5px 0; font-size: 1.1em; }
+        .arch-layer p { margin: 0; font-size: 0.85em; opacity: 0.9; }
+
+        /* Knowledge Base Visualization */
+        .kb-visual {
+            display: grid;
+            grid-template-columns: 1fr 80px 1fr;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+        }
+        .kb-sources {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .kb-source {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out forwards;
+        }
+        .kb-source:nth-child(1) { animation-delay: 0.1s; }
+        .kb-source:nth-child(2) { animation-delay: 0.2s; }
+        .kb-source:nth-child(3) { animation-delay: 0.3s; }
+        .kb-source:nth-child(4) { animation-delay: 0.4s; }
+        .kb-source .icon { font-size: 1.5em; }
+        .kb-source span { font-size: 0.85em; }
+        .kb-arrows {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+        }
+        .kb-arrow {
+            font-size: 1.2em;
+            color: var(--accent-green);
+            animation: flowRight 1.5s ease-in-out infinite;
+        }
+        .kb-database {
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            animation: pulse 3s ease-in-out infinite;
+        }
+        .kb-database .icon { font-size: 3em; margin-bottom: 10px; }
+        .kb-database h4 { margin: 0; font-size: 1.1em; }
+
+        /* Tool Cards */
+        .tool-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+        .tool-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid var(--itag-blue);
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .tool-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-green);
+        }
+        .tool-card:nth-child(1) { animation-delay: 0.1s; }
+        .tool-card:nth-child(2) { animation-delay: 0.2s; }
+        .tool-card:nth-child(3) { animation-delay: 0.3s; }
+        .tool-card:nth-child(4) { animation-delay: 0.4s; }
+        .tool-card:nth-child(5) { animation-delay: 0.5s; }
+        .tool-card:nth-child(6) { animation-delay: 0.6s; }
+        .tool-card .icon { font-size: 2.5em; margin-bottom: 15px; }
+        .tool-card h4 { color: var(--itag-light); margin: 0 0 10px 0; }
+        .tool-card p { font-size: 0.8em; color: #aaa; margin: 0; }
+        .tool-card .tag {
+            display: inline-block;
+            background: var(--itag-blue);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            margin-top: 10px;
+        }
+
+        /* Chunking Visualization */
+        .chunk-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .chunk-doc {
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #30363d;
+        }
+        .chunk-doc h4 { color: var(--itag-light); margin: 0 0 15px 0; }
+        .chunk-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .chunk {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            border-left: 3px solid var(--itag-blue);
+            opacity: 0;
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        .chunk:nth-child(1) { animation-delay: 0.1s; border-left-color: #ff6b6b; }
+        .chunk:nth-child(2) { animation-delay: 0.2s; border-left-color: #ffd93d; }
+        .chunk:nth-child(3) { animation-delay: 0.3s; border-left-color: var(--itag-light); }
+        .chunk:nth-child(4) { animation-delay: 0.4s; border-left-color: var(--accent-green); }
+        .chunk:nth-child(5) { animation-delay: 0.5s; border-left-color: var(--accent-purple); }
+
+        /* Use Case Matrix */
+        .usecase-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        .usecase-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 25px;
+            border-radius: 15px;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        .usecase-card:nth-child(1) { animation-delay: 0.1s; border-top: 4px solid var(--accent-green); }
+        .usecase-card:nth-child(2) { animation-delay: 0.2s; border-top: 4px solid var(--itag-light); }
+        .usecase-card:nth-child(3) { animation-delay: 0.3s; border-top: 4px solid var(--accent-orange); }
+        .usecase-card:nth-child(4) { animation-delay: 0.4s; border-top: 4px solid var(--accent-purple); }
+        .usecase-card .icon { font-size: 2em; margin-bottom: 10px; }
+        .usecase-card h4 { color: var(--itag-light); margin: 0 0 10px 0; }
+        .usecase-card p { margin: 0 0 10px 0; font-size: 0.85em; color: #aaa; }
+        .usecase-card ul { margin: 0; padding-left: 20px; font-size: 0.8em; }
+        .usecase-card li { margin: 5px 0; }
+
+        /* ========== PRINT / PDF STYLES ========== */
+        @page {
+            size: landscape;
+            margin: 0;
+        }
+
+        @media print {
+            .reveal .slides {
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                transform: none !important;
+            }
+
+            .reveal .slides > section,
+            .reveal .slides > section > section {
+                width: 100% !important;
+                height: 100vh !important;
+                min-height: 100vh !important;
+                max-height: 100vh !important;
+                overflow: hidden !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                transform: none !important;
+                position: relative !important;
+                display: block !important;
+                padding: 30px 40px !important;
+                box-sizing: border-box !important;
+            }
+
+            .slide-content {
+                max-height: none !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            .two-column {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 15px !important;
+                page-break-inside: avoid !important;
+            }
+
+            .three-column {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr 1fr !important;
+                gap: 10px !important;
+                page-break-inside: avoid !important;
+            }
+
+            .card, .tip-box, .warning-box, .exercise-box, .prompt-example {
+                page-break-inside: avoid !important;
+            }
+
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+
+            .pipeline-stage, .doc-step, .arch-layer, .kb-source, .tool-card, .chunk, .usecase-card {
+                opacity: 1 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Slide 1: Title -->
+            <section>
+                <div class="slide-content" style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">🤖</div>
+                    <h1>Build Your Own AI Copilot</h1>
+                    <h3 style="color: var(--accent-green); font-size: 1.3em;">Turning Content into Answers</h3>
+                    <p style="color: #94a3b8; font-size: 1.2em; margin-top: 30px;">90-minute interactive seminar</p>
+                    <div style="margin-top: 50px; padding: 20px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 10px; display: inline-block;">
+                        <p style="margin: 0; color: var(--itag-light);">ITAG Skillnet AI Advantage</p>
+                    </div>
+                    <p class="itag-logo">ITAG Skillnet | AI Advantage Programme</p>
+                </div>
+            </section>
+
+            <!-- Slide 2: The Problem -->
+            <section>
+                <div class="slide-content">
+                    <h2>The Challenge We All Face</h2>
+                    <div class="two-column" style="margin-top: 30px;">
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>Information Overload</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Documents scattered across drives</li>
+                                <li>Policies buried in PDFs</li>
+                                <li>Expertise locked in people's heads</li>
+                                <li>Hours spent searching for answers</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>The AI Solution</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Your content, instantly searchable</li>
+                                <li>Answers in natural language</li>
+                                <li>Available 24/7 to your team</li>
+                                <li>Gets smarter as you add content</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>Today's Goal:</strong> Understand how to turn YOUR content into an AI-powered assistant that answers questions accurately and cites sources.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: Agenda -->
+            <section>
+                <div class="slide-content">
+                    <h2>What We'll Cover</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>🧠 How AI "Learns" Your Content (RAG Explained)</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">20 min</span>
+                            <span>📄 Preparing Your Documents for AI</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">20 min</span>
+                            <span>🛠️ Tools & Platforms for Building Copilots</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">25 min</span>
+                            <span>🎯 Live Demo: Building a Knowledge Base</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>📋 Your Action Plan & Next Steps</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: What is RAG? -->
+            <section>
+                <div class="slide-content">
+                    <h2>What is RAG?</h2>
+                    <p style="text-align: center; font-size: 1.1em; margin-bottom: 30px;">Retrieval-Augmented Generation: The Secret Behind AI Copilots</p>
+                    <div class="rag-pipeline">
+                        <div class="pipeline-stage">
+                            <div class="icon">❓</div>
+                            <h4>Ask</h4>
+                            <p>User question</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">🔍</div>
+                            <h4>Search</h4>
+                            <p>Find docs</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">📎</div>
+                            <h4>Fetch</h4>
+                            <p>Best matches</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">🧠</div>
+                            <h4>Create</h4>
+                            <p>AI answers</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">✅</div>
+                            <h4>Reply</h4>
+                            <p>With sources!</p>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Key Insight:</strong> RAG doesn't "train" the AI on your data—it retrieves relevant content at query time and gives it to the AI as context.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: Why RAG Matters -->
+            <section>
+                <div class="slide-content">
+                    <h2>RAG vs Fine-Tuning: Two Approaches</h2>
+                    <div class="two-column" style="margin-bottom: 20px;">
+                        <div class="card">
+                            <h4>Fine-Tuning</h4>
+                            <p style="font-size: 0.85em;">Permanently modifies an AI model's weights by training it on your data. The knowledge becomes "baked in" to the model itself.</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>RAG (Retrieval)</h4>
+                            <p style="font-size: 0.85em;">Keeps the base model unchanged. Instead, it searches your documents at query time and passes relevant content to the AI as context.</p>
+                        </div>
+                    </div>
+                    <table class="comparison-table">
+                        <tr>
+                            <th style="width: 25%;">Aspect</th>
+                            <th style="width: 37%;">Fine-Tuning</th>
+                            <th style="width: 38%;">RAG (Retrieval)</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Setup Time</strong></td>
+                            <td>Days to weeks</td>
+                            <td style="color: var(--accent-green);">Hours to days</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost</strong></td>
+                            <td>$100s - $10,000s</td>
+                            <td style="color: var(--accent-green);">$10s - $100s</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Updates</strong></td>
+                            <td>Requires retraining</td>
+                            <td style="color: var(--accent-green);">Just add documents</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Citations</strong></td>
+                            <td>Not available</td>
+                            <td style="color: var(--accent-green);">Built-in source tracking</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hallucinations</strong></td>
+                            <td>Can still occur</td>
+                            <td style="color: var(--accent-green);">Grounded in your docs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Privacy</strong></td>
+                            <td>Data sent for training</td>
+                            <td style="color: var(--accent-green);">Can run locally</td>
+                        </tr>
+                    </table>
+                    <div class="tip-box">
+                        <strong>Bottom Line:</strong> For most business use cases, RAG is faster, cheaper, and more practical than fine-tuning.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: Vector Embeddings -->
+            <section>
+                <div class="slide-content">
+                    <h2>How Semantic Search Works</h2>
+                    <p style="text-align: center;">Converting meaning into numbers that computers can compare</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Traditional Keyword Search</h4>
+                            <div class="prompt-example">
+                                Query: "vacation policy"<br><br>
+                                ❌ Misses: "time off procedures"<br>
+                                ❌ Misses: "annual leave guidelines"<br>
+                                ❌ Misses: "PTO requests"
+                            </div>
+                            <p style="font-size: 0.85em; color: #888;">Only finds exact word matches</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Semantic (Vector) Search</h4>
+                            <div class="prompt-example">
+                                Query: "vacation policy"<br><br>
+                                ✅ Finds: "time off procedures"<br>
+                                ✅ Finds: "annual leave guidelines"<br>
+                                ✅ Finds: "PTO requests"
+                            </div>
+                            <p style="font-size: 0.85em; color: var(--accent-green);">Understands meaning, not just words</p>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>How it works:</strong> Each document chunk is converted to a "vector" (list of numbers) that represents its meaning. Similar meanings = similar vectors = found together.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: The Copilot Architecture -->
+            <section>
+                <div class="slide-content">
+                    <h2>Anatomy of an AI Copilot</h2>
+                    <div class="copilot-arch">
+                        <div class="arch-layer">
+                            <div class="icon">💬</div>
+                            <div class="content">
+                                <h4>User Interface</h4>
+                                <p>Chat widget, Slack bot, Teams app, or web portal</p>
+                            </div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="icon">🧠</div>
+                            <div class="content">
+                                <h4>LLM (Language Model)</h4>
+                                <p>GPT-5, Claude, Gemini, or open-source models</p>
+                            </div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="icon">🔍</div>
+                            <div class="content">
+                                <h4>Vector Database</h4>
+                                <p>Stores embeddings for semantic search (Pinecone, Weaviate, Chroma)</p>
+                            </div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="icon">📚</div>
+                            <div class="content">
+                                <h4>Knowledge Base</h4>
+                                <p>Your documents: PDFs, docs, web pages, databases</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: Document Preparation -->
+            <section>
+                <div class="slide-content">
+                    <h2>Preparing Your Documents</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">The quality of your copilot depends on the quality of your content</p>
+                    <div class="doc-flow">
+                        <div class="doc-step">
+                            <div class="icon">📄</div>
+                            <h4>Collect</h4>
+                            <p>Gather docs from all sources</p>
+                        </div>
+                        <div class="doc-step">
+                            <div class="icon">🧹</div>
+                            <h4>Clean</h4>
+                            <p>Remove duplicates, outdated info</p>
+                        </div>
+                        <div class="doc-step">
+                            <div class="icon">✂️</div>
+                            <h4>Chunk</h4>
+                            <p>Split into searchable pieces</p>
+                        </div>
+                        <div class="doc-step">
+                            <div class="icon">🔢</div>
+                            <h4>Embed</h4>
+                            <p>Convert to vectors</p>
+                        </div>
+                    </div>
+                    <div class="warning-box">
+                        <strong>Common Mistake:</strong> Garbage in = garbage out. Take time to curate your content—remove outdated policies, fix formatting issues, ensure accuracy.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: Chunking Strategies -->
+            <section>
+                <div class="slide-content">
+                    <h2>The Art of Chunking</h2>
+                    <p style="text-align: center;">How you split documents affects retrieval quality</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Chunking Strategies</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📏 Fixed Size</h4>
+                                <p style="font-size: 0.8em;">Split every 500-1000 tokens. Simple but may break mid-sentence.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📄 By Structure</h4>
+                                <p style="font-size: 0.8em;">Split by headers, paragraphs, or sections. Preserves context.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔄 Overlapping</h4>
+                                <p style="font-size: 0.8em;">Chunks overlap by 10-20%. Helps with context at boundaries.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Example: Policy Document</h4>
+                            <div class="chunk-visual">
+                                <div class="chunk-doc">
+                                    <h4>Employee Handbook</h4>
+                                    <div class="chunk-row">
+                                        <div class="chunk">Chapter 1: Onboarding...</div>
+                                        <div class="chunk">Chapter 2: Benefits...</div>
+                                        <div class="chunk">Section 2.1: Health...</div>
+                                        <div class="chunk">Section 2.2: Dental...</div>
+                                        <div class="chunk">Chapter 3: Time Off...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Rule of Thumb:</strong> Chunks should be small enough to be specific, but large enough to contain complete thoughts (typically 200-500 words).
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: Document Types -->
+            <section>
+                <div class="slide-content">
+                    <h2>What Content Can You Use?</h2>
+                    <div class="kb-visual">
+                        <div class="kb-sources">
+                            <div class="kb-source">
+                                <span class="icon">📄</span>
+                                <span>PDFs (policies, manuals)</span>
+                            </div>
+                            <div class="kb-source">
+                                <span class="icon">📝</span>
+                                <span>Word docs & Google Docs</span>
+                            </div>
+                            <div class="kb-source">
+                                <span class="icon">🌐</span>
+                                <span>Web pages & wikis</span>
+                            </div>
+                            <div class="kb-source">
+                                <span class="icon">📊</span>
+                                <span>Spreadsheets & CSVs</span>
+                            </div>
+                        </div>
+                        <div class="kb-arrows">
+                            <span class="kb-arrow">→</span>
+                            <span class="kb-arrow">→</span>
+                            <span class="kb-arrow">→</span>
+                            <span class="kb-arrow">→</span>
+                        </div>
+                        <div class="kb-database">
+                            <div class="icon">🗄️</div>
+                            <h4>Knowledge Base</h4>
+                        </div>
+                    </div>
+                    <div class="three-column" style="margin-top: 20px;">
+                        <div class="card">
+                            <h4>✅ Great Sources</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Policy documents</li>
+                                <li>Training materials</li>
+                                <li>FAQs & help articles</li>
+                                <li>Process documentation</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>⚠️ Needs Cleaning</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Scanned documents</li>
+                                <li>Complex tables</li>
+                                <li>Image-heavy content</li>
+                                <li>Legacy formats</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>❌ Avoid</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Sensitive personal data</li>
+                                <li>Outdated information</li>
+                                <li>Duplicated content</li>
+                                <li>Raw data dumps</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11: No-Code Tools -->
+            <section>
+                <div class="slide-content">
+                    <h2>No-Code Solutions</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">Build your copilot without writing code</p>
+                    <div class="tool-cards">
+                        <div class="tool-card">
+                            <div class="icon">🤖</div>
+                            <h4>Custom GPTs</h4>
+                            <p>Upload docs to ChatGPT, create specialized assistant</p>
+                            <span class="tag">Free - $20/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">📚</div>
+                            <h4>NotebookLM</h4>
+                            <p>Google's research assistant with source grounding</p>
+                            <span class="tag">Free</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">💼</div>
+                            <h4>Microsoft Copilot</h4>
+                            <p>Integrates with M365, SharePoint, Teams</p>
+                            <span class="tag">$30/user/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🔮</div>
+                            <h4>Claude Projects</h4>
+                            <p>Upload files, maintain context across chats</p>
+                            <span class="tag">$20/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🌊</div>
+                            <h4>Notion AI</h4>
+                            <p>Q&A over your Notion workspace</p>
+                            <span class="tag">$10/user/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">⚡</div>
+                            <h4>Glean / Guru</h4>
+                            <p>Enterprise knowledge search</p>
+                            <span class="tag">Enterprise</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 12: Low-Code Tools -->
+            <section>
+                <div class="slide-content">
+                    <h2>Low-Code Platforms</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">More control, minimal coding required</p>
+                    <div class="tool-cards" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="tool-card">
+                            <div class="icon">🦜</div>
+                            <h4>LangFlow</h4>
+                            <p>Visual builder for LangChain pipelines</p>
+                            <span class="tag">Open Source</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🔗</div>
+                            <h4>Flowise</h4>
+                            <p>Drag-and-drop LLM workflow builder</p>
+                            <span class="tag">Open Source</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🏗️</div>
+                            <h4>Dify</h4>
+                            <p>Full RAG platform with API access</p>
+                            <span class="tag">Free tier</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🎯</div>
+                            <h4>Relevance AI</h4>
+                            <p>Build AI tools and agents visually</p>
+                            <span class="tag">Free tier</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">📦</div>
+                            <h4>Stack AI</h4>
+                            <p>Enterprise-ready workflow automation</p>
+                            <span class="tag">From $199/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🌐</div>
+                            <h4>Voiceflow</h4>
+                            <p>Conversational AI with knowledge base</p>
+                            <span class="tag">Free tier</span>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Best for:</strong> Teams that want customization without hiring developers. Good middle ground between no-code simplicity and full flexibility.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 13: Developer Tools -->
+            <section>
+                <div class="slide-content">
+                    <h2>For Developers</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">Full control, maximum flexibility</p>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Frameworks</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🦜 LangChain</h4>
+                                <p style="font-size: 0.8em;">Most popular RAG framework. Python & JS. Extensive integrations.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🦙 LlamaIndex</h4>
+                                <p style="font-size: 0.8em;">Data framework optimized for RAG. Great for complex document structures.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔧 Haystack</h4>
+                                <p style="font-size: 0.8em;">Production-ready NLP pipelines. Strong enterprise features.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Vector Databases</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🌲 Pinecone</h4>
+                                <p style="font-size: 0.8em;">Managed, serverless. Easiest to start. Free tier available.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎨 Chroma</h4>
+                                <p style="font-size: 0.8em;">Open source, runs locally. Great for development & prototyping.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔷 Weaviate</h4>
+                                <p style="font-size: 0.8em;">Full-featured, hybrid search. Cloud or self-hosted.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 14: Use Cases -->
+            <section>
+                <div class="slide-content">
+                    <h2>Real-World Use Cases</h2>
+                    <div class="usecase-matrix">
+                        <div class="usecase-card">
+                            <div class="icon">📋</div>
+                            <h4>HR Policy Bot</h4>
+                            <p>Answer employee questions about benefits, time off, policies</p>
+                            <ul>
+                                <li>"How many vacation days do I have?"</li>
+                                <li>"What's the parental leave policy?"</li>
+                                <li>"How do I submit expenses?"</li>
+                            </ul>
+                        </div>
+                        <div class="usecase-card">
+                            <div class="icon">🎧</div>
+                            <h4>Customer Support</h4>
+                            <p>Help customers find answers without waiting for agents</p>
+                            <ul>
+                                <li>"How do I reset my password?"</li>
+                                <li>"What's your return policy?"</li>
+                                <li>"Track my order #12345"</li>
+                            </ul>
+                        </div>
+                        <div class="usecase-card">
+                            <div class="icon">📚</div>
+                            <h4>Training Assistant</h4>
+                            <p>Help new employees learn processes and systems</p>
+                            <ul>
+                                <li>"How do I submit a PO?"</li>
+                                <li>"What's the code review process?"</li>
+                                <li>"Where do I find templates?"</li>
+                            </ul>
+                        </div>
+                        <div class="usecase-card">
+                            <div class="icon">⚖️</div>
+                            <h4>Compliance Helper</h4>
+                            <p>Navigate regulations and internal policies</p>
+                            <ul>
+                                <li>"What are GDPR requirements for X?"</li>
+                                <li>"Do we need approval for this?"</li>
+                                <li>"What's the audit trail process?"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 15: Live Demo Intro -->
+            <section>
+                <div class="slide-content" style="text-align: center;">
+                    <h2>Live Demo Time!</h2>
+                    <div style="font-size: 4em; margin: 30px 0;">🎬</div>
+                    <h3 style="color: var(--accent-green);">Building a Knowledge Base in Real-Time</h3>
+                    <div class="three-column" style="margin-top: 40px;">
+                        <div class="card">
+                            <h4>Step 1</h4>
+                            <p>Upload sample documents</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>Step 2</h4>
+                            <p>Configure the copilot</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-orange);">
+                            <h4>Step 3</h4>
+                            <p>Ask questions & see sources</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>Follow along:</strong> We'll use a free tool so you can try this yourself!
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 16: Demo - Custom GPT -->
+            <section>
+                <div class="slide-content">
+                    <h2>Demo Option 1: Custom GPT</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Steps to Create</h4>
+                            <div class="framework-step">
+                                <span class="step-number">1</span>
+                                <span>Go to ChatGPT → Explore GPTs → Create</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">2</span>
+                                <span>Name your GPT and write instructions</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">3</span>
+                                <span>Upload your documents (up to 20 files)</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">4</span>
+                                <span>Enable "Knowledge" capability</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">5</span>
+                                <span>Test and refine your prompts</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Sample Instructions</h4>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+You are an HR Policy Assistant for [Company Name].
+
+Your role is to:
+- Answer questions about company policies
+- Always cite the specific document and section
+- If unsure, say "I couldn't find that in the documents"
+- Be friendly and professional
+
+When answering:
+1. Quote relevant policy sections
+2. Provide the source document name
+3. Offer to clarify if needed
+
+Never make up policies that aren't in the documents.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 17: Demo - NotebookLM -->
+            <section>
+                <div class="slide-content">
+                    <h2>Demo Option 2: NotebookLM</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Why NotebookLM?</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>✅ <strong>Free</strong> (Google account required)</li>
+                                <li>✅ Always cites sources with highlights</li>
+                                <li>✅ Generates audio summaries (podcasts!)</li>
+                                <li>✅ Create study guides & FAQs</li>
+                                <li>✅ No data used for training</li>
+                            </ul>
+                            <div class="tip-box" style="margin-top: 20px;">
+                                <strong>Best for:</strong> Research, document analysis, creating summaries from multiple sources
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Getting Started</h4>
+                            <div class="framework-step">
+                                <span class="step-number">1</span>
+                                <span>Go to notebooklm.google.com</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">2</span>
+                                <span>Create a new notebook</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">3</span>
+                                <span>Upload sources (PDFs, docs, URLs)</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">4</span>
+                                <span>Start asking questions!</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">5</span>
+                                <span>Click citations to see original text</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 18: Writing Good System Prompts -->
+            <section>
+                <div class="slide-content">
+                    <h2>Writing Effective System Prompts</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">The instructions that define your copilot's behavior</p>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: #ff6b6b;">❌ Weak Prompt</h4>
+                            <div class="prompt-example">
+You are a helpful assistant. Answer questions about our company.
+                            </div>
+                            <p style="font-size: 0.8em; color: #888;">Too vague - AI will make things up</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">✅ Strong Prompt</h4>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+You are a Customer Service Assistant for TechCorp.
+
+RULES:
+1. ONLY answer from the provided documents
+2. ALWAYS cite the source document
+3. If info isn't in the docs, say: "I don't have that information. Please contact support@techcorp.com"
+4. Never speculate or make up information
+
+FORMAT your answers:
+- Start with a direct answer
+- Quote relevant sections
+- End with "Source: [document name]"
+
+TONE: Professional, friendly, concise
+                            </div>
+                        </div>
+                    </div>
+                    <div class="warning-box">
+                        <strong>Key Principle:</strong> Be explicit about what the AI should NOT do. Prevent hallucinations by requiring citations.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 19: Handling Edge Cases -->
+            <section>
+                <div class="slide-content">
+                    <h2>Handling Edge Cases</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">Prepare your copilot for tricky situations</p>
+                    <div class="three-column">
+                        <div class="card">
+                            <h4>🤷 "I Don't Know"</h4>
+                            <p style="font-size: 0.85em;">Train it to admit gaps:</p>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+"If you cannot find the answer in the provided documents, respond: 'I couldn't find that information in our knowledge base. Please contact [team] for help.'"
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>🔀 Ambiguous Questions</h4>
+                            <p style="font-size: 0.85em;">Ask for clarification:</p>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+"If a question is ambiguous, ask a clarifying question before answering. Example: 'Are you asking about the US or UK policy?'"
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>⚠️ Sensitive Topics</h4>
+                            <p style="font-size: 0.85em;">Redirect appropriately:</p>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+"For questions about salaries, performance reviews, or personal matters, direct users to HR: 'Please contact HR directly at hr@company.com for this sensitive matter.'"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Pro Tip:</strong> Test your copilot with edge cases before launch. Try to break it—then fix the prompts.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 20: Measuring Success -->
+            <section>
+                <div class="slide-content">
+                    <h2>Measuring Success</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">How do you know if your copilot is working?</p>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Key Metrics</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📊 Usage Rate</h4>
+                                <p style="font-size: 0.85em;">How many people are using it? Increasing over time?</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>✅ Resolution Rate</h4>
+                                <p style="font-size: 0.85em;">% of questions answered without human escalation</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>👍 Satisfaction Score</h4>
+                                <p style="font-size: 0.85em;">Thumbs up/down feedback on responses</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>⏱️ Time Saved</h4>
+                                <p style="font-size: 0.85em;">Compare to previous support ticket volume</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Warning Signs</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>⚠️ High escalation rate → improve content</li>
+                                <li>⚠️ Low usage → promote better, simplify UI</li>
+                                <li>⚠️ Complaints about wrong answers → review sources</li>
+                                <li>⚠️ Same questions repeatedly → content gap</li>
+                            </ul>
+                            <div class="tip-box" style="margin-top: 20px;">
+                                <strong>Quick Win:</strong> Add a feedback button. Review negative feedback weekly to improve.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 21: Security & Privacy -->
+            <section>
+                <div class="slide-content">
+                    <h2>Security & Privacy Considerations</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Questions to Ask</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>Where is my data stored?</li>
+                                <li>Is it used to train AI models?</li>
+                                <li>Who has access to conversations?</li>
+                                <li>Can we delete data on request?</li>
+                                <li>Is the service GDPR compliant?</li>
+                                <li>What about SOC 2 / ISO 27001?</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Best Practices</h4>
+                            <div class="tip-box">
+                                <strong>✅ Do:</strong>
+                                <ul style="font-size: 0.85em; margin: 5px 0;">
+                                    <li>Use enterprise tiers with data protection</li>
+                                    <li>Review vendor security documentation</li>
+                                    <li>Involve your security/legal team</li>
+                                    <li>Classify content before uploading</li>
+                                </ul>
+                            </div>
+                            <div class="warning-box">
+                                <strong>❌ Don't:</strong>
+                                <ul style="font-size: 0.85em; margin: 5px 0;">
+                                    <li>Upload PII or sensitive data</li>
+                                    <li>Use free tiers for confidential docs</li>
+                                    <li>Skip the vendor security review</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 22: Common Pitfalls -->
+            <section>
+                <div class="slide-content">
+                    <h2>Common Pitfalls to Avoid</h2>
+                    <div class="three-column">
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>🗑️ Bad Data</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Outdated documents</li>
+                                <li>Duplicate content</li>
+                                <li>Poor formatting</li>
+                                <li>Inconsistent info</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: var(--accent-green); margin-top: 10px;"><strong>Fix:</strong> Audit and clean before uploading</p>
+                        </div>
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>📏 Wrong Chunks</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Too small = missing context</li>
+                                <li>Too large = irrelevant noise</li>
+                                <li>Breaking mid-sentence</li>
+                                <li>Losing document structure</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: var(--accent-green); margin-top: 10px;"><strong>Fix:</strong> Test different chunk sizes</p>
+                        </div>
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>🎯 Scope Creep</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Trying to do everything</li>
+                                <li>Too many document types</li>
+                                <li>Unclear purpose</li>
+                                <li>No success metrics</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: var(--accent-green); margin-top: 10px;"><strong>Fix:</strong> Start small, expand gradually</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Golden Rule:</strong> Start with ONE use case, ONE document set, measure success, then expand.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 23: Getting Started Checklist -->
+            <section>
+                <div class="slide-content">
+                    <h2>Your Getting Started Checklist</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Week 1: Plan</h4>
+                            <div class="exercise-box" style="border-color: var(--itag-blue);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Identify your use case (start with ONE)<br>
+                                    ☐ List the questions people ask most<br>
+                                    ☐ Inventory your existing documents<br>
+                                    ☐ Choose a tool (start simple!)<br>
+                                    ☐ Get stakeholder buy-in
+                                </p>
+                            </div>
+                            <h4 style="color: var(--itag-light); margin-top: 20px;">Week 2: Build</h4>
+                            <div class="exercise-box" style="border-color: var(--itag-blue);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Clean and organize documents<br>
+                                    ☐ Upload to your chosen platform<br>
+                                    ☐ Write system prompts<br>
+                                    ☐ Test with sample questions<br>
+                                    ☐ Refine based on results
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Week 3: Pilot</h4>
+                            <div class="exercise-box" style="border-color: var(--accent-green);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Launch with small test group<br>
+                                    ☐ Gather feedback actively<br>
+                                    ☐ Track usage metrics<br>
+                                    ☐ Fix issues quickly<br>
+                                    ☐ Document what works
+                                </p>
+                            </div>
+                            <h4 style="color: var(--accent-green); margin-top: 20px;">Week 4: Scale</h4>
+                            <div class="exercise-box" style="border-color: var(--accent-green);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Expand to broader audience<br>
+                                    ☐ Add more content (carefully)<br>
+                                    ☐ Set up ongoing maintenance<br>
+                                    ☐ Plan next use case<br>
+                                    ☐ Celebrate wins! 🎉
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 24: Exercise -->
+            <section>
+                <div class="slide-content">
+                    <h2>Hands-On Exercise</h2>
+                    <div style="text-align: center; font-size: 2em; margin: 20px 0;">✍️</div>
+                    <div class="exercise-box">
+                        <h4>Design Your Copilot (5 minutes)</h4>
+                        <p>Answer these questions for YOUR organization:</p>
+                        <div class="two-column" style="margin-top: 15px;">
+                            <div>
+                                <p><strong>1. Use Case:</strong><br>
+                                What questions do people ask repeatedly?<br>
+                                <span style="color: #888;">Example: "How do I submit an expense report?"</span></p>
+
+                                <p><strong>2. Documents:</strong><br>
+                                What content would answer these questions?<br>
+                                <span style="color: #888;">Example: Expense policy PDF, process guide</span></p>
+                            </div>
+                            <div>
+                                <p><strong>3. Users:</strong><br>
+                                Who would benefit from this copilot?<br>
+                                <span style="color: #888;">Example: All employees, new hires</span></p>
+
+                                <p><strong>4. Tool:</strong><br>
+                                What tool makes sense for your situation?<br>
+                                <span style="color: #888;">Consider: budget, technical skills, security</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Share with your neighbor:</strong> What did you come up with? Any common themes?
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 25: Resources -->
+            <section>
+                <div class="slide-content">
+                    <h2>Resources & Next Steps</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Free Tools to Try Today</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📓 NotebookLM</h4>
+                                <p style="font-size: 0.8em;">notebooklm.google.com</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🤖 Custom GPTs</h4>
+                                <p style="font-size: 0.8em;">chat.openai.com/create</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎯 Claude Projects</h4>
+                                <p style="font-size: 0.8em;">claude.ai (Pro plan)</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔗 Flowise</h4>
+                                <p style="font-size: 0.8em;">flowiseai.com (open source)</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Learn More</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📚 Documentation</h4>
+                                <p style="font-size: 0.8em;">LangChain docs, LlamaIndex guides</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎥 Video Tutorials</h4>
+                                <p style="font-size: 0.8em;">YouTube: "RAG tutorial", "Custom GPT"</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>💬 Communities</h4>
+                                <p style="font-size: 0.8em;">r/LocalLLaMA, LangChain Discord</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎓 ITAG Skillnet</h4>
+                                <p style="font-size: 0.8em;">More AI workshops coming soon!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 26: Key Takeaways -->
+            <section>
+                <div class="slide-content">
+                    <h2>Key Takeaways</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--accent-green);">1</span>
+                            <span><strong>RAG is your friend</strong> — It's faster, cheaper, and more practical than fine-tuning for most use cases</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--itag-blue);">2</span>
+                            <span><strong>Quality content matters</strong> — Clean, organized documents = better answers</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--accent-orange);">3</span>
+                            <span><strong>Start simple</strong> — Custom GPTs or NotebookLM today, more complex tools later</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--accent-purple);">4</span>
+                            <span><strong>Iterate constantly</strong> — Test, gather feedback, improve, repeat</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: #ff6b6b;">5</span>
+                            <span><strong>Security first</strong> — Know where your data goes and who can access it</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 27: Q&A -->
+            <section>
+                <div class="slide-content" style="text-align: center;">
+                    <h2>Questions & Discussion</h2>
+                    <div style="font-size: 4em; margin: 40px 0;">❓</div>
+                    <h3 style="color: var(--accent-green);">What would YOU build?</h3>
+                    <div class="two-column" style="margin-top: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        <div class="card">
+                            <h4>Think About...</h4>
+                            <p style="font-size: 0.9em;">What's your biggest information bottleneck?</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>Share...</h4>
+                            <p style="font-size: 0.9em;">What use case excites you most?</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 28: Thank You -->
+            <section>
+                <div class="slide-content" style="text-align: center;">
+                    <h2>Thank You!</h2>
+                    <div style="font-size: 3em; margin: 30px 0;">🚀</div>
+                    <h3 style="color: var(--accent-green);">Now go build something amazing!</h3>
+                    <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 15px; display: inline-block;">
+                        <p style="margin: 0 0 10px 0; color: var(--itag-light); font-size: 1.1em;">ITAG Skillnet AI Advantage</p>
+                        <p style="margin: 0; color: #888;">Empowering Irish businesses with AI skills</p>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px; display: inline-block;">
+                        <strong>Remember:</strong> Start small, learn fast, scale what works!
+                    </div>
+                    <p class="itag-logo">ITAG Skillnet | AI Advantage Programme</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ],
+            // Use Page Up/Down for content scrolling (33=PageUp, 34=PageDown)
+            keyboard: {
+                33: function() { scrollCurrentSlide(-200); },
+                34: function() { scrollCurrentSlide(200); }
+            }
+        });
+
+        function scrollCurrentSlide(amount) {
+            const currentSlide = Reveal.getCurrentSlide();
+            if (currentSlide) {
+                // Try to find a .slide-content wrapper first, otherwise scroll the section
+                const scrollTarget = currentSlide.querySelector('.slide-content') || currentSlide;
+                scrollTarget.scrollBy({ top: amount, behavior: 'smooth' });
+            }
+        }
+
+        // Auto-wrap slide content for scrolling on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.reveal .slides > section > section, .reveal .slides > section:not(:has(section))').forEach(function(slide) {
+                // Skip if already has slide-content wrapper
+                if (slide.querySelector('.slide-content')) return;
+
+                // Create wrapper and move all content into it
+                const wrapper = document.createElement('div');
+                wrapper.className = 'slide-content';
+                while (slide.firstChild) {
+                    wrapper.appendChild(slide.firstChild);
+                }
+                slide.appendChild(wrapper);
+            });
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Global keyboard listener for fullscreen and scrolling
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+            // Page Up - scroll slide content up
+            if (e.key === 'PageUp' || e.keyCode === 33) {
+                scrollCurrentSlide(-200);
+                e.preventDefault();
+            }
+            // Page Down - scroll slide content down
+            if (e.key === 'PageDown' || e.keyCode === 34) {
+                scrollCurrentSlide(200);
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

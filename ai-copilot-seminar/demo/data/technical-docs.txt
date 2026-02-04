@@ -1,0 +1,279 @@
+# CloudSync Pro - Technical Documentation
+
+## API Overview
+
+### Authentication
+CloudSync Pro uses OAuth 2.0 for API authentication.
+
+**Getting Access Tokens:**
+```
+POST https://api.cloudsyncpro.com/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id=YOUR_CLIENT_ID
+&client_secret=YOUR_CLIENT_SECRET
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIs...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+Include the token in all API requests:
+```
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
+
+### Rate Limits
+- Free tier: 100 requests/hour
+- Business tier: 1,000 requests/hour
+- Enterprise tier: 10,000 requests/hour
+Rate limit headers included in all responses:
+- X-RateLimit-Limit
+- X-RateLimit-Remaining
+- X-RateLimit-Reset
+
+## File Operations
+
+### Upload a File
+```
+POST https://api.cloudsyncpro.com/v1/files/upload
+Content-Type: multipart/form-data
+
+file: [binary data]
+folder_id: "folder_abc123"
+name: "document.pdf" (optional, defaults to original filename)
+```
+
+**Response:**
+```json
+{
+  "id": "file_xyz789",
+  "name": "document.pdf",
+  "size": 1048576,
+  "mime_type": "application/pdf",
+  "created_at": "2024-01-15T10:30:00Z",
+  "folder_id": "folder_abc123",
+  "download_url": "https://files.cloudsyncpro.com/..."
+}
+```
+
+### Download a File
+```
+GET https://api.cloudsyncpro.com/v1/files/{file_id}/download
+```
+
+Returns a 302 redirect to a temporary download URL (valid for 15 minutes).
+
+### List Files in Folder
+```
+GET https://api.cloudsyncpro.com/v1/folders/{folder_id}/files
+?page=1
+&per_page=50
+&sort=name
+&order=asc
+```
+
+**Response:**
+```json
+{
+  "files": [
+    {
+      "id": "file_xyz789",
+      "name": "document.pdf",
+      "size": 1048576,
+      "modified_at": "2024-01-15T14:22:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "per_page": 50,
+    "total": 127
+  }
+}
+```
+
+### Delete a File
+```
+DELETE https://api.cloudsyncpro.com/v1/files/{file_id}
+```
+
+Files are moved to trash. To permanently delete:
+```
+DELETE https://api.cloudsyncpro.com/v1/files/{file_id}?permanent=true
+```
+
+## Folder Operations
+
+### Create Folder
+```
+POST https://api.cloudsyncpro.com/v1/folders
+Content-Type: application/json
+
+{
+  "name": "Project Documents",
+  "parent_id": "folder_parent123"
+}
+```
+
+### Move Folder
+```
+PATCH https://api.cloudsyncpro.com/v1/folders/{folder_id}
+Content-Type: application/json
+
+{
+  "parent_id": "folder_newparent456"
+}
+```
+
+### Get Folder Tree
+```
+GET https://api.cloudsyncpro.com/v1/folders/tree
+?depth=3
+```
+
+Returns nested folder structure up to specified depth.
+
+## Sharing
+
+### Create Share Link
+```
+POST https://api.cloudsyncpro.com/v1/shares
+Content-Type: application/json
+
+{
+  "resource_type": "file",
+  "resource_id": "file_xyz789",
+  "permissions": "view",
+  "password": "optional_password",
+  "expires_at": "2024-02-15T00:00:00Z"
+}
+```
+
+**Permissions:**
+- "view" - Can view/download
+- "edit" - Can view, download, and edit (Office files)
+- "upload" - Can upload to folder (folders only)
+
+### List Shares
+```
+GET https://api.cloudsyncpro.com/v1/shares
+?resource_type=file
+&resource_id=file_xyz789
+```
+
+### Revoke Share
+```
+DELETE https://api.cloudsyncpro.com/v1/shares/{share_id}
+```
+
+## Webhooks
+
+### Supported Events
+- `file.created` - New file uploaded
+- `file.updated` - File content changed
+- `file.deleted` - File deleted or trashed
+- `folder.created` - New folder created
+- `share.created` - New share link created
+- `user.added` - User added to organization
+
+### Register Webhook
+```
+POST https://api.cloudsyncpro.com/v1/webhooks
+Content-Type: application/json
+
+{
+  "url": "https://your-server.com/webhook",
+  "events": ["file.created", "file.updated"],
+  "secret": "your_webhook_secret"
+}
+```
+
+### Webhook Payload Example
+```json
+{
+  "event": "file.created",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "data": {
+    "file_id": "file_xyz789",
+    "name": "report.xlsx",
+    "folder_id": "folder_abc123",
+    "user_id": "user_john123"
+  }
+}
+```
+
+Verify webhook signature using HMAC-SHA256:
+```
+X-CloudSync-Signature: sha256=abc123...
+```
+
+## Error Codes
+
+| Code | Description |
+|------|-------------|
+| 400 | Bad Request - Invalid parameters |
+| 401 | Unauthorized - Invalid or expired token |
+| 403 | Forbidden - Insufficient permissions |
+| 404 | Not Found - Resource doesn't exist |
+| 409 | Conflict - Resource already exists |
+| 413 | Payload Too Large - File exceeds limit |
+| 429 | Too Many Requests - Rate limit exceeded |
+| 500 | Internal Server Error |
+
+**Error Response Format:**
+```json
+{
+  "error": {
+    "code": "invalid_parameter",
+    "message": "The 'folder_id' parameter is required",
+    "details": {
+      "parameter": "folder_id"
+    }
+  }
+}
+```
+
+## SDKs
+
+Official SDKs available:
+- Python: `pip install cloudsync-pro`
+- Node.js: `npm install @cloudsync/sdk`
+- Java: Maven artifact `com.cloudsyncpro:sdk`
+- .NET: NuGet package `CloudSyncPro.SDK`
+
+**Python Example:**
+```python
+from cloudsync import CloudSyncClient
+
+client = CloudSyncClient(
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET"
+)
+
+# Upload a file
+file = client.files.upload(
+    path="/path/to/document.pdf",
+    folder_id="folder_abc123"
+)
+
+# Create share link
+share = client.shares.create(
+    resource_type="file",
+    resource_id=file.id,
+    permissions="view"
+)
+
+print(f"Share URL: {share.url}")
+```
+
+## Support
+
+- API Status: status.cloudsyncpro.com
+- Developer Portal: developers.cloudsyncpro.com
+- API Support: api-support@cloudsyncpro.com

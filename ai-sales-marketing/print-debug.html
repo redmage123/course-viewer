@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Introduction to AI for Sales and Marketing</title>
+    <style>
+    
+    @page {
+        size: 297mm 210mm;
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #1a1a2e;
+        color: #ffffff;
+    }
+
+    .slide {
+        width: 297mm;
+        height: 210mm;
+        padding: 30px 40px;
+        page-break-after: always;
+        page-break-inside: avoid;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .slide:last-child {
+        page-break-after: auto;
+    }
+
+    /* Title slides */
+    .slide.title-slide {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .slide.section-divider {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 2.2em;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: #667eea;
+    }
+
+    h2 {
+        font-size: 1.8em;
+        margin-bottom: 18px;
+        color: #a5b4fc;
+    }
+
+    h3 {
+        font-size: 1.4em;
+        margin-bottom: 15px;
+        color: #c4b5fd;
+    }
+
+    h4 {
+        font-size: 1.2em;
+        margin-bottom: 12px;
+        color: #ddd6fe;
+    }
+
+    p {
+        font-size: 1em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        color: #e2e8f0;
+    }
+
+    ul, ol {
+        font-size: 0.95em;
+        line-height: 1.8;
+        margin-left: 25px;
+        color: #e2e8f0;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        font-size: 1.4em;
+        color: #a5b4fc;
+        margin-bottom: 20px;
+    }
+
+    .course-info {
+        font-size: 1em;
+        color: #94a3b8;
+    }
+
+    /* Two-column layout */
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        flex: 1;
+    }
+
+    .three-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .four-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 15px;
+        flex: 1;
+    }
+
+    /* Card styles */
+    .card {
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        padding: 18px;
+    }
+
+    /* Highlight boxes */
+    .highlight-box {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+        border-left: 4px solid #8b5cf6;
+        padding: 18px 22px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+
+    .warning-box {
+        background: rgba(245, 158, 11, 0.2);
+        border-left: 4px solid #f59e0b;
+        padding: 18px 22px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+
+    .success-box {
+        background: rgba(34, 197, 94, 0.2);
+        border-left: 4px solid #22c55e;
+        padding: 18px 22px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+
+    /* Day badge */
+    .day-badge {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    /* Section icon */
+    .section-icon {
+        font-size: 4em;
+        margin-bottom: 20px;
+    }
+
+    /* Stat cards */
+    .stat-card {
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2.5em;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: #667eea;
+    }
+
+    .stat-label {
+        font-size: 0.9em;
+        color: #a5b4fc;
+        margin-top: 8px;
+    }
+
+    /* Tool cards */
+    .tool-card {
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .tool-icon {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    .tool-name {
+        font-weight: bold;
+        color: #a5b4fc;
+        margin-bottom: 5px;
+    }
+
+    .tool-desc {
+        font-size: 0.85em;
+        color: #94a3b8;
+    }
+
+    /* Process flow */
+    .process-flow {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin: 20px 0;
+        gap: 10px;
+    }
+
+    .process-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex: 1;
+    }
+
+    .process-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .process-arrow {
+        font-size: 1.5em;
+        color: #6366f1;
+        margin-top: 25px;
+    }
+
+    .process-label {
+        font-size: 0.85em;
+        color: #a5b4fc;
+    }
+
+    /* AI Wheel - simplified for print */
+    .ai-wheel-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .ai-wheel {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        max-width: 500px;
+    }
+
+    .wheel-center {
+        grid-column: 2;
+        grid-row: 2;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1em;
+        font-weight: bold;
+        text-align: center;
+        margin: auto;
+    }
+
+    .wheel-segment {
+        background: rgba(99, 102, 241, 0.2);
+        border: 2px solid rgba(139, 92, 246, 0.5);
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .wheel-segment .icon {
+        font-size: 1.5em;
+        margin-bottom: 5px;
+    }
+
+    .wheel-segment .label {
+        font-size: 0.8em;
+        color: #a5b4fc;
+    }
+
+    /* Score meter - simplified for print */
+    .score-container {
+        margin: 20px 0;
+    }
+
+    .score-meter {
+        width: 100%;
+        height: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .score-fill {
+        height: 100%;
+        border-radius: 15px;
+    }
+
+    .score-fill.low { background: linear-gradient(90deg, #ef4444, #f97316); width: 30%; }
+    .score-fill.medium { background: linear-gradient(90deg, #f59e0b, #eab308); width: 60%; }
+    .score-fill.high { background: linear-gradient(90deg, #22c55e, #10b981); width: 85%; }
+
+    .score-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 0.8em;
+        color: #94a3b8;
+    }
+
+    /* Customer journey */
+    .customer-journey {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px 0;
+        gap: 8px;
+    }
+
+    .journey-step {
+        text-align: center;
+        flex: 1;
+    }
+
+    .journey-icon {
+        font-size: 1.5em;
+        margin-bottom: 5px;
+    }
+
+    .journey-label {
+        font-size: 0.75em;
+        color: #a5b4fc;
+    }
+
+    .journey-arrow {
+        font-size: 1.2em;
+        color: #6366f1;
+    }
+
+    /* Comparison table */
+    .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 0.85em;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        padding: 10px 12px;
+        text-align: left;
+    }
+
+    .comparison-table th {
+        background: rgba(99, 102, 241, 0.3);
+        color: #a5b4fc;
+        font-weight: bold;
+    }
+
+    .comparison-table tr:nth-child(even) {
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    /* Framework boxes */
+    .framework-box {
+        background: rgba(99, 102, 241, 0.1);
+        border: 2px solid rgba(139, 92, 246, 0.4);
+        border-radius: 12px;
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    .framework-letter {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #8b5cf6;
+        margin-right: 12px;
+    }
+
+    /* Tip box */
+    .tip-box {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+        border-left: 4px solid #22c55e;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+
+    /* Code/prompt examples */
+    .prompt-example {
+        background: #0f172a;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        font-family: 'Consolas', monospace;
+        font-size: 0.85em;
+        white-space: pre-wrap;
+        margin: 10px 0;
+    }
+
+    /* Checklist */
+    .checklist {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .checklist li {
+        padding-left: 28px;
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    .checklist li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #22c55e;
+        font-weight: bold;
+    }
+
+    /* Slide number */
+    .slide-number {
+        position: absolute;
+        bottom: 15px;
+        right: 30px;
+        font-size: 0.9em;
+        color: #64748b;
+    }
+
+    /* Remove animations for print */
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .animated-list li {
+        opacity: 1 !important;
+    }
+    
+    </style>
+</head>
+<body>
+
+        <div class="slide title-slide">
+            <div class="section-icon" style="font-size: 6em; margin-bottom: 30px;">📈</div>
+        <h1>Introduction to AI for Sales and Marketing</h1>
+        <p class="subtitle">Practical Applications for Modern Teams</p>
+        <p class="course-info">2-Day Course | AI Elevate</p>
+        <div style="margin-top: 40px; display: flex; gap: 30px; justify-content: center;">
+            <div class="card" style="padding: 20px 30px;">
+                <div style="font-size: 2em;">🎯</div>
+                <div style="color: #a5b4fc; margin-top: 10px;">Customer Engagement</div>
+            </div>
+            <div class="card" style="padding: 20px 30px;">
+                <div style="font-size: 2em;">📊</div>
+                <div style="color: #a5b4fc; margin-top: 10px;">Campaign Analytics</div>
+            </div>
+            <div class="card" style="padding: 20px 30px;">
+                <div style="font-size: 2em;">✨</div>
+                <div style="color: #a5b4fc; margin-top: 10px;">Content Generation</div>
+            </div>
+            <div class="card" style="padding: 20px 30px;">
+                <div style="font-size: 2em;">🔥</div>
+                <div style="color: #a5b4fc; margin-top: 10px;">Lead Scoring</div>
+            </div>
+        </div>
+            <div class="slide-number">1</div>
+        </div>
+        
+        <div class="slide">
+            <h1>Course Overview</h1>
+        <div class="two-column">
+            <div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="day-badge">Day 1</div>
+                    <h4>AI Foundations & Content Creation</h4>
+                    <ul class="animated-list">
+                        <li>The AI Revolution in Sales & Marketing</li>
+                        <li>Understanding AI Tools Landscape</li>
+                        <li>AI-Powered Content Generation</li>
+                        <li>Customer Engagement Strategies</li>
+                        <li>Hands-on: Creating Marketing Content</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="day-badge">Day 2</div>
+                    <h4>Analytics, Scoring & Implementation</h4>
+                    <ul class="animated-list">
+                        <li>Lead Scoring with AI</li>
+                        <li>Campaign Optimization</li>
+                        <li>Predictive Analytics</li>
+                        <li>Implementation Strategy</li>
+                        <li>Hands-on: Building Your AI Toolkit</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 30px;">
+            <h4>What You'll Walk Away With</h4>
+            <p>Practical skills to immediately apply AI tools in your daily sales and marketing workflows, plus a personalized implementation plan.</p>
+        </div>
+            <div class="slide-number">2</div>
+        </div>
+        
+        <div class="slide">
+            <div class="day-badge" style="font-size: 1.2em; padding: 12px 30px;">Day 1</div>
+        <div class="section-icon">🚀</div>
+        <h1>The AI Revolution in Sales & Marketing</h1>
+        <p style="font-size: 1.3em; color: #a5b4fc;">Understanding the Landscape</p>
+            <div class="slide-number">3</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>Why AI in Sales & Marketing Now?</h1>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-number">80%</div>
+                <div class="stat-label">of marketing leaders plan to use AI by 2025</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">40%</div>
+                <div class="stat-label">productivity increase with AI tools</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3x</div>
+                <div class="stat-label">faster content creation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">25%</div>
+                <div class="stat-label">higher conversion rates</div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h4>The Perfect Storm</h4>
+            <ul>
+                <li><strong>Technology maturity:</strong> LLMs and generative AI are now production-ready</li>
+                <li><strong>Tool accessibility:</strong> No-code/low-code AI tools for non-technical users</li>
+                <li><strong>Competitive pressure:</strong> Early adopters are pulling ahead</li>
+                <li><strong>Customer expectations:</strong> Personalization at scale is now expected</li>
+            </ul>
+        </div>
+            <div class="slide-number">4</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>AI Capabilities for Sales & Marketing</h1>
+
+        <div class="ai-wheel-container">
+            <div class="ai-wheel">
+                <div class="wheel-segment">
+                    <div class="icon">✍️</div>
+                    <div class="label">Content<br>Generation</div>
+                </div>
+                <div class="wheel-segment">
+                    <div class="icon">🎯</div>
+                    <div class="label">Audience<br>Targeting</div>
+                </div>
+                <div class="wheel-segment">
+                    <div class="icon">📊</div>
+                    <div class="label">Predictive<br>Analytics</div>
+                </div>
+                <div class="wheel-segment">
+                    <div class="icon">🔥</div>
+                    <div class="label">Lead<br>Scoring</div>
+                </div>
+                <div class="wheel-segment">
+                    <div class="icon">💬</div>
+                    <div class="label">Customer<br>Service</div>
+                </div>
+                <div class="wheel-segment">
+                    <div class="icon">🔄</div>
+                    <div class="label">Campaign<br>Optimization</div>
+                </div>
+                <div class="wheel-center">AI for<br>Sales &<br>Marketing</div>
+            </div>
+        </div>
+            <div class="slide-number">5</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>AI Across the Customer Journey</h1>
+
+        <div class="journey-container">
+            <div class="journey-stage">
+                <div class="journey-icon">👀</div>
+                <div class="journey-label">Awareness</div>
+            </div>
+            <div class="journey-stage">
+                <div class="journey-icon">🤔</div>
+                <div class="journey-label">Interest</div>
+            </div>
+            <div class="journey-stage">
+                <div class="journey-icon">⚖️</div>
+                <div class="journey-label">Consideration</div>
+            </div>
+            <div class="journey-stage">
+                <div class="journey-icon">💳</div>
+                <div class="journey-label">Purchase</div>
+            </div>
+            <div class="journey-stage">
+                <div class="journey-icon">❤️</div>
+                <div class="journey-label">Loyalty</div>
+            </div>
+        </div>
+
+        <div class="three-column" style="margin-top: 40px;">
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h4>Top of Funnel</h4>
+                <ul>
+                    <li>SEO content generation</li>
+                    <li>Social media posts</li>
+                    <li>Ad copy optimization</li>
+                    <li>Audience segmentation</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔥</div>
+                <h4>Middle of Funnel</h4>
+                <ul>
+                    <li>Lead scoring</li>
+                    <li>Email personalization</li>
+                    <li>Chatbot engagement</li>
+                    <li>Content recommendations</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">💎</div>
+                <h4>Bottom of Funnel</h4>
+                <ul>
+                    <li>Sales enablement</li>
+                    <li>Proposal generation</li>
+                    <li>Pricing optimization</li>
+                    <li>Churn prediction</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">6</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>AI Tools Landscape</h1>
+
+        <div class="tool-grid">
+            <div class="tool-card">
+                <div class="tool-logo">🤖</div>
+                <div class="tool-name">ChatGPT / Claude</div>
+                <div class="tool-category">Content & Strategy</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-logo">🎨</div>
+                <div class="tool-name">DALL-E / Midjourney</div>
+                <div class="tool-category">Visual Content</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-logo">✉️</div>
+                <div class="tool-name">Jasper / Copy.ai</div>
+                <div class="tool-category">Marketing Copy</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-logo">📧</div>
+                <div class="tool-name">HubSpot AI</div>
+                <div class="tool-category">CRM & Automation</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-logo">📊</div>
+                <div class="tool-name">Salesforce Einstein</div>
+                <div class="tool-category">Predictive Analytics</div>
+            </div>
+            <div class="tool-card">
+                <div class="tool-logo">🎯</div>
+                <div class="tool-name">Persado</div>
+                <div class="tool-category">Language Optimization</div>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <h4>Tool Selection Criteria</h4>
+            <ul>
+                <li><strong>Integration:</strong> Does it connect with your existing stack?</li>
+                <li><strong>Learning curve:</strong> How quickly can your team adopt it?</li>
+                <li><strong>ROI:</strong> What's the time/cost savings vs. investment?</li>
+                <li><strong>Data privacy:</strong> Where does your data go?</li>
+            </ul>
+        </div>
+            <div class="slide-number">7</div>
+        </div>
+        
+        <div class="slide">
+            <div class="section-icon">✍️</div>
+        <h1>AI-Powered Content Generation</h1>
+        <p style="font-size: 1.3em; color: #a5b4fc;">Creating Marketing Content at Scale</p>
+            <div class="slide-number">8</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>Content Types AI Can Create</h1>
+
+        <div class="four-column">
+            <div class="card" style="text-align: center;">
+                <div class="card-icon">📝</div>
+                <h4>Written Content</h4>
+                <ul style="text-align: left; font-size: 0.9em;">
+                    <li>Blog posts</li>
+                    <li>Email campaigns</li>
+                    <li>Social posts</li>
+                    <li>Ad copy</li>
+                    <li>Product descriptions</li>
+                    <li>Case studies</li>
+                </ul>
+            </div>
+            <div class="card" style="text-align: center;">
+                <div class="card-icon">🎨</div>
+                <h4>Visual Content</h4>
+                <ul style="text-align: left; font-size: 0.9em;">
+                    <li>Social graphics</li>
+                    <li>Ad creatives</li>
+                    <li>Infographics</li>
+                    <li>Product mockups</li>
+                    <li>Brand visuals</li>
+                    <li>Presentations</li>
+                </ul>
+            </div>
+            <div class="card" style="text-align: center;">
+                <div class="card-icon">🎬</div>
+                <h4>Video & Audio</h4>
+                <ul style="text-align: left; font-size: 0.9em;">
+                    <li>Video scripts</li>
+                    <li>Podcast outlines</li>
+                    <li>AI voiceovers</li>
+                    <li>Video captions</li>
+                    <li>Short-form clips</li>
+                    <li>Webinar content</li>
+                </ul>
+            </div>
+            <div class="card" style="text-align: center;">
+                <div class="card-icon">📊</div>
+                <h4>Strategic Content</h4>
+                <ul style="text-align: left; font-size: 0.9em;">
+                    <li>Content calendars</li>
+                    <li>Campaign briefs</li>
+                    <li>Competitor analysis</li>
+                    <li>Personas</li>
+                    <li>SEO strategies</li>
+                    <li>Market research</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">9</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>Prompt Engineering for Marketing</h1>
+        <p>The quality of AI output depends entirely on the quality of your prompts.</p>
+
+        <div class="two-column">
+            <div>
+                <h3 style="color: #ef4444;">❌ Weak Prompt</h3>
+                <div class="prompt-template" style="border-color: #ef4444;">
+                    <p>"Write a marketing email."</p>
+                </div>
+                <p style="color: #94a3b8;">Result: Generic, unusable content that requires complete rewriting.</p>
+            </div>
+            <div>
+                <h3 style="color: #10b981;">✅ Strong Prompt</h3>
+                <div class="prompt-template" style="border-color: #10b981;">
+                    <p><strong>Role:</strong> You are a B2B email marketing specialist.</p>
+                    <p><strong>Context:</strong> Our SaaS product helps <span class="prompt-variable">[industry]</span> companies reduce <span class="prompt-variable">[pain point]</span> by 40%.</p>
+                    <p><strong>Task:</strong> Write a follow-up email to prospects who attended our webinar but haven't booked a demo.</p>
+                    <p><strong>Format:</strong> Subject line + 150-word email. Include one customer proof point and one clear CTA.</p>
+                    <p><strong>Tone:</strong> Helpful, not pushy. Professional but conversational.</p>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">10</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>Marketing Prompt Templates</h1>
+
+        <div class="three-column">
+            <div class="card">
+                <div class="card-icon">📧</div>
+                <h4>Email Campaign</h4>
+                <div class="prompt-template" style="font-size: 0.85em;">
+                    <p>Write a <span class="prompt-variable">[type]</span> email for <span class="prompt-variable">[audience]</span>.</p>
+                    <p>Goal: <span class="prompt-variable">[action]</span></p>
+                    <p>Key benefit: <span class="prompt-variable">[value prop]</span></p>
+                    <p>Include: Subject line, preview text, body (under 200 words), CTA button text.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">📱</div>
+                <h4>Social Media</h4>
+                <div class="prompt-template" style="font-size: 0.85em;">
+                    <p>Create 5 <span class="prompt-variable">[platform]</span> posts about <span class="prompt-variable">[topic]</span>.</p>
+                    <p>Audience: <span class="prompt-variable">[persona]</span></p>
+                    <p>Brand voice: <span class="prompt-variable">[tone]</span></p>
+                    <p>Include: Hook, value, hashtags, CTA.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-icon">📝</div>
+                <h4>Blog Post</h4>
+                <div class="prompt-template" style="font-size: 0.85em;">
+                    <p>Write a blog post: "<span class="prompt-variable">[title]</span>"</p>
+                    <p>Target keyword: <span class="prompt-variable">[SEO keyword]</span></p>
+                    <p>Reader level: <span class="prompt-variable">[beginner/expert]</span></p>
+                    <p>Include: H2 sections, examples, actionable tips, meta description.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-box" style="margin-top: 30px;">
+            <h4>Pro Tip: Create a Prompt Library</h4>
+            <p>Save your best-performing prompts in a shared document. Include the prompt, sample output, and what worked well. This becomes your team's AI playbook.</p>
+        </div>
+            <div class="slide-number">11</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>AI-Assisted Content Workflow</h1>
+
+        <div class="process-flow">
+            <div class="process-step">
+                <div class="process-icon">💡</div>
+                <h4>Ideate</h4>
+                <p style="font-size: 0.9em;">AI brainstorms topics, angles, headlines</p>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="process-step">
+                <div class="process-icon">📝</div>
+                <h4>Draft</h4>
+                <p style="font-size: 0.9em;">AI creates first draft with your prompts</p>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="process-step">
+                <div class="process-icon">✏️</div>
+                <h4>Edit</h4>
+                <p style="font-size: 0.9em;">Human refines voice, adds expertise</p>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="process-step">
+                <div class="process-icon">✅</div>
+                <h4>Optimize</h4>
+                <p style="font-size: 0.9em;">AI helps with SEO, A/B variants</p>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="process-step">
+                <div class="process-icon">📊</div>
+                <h4>Analyze</h4>
+                <p style="font-size: 0.9em;">AI reviews performance, suggests improvements</p>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 40px;">
+            <h4>The Human-AI Balance</h4>
+            <div class="two-column">
+                <div>
+                    <h4 style="color: #8b5cf6;">AI Does Best:</h4>
+                    <ul>
+                        <li>First drafts & variations</li>
+                        <li>Research & data synthesis</li>
+                        <li>Reformatting & repurposing</li>
+                        <li>Grammar & optimization</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #10b981;">Humans Do Best:</h4>
+                    <ul>
+                        <li>Brand voice & authenticity</li>
+                        <li>Strategic decisions</li>
+                        <li>Emotional connection</li>
+                        <li>Quality control</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">12</div>
+        </div>
+        
+        <div class="slide">
+            <div class="section-icon">💬</div>
+        <h1>AI for Customer Engagement</h1>
+        <p style="font-size: 1.3em; color: #a5b4fc;">Personalization at Scale</p>
+            <div class="slide-number">13</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>The Personalization Imperative</h1>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-number">71%</div>
+                <div class="stat-label">expect personalized experiences</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">76%</div>
+                <div class="stat-label">frustrated by generic content</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">80%</div>
+                <div class="stat-label">more likely to buy with personalization</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">$20</div>
+                <div class="stat-label">return per $1 spent on personalization</div>
+            </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div class="card">
+                <h4>Traditional Personalization</h4>
+                <ul>
+                    <li>"Hi {First_Name}"</li>
+                    <li>Basic segmentation (industry, size)</li>
+                    <li>Static recommendation rules</li>
+                    <li>Manual A/B testing</li>
+                </ul>
+                <p style="margin-top: 15px; color: #f59e0b;">⚠️ Limited, labor-intensive, slow</p>
+            </div>
+            <div class="card" style="border-color: #10b981;">
+                <h4>AI-Powered Personalization</h4>
+                <ul>
+                    <li>Dynamic content generation</li>
+                    <li>Behavioral micro-segmentation</li>
+                    <li>Real-time recommendations</li>
+                    <li>Continuous optimization</li>
+                </ul>
+                <p style="margin-top: 15px; color: #10b981;">✅ Scalable, intelligent, adaptive</p>
+            </div>
+        </div>
+            <div class="slide-number">14</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>Conversational AI for Sales</h1>
+
+        <div class="two-column">
+            <div>
+                <h3>Modern AI Chatbots Can:</h3>
+                <ul class="animated-list">
+                    <li>Qualify leads 24/7 with intelligent questions</li>
+                    <li>Answer product questions from your knowledge base</li>
+                    <li>Book meetings directly on your calendar</li>
+                    <li>Hand off to human reps seamlessly</li>
+                    <li>Learn and improve from every conversation</li>
+                    <li>Provide multi-language support</li>
+                </ul>
+
+                <div class="success-box" style="margin-top: 20px;">
+                    <h4>Real Results</h4>
+                    <ul>
+                        <li>35% more qualified leads captured</li>
+                        <li>50% reduction in response time</li>
+                        <li>24/7 coverage without staffing costs</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="background: #1a1a2e; padding: 30px;">
+                    <h4 style="margin-bottom: 20px;">Sample Bot Conversation</h4>
+                    <div style="background: rgba(99, 102, 241, 0.2); padding: 12px 16px; border-radius: 12px; margin-bottom: 10px;">
+                        <strong style="color: #8b5cf6;">Bot:</strong> Hi! I see you're looking at our enterprise plan. What's driving your search for a new solution?
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; text-align: right;">
+                        <strong style="color: #a5b4fc;">Visitor:</strong> Our current tool doesn't integrate with Salesforce
+                    </div>
+                    <div style="background: rgba(99, 102, 241, 0.2); padding: 12px 16px; border-radius: 12px; margin-bottom: 10px;">
+                        <strong style="color: #8b5cf6;">Bot:</strong> Great news - we have native Salesforce integration! Would you like me to show you how it works, or schedule a quick demo with our team?
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">15</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 1</span>
+        <h1>Hands-On Exercise: Content Creation</h1>
+
+        <div class="highlight-box">
+            <h4>Exercise 1: Create Marketing Content with AI</h4>
+            <p>Using ChatGPT or Claude, create content for a real marketing campaign.</p>
+        </div>
+
+        <div class="three-column" style="margin-top: 30px;">
+            <div class="card">
+                <div class="card-icon">1️⃣</div>
+                <h4>Email Sequence</h4>
+                <p>Create a 3-email nurture sequence for leads who downloaded your whitepaper.</p>
+                <ul style="font-size: 0.9em; margin-top: 15px;">
+                    <li>Email 1: Thank you + value</li>
+                    <li>Email 2: Case study</li>
+                    <li>Email 3: Demo invitation</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">2️⃣</div>
+                <h4>Social Campaign</h4>
+                <p>Create a week of social posts promoting a new feature launch.</p>
+                <ul style="font-size: 0.9em; margin-top: 15px;">
+                    <li>3 LinkedIn posts</li>
+                    <li>5 Twitter/X posts</li>
+                    <li>2 Instagram captions</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">3️⃣</div>
+                <h4>Ad Copy Variants</h4>
+                <p>Generate 5 Google Ads variants for your top product/service.</p>
+                <ul style="font-size: 0.9em; margin-top: 15px;">
+                    <li>Headline variations</li>
+                    <li>Description variations</li>
+                    <li>Different value props</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="warning-box" style="margin-top: 30px;">
+            <h4>Remember the CRAFT Framework</h4>
+            <p><strong>C</strong>ontext → <strong>R</strong>ole → <strong>A</strong>ction → <strong>F</strong>ormat → <strong>T</strong>one</p>
+        </div>
+            <div class="slide-number">16</div>
+        </div>
+        
+        <div class="slide">
+            <div class="day-badge" style="font-size: 1.2em; padding: 12px 30px;">Day 2</div>
+        <div class="section-icon">🔥</div>
+        <h1>Lead Scoring & Predictive Analytics</h1>
+        <p style="font-size: 1.3em; color: #a5b4fc;">Data-Driven Sales Intelligence</p>
+            <div class="slide-number">17</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>What is AI Lead Scoring?</h1>
+
+        <div class="two-column">
+            <div>
+                <p>AI lead scoring uses machine learning to predict which leads are most likely to convert, based on historical data patterns.</p>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h4>Traditional Scoring</h4>
+                    <ul>
+                        <li>Manual point assignment</li>
+                        <li>Downloaded whitepaper = +10 pts</li>
+                        <li>Visited pricing page = +20 pts</li>
+                        <li>Enterprise company = +30 pts</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: #f59e0b;">⚠️ Based on assumptions, not data</p>
+                </div>
+
+                <div class="card" style="margin-top: 20px; border-color: #10b981;">
+                    <h4>AI Scoring</h4>
+                    <ul>
+                        <li>Learns from closed-won patterns</li>
+                        <li>Considers 100+ signals</li>
+                        <li>Updates in real-time</li>
+                        <li>Explains why scores change</li>
+                    </ul>
+                    <p style="margin-top: 10px; color: #10b981;">✅ Data-driven, adaptive, accurate</p>
+                </div>
+            </div>
+            <div>
+                <div class="score-container">
+                    <h4 style="margin-bottom: 20px;">Lead Score Distribution</h4>
+
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Hot Leads (80-100)</span>
+                            <span style="color: #10b981;">12%</span>
+                        </div>
+                        <div class="score-meter">
+                            <div class="score-fill high" style="width: 85%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Warm Leads (50-79)</span>
+                            <span style="color: #eab308;">28%</span>
+                        </div>
+                        <div class="score-meter">
+                            <div class="score-fill medium" style="width: 60%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Cold Leads (0-49)</span>
+                            <span style="color: #ef4444;">60%</span>
+                        </div>
+                        <div class="score-meter">
+                            <div class="score-fill low" style="width: 30%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong>Key Insight:</strong> AI scoring typically improves lead-to-opportunity conversion by 30-50% by focusing rep time on high-potential leads.</p>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">18</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Signals AI Uses for Lead Scoring</h1>
+
+        <div class="four-column">
+            <div class="card">
+                <div class="card-icon">👤</div>
+                <h4>Demographic</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Job title & seniority</li>
+                    <li>Department</li>
+                    <li>Company size</li>
+                    <li>Industry</li>
+                    <li>Location</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">🏢</div>
+                <h4>Firmographic</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Revenue</li>
+                    <li>Growth rate</li>
+                    <li>Tech stack</li>
+                    <li>Funding stage</li>
+                    <li>Hiring signals</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">🖱️</div>
+                <h4>Behavioral</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Page visits</li>
+                    <li>Content downloads</li>
+                    <li>Email engagement</li>
+                    <li>Form submissions</li>
+                    <li>Chat interactions</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">⏰</div>
+                <h4>Temporal</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Recency of activity</li>
+                    <li>Frequency patterns</li>
+                    <li>Time to conversion</li>
+                    <li>Engagement velocity</li>
+                    <li>Buying cycle stage</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="success-box" style="margin-top: 30px;">
+            <h4>The Power of Pattern Recognition</h4>
+            <p>AI can identify patterns humans miss. Example: "Leads who visit the integrations page, then pricing, within 3 days of signing up for a webinar convert 4x more often."</p>
+        </div>
+            <div class="slide-number">19</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>AI-Optimized Sales Funnel</h1>
+
+        <div class="two-column">
+            <div>
+                <div class="funnel-container">
+                    <div class="funnel-stage">
+                        <span style="margin-right: 15px;">🌐</span> Website Visitors (10,000)
+                    </div>
+                    <div class="funnel-arrow">▼</div>
+                    <div class="funnel-stage">
+                        <span style="margin-right: 15px;">📧</span> Leads Captured (1,500)
+                    </div>
+                    <div class="funnel-arrow">▼</div>
+                    <div class="funnel-stage">
+                        <span style="margin-right: 15px;">🔥</span> MQLs (450)
+                    </div>
+                    <div class="funnel-arrow">▼</div>
+                    <div class="funnel-stage">
+                        <span style="margin-right: 15px;">💼</span> SQLs (180)
+                    </div>
+                    <div class="funnel-arrow">▼</div>
+                    <div class="funnel-stage">
+                        <span style="margin-right: 15px;">🏆</span> Customers (45)
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3>AI Optimizations at Each Stage</h3>
+
+                <div class="card" style="margin-bottom: 15px;">
+                    <h4>🌐 → 📧 Traffic to Lead</h4>
+                    <p style="font-size: 0.95em;">AI chatbots, personalized CTAs, smart forms</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 15px;">
+                    <h4>📧 → 🔥 Lead to MQL</h4>
+                    <p style="font-size: 0.95em;">Predictive scoring, automated nurturing</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 15px;">
+                    <h4>🔥 → 💼 MQL to SQL</h4>
+                    <p style="font-size: 0.95em;">Intent signals, sales intelligence, timing</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 15px;">
+                    <h4>💼 → 🏆 SQL to Customer</h4>
+                    <p style="font-size: 0.95em;">Proposal generation, pricing optimization, churn prediction</p>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">20</div>
+        </div>
+        
+        <div class="slide">
+            <div class="section-icon">📊</div>
+        <h1>Campaign Analytics & Optimization</h1>
+        <p style="font-size: 1.3em; color: #a5b4fc;">Data-Driven Marketing Decisions</p>
+            <div class="slide-number">21</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>AI-Powered Analytics</h1>
+
+        <div class="dashboard">
+            <div class="dashboard-chart">
+                <h4>Campaign Performance</h4>
+                <div class="chart-bars">
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                </div>
+                <div style="display: flex; justify-content: space-around; margin-top: 10px; color: #94a3b8; font-size: 0.85em;">
+                    <span>Email</span>
+                    <span>Social</span>
+                    <span>Paid</span>
+                    <span>SEO</span>
+                    <span>Events</span>
+                    <span>Partner</span>
+                </div>
+            </div>
+            <div class="dashboard-metrics">
+                <div class="metric-item">
+                    <div class="metric-label">Conversion Rate</div>
+                    <div class="metric-value">4.2%</div>
+                    <div class="metric-change positive">↑ 18% vs last month</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Cost per Lead</div>
+                    <div class="metric-value">$42</div>
+                    <div class="metric-change positive">↓ 12% vs last month</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Pipeline Generated</div>
+                    <div class="metric-value">$1.2M</div>
+                    <div class="metric-change positive">↑ 25% vs last month</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="two-column" style="margin-top: 20px;">
+            <div class="card">
+                <h4>What AI Analytics Can Do</h4>
+                <ul>
+                    <li>Identify top-performing content and channels</li>
+                    <li>Predict campaign outcomes before launch</li>
+                    <li>Recommend budget reallocation</li>
+                    <li>Detect anomalies and alert you</li>
+                    <li>Generate natural language insights</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Ask AI Questions Like:</h4>
+                <ul>
+                    <li>"Why did email performance drop last week?"</li>
+                    <li>"Which audience segment converts best?"</li>
+                    <li>"What should I test next?"</li>
+                    <li>"How should I allocate next month's budget?"</li>
+                    <li>"What's driving the spike in traffic?"</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">22</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>AI-Powered A/B Testing</h1>
+
+        <div class="two-column">
+            <div>
+                <h3>Traditional A/B Testing</h3>
+                <div class="card">
+                    <ul>
+                        <li>Test one variable at a time</li>
+                        <li>Wait for statistical significance</li>
+                        <li>Manual hypothesis creation</li>
+                        <li>Limited by human creativity</li>
+                        <li>Slow iteration cycles</li>
+                    </ul>
+                </div>
+
+                <h3 style="margin-top: 25px;">AI-Enhanced Testing</h3>
+                <div class="card" style="border-color: #10b981;">
+                    <ul>
+                        <li>Multivariate testing at scale</li>
+                        <li>Dynamic traffic allocation</li>
+                        <li>AI generates test variations</li>
+                        <li>Learns from every test</li>
+                        <li>Continuous optimization</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="highlight-box">
+                    <h4>Example: Email Subject Line Testing</h4>
+                    <p><strong>Prompt to AI:</strong></p>
+                    <div class="prompt-template" style="margin-top: 10px;">
+                        <p>Generate 10 email subject line variations for a webinar invitation. Our audience is B2B marketers.</p>
+                        <p>Current best performer: "Join us: Marketing Automation Workshop"</p>
+                        <p>Test these angles: urgency, curiosity, benefit-focused, question, personalization.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h4>AI-Generated Variations:</h4>
+                    <ol style="font-size: 0.95em;">
+                        <li>"Your marketing automation is costing you leads"</li>
+                        <li>"[Name], save your seat for Thursday"</li>
+                        <li>"What top marketers know about automation"</li>
+                        <li>"Last chance: Only 12 spots left"</li>
+                        <li>"The automation mistake 73% of marketers make"</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">23</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Predictive Analytics for Marketing</h1>
+
+        <div class="three-column">
+            <div class="card">
+                <div class="card-icon">🔮</div>
+                <h4>Predict</h4>
+                <ul>
+                    <li>Which leads will convert</li>
+                    <li>When customers will churn</li>
+                    <li>Campaign performance</li>
+                    <li>Revenue forecasts</li>
+                    <li>Seasonal trends</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h4>Optimize</h4>
+                <ul>
+                    <li>Best send times</li>
+                    <li>Optimal pricing</li>
+                    <li>Channel allocation</li>
+                    <li>Content recommendations</li>
+                    <li>Budget distribution</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h4>Automate</h4>
+                <ul>
+                    <li>Trigger-based actions</li>
+                    <li>Dynamic personalization</li>
+                    <li>Real-time bidding</li>
+                    <li>Inventory management</li>
+                    <li>Customer routing</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="success-box" style="margin-top: 30px;">
+            <h4>Case Study: Predictive Churn Prevention</h4>
+            <div class="two-column">
+                <div>
+                    <p><strong>Challenge:</strong> 8% monthly churn rate</p>
+                    <p><strong>Solution:</strong> AI model predicts at-risk customers 30 days before churn</p>
+                </div>
+                <div>
+                    <p><strong>Action:</strong> Automated retention campaigns triggered for high-risk accounts</p>
+                    <p><strong>Result:</strong> 35% reduction in churn, $2.4M saved annually</p>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">24</div>
+        </div>
+        
+        <div class="slide">
+            <div class="section-icon">🛠️</div>
+        <h1>Implementation Strategy</h1>
+        <p style="font-size: 1.3em; color: #a5b4fc;">From Learning to Doing</p>
+            <div class="slide-number">25</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Getting Started: The Crawl-Walk-Run Approach</h1>
+
+        <div class="three-column">
+            <div class="card" style="border-top: 4px solid #6366f1;">
+                <h3 style="color: #6366f1;">🐢 Crawl</h3>
+                <h4>Week 1-2</h4>
+                <ul>
+                    <li>Pick ONE use case</li>
+                    <li>Use free AI tools (ChatGPT)</li>
+                    <li>Document time savings</li>
+                    <li>Share wins with team</li>
+                </ul>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(99, 102, 241, 0.1); border-radius: 8px;">
+                    <strong>Example:</strong> Use AI to draft all social posts for one campaign
+                </div>
+            </div>
+            <div class="card" style="border-top: 4px solid #8b5cf6;">
+                <h3 style="color: #8b5cf6;">🚶 Walk</h3>
+                <h4>Month 1-2</h4>
+                <ul>
+                    <li>Expand to 3-5 use cases</li>
+                    <li>Create prompt templates</li>
+                    <li>Train team members</li>
+                    <li>Evaluate paid tools</li>
+                </ul>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+                    <strong>Example:</strong> Implement AI email personalization and content generation
+                </div>
+            </div>
+            <div class="card" style="border-top: 4px solid #a855f7;">
+                <h3 style="color: #a855f7;">🏃 Run</h3>
+                <h4>Month 3+</h4>
+                <ul>
+                    <li>Integrate with CRM/MAP</li>
+                    <li>Implement lead scoring</li>
+                    <li>Build AI workflows</li>
+                    <li>Measure ROI</li>
+                </ul>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 8px;">
+                    <strong>Example:</strong> Full AI-powered marketing automation pipeline
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">26</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Quick Wins to Start Today</h1>
+
+        <div class="two-column">
+            <div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">📧</div>
+                    <h4>Email Marketing</h4>
+                    <ul>
+                        <li>Generate subject line variations</li>
+                        <li>Write personalized email intros</li>
+                        <li>Create email sequences</li>
+                        <li>Summarize long emails</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">📱</div>
+                    <h4>Social Media</h4>
+                    <ul>
+                        <li>Draft posts for multiple platforms</li>
+                        <li>Generate hashtag suggestions</li>
+                        <li>Create content calendars</li>
+                        <li>Repurpose content across formats</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">📝</div>
+                    <h4>Content Marketing</h4>
+                    <ul>
+                        <li>Outline blog posts</li>
+                        <li>Generate meta descriptions</li>
+                        <li>Create product descriptions</li>
+                        <li>Write case study drafts</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">💼</div>
+                    <h4>Sales Support</h4>
+                    <ul>
+                        <li>Research prospects</li>
+                        <li>Draft personalized outreach</li>
+                        <li>Create proposal sections</li>
+                        <li>Summarize meeting notes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">27</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Common Pitfalls to Avoid</h1>
+
+        <div class="two-column">
+            <div>
+                <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                    <h4 style="color: #ef4444;">❌ Don't: Publish AI Content Without Review</h4>
+                    <p>AI can hallucinate facts, use wrong brand voice, or include outdated information.</p>
+                    <p style="color: #10b981; margin-top: 10px;"><strong>✅ Do:</strong> Always have a human review and edit AI output.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                    <h4 style="color: #ef4444;">❌ Don't: Put Sensitive Data in AI Tools</h4>
+                    <p>Customer PII, financial data, and trade secrets shouldn't go into public AI tools.</p>
+                    <p style="color: #10b981; margin-top: 10px;"><strong>✅ Do:</strong> Use enterprise-grade tools with data protection or anonymize data.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                    <h4 style="color: #ef4444;">❌ Don't: Expect Perfection on First Try</h4>
+                    <p>AI is a draft generator, not a finished product machine.</p>
+                    <p style="color: #10b981; margin-top: 10px;"><strong>✅ Do:</strong> Iterate on prompts and refine outputs.</p>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                    <h4 style="color: #ef4444;">❌ Don't: Try to Automate Everything at Once</h4>
+                    <p>AI transformation is a journey, not a destination.</p>
+                    <p style="color: #10b981; margin-top: 10px;"><strong>✅ Do:</strong> Start small, measure results, then expand.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                    <h4 style="color: #ef4444;">❌ Don't: Ignore Your Brand Voice</h4>
+                    <p>Generic AI output sounds like... generic AI output.</p>
+                    <p style="color: #10b981; margin-top: 10px;"><strong>✅ Do:</strong> Include brand guidelines and examples in prompts.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                    <h4 style="color: #ef4444;">❌ Don't: Skip the Measurement</h4>
+                    <p>Without metrics, you can't prove (or improve) AI ROI.</p>
+                    <p style="color: #10b981; margin-top: 10px;"><strong>✅ Do:</strong> Track time saved, quality improvements, and business outcomes.</p>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">28</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Hands-On Exercise: Build Your AI Toolkit</h1>
+
+        <div class="highlight-box">
+            <h4>Exercise 2: Create Your Personal AI Implementation Plan</h4>
+            <p>Design a 30-day plan to integrate AI into your sales/marketing workflow.</p>
+        </div>
+
+        <div class="two-column" style="margin-top: 30px;">
+            <div>
+                <div class="card">
+                    <h4>Step 1: Identify 3 Use Cases</h4>
+                    <p>Based on what you learned, which 3 applications would have the biggest impact for you?</p>
+                    <ol style="margin-top: 15px;">
+                        <li>_______________________________</li>
+                        <li>_______________________________</li>
+                        <li>_______________________________</li>
+                    </ol>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h4>Step 2: Choose Your Tools</h4>
+                    <p>Which tools will you use for each use case?</p>
+                    <ul style="margin-top: 15px;">
+                        <li>Free: ChatGPT, Claude, Canva AI</li>
+                        <li>Paid: Jasper, HubSpot AI, etc.</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="card">
+                    <h4>Step 3: Create Your Prompt Library</h4>
+                    <p>Write 3 reusable prompt templates for your top use cases.</p>
+                    <div class="prompt-template" style="margin-top: 15px; font-size: 0.9em;">
+                        <p>Template 1: ___________________</p>
+                        <p>Template 2: ___________________</p>
+                        <p>Template 3: ___________________</p>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h4>Step 4: Set Success Metrics</h4>
+                    <p>How will you measure impact?</p>
+                    <ul style="margin-top: 15px;">
+                        <li>Time saved: ______ hrs/week</li>
+                        <li>Quality metric: _______________</li>
+                        <li>Business outcome: _____________</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">29</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Ethical AI in Marketing</h1>
+
+        <div class="three-column">
+            <div class="card">
+                <div class="card-icon">🔒</div>
+                <h4>Privacy</h4>
+                <ul>
+                    <li>Don't feed PII to public AI</li>
+                    <li>Respect data consent</li>
+                    <li>Use enterprise tools for sensitive data</li>
+                    <li>Anonymize when possible</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">✨</div>
+                <h4>Transparency</h4>
+                <ul>
+                    <li>Disclose AI use when appropriate</li>
+                    <li>Don't fake human interaction</li>
+                    <li>Be honest about AI limitations</li>
+                    <li>Label AI-generated images</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚖️</div>
+                <h4>Fairness</h4>
+                <ul>
+                    <li>Watch for bias in targeting</li>
+                    <li>Ensure inclusive content</li>
+                    <li>Test across demographics</li>
+                    <li>Don't manipulate or deceive</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="warning-box" style="margin-top: 30px;">
+            <h4>The Trust Factor</h4>
+            <p>83% of consumers say they want to know when they're interacting with AI. Transparency builds trust; deception destroys it. Use AI to enhance human connection, not replace it.</p>
+        </div>
+            <div class="slide-number">30</div>
+        </div>
+        
+        <div class="slide">
+            <span class="day-badge">Day 2</span>
+        <h1>Resources for Continued Learning</h1>
+
+        <div class="three-column">
+            <div class="card">
+                <div class="card-icon">📚</div>
+                <h4>Free Resources</h4>
+                <ul>
+                    <li><a href="https://learnprompting.org" style="color: #a5b4fc;">Learn Prompting</a></li>
+                    <li><a href="https://platform.openai.com/docs" style="color: #a5b4fc;">OpenAI Documentation</a></li>
+                    <li><a href="https://docs.anthropic.com" style="color: #a5b4fc;">Anthropic Prompt Library</a></li>
+                    <li>HubSpot AI Academy</li>
+                    <li>Google AI Marketing Guide</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">🛠️</div>
+                <h4>Recommended Tools</h4>
+                <ul>
+                    <li><strong>General:</strong> ChatGPT, Claude</li>
+                    <li><strong>Marketing:</strong> Jasper, Copy.ai</li>
+                    <li><strong>Visual:</strong> Midjourney, DALL-E</li>
+                    <li><strong>CRM:</strong> HubSpot AI, Salesforce Einstein</li>
+                    <li><strong>Analytics:</strong> Google Analytics 4</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎓</div>
+                <h4>Next Steps</h4>
+                <ul>
+                    <li>Join AI marketing communities</li>
+                    <li>Follow AI thought leaders</li>
+                    <li>Experiment weekly</li>
+                    <li>Share learnings with team</li>
+                    <li>Measure and iterate</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 30px;">
+            <h4>AI Elevate Courses</h4>
+            <p>Continue your AI journey with our advanced courses: <strong>Prompt Engineering Deep Dive</strong>, <strong>AI Agents for Business</strong>, and <strong>Enterprise AI Strategy</strong>.</p>
+        </div>
+            <div class="slide-number">31</div>
+        </div>
+        
+        <div class="slide">
+            <h1>Key Takeaways</h1>
+
+        <div class="two-column">
+            <div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">1️⃣</div>
+                    <h4>AI is a Force Multiplier</h4>
+                    <p>It amplifies your capabilities, not replaces your expertise. The best results come from human + AI collaboration.</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">2️⃣</div>
+                    <h4>Prompts Are Your Superpower</h4>
+                    <p>The quality of AI output depends on the quality of your input. Invest time in learning prompt engineering.</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">3️⃣</div>
+                    <h4>Start Small, Scale Fast</h4>
+                    <p>Pick one use case, prove value, then expand. Don't try to boil the ocean.</p>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">4️⃣</div>
+                    <h4>Data is Your Competitive Advantage</h4>
+                    <p>AI is only as good as the data it learns from. Your unique customer data creates unique insights.</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">5️⃣</div>
+                    <h4>Ethics and Trust Matter</h4>
+                    <p>Use AI responsibly. Transparency and authenticity build long-term customer relationships.</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-icon">6️⃣</div>
+                    <h4>The Time to Start is Now</h4>
+                    <p>AI adoption is accelerating. Early movers are gaining advantages that will compound over time.</p>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">32</div>
+        </div>
+        
+        <div class="slide">
+            <div class="section-icon" style="font-size: 5em; margin-bottom: 30px;">🚀</div>
+        <h1>Thank You!</h1>
+        <p class="subtitle">Now Go Transform Your Marketing with AI</p>
+
+        <div style="margin-top: 40px; display: flex; gap: 30px; justify-content: center;">
+            <div class="card" style="padding: 25px 35px;">
+                <div style="font-size: 2em;">📧</div>
+                <div style="color: #a5b4fc; margin-top: 10px;">Questions?</div>
+                <div style="color: #94a3b8; font-size: 0.9em;">training@ai-elevate.ai</div>
+            </div>
+            <div class="card" style="padding: 25px 35px;">
+                <div style="font-size: 2em;">🌐</div>
+                <div style="color: #a5b4fc; margin-top: 10px;">More Courses</div>
+                <div style="color: #94a3b8; font-size: 0.9em;">ai-elevate.ai/courses</div>
+            </div>
+            <div class="card" style="padding: 25px 35px;">
+                <div style="font-size: 2em;">💬</div>
+                <div style="color: #a5b4fc; margin-top: 10px;">Stay Connected</div>
+                <div style="color: #94a3b8; font-size: 0.9em;">LinkedIn & Newsletter</div>
+            </div>
+        </div>
+
+        <p class="course-info" style="margin-top: 50px;">Introduction to AI for Sales and Marketing | AI Elevate</p>
+            <div class="slide-number">33</div>
+        </div>
+        
+</body>
+</html>

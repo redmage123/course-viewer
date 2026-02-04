@@ -1132,6 +1132,7 @@ def get_course(course_id):
     return jsonify({"error": "Course not found"}), 404
 
 @app.route('/api/course/<course_id>/materials')
+@login_required
 def get_course_materials(course_id):
     """Return materials for a specific course"""
     if course_id in COURSES:
@@ -1181,6 +1182,7 @@ def get_my_enrollments():
     return jsonify(result)
 
 @app.route('/api/course/<course_id>/download')
+@login_required
 def download_course_materials(course_id):
     """Download all course materials as a zip file (sandboxed)"""
     # Validate course_id format
@@ -1813,6 +1815,7 @@ def get_materials():
     return jsonify(COURSES["mastering-ai"]["sections"])
 
 @app.route('/content/<path:filename>')
+@login_required
 def serve_content(filename):
     """Serve course HTML files (sandboxed to materials directory)"""
     try:

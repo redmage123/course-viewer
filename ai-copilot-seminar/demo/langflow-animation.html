@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1280, height=720">
+    <title>Langflow RAG Pipeline Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            width: 1280px;
+            height: 720px;
+            overflow: hidden;
+        }
+
+        .langflow-app {
+            display: flex;
+            height: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #161b22;
+            border-right: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .langflow-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #FF3366, #9933FF);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .search-box {
+            margin: 12px 16px;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .component-category {
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+
+        .component-list {
+            padding: 0 8px;
+        }
+
+        .component-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            margin: 2px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .component-item:hover {
+            background: #21262d;
+        }
+
+        .component-item.dragging {
+            background: #238636;
+            transform: scale(1.02);
+        }
+
+        .component-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .icon-file { background: #1f6feb; }
+        .icon-split { background: #8957e5; }
+        .icon-embed { background: #238636; }
+        .icon-vector { background: #bf8700; }
+        .icon-retriever { background: #da3633; }
+        .icon-llm { background: #1f6feb; }
+        .icon-chat { background: #238636; }
+
+        /* Canvas */
+        .canvas-area {
+            flex: 1;
+            position: relative;
+            background:
+                radial-gradient(circle at 1px 1px, #21262d 1px, transparent 0);
+            background-size: 24px 24px;
+            overflow: hidden;
+        }
+
+        .canvas-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+        }
+
+        .flow-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .flow-badge {
+            padding: 4px 10px;
+            background: #238636;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Nodes */
+        .node {
+            position: absolute;
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 12px;
+            min-width: 220px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .node.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-bottom: 1px solid #30363d;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .node-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .node-body {
+            padding: 12px 14px;
+        }
+
+        .node-field {
+            margin-bottom: 10px;
+        }
+
+        .node-field-label {
+            font-size: 11px;
+            color: #8b949e;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .node-field-value {
+            padding: 8px 10px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #7ee787;
+        }
+
+        /* Connection ports */
+        .port {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #30363d;
+            border: 2px solid #58a6ff;
+            border-radius: 50%;
+        }
+
+        .port-input {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .port-output {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Connections */
+        .connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connection {
+            stroke: #58a6ff;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+            stroke-dasharray: 8 4;
+            animation: flowDash 1s linear infinite;
+        }
+
+        .connection.visible {
+            opacity: 1;
+        }
+
+        @keyframes flowDash {
+            to { stroke-dashoffset: -12; }
+        }
+
+        /* Step indicator */
+        .step-indicator {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(22, 27, 34, 0.95);
+            border: 1px solid #30363d;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #30363d;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #58a6ff;
+            box-shadow: 0 0 10px #58a6ff;
+        }
+
+        .step-dot.completed {
+            background: #238636;
+        }
+
+        /* Floating annotation */
+        .annotation {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.15), rgba(153, 51, 255, 0.15));
+            border: 1px solid rgba(88, 166, 255, 0.4);
+            border-radius: 12px;
+            padding: 16px 20px;
+            max-width: 280px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .annotation.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .annotation-step {
+            font-size: 11px;
+            color: #58a6ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .annotation-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .annotation-text {
+            font-size: 13px;
+            color: #8b949e;
+            line-height: 1.5;
+        }
+
+        /* Cursor */
+        .cursor {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cursor.visible {
+            opacity: 1;
+        }
+
+        .cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #58a6ff;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="langflow-app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="langflow-logo">L</div>
+                <span class="sidebar-title">Langflow</span>
+            </div>
+            <div class="search-box">Search components...</div>
+
+            <div class="component-category">Data Loading</div>
+            <div class="component-list">
+                <div class="component-item" id="comp-file">
+                    <div class="component-icon icon-file">📄</div>
+                    <span>File Loader</span>
+                </div>
+                <div class="component-item" id="comp-split">
+                    <div class="component-icon icon-split">✂️</div>
+                    <span>Text Splitter</span>
+                </div>
+            </div>
+
+            <div class="component-category">Embeddings</div>
+            <div class="component-list">
+                <div class="component-item" id="comp-embed">
+                    <div class="component-icon icon-embed">🧮</div>
+                    <span>OpenAI Embeddings</span>
+                </div>
+            </div>
+
+            <div class="component-category">Vector Stores</div>
+            <div class="component-list">
+                <div class="component-item" id="comp-vector">
+                    <div class="component-icon icon-vector">🗄️</div>
+                    <span>Chroma DB</span>
+                </div>
+            </div>
+
+            <div class="component-category">Retrieval</div>
+            <div class="component-list">
+                <div class="component-item" id="comp-retriever">
+                    <div class="component-icon icon-retriever">🔍</div>
+                    <span>Vector Retriever</span>
+                </div>
+            </div>
+
+            <div class="component-category">Models</div>
+            <div class="component-list">
+                <div class="component-item" id="comp-llm">
+                    <div class="component-icon icon-llm">🤖</div>
+                    <span>OpenAI GPT-4</span>
+                </div>
+            </div>
+
+            <div class="component-category">I/O</div>
+            <div class="component-list">
+                <div class="component-item" id="comp-chat">
+                    <div class="component-icon icon-chat">💬</div>
+                    <span>Chat Output</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-area">
+            <div class="canvas-header">
+                <span class="flow-name">RAG Chatbot Pipeline</span>
+                <span class="flow-badge">Building...</span>
+            </div>
+
+            <!-- SVG Connections -->
+            <svg class="connections">
+                <path class="connection" id="conn-1" d="M 430 180 C 480 180 480 260 530 260"/>
+                <path class="connection" id="conn-2" d="M 430 340 C 480 340 480 300 530 300"/>
+                <path class="connection" id="conn-3" d="M 750 280 C 800 280 800 360 850 360"/>
+                <path class="connection" id="conn-4" d="M 750 380 C 790 380 790 400 830 400"/>
+                <path class="connection" id="conn-5" d="M 750 460 C 800 460 800 480 850 480"/>
+                <path class="connection" id="conn-6" d="M 1070 430 C 1120 430 1120 520 1170 520"/>
+            </svg>
+
+            <!-- Nodes -->
+            <div class="node" id="node-file" style="left: 310px; top: 120px;">
+                <div class="node-header">
+                    <div class="node-icon icon-file">📄</div>
+                    <span class="node-title">File Loader</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-field">
+                        <div class="node-field-label">File</div>
+                        <div class="node-field-value">company-docs.pdf</div>
+                    </div>
+                </div>
+                <div class="port port-output"></div>
+            </div>
+
+            <div class="node" id="node-split" style="left: 310px; top: 280px;">
+                <div class="node-header">
+                    <div class="node-icon icon-split">✂️</div>
+                    <span class="node-title">Text Splitter</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-field">
+                        <div class="node-field-label">Chunk Size</div>
+                        <div class="node-field-value">500 characters</div>
+                    </div>
+                </div>
+                <div class="port port-input"></div>
+                <div class="port port-output"></div>
+            </div>
+
+            <div class="node" id="node-embed" style="left: 530px; top: 200px;">
+                <div class="node-header">
+                    <div class="node-icon icon-embed">🧮</div>
+                    <span class="node-title">OpenAI Embeddings</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-field">
+                        <div class="node-field-label">Model</div>
+                        <div class="node-field-value">text-embedding-3-small</div>
+                    </div>
+                </div>
+                <div class="port port-input"></div>
+                <div class="port port-output"></div>
+            </div>
+
+            <div class="node" id="node-vector" style="left: 530px; top: 360px;">
+                <div class="node-header">
+                    <div class="node-icon icon-vector">🗄️</div>
+                    <span class="node-title">Chroma DB</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-field">
+                        <div class="node-field-label">Collection</div>
+                        <div class="node-field-value">knowledge_base</div>
+                    </div>
+                </div>
+                <div class="port port-input"></div>
+                <div class="port port-output"></div>
+            </div>
+
+            <div class="node" id="node-retriever" style="left: 750px; top: 280px;">
+                <div class="node-header">
+                    <div class="node-icon icon-retriever">🔍</div>
+                    <span class="node-title">Vector Retriever</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-field">
+                        <div class="node-field-label">Top K</div>
+                        <div class="node-field-value">5 results</div>
+                    </div>
+                </div>
+                <div class="port port-input"></div>
+                <div class="port port-output"></div>
+            </div>
+
+            <div class="node" id="node-llm" style="left: 950px; top: 360px;">
+                <div class="node-header">
+                    <div class="node-icon icon-llm">🤖</div>
+                    <span class="node-title">OpenAI GPT-4</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-field">
+                        <div class="node-field-label">Temperature</div>
+                        <div class="node-field-value">0.7</div>
+                    </div>
+                </div>
+                <div class="port port-input"></div>
+                <div class="port port-output"></div>
+            </div>
+
+            <div class="node" id="node-chat" style="left: 1150px; top: 440px;">
+                <div class="node-header">
+                    <div class="node-icon icon-chat">💬</div>
+                    <span class="node-title">Chat Output</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-field">
+                        <div class="node-field-label">Status</div>
+                        <div class="node-field-value">Ready</div>
+                    </div>
+                </div>
+                <div class="port port-input"></div>
+            </div>
+
+            <!-- Annotations -->
+            <div class="annotation" id="anno-1" style="left: 310px; top: 60px;">
+                <div class="annotation-step">Step 1</div>
+                <div class="annotation-title">Add File Loader</div>
+                <div class="annotation-text">Load your knowledge documents (PDF, TXT, DOCX) into the pipeline.</div>
+            </div>
+
+            <div class="annotation" id="anno-2" style="left: 310px; top: 420px;">
+                <div class="annotation-step">Step 2</div>
+                <div class="annotation-title">Split Into Chunks</div>
+                <div class="annotation-text">Break documents into smaller pieces (500 chars) for better retrieval.</div>
+            </div>
+
+            <div class="annotation" id="anno-3" style="left: 530px; top: 120px;">
+                <div class="annotation-step">Step 3</div>
+                <div class="annotation-title">Create Embeddings</div>
+                <div class="annotation-text">Convert text chunks into numerical vectors that capture semantic meaning.</div>
+            </div>
+
+            <div class="annotation" id="anno-4" style="left: 530px; top: 520px;">
+                <div class="annotation-step">Step 4</div>
+                <div class="annotation-title">Store in Vector DB</div>
+                <div class="annotation-text">Save embeddings in Chroma DB for fast similarity search.</div>
+            </div>
+
+            <div class="annotation" id="anno-5" style="left: 750px; top: 180px;">
+                <div class="annotation-step">Step 5</div>
+                <div class="annotation-title">Add Retriever</div>
+                <div class="annotation-text">Find the top 5 most relevant chunks for any query.</div>
+            </div>
+
+            <div class="annotation" id="anno-6" style="left: 950px; top: 520px;">
+                <div class="annotation-step">Step 6</div>
+                <div class="annotation-title">Connect the LLM</div>
+                <div class="annotation-text">GPT-4 uses retrieved context to generate accurate answers.</div>
+            </div>
+
+            <div class="annotation" id="anno-7" style="left: 1100px; top: 580px;">
+                <div class="annotation-step">Step 7</div>
+                <div class="annotation-title">Add Chat Interface</div>
+                <div class="annotation-text">Create an interactive chatbot interface for users.</div>
+            </div>
+
+            <!-- Step indicator -->
+            <div class="step-indicator">
+                <div class="step-dot" id="dot-1"></div>
+                <div class="step-dot" id="dot-2"></div>
+                <div class="step-dot" id="dot-3"></div>
+                <div class="step-dot" id="dot-4"></div>
+                <div class="step-dot" id="dot-5"></div>
+                <div class="step-dot" id="dot-6"></div>
+                <div class="step-dot" id="dot-7"></div>
+            </div>
+
+            <!-- Cursor -->
+            <div class="cursor" id="cursor"></div>
+        </div>
+    </div>
+
+    <script>
+        const steps = [
+            { node: 'node-file', anno: 'anno-1', dot: 'dot-1', comp: 'comp-file' },
+            { node: 'node-split', anno: 'anno-2', dot: 'dot-2', comp: 'comp-split', conn: 'conn-1' },
+            { node: 'node-embed', anno: 'anno-3', dot: 'dot-3', comp: 'comp-embed', conn: 'conn-2' },
+            { node: 'node-vector', anno: 'anno-4', dot: 'dot-4', comp: 'comp-vector', conn: 'conn-3' },
+            { node: 'node-retriever', anno: 'anno-5', dot: 'dot-5', comp: 'comp-retriever', conn: 'conn-4' },
+            { node: 'node-llm', anno: 'anno-6', dot: 'dot-6', comp: 'comp-llm', conn: 'conn-5' },
+            { node: 'node-chat', anno: 'anno-7', dot: 'dot-7', comp: 'comp-chat', conn: 'conn-6' }
+        ];
+
+        let currentStep = 0;
+
+        function showStep(stepIndex) {
+            const step = steps[stepIndex];
+
+            // Show cursor at component
+            const cursor = document.getElementById('cursor');
+            const comp = document.getElementById(step.comp);
+            const compRect = comp.getBoundingClientRect();
+            cursor.style.left = (compRect.left + compRect.width/2) + 'px';
+            cursor.style.top = (compRect.top + compRect.height/2) + 'px';
+            cursor.classList.add('visible');
+
+            // Highlight component
+            comp.classList.add('dragging');
+
+            setTimeout(() => {
+                // Move cursor to node position
+                const node = document.getElementById(step.node);
+                const nodeRect = node.getBoundingClientRect();
+                cursor.style.left = (nodeRect.left + nodeRect.width/2) + 'px';
+                cursor.style.top = (nodeRect.top + nodeRect.height/2) + 'px';
+
+                comp.classList.remove('dragging');
+            }, 400);
+
+            setTimeout(() => {
+                // Show node
+                const node = document.getElementById(step.node);
+                node.classList.add('visible');
+                cursor.classList.remove('visible');
+
+                // Show connection
+                if (step.conn) {
+                    document.getElementById(step.conn).classList.add('visible');
+                }
+
+                // Update dot
+                document.getElementById(step.dot).classList.add('active');
+                if (stepIndex > 0) {
+                    document.getElementById(steps[stepIndex-1].dot).classList.remove('active');
+                    document.getElementById(steps[stepIndex-1].dot).classList.add('completed');
+                }
+
+                // Show annotation
+                const anno = document.getElementById(step.anno);
+                anno.classList.add('visible');
+            }, 800);
+
+            setTimeout(() => {
+                // Hide annotation
+                const anno = document.getElementById(step.anno);
+                anno.classList.remove('visible');
+            }, 3500);
+        }
+
+        function runAnimation() {
+            if (currentStep < steps.length) {
+                showStep(currentStep);
+                currentStep++;
+                setTimeout(runAnimation, 4000);
+            } else {
+                // Final state - mark last dot as completed
+                document.getElementById('dot-7').classList.remove('active');
+                document.getElementById('dot-7').classList.add('completed');
+
+                // Update badge
+                document.querySelector('.flow-badge').textContent = 'Complete!';
+                document.querySelector('.flow-badge').style.background = '#238636';
+            }
+        }
+
+        // Start animation after 1 second
+        setTimeout(runAnimation, 1000);
+    </script>
+</body>
+</html>

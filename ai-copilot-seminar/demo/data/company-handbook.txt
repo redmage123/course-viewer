@@ -1,0 +1,178 @@
+# TechFlow Solutions - Employee Handbook
+
+## Welcome to TechFlow Solutions
+
+### Our Mission
+To empower businesses with innovative technology solutions that drive growth, efficiency, and digital transformation.
+
+### Our Values
+1. **Innovation First** - We embrace new ideas and technologies
+2. **Customer Success** - Our clients' success is our success
+3. **Collaboration** - Great things happen when we work together
+4. **Integrity** - We do the right thing, always
+5. **Growth Mindset** - We learn, adapt, and improve continuously
+
+### Company History
+TechFlow Solutions was founded in 2015 in Dublin, Ireland. What started as a 5-person consultancy has grown to over 200 employees across Ireland and the UK. We specialize in:
+- Cloud architecture and migration
+- Custom software development
+- Data analytics and AI solutions
+- IT managed services
+
+## Getting Started
+
+### Your First Week
+Day 1:
+- Meet your manager and team
+- IT setup (laptop, accounts, access cards)
+- HR onboarding paperwork
+- Office tour
+
+Days 2-3:
+- Department orientation
+- Systems training
+- Meet key stakeholders
+- Review current projects
+
+Days 4-5:
+- Shadow team members
+- Begin initial assignments
+- Attend team meetings
+- One-on-one with manager
+
+### Key Systems & Tools
+- **Email & Calendar**: Microsoft 365 (outlook.techflowsolutions.ie)
+- **Communication**: Microsoft Teams
+- **Project Management**: Jira (for tech teams), Monday.com (for other teams)
+- **Time Tracking**: Clockify
+- **Knowledge Base**: Confluence
+- **HR Portal**: BambooHR (hr.techflowsolutions.ie)
+- **Expense Reports**: Expensify
+
+### Building Access
+- Main office: Silicon Dock, Dublin 2
+- Office hours: 7:00 AM - 9:00 PM
+- Weekend access: Badge + security code (request from IT)
+- Visitor policy: All visitors must sign in at reception
+
+## Benefits
+
+### Health & Wellness
+- Private health insurance (VHI) - employee fully covered
+- Dental and vision coverage
+- Employee Assistance Programme (EAP) - confidential counseling
+- Gym membership subsidy (EUR 50/month)
+- Mental health days (2 per year, no questions asked)
+
+### Financial Benefits
+- Pension scheme: 5% employer contribution (after 6 months)
+- Life assurance: 4x annual salary
+- Income protection insurance
+- Bike to work scheme
+- Tax saver commuter tickets
+
+### Other Perks
+- Flexible working hours (core hours: 10 AM - 4 PM)
+- Hybrid working (2-3 days in office)
+- Free lunch on Fridays
+- Team social budget: EUR 50/person/quarter
+- Hackathon days (quarterly)
+- Conference attendance support
+
+## Career Development
+
+### Learning & Development
+Every employee has access to:
+- LinkedIn Learning (unlimited courses)
+- Annual training budget: EUR 1,500
+- Internal tech talks (bi-weekly)
+- Mentorship programme
+- Leadership development track
+
+### Career Paths
+**Technical Track:**
+Junior Developer → Developer → Senior Developer → Staff Engineer → Principal Engineer
+
+**Management Track:**
+Team Lead → Engineering Manager → Director → VP
+
+**Specialist Track:**
+Specialist → Senior Specialist → Principal → Distinguished Expert
+
+### Promotions
+- Reviewed annually (December cycle)
+- Based on performance, impact, and growth
+- Self-nomination supported
+- Peer feedback included
+
+## Office Facilities
+
+### Dublin Office (HQ)
+- Address: Silicon Dock, Grand Canal Square, Dublin 2
+- 4 floors, open plan with meeting rooms
+- Quiet zones on Floor 3
+- Phone booths for calls
+- Kitchen and break areas on each floor
+
+### Amenities
+- Free tea, coffee, and soft drinks
+- Snack bar (free fruit, paid snacks)
+- Showers and changing facilities
+- Bike storage (secure, basement level)
+- Parking: Limited spaces (apply via facilities@)
+
+### Meeting Rooms
+Book via Outlook calendar:
+- Small (4 people): Liffey, Boyne, Shannon
+- Medium (8 people): Phoenix, Aviva
+- Large (20 people): Conference A, Conference B
+- All-hands: Auditorium (capacity 100)
+
+## IT & Security
+
+### Password Policy
+- Minimum 14 characters
+- Must include uppercase, lowercase, number, and symbol
+- Change every 90 days
+- No password reuse (last 12 passwords)
+- Use company password manager (1Password)
+
+### Acceptable Use
+- Company devices are for business use primarily
+- Limited personal use acceptable
+- No installation of unauthorized software
+- Report any security incidents immediately
+- Complete annual security awareness training
+
+### Data Classification
+- **Public**: Marketing materials, job postings
+- **Internal**: Company policies, org charts
+- **Confidential**: Client data, financial reports
+- **Restricted**: PII, credentials, trade secrets
+
+## Emergency Procedures
+
+### Fire Safety
+- Know your floor's fire exits
+- Assembly point: Grand Canal Square (east side)
+- Fire wardens on each floor (see notice boards)
+- Do not use lifts during evacuation
+- Monthly fire drills
+
+### First Aid
+- First aiders on each floor
+- First aid kits in kitchen areas
+- AED located at reception and Floor 2
+- Emergency: Call 999, then notify reception (Ext. 0)
+
+### Incident Reporting
+Report all incidents via:
+- Email: safety@techflowsolutions.ie
+- Urgently: Reception (Ext. 0) or your manager
+- Anonymous: Physical suggestion boxes on each floor
+
+## Questions?
+Contact your manager or HR:
+- hr@techflowsolutions.ie
+- Slack: #ask-hr
+- HR Office: Floor 1, Room 108

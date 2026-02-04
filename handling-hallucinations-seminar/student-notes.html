@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Notes - Handling Hallucinations: Fact-Checking AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            color: #0066cc;
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #0066cc;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0066cc;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .highlight-box {
+            background: #e6f2ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning-box {
+            background: #fff3e6;
+            border-left: 4px solid #ff9933;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .danger-box {
+            background: #ffe6e6;
+            border-left: 4px solid #ff4444;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .tip-box {
+            background: #e6ffe6;
+            border-left: 4px solid #00cc66;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .framework-box {
+            background: #f5f5f5;
+            border: 2px solid #0066cc;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .framework-letter {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .framework-letter:last-child {
+            border-bottom: none;
+        }
+        .letter {
+            width: 35px;
+            height: 35px;
+            background: #0066cc;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .prompt-example {
+            background: #1a1a2e;
+            color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #0066cc;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .exercise-box {
+            background: #f0f0ff;
+            border: 2px solid #4da6ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+        .checklist li {
+            padding-left: 30px;
+            position: relative;
+        }
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+        }
+        @media print {
+            body {
+                padding: 20px;
+            }
+            .highlight-box, .warning-box, .tip-box, .danger-box {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Handling Hallucinations: Fact-Checking AI</h1>
+    <p style="color: #666; margin-bottom: 30px;">ITAG Skillnet AI Advantage | Student Notes</p>
+
+    <h2>What is an AI Hallucination?</h2>
+    <p>An AI hallucination occurs when a language model generates content that is:</p>
+    <ul>
+        <li><strong>Factually incorrect</strong> - States something false as if it were true</li>
+        <li><strong>Fabricated</strong> - Invents sources, quotes, statistics, or data that don't exist</li>
+        <li><strong>Confidently wrong</strong> - Presents errors with high certainty</li>
+    </ul>
+
+    <div class="highlight-box">
+        <strong>Key Insight:</strong> AI doesn't "know" it's wrong. LLMs generate plausible-sounding text based on patterns, not understanding or fact-checking.
+    </div>
+
+    <h2>Why Do Hallucinations Happen?</h2>
+    <ul>
+        <li><strong>Pattern matching</strong> - LLMs predict what comes next based on patterns, not knowledge retrieval</li>
+        <li><strong>Optimization for plausibility</strong> - Models are trained to sound coherent, not to be accurate</li>
+        <li><strong>No fact database</strong> - LLMs can't verify claims against a source of truth</li>
+        <li><strong>Training data limitations</strong> - Incomplete or outdated information in training data</li>
+    </ul>
+
+    <h2>Types of Hallucinations</h2>
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Example</th>
+        </tr>
+        <tr>
+            <td><strong>Intrinsic</strong></td>
+            <td>Contradicts the source/input provided</td>
+            <td>Input says "Tuesday" but AI outputs "Wednesday"</td>
+        </tr>
+        <tr>
+            <td><strong>Extrinsic</strong></td>
+            <td>Adds unverifiable information</td>
+            <td>Summary includes facts not in the original document</td>
+        </tr>
+        <tr>
+            <td><strong>Fabricated Citations</strong></td>
+            <td>Invents sources that don't exist</td>
+            <td>References a fake journal article or book</td>
+        </tr>
+        <tr>
+            <td><strong>Invented Statistics</strong></td>
+            <td>Creates precise numbers without basis</td>
+            <td>"73.4% of companies report..."</td>
+        </tr>
+    </table>
+
+    <h2>The VERIFY Framework</h2>
+    <div class="framework-box">
+        <div class="framework-letter">
+            <span class="letter">V</span>
+            <div><strong>Validate Sources</strong> - Check if cited sources actually exist. Search for papers, verify authors, check URLs.</div>
+        </div>
+        <div class="framework-letter">
+            <span class="letter">E</span>
+            <div><strong>Examine Specifics</strong> - Scrutinize precise numbers, dates, and names. Overly specific statistics are red flags.</div>
+        </div>
+        <div class="framework-letter">
+            <span class="letter">R</span>
+            <div><strong>Research Claims</strong> - Cross-reference with 2+ authoritative sources before using important claims.</div>
+        </div>
+        <div class="framework-letter">
+            <span class="letter">I</span>
+            <div><strong>Identify Uncertainty</strong> - Look for hedging language. AI confidence ≠ accuracy.</div>
+        </div>
+        <div class="framework-letter">
+            <span class="letter">F</span>
+            <div><strong>Flag Suspicious Content</strong> - Mark claims with [VERIFY] for later checking.</div>
+        </div>
+        <div class="framework-letter">
+            <span class="letter">Y</span>
+            <div><strong>Yield to Expertise</strong> - Consult domain experts for critical decisions.</div>
+        </div>
+    </div>
+
+    <h2>High-Risk Domains</h2>
+    <div class="danger-box">
+        <strong>Critical Risk Areas:</strong>
+        <ul style="margin-top: 10px; margin-bottom: 0;">
+            <li>Medical advice and health information</li>
+            <li>Legal citations and case law</li>
+            <li>Financial data and investment advice</li>
+            <li>Safety procedures and regulations</li>
+        </ul>
+    </div>
+
+    <div class="warning-box">
+        <strong>High Risk Areas:</strong>
+        <ul style="margin-top: 10px; margin-bottom: 0;">
+            <li>Historical facts and dates</li>
+            <li>Scientific claims and research</li>
+            <li>Technical specifications</li>
+            <li>Current events (after training cutoff)</li>
+        </ul>
+    </div>
+
+    <h2>Prevention Strategies</h2>
+
+    <h3>1. Better Prompts</h3>
+    <div class="prompt-example">Add to your prompts:
+
+"Important guidelines:
+- Only include facts you are highly confident about
+- If you cite a source, it must be real and verifiable
+- Mark uncertain claims with [NEEDS VERIFICATION]
+- Say 'I don't know' rather than guessing
+- Don't invent statistics - use qualitative descriptions"</div>
+
+    <h3>2. Ground with Context (RAG)</h3>
+    <p>Provide verified source material in your prompt and instruct the AI to use ONLY that information:</p>
+    <div class="prompt-example">"Based ONLY on the following data, summarize the key points:
+
+[Paste your verified data here]
+
+Do not add information not contained in the above."</div>
+
+    <h3>3. Chain-of-Thought</h3>
+    <p>Ask AI to show its reasoning so you can evaluate the logic:</p>
+    <div class="prompt-example">"Think through this step by step, noting any assumptions you're making and areas of uncertainty."</div>
+
+    <h3>4. Self-Critique</h3>
+    <p>Ask the AI to review its own output for potential issues:</p>
+    <div class="prompt-example">"Review your previous response and identify:
+1. Claims that might be outdated
+2. Statistics that need verification
+3. Sources that should be confirmed
+4. Statements that should be hedged"</div>
+
+    <h2>Verification Tools</h2>
+    <table>
+        <tr>
+            <th>Tool</th>
+            <th>Use For</th>
+        </tr>
+        <tr>
+            <td>Google Scholar</td>
+            <td>Academic papers and citations</td>
+        </tr>
+        <tr>
+            <td>CrossRef</td>
+            <td>DOI and publication verification</td>
+        </tr>
+        <tr>
+            <td>Snopes / PolitiFact</td>
+            <td>Fact-checking claims</td>
+        </tr>
+        <tr>
+            <td>LinkedIn</td>
+            <td>Verifying people and credentials</td>
+        </tr>
+        <tr>
+            <td>Wayback Machine</td>
+            <td>Archived web pages</td>
+        </tr>
+    </table>
+
+    <h2>Review Workflow</h2>
+    <ol>
+        <li><strong>Generate</strong> - Create content with anti-hallucination prompts</li>
+        <li><strong>Flag</strong> - Mark all verifiable claims (stats, quotes, sources)</li>
+        <li><strong>Verify</strong> - Check each flagged item against authoritative sources</li>
+        <li><strong>Revise</strong> - Correct errors, remove unverifiable claims</li>
+        <li><strong>Review</strong> - Expert check for domain-specific content</li>
+        <li><strong>Publish</strong> - Only after human sign-off</li>
+    </ol>
+
+    <h2>Quick Reference: Red Flags</h2>
+    <ul class="checklist">
+        <li>Very precise percentages (73.4%, 42.6%)</li>
+        <li>Specific dates for vague events</li>
+        <li>Exact quotes from famous people</li>
+        <li>Detailed statistics without sources</li>
+        <li>"Studies show..." (which studies?)</li>
+        <li>Highly specific claims about recent events</li>
+        <li>Citations with full DOIs or URLs (check them!)</li>
+    </ul>
+
+    <div class="tip-box">
+        <strong>The Trust Equation:</strong><br>
+        AI Output + Human Verification = Trustworthy Content<br><br>
+        AI provides speed, humans ensure accuracy.
+    </div>
+
+    <h2>Take-Home Exercise</h2>
+    <div class="exercise-box">
+        <h3>Practice Assignment</h3>
+        <ol>
+            <li><strong>Generate</strong> - Ask AI to write a 200-word summary about a topic in your field</li>
+            <li><strong>Analyze</strong> - Apply the VERIFY framework to identify potential issues</li>
+            <li><strong>Verify</strong> - Fact-check at least 3 specific claims using authoritative sources</li>
+            <li><strong>Revise</strong> - Create a corrected version with proper sourcing</li>
+            <li><strong>Reflect</strong> - Document what you learned about AI limitations</li>
+        </ol>
+        <p style="margin-top: 15px;"><strong>Bonus:</strong> Try the same prompt with different AI models and compare hallucination patterns.</p>
+    </div>
+
+    <footer>
+        <p>Handling Hallucinations: Fact-Checking AI</p>
+        <p>ITAG Skillnet AI Advantage</p>
+    </footer>
+</body>
+</html>

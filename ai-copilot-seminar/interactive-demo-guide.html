@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Demo Guide - Build Your Own AI Copilot</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --accent-red: #ff4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--itag-blue);
+        }
+
+        header h1 {
+            color: var(--itag-blue);
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .instructor-badge {
+            display: inline-block;
+            background: var(--accent-orange);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        h2 {
+            color: var(--itag-blue);
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        h3 {
+            color: #444;
+            margin: 25px 0 10px 0;
+        }
+
+        h4 {
+            color: var(--itag-light);
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .demo-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid var(--itag-blue);
+        }
+
+        .demo-section h3 {
+            color: var(--itag-blue);
+            margin-top: 0;
+        }
+
+        .timing {
+            display: inline-block;
+            background: var(--itag-blue);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .prep-box {
+            background: linear-gradient(135deg, #fff8e8 0%, #fffaf0 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 20px 0;
+        }
+
+        .script-box {
+            background: linear-gradient(135deg, #e8f4fc 0%, #f0f8ff 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--itag-light);
+            margin: 20px 0;
+        }
+
+        .script-box h4 {
+            margin-top: 0;
+        }
+
+        .say {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-style: italic;
+            border: 1px solid #ddd;
+        }
+
+        .say::before {
+            content: "Say: ";
+            font-style: normal;
+            font-weight: bold;
+            color: var(--itag-blue);
+        }
+
+        .do {
+            background: #e8f8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #b8e8d0;
+        }
+
+        .do::before {
+            content: "Do: ";
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .tip {
+            background: linear-gradient(135deg, #e8f8f0 0%, #f0fff5 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 15px 0;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fff0f0 0%, #fff5f5 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-red);
+            margin: 15px 0;
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            color: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .question-list {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin: 15px 0;
+        }
+
+        .question-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid var(--itag-light);
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .checklist li {
+            list-style: none;
+            margin: 10px 0;
+        }
+
+        .checklist li::before {
+            content: "☐ ";
+            color: var(--itag-blue);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--itag-blue);
+            color: white;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            text-align: center;
+            color: #888;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Instructor Demo Guide</h1>
+            <p>Build Your Own AI Copilot: Turning Content into Answers</p>
+            <span class="instructor-badge">For Instructors Only</span>
+        </header>
+
+        <h2>Pre-Session Preparation</h2>
+
+        <div class="prep-box">
+            <h3>Before the Session (24 hours)</h3>
+            <div class="checklist">
+                <ul>
+                    <li>Test internet connection at venue</li>
+                    <li>Verify access to demo accounts (NotebookLM, ChatGPT)</li>
+                    <li>Prepare sample documents (see below)</li>
+                    <li>Test screen sharing setup</li>
+                    <li>Print student notes as backup</li>
+                    <li>Prepare fallback slides in case demos fail</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Sample Documents to Prepare</h3>
+        <p>Create or use these sample documents for the live demo:</p>
+
+        <div class="two-column">
+            <div>
+                <h4>Option A: HR Policy Demo</h4>
+                <ul>
+                    <li>Vacation/PTO Policy (1-2 pages)</li>
+                    <li>Expense Reimbursement Guide</li>
+                    <li>Remote Work Policy</li>
+                    <li>Benefits Summary</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Option B: Product Manual Demo</h4>
+                <ul>
+                    <li>Product FAQ document</li>
+                    <li>Troubleshooting guide</li>
+                    <li>Setup instructions</li>
+                    <li>Feature descriptions</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tip">
+            <strong>Tip:</strong> Use real-looking but fictional content to avoid privacy concerns. Or use publicly available documents like government guides, open-source project documentation, etc.
+        </div>
+
+        <!-- Demo 1: NotebookLM -->
+        <h2>Demo 1: NotebookLM <span class="timing">10-12 minutes</span></h2>
+
+        <div class="demo-section">
+            <h3>Setup (Before Session)</h3>
+            <ul>
+                <li>Go to notebooklm.google.com</li>
+                <li>Create a new notebook called "HR Policy Assistant"</li>
+                <li>Upload 3-4 sample HR documents</li>
+                <li>Have it ready but minimized</li>
+            </ul>
+        </div>
+
+        <div class="script-box">
+            <h4>Live Demo Script</h4>
+
+            <div class="say">
+                "Now I'm going to show you how easy it is to build a knowledge base using a free tool from Google called NotebookLM. This is great for research, document analysis, and creating AI assistants grounded in your own content."
+            </div>
+
+            <div class="do">
+                Open NotebookLM and show the pre-created notebook with documents already uploaded.
+            </div>
+
+            <div class="say">
+                "I've already uploaded some sample HR policy documents here. Let me show you what we can do with them."
+            </div>
+
+            <div class="do">
+                Type a question: "How many vacation days do new employees get?"
+            </div>
+
+            <div class="say">
+                "Notice how the AI gives us an answer, but more importantly, look at these citations on the right side. Each numbered reference links back to the exact section in our documents. This is called 'grounding' - the AI only answers from what's in our knowledge base."
+            </div>
+
+            <div class="do">
+                Click on a citation to show it highlights the source text.
+            </div>
+
+            <div class="say">
+                "Let me try another question that tests the boundaries..."
+            </div>
+
+            <div class="do">
+                Ask: "What is the salary range for senior engineers?"
+            </div>
+
+            <div class="say">
+                "See? It tells us this information isn't in the documents. That's exactly what we want - it won't make things up!"
+            </div>
+
+            <h4>Bonus Feature (if time permits)</h4>
+
+            <div class="say">
+                "NotebookLM has a cool feature - it can generate an audio summary of your documents, like a podcast. Let me show you..."
+            </div>
+
+            <div class="do">
+                Click "Generate Audio Overview" and play a short clip (or show a pre-generated one).
+            </div>
+        </div>
+
+        <div class="question-list">
+            <h4>Questions to Ask During Demo</h4>
+            <ul>
+                <li>"How many vacation days do new employees get?"</li>
+                <li>"What's the process for submitting expenses?"</li>
+                <li>"Can I work from home on Fridays?"</li>
+                <li>"What are the health insurance options?"</li>
+                <li>"What's the salary range for engineers?" (should fail - not in docs)</li>
+            </ul>
+        </div>
+
+        <!-- Demo 2: Custom GPT -->
+        <h2>Demo 2: Custom GPT <span class="timing">10-12 minutes</span></h2>
+
+        <div class="demo-section">
+            <h3>Setup (Before Session)</h3>
+            <ul>
+                <li>Have ChatGPT Plus account ready ($20/mo required)</li>
+                <li>Pre-create a Custom GPT with documents uploaded</li>
+                <li>OR be prepared to create one live (takes ~5 minutes)</li>
+            </ul>
+        </div>
+
+        <div class="script-box">
+            <h4>Live Demo Script - Creating a Custom GPT</h4>
+
+            <div class="say">
+                "Now let's look at another approach - Custom GPTs in ChatGPT. This is available with a ChatGPT Plus subscription and lets you create specialized assistants."
+            </div>
+
+            <div class="do">
+                Go to ChatGPT → Explore GPTs → Create (top right)
+            </div>
+
+            <div class="say">
+                "You can either use the conversation mode or the Configure tab. Let's use Configure for more control."
+            </div>
+
+            <div class="do">
+                Click "Configure" tab and fill in:
+                - Name: "HR Policy Helper"
+                - Description: "Answers questions about company policies"
+            </div>
+
+            <div class="say">
+                "Here's where the magic happens - the Instructions field. This is your system prompt that tells the GPT how to behave."
+            </div>
+
+            <div class="do">
+                Paste the system prompt from the slides (or type it).
+            </div>
+
+            <div class="code-block">You are an HR Policy Assistant for our company.
+
+RULES:
+1. ONLY answer from the uploaded documents
+2. ALWAYS cite which document the answer came from
+3. If the answer isn't in the documents, say: "I couldn't find that in our policy documents. Please contact HR at hr@company.com"
+4. Be friendly and professional
+
+FORMAT:
+- Give a direct answer first
+- Quote the relevant policy section
+- End with the source document name</div>
+
+            <div class="do">
+                Scroll down to "Knowledge" and upload documents.
+            </div>
+
+            <div class="say">
+                "Now we upload our documents. These become the knowledge base that the GPT will search when answering questions."
+            </div>
+
+            <div class="do">
+                Test the GPT with sample questions.
+            </div>
+        </div>
+
+        <div class="warning">
+            <strong>Common Issues:</strong>
+            <ul>
+                <li><strong>Documents not uploading:</strong> Max 20 files, 512MB total. Try smaller files.</li>
+                <li><strong>Wrong answers:</strong> The system prompt needs to be more explicit about only using uploaded docs.</li>
+                <li><strong>Slow responses:</strong> Normal for Custom GPTs. Wait 5-10 seconds.</li>
+            </ul>
+        </div>
+
+        <!-- Demo 3: Quick Comparison -->
+        <h2>Demo 3: Side-by-Side Comparison <span class="timing">5 minutes</span></h2>
+
+        <div class="script-box">
+            <h4>Comparing the Approaches</h4>
+
+            <div class="say">
+                "Let's quickly compare what we just saw. Both tools accomplish the same goal but have different strengths."
+            </div>
+
+            <div class="do">
+                Show this comparison (or refer to slides):
+            </div>
+        </div>
+
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>NotebookLM</th>
+                <th>Custom GPT</th>
+            </tr>
+            <tr>
+                <td>Cost</td>
+                <td>Free</td>
+                <td>$20/month</td>
+            </tr>
+            <tr>
+                <td>Citations</td>
+                <td>Excellent (highlights)</td>
+                <td>Good (text references)</td>
+            </tr>
+            <tr>
+                <td>Sharing</td>
+                <td>Link sharing</td>
+                <td>Public or link</td>
+            </tr>
+            <tr>
+                <td>Audio summaries</td>
+                <td>Yes</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>Customization</td>
+                <td>Limited</td>
+                <td>High (system prompts)</td>
+            </tr>
+            <tr>
+                <td>Best for</td>
+                <td>Research, personal use</td>
+                <td>Team tools, production</td>
+            </tr>
+        </table>
+
+        <h2>Handling Questions & Troubleshooting</h2>
+
+        <div class="question-list">
+            <h4>Anticipated Questions</h4>
+            <ul>
+                <li><strong>"Is my data safe?"</strong> - Both tools have enterprise options. Free tiers may use data for training. Check vendor policies.</li>
+                <li><strong>"Can I use this with our internal systems?"</strong> - Custom GPTs can use APIs. Enterprise tools like Microsoft Copilot integrate with M365.</li>
+                <li><strong>"What about PDFs with images/tables?"</strong> - Both handle text well. Complex layouts may need preprocessing.</li>
+                <li><strong>"How do I prevent hallucinations?"</strong> - Strong system prompts, require citations, test edge cases.</li>
+                <li><strong>"Can multiple people use the same copilot?"</strong> - Yes, both support sharing. Enterprise needs vary.</li>
+            </ul>
+        </div>
+
+        <h2>Fallback Plans</h2>
+
+        <div class="warning">
+            <h4>If demos fail...</h4>
+            <ul>
+                <li><strong>Internet down:</strong> Switch to slides with screenshots of the demo flow</li>
+                <li><strong>Account issues:</strong> Have a recorded video backup</li>
+                <li><strong>Slow responses:</strong> Pre-cache some responses by asking questions before the session</li>
+                <li><strong>Unexpected answers:</strong> Use it as a teaching moment about prompt engineering</li>
+            </ul>
+        </div>
+
+        <h2>Session Timing Guide</h2>
+
+        <table>
+            <tr>
+                <th>Section</th>
+                <th>Duration</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>Introduction & Problem</td>
+                <td>5 min</td>
+                <td>Engage with relatable pain points</td>
+            </tr>
+            <tr>
+                <td>What is RAG?</td>
+                <td>10 min</td>
+                <td>Keep theory light, focus on benefits</td>
+            </tr>
+            <tr>
+                <td>Document Preparation</td>
+                <td>10 min</td>
+                <td>Practical advice they can use immediately</td>
+            </tr>
+            <tr>
+                <td>Tools Overview</td>
+                <td>10 min</td>
+                <td>Spend more time on free options</td>
+            </tr>
+            <tr>
+                <td><strong>Live Demos</strong></td>
+                <td><strong>25 min</strong></td>
+                <td>The heart of the session</td>
+            </tr>
+            <tr>
+                <td>System Prompts & Edge Cases</td>
+                <td>10 min</td>
+                <td>Practical tips for success</td>
+            </tr>
+            <tr>
+                <td>Exercise & Discussion</td>
+                <td>10 min</td>
+                <td>Get them thinking about their use case</td>
+            </tr>
+            <tr>
+                <td>Q&A & Wrap-up</td>
+                <td>10 min</td>
+                <td>Leave them excited to try it</td>
+            </tr>
+        </table>
+
+        <h2>Post-Session</h2>
+
+        <div class="tip">
+            <h4>Follow-up Actions</h4>
+            <ul>
+                <li>Share student notes PDF</li>
+                <li>Share links to NotebookLM, ChatGPT</li>
+                <li>Offer to answer questions via email</li>
+                <li>Collect feedback for improvement</li>
+                <li>Point to next ITAG Skillnet sessions</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p><strong>ITAG Skillnet AI Advantage</strong></p>
+            <p>Build Your Own AI Copilot - Instructor Demo Guide</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Version 1.0 | December 2024</p>
+        </footer>
+    </div>
+</body>
+</html>

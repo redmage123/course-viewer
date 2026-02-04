@@ -1,0 +1,94 @@
+# TechFlow Solutions - HR Policies & Procedures
+
+## Leave & Time Off
+
+### Annual Leave
+- All full-time employees are entitled to 25 days annual leave per year
+- Leave must be requested at least 2 weeks in advance for periods longer than 3 days
+- Maximum 10 consecutive days without manager approval
+- Unused leave can carry over up to 5 days to the following year
+
+### Sick Leave
+- Employees receive 10 paid sick days per year
+- A medical certificate is required for absences exceeding 3 consecutive days
+- Notify your manager before 9:00 AM on the first day of absence
+- Extended sick leave (beyond 10 days) is handled through HR on a case-by-case basis
+
+### Parental Leave
+- Primary caregiver: 26 weeks paid leave
+- Secondary caregiver: 4 weeks paid leave
+- Must notify HR at least 8 weeks before expected start date
+- Flexible return-to-work arrangements available
+
+## Remote Work Policy
+
+### Eligibility
+- All employees who have completed their 6-month probation period
+- Role must be suitable for remote work (determined by department head)
+- Must have reliable internet connection and suitable home office setup
+
+### Guidelines
+- Maximum 3 remote days per week (Hybrid model)
+- Core hours: 10:00 AM - 3:00 PM (must be available)
+- Weekly team meetings must be attended in-person
+- Monthly all-hands meeting in office is mandatory
+
+### Equipment
+- Company provides laptop and monitor for home use
+- EUR 500 one-time home office setup allowance
+- IT support available remotely via helpdesk
+
+## Expense Policy
+
+### Travel Expenses
+- Economy class for flights under 4 hours
+- Business class for flights over 4 hours (with pre-approval)
+- Hotel cap: EUR 150/night (Dublin), EUR 120/night (regional Ireland)
+- Meal allowance: EUR 50/day for overnight travel
+
+### Reimbursement Process
+1. Submit expenses within 30 days of incurring them
+2. Attach all receipts (photos acceptable)
+3. Use the expense portal: expenses.techflowsolutions.ie
+4. Approval within 5 business days
+5. Reimbursement in next pay cycle
+
+### Training & Development
+- EUR 1,500 annual training budget per employee
+- Conferences require manager pre-approval
+- Professional certifications: 50% company funded
+
+## Performance Reviews
+
+### Schedule
+- Quarterly check-ins with direct manager
+- Annual comprehensive review in December
+- Mid-year review in June for goal adjustment
+
+### Process
+1. Self-assessment submission (2 weeks before review)
+2. Manager assessment
+3. 360 feedback (for senior roles)
+4. Review meeting
+5. Development plan creation
+
+## Code of Conduct
+
+### Workplace Behaviour
+- Treat all colleagues with respect and professionalism
+- Zero tolerance for harassment or discrimination
+- Report concerns to HR or use anonymous ethics hotline
+- Dress code: Business casual (client meetings: business formal)
+
+### Confidentiality
+- Do not share company information externally without authorization
+- Client data must be handled per GDPR requirements
+- Sign NDA for all project work
+- Return all company property upon leaving
+
+## Contact Information
+
+- HR General Queries: hr@techflowsolutions.ie
+- Leave Requests: leave.techflowsolutions.ie
+- IT Helpdesk: helpdesk@techflowsolutions.ie / Ext. 1001
+- Ethics Hotline: 1800-555-0123 (anonymous)

@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Build Your Own AI Copilot - Course Slides</title>
+    <style>
+    
+    @page {
+        size: 297mm 210mm;
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
+    }
+
+    .slide {
+        width: 297mm;
+        height: 210mm;
+        padding: 25px 35px;
+        page-break-after: always;
+        page-break-inside: avoid;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        font-size: 12pt;
+    }
+
+    .slide:last-child {
+        page-break-after: auto;
+    }
+
+    /* Center class for title slides */
+    .slide.center {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    h1 {
+        color: #4da6ff;
+        font-size: 2.4em;
+        margin: 0 0 20px 0;
+        text-align: center;
+    }
+
+    h2 {
+        color: #4da6ff;
+        font-size: 1.8em;
+        margin: 0 0 20px 0;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 10px;
+    }
+
+    h3 {
+        color: #94a3b8;
+        font-size: 1.4em;
+        margin: 10px 0;
+    }
+
+    h4 {
+        color: #4da6ff;
+        font-size: 1.2em;
+        margin: 10px 0;
+    }
+
+    p {
+        margin: 10px 0;
+        line-height: 1.5;
+        font-size: 1em;
+    }
+
+    ul, ol {
+        margin: 10px 0;
+        padding-left: 25px;
+    }
+
+    li {
+        margin: 6px 0;
+        line-height: 1.4;
+        font-size: 0.95em;
+    }
+
+    /* Two-column layout */
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .three-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        flex: 1;
+    }
+
+    /* Card styles */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 4px solid #0066cc;
+    }
+
+    .card h4 {
+        color: #4da6ff;
+        margin: 0 0 10px 0;
+    }
+
+    /* Tip and warning boxes */
+    .tip-box {
+        background-color: rgba(0, 204, 102, 0.15);
+        padding: 15px 20px;
+        border-radius: 5px;
+        border-left: 4px solid #00cc66;
+        margin: 15px 0;
+    }
+
+    .warning-box {
+        background-color: rgba(255, 153, 51, 0.15);
+        padding: 15px 20px;
+        border-radius: 5px;
+        border-left: 4px solid #ff9933;
+        margin: 15px 0;
+    }
+
+    .exercise-box {
+        background-color: rgba(77, 166, 255, 0.15);
+        padding: 15px 20px;
+        border-radius: 8px;
+        border: 2px solid #4da6ff;
+        margin: 15px 0;
+    }
+
+    /* Code blocks */
+    pre {
+        background: #0d1117;
+        border: 2px solid #0066cc;
+        border-radius: 8px;
+        padding: 15px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.75em;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 10px 0;
+    }
+
+    .prompt-example {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8em;
+        margin: 10px 0;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 0.85em;
+    }
+
+    .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #334155;
+        padding: 10px 12px;
+        text-align: left;
+    }
+
+    th {
+        background: rgba(0, 102, 204, 0.4);
+        color: #4da6ff;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background: rgba(30, 41, 59, 0.5);
+    }
+
+    /* Agenda items */
+    .agenda-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #333;
+    }
+
+    .agenda-time {
+        color: #4da6ff;
+        font-weight: bold;
+        width: 70px;
+        flex-shrink: 0;
+    }
+
+    /* Framework steps */
+    .framework-step {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+    }
+
+    .step-number {
+        background: #0066cc;
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+
+    /* RAG Pipeline */
+    .rag-pipeline {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+
+    .pipeline-stage {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 15px 12px;
+        border-radius: 10px;
+        border: 2px solid #0066cc;
+        text-align: center;
+        width: 110px;
+    }
+
+    .pipeline-stage .icon {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+
+    .pipeline-stage h4 {
+        margin: 0 0 5px 0;
+        font-size: 0.85em;
+    }
+
+    .pipeline-stage p {
+        margin: 0;
+        font-size: 0.7em;
+        color: #aaa;
+    }
+
+    .pipeline-arrow {
+        font-size: 1.3em;
+        color: #00cc66;
+    }
+
+    /* Copilot Architecture */
+    .copilot-arch {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .arch-layer {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .arch-layer:nth-child(1) { background: linear-gradient(135deg, #1a4d30, #2d7a4d); }
+    .arch-layer:nth-child(2) { background: linear-gradient(135deg, #0d3366, #1a5599); }
+    .arch-layer:nth-child(3) { background: linear-gradient(135deg, #4d1a66, #7a2d99); }
+    .arch-layer:nth-child(4) { background: linear-gradient(135deg, #664d00, #997300); }
+
+    .arch-layer .icon {
+        font-size: 2em;
+    }
+
+    .arch-layer h4 {
+        margin: 0 0 5px 0;
+        font-size: 1em;
+    }
+
+    .arch-layer p {
+        margin: 0;
+        font-size: 0.85em;
+        opacity: 0.9;
+    }
+
+    /* Document flow */
+    .doc-flow {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .doc-step {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .doc-step:nth-child(1) { border-left: 4px solid #ff6b6b; }
+    .doc-step:nth-child(2) { border-left: 4px solid #ffd93d; }
+    .doc-step:nth-child(3) { border-left: 4px solid #4da6ff; }
+    .doc-step:nth-child(4) { border-left: 4px solid #00cc66; }
+
+    .doc-step .icon {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+
+    .doc-step h4 {
+        margin: 0 0 5px 0;
+        font-size: 0.9em;
+    }
+
+    .doc-step p {
+        margin: 0;
+        font-size: 0.75em;
+        color: #aaa;
+    }
+
+    /* Knowledge base visual */
+    .kb-visual {
+        display: grid;
+        grid-template-columns: 1fr 60px 1fr;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .kb-sources {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .kb-source {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 10px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .kb-source .icon {
+        font-size: 1.2em;
+    }
+
+    .kb-source span {
+        font-size: 0.8em;
+    }
+
+    .kb-arrows {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: center;
+    }
+
+    .kb-arrow {
+        color: #00cc66;
+        font-size: 1em;
+    }
+
+    .kb-database {
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .kb-database .icon {
+        font-size: 2.5em;
+        margin-bottom: 8px;
+    }
+
+    .kb-database h4 {
+        margin: 0;
+        font-size: 1em;
+    }
+
+    /* Tool cards */
+    .tool-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .tool-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 18px;
+        border-radius: 12px;
+        border: 2px solid #0066cc;
+        text-align: center;
+    }
+
+    .tool-card .icon {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .tool-card h4 {
+        margin: 0 0 8px 0;
+        font-size: 0.95em;
+    }
+
+    .tool-card p {
+        font-size: 0.75em;
+        color: #aaa;
+        margin: 0 0 8px 0;
+    }
+
+    .tool-card .tag {
+        display: inline-block;
+        background: #0066cc;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.7em;
+    }
+
+    /* Use case matrix */
+    .usecase-matrix {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .usecase-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 18px;
+        border-radius: 12px;
+    }
+
+    .usecase-card:nth-child(1) { border-top: 4px solid #00cc66; }
+    .usecase-card:nth-child(2) { border-top: 4px solid #4da6ff; }
+    .usecase-card:nth-child(3) { border-top: 4px solid #ff9933; }
+    .usecase-card:nth-child(4) { border-top: 4px solid #9933ff; }
+
+    .usecase-card .icon {
+        font-size: 1.5em;
+        margin-bottom: 8px;
+    }
+
+    .usecase-card h4 {
+        margin: 0 0 8px 0;
+        font-size: 1em;
+    }
+
+    .usecase-card p {
+        margin: 0 0 8px 0;
+        font-size: 0.8em;
+        color: #aaa;
+    }
+
+    .usecase-card ul {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 0.75em;
+    }
+
+    .usecase-card li {
+        margin: 4px 0;
+    }
+
+    /* Chunk visual */
+    .chunk-visual {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .chunk-doc {
+        background: #0d1117;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid #30363d;
+    }
+
+    .chunk-doc h4 {
+        margin: 0 0 10px 0;
+    }
+
+    .chunk-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .chunk {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.75em;
+        border-left: 3px solid #0066cc;
+    }
+
+    .chunk:nth-child(1) { border-left-color: #ff6b6b; }
+    .chunk:nth-child(2) { border-left-color: #ffd93d; }
+    .chunk:nth-child(3) { border-left-color: #4da6ff; }
+    .chunk:nth-child(4) { border-left-color: #00cc66; }
+    .chunk:nth-child(5) { border-left-color: #9933ff; }
+
+    /* Slide number */
+    .slide-number {
+        position: absolute;
+        bottom: 12px;
+        right: 25px;
+        font-size: 0.9em;
+        color: #64748b;
+    }
+
+    /* Hide animations for print */
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* ITAG logo */
+    .itag-logo {
+        position: absolute;
+        bottom: 10px;
+        left: 20px;
+        font-size: 0.7em;
+        color: #64748b;
+    }
+    
+    </style>
+</head>
+<body>
+
+        <div class="slide center">
+            <div class="slide-content" style="text-align: center;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">🤖</div>
+                    <h1>Build Your Own AI Copilot</h1>
+                    <h3 style="color: var(--accent-green); font-size: 1.3em;">Turning Content into Answers</h3>
+                    <p style="color: #94a3b8; font-size: 1.2em; margin-top: 30px;">90-minute interactive seminar</p>
+                    <div style="margin-top: 50px; padding: 20px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 10px; display: inline-block;">
+                        <p style="margin: 0; color: var(--itag-light);">ITAG Skillnet AI Advantage</p>
+                    </div>
+                    <p class="itag-logo">ITAG Skillnet | AI Advantage Programme</p>
+                </div>
+            <div class="slide-number">1</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>The Challenge We All Face</h2>
+                    <div class="two-column" style="margin-top: 30px;">
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>Information Overload</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Documents scattered across drives</li>
+                                <li>Policies buried in PDFs</li>
+                                <li>Expertise locked in people's heads</li>
+                                <li>Hours spent searching for answers</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>The AI Solution</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Your content, instantly searchable</li>
+                                <li>Answers in natural language</li>
+                                <li>Available 24/7 to your team</li>
+                                <li>Gets smarter as you add content</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>Today's Goal:</strong> Understand how to turn YOUR content into an AI-powered assistant that answers questions accurately and cites sources.
+                    </div>
+                </div>
+            <div class="slide-number">2</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>What We'll Cover</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>🧠 How AI "Learns" Your Content (RAG Explained)</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">20 min</span>
+                            <span>📄 Preparing Your Documents for AI</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">20 min</span>
+                            <span>🛠️ Tools & Platforms for Building Copilots</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">25 min</span>
+                            <span>🎯 Live Demo: Building a Knowledge Base</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>📋 Your Action Plan & Next Steps</span>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">3</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>What is RAG?</h2>
+                    <p style="text-align: center; font-size: 1.1em; margin-bottom: 30px;">Retrieval-Augmented Generation: The Secret Behind AI Copilots</p>
+                    <div class="rag-pipeline">
+                        <div class="pipeline-stage">
+                            <div class="icon">❓</div>
+                            <h4>Question</h4>
+                            <p>User asks something</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">🔍</div>
+                            <h4>Search</h4>
+                            <p>Find relevant docs</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">📎</div>
+                            <h4>Retrieve</h4>
+                            <p>Pull best matches</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">🧠</div>
+                            <h4>Generate</h4>
+                            <p>AI creates answer</p>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-stage">
+                            <div class="icon">✅</div>
+                            <h4>Response</h4>
+                            <p>With citations!</p>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Key Insight:</strong> RAG doesn't "train" the AI on your data—it retrieves relevant content at query time and gives it to the AI as context.
+                    </div>
+                </div>
+            <div class="slide-number">4</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>RAG vs Fine-Tuning: Two Approaches</h2>
+                    <div class="two-column" style="margin-bottom: 20px;">
+                        <div class="card">
+                            <h4>Fine-Tuning</h4>
+                            <p style="font-size: 0.85em;">Permanently modifies an AI model's weights by training it on your data. The knowledge becomes "baked in" to the model itself.</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>RAG (Retrieval)</h4>
+                            <p style="font-size: 0.85em;">Keeps the base model unchanged. Instead, it searches your documents at query time and passes relevant content to the AI as context.</p>
+                        </div>
+                    </div>
+                    <table class="comparison-table">
+                        <tr>
+                            <th style="width: 25%;">Aspect</th>
+                            <th style="width: 37%;">Fine-Tuning</th>
+                            <th style="width: 38%;">RAG (Retrieval)</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Setup Time</strong></td>
+                            <td>Days to weeks</td>
+                            <td style="color: var(--accent-green);">Hours to days</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cost</strong></td>
+                            <td>$100s - $10,000s</td>
+                            <td style="color: var(--accent-green);">$10s - $100s</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Updates</strong></td>
+                            <td>Requires retraining</td>
+                            <td style="color: var(--accent-green);">Just add documents</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Citations</strong></td>
+                            <td>Not available</td>
+                            <td style="color: var(--accent-green);">Built-in source tracking</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hallucinations</strong></td>
+                            <td>Can still occur</td>
+                            <td style="color: var(--accent-green);">Grounded in your docs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Privacy</strong></td>
+                            <td>Data sent for training</td>
+                            <td style="color: var(--accent-green);">Can run locally</td>
+                        </tr>
+                    </table>
+                    <div class="tip-box">
+                        <strong>Bottom Line:</strong> For most business use cases, RAG is faster, cheaper, and more practical than fine-tuning.
+                    </div>
+                </div>
+            <div class="slide-number">5</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>How Semantic Search Works</h2>
+                    <p style="text-align: center;">Converting meaning into numbers that computers can compare</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Traditional Keyword Search</h4>
+                            <div class="prompt-example">
+                                Query: "vacation policy"<br><br>
+                                ❌ Misses: "time off procedures"<br>
+                                ❌ Misses: "annual leave guidelines"<br>
+                                ❌ Misses: "PTO requests"
+                            </div>
+                            <p style="font-size: 0.85em; color: #888;">Only finds exact word matches</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Semantic (Vector) Search</h4>
+                            <div class="prompt-example">
+                                Query: "vacation policy"<br><br>
+                                ✅ Finds: "time off procedures"<br>
+                                ✅ Finds: "annual leave guidelines"<br>
+                                ✅ Finds: "PTO requests"
+                            </div>
+                            <p style="font-size: 0.85em; color: var(--accent-green);">Understands meaning, not just words</p>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>How it works:</strong> Each document chunk is converted to a "vector" (list of numbers) that represents its meaning. Similar meanings = similar vectors = found together.
+                    </div>
+                </div>
+            <div class="slide-number">6</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Anatomy of an AI Copilot</h2>
+                    <div class="copilot-arch">
+                        <div class="arch-layer">
+                            <div class="icon">💬</div>
+                            <div class="content">
+                                <h4>User Interface</h4>
+                                <p>Chat widget, Slack bot, Teams app, or web portal</p>
+                            </div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="icon">🧠</div>
+                            <div class="content">
+                                <h4>LLM (Language Model)</h4>
+                                <p>GPT-5, Claude, Gemini, or open-source models</p>
+                            </div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="icon">🔍</div>
+                            <div class="content">
+                                <h4>Vector Database</h4>
+                                <p>Stores embeddings for semantic search (Pinecone, Weaviate, Chroma)</p>
+                            </div>
+                        </div>
+                        <div class="arch-layer">
+                            <div class="icon">📚</div>
+                            <div class="content">
+                                <h4>Knowledge Base</h4>
+                                <p>Your documents: PDFs, docs, web pages, databases</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">7</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>Preparing Your Documents</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">The quality of your copilot depends on the quality of your content</p>
+                    <div class="doc-flow">
+                        <div class="doc-step">
+                            <div class="icon">📄</div>
+                            <h4>Collect</h4>
+                            <p>Gather docs from all sources</p>
+                        </div>
+                        <div class="doc-step">
+                            <div class="icon">🧹</div>
+                            <h4>Clean</h4>
+                            <p>Remove duplicates, outdated info</p>
+                        </div>
+                        <div class="doc-step">
+                            <div class="icon">✂️</div>
+                            <h4>Chunk</h4>
+                            <p>Split into searchable pieces</p>
+                        </div>
+                        <div class="doc-step">
+                            <div class="icon">🔢</div>
+                            <h4>Embed</h4>
+                            <p>Convert to vectors</p>
+                        </div>
+                    </div>
+                    <div class="warning-box">
+                        <strong>Common Mistake:</strong> Garbage in = garbage out. Take time to curate your content—remove outdated policies, fix formatting issues, ensure accuracy.
+                    </div>
+                </div>
+            <div class="slide-number">8</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>The Art of Chunking</h2>
+                    <p style="text-align: center;">How you split documents affects retrieval quality</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Chunking Strategies</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📏 Fixed Size</h4>
+                                <p style="font-size: 0.8em;">Split every 500-1000 tokens. Simple but may break mid-sentence.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📄 By Structure</h4>
+                                <p style="font-size: 0.8em;">Split by headers, paragraphs, or sections. Preserves context.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔄 Overlapping</h4>
+                                <p style="font-size: 0.8em;">Chunks overlap by 10-20%. Helps with context at boundaries.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Example: Policy Document</h4>
+                            <div class="chunk-visual">
+                                <div class="chunk-doc">
+                                    <h4>Employee Handbook</h4>
+                                    <div class="chunk-row">
+                                        <div class="chunk">Chapter 1: Onboarding...</div>
+                                        <div class="chunk">Chapter 2: Benefits...</div>
+                                        <div class="chunk">Section 2.1: Health...</div>
+                                        <div class="chunk">Section 2.2: Dental...</div>
+                                        <div class="chunk">Chapter 3: Time Off...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Rule of Thumb:</strong> Chunks should be small enough to be specific, but large enough to contain complete thoughts (typically 200-500 words).
+                    </div>
+                </div>
+            <div class="slide-number">9</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>What Content Can You Use?</h2>
+                    <div class="kb-visual">
+                        <div class="kb-sources">
+                            <div class="kb-source">
+                                <span class="icon">📄</span>
+                                <span>PDFs (policies, manuals)</span>
+                            </div>
+                            <div class="kb-source">
+                                <span class="icon">📝</span>
+                                <span>Word docs & Google Docs</span>
+                            </div>
+                            <div class="kb-source">
+                                <span class="icon">🌐</span>
+                                <span>Web pages & wikis</span>
+                            </div>
+                            <div class="kb-source">
+                                <span class="icon">📊</span>
+                                <span>Spreadsheets & CSVs</span>
+                            </div>
+                        </div>
+                        <div class="kb-arrows">
+                            <span class="kb-arrow">→</span>
+                            <span class="kb-arrow">→</span>
+                            <span class="kb-arrow">→</span>
+                            <span class="kb-arrow">→</span>
+                        </div>
+                        <div class="kb-database">
+                            <div class="icon">🗄️</div>
+                            <h4>Knowledge Base</h4>
+                        </div>
+                    </div>
+                    <div class="three-column" style="margin-top: 20px;">
+                        <div class="card">
+                            <h4>✅ Great Sources</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Policy documents</li>
+                                <li>Training materials</li>
+                                <li>FAQs & help articles</li>
+                                <li>Process documentation</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>⚠️ Needs Cleaning</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Scanned documents</li>
+                                <li>Complex tables</li>
+                                <li>Image-heavy content</li>
+                                <li>Legacy formats</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>❌ Avoid</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Sensitive personal data</li>
+                                <li>Outdated information</li>
+                                <li>Duplicated content</li>
+                                <li>Raw data dumps</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">10</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>No-Code Solutions</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">Build your copilot without writing code</p>
+                    <div class="tool-cards">
+                        <div class="tool-card">
+                            <div class="icon">🤖</div>
+                            <h4>Custom GPTs</h4>
+                            <p>Upload docs to ChatGPT, create specialized assistant</p>
+                            <span class="tag">Free - $20/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">📚</div>
+                            <h4>NotebookLM</h4>
+                            <p>Google's research assistant with source grounding</p>
+                            <span class="tag">Free</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">💼</div>
+                            <h4>Microsoft Copilot</h4>
+                            <p>Integrates with M365, SharePoint, Teams</p>
+                            <span class="tag">$30/user/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🔮</div>
+                            <h4>Claude Projects</h4>
+                            <p>Upload files, maintain context across chats</p>
+                            <span class="tag">$20/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🌊</div>
+                            <h4>Notion AI</h4>
+                            <p>Q&A over your Notion workspace</p>
+                            <span class="tag">$10/user/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">⚡</div>
+                            <h4>Glean / Guru</h4>
+                            <p>Enterprise knowledge search</p>
+                            <span class="tag">Enterprise</span>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">11</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>Low-Code Platforms</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">More control, minimal coding required</p>
+                    <div class="tool-cards" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="tool-card">
+                            <div class="icon">🦜</div>
+                            <h4>LangFlow</h4>
+                            <p>Visual builder for LangChain pipelines</p>
+                            <span class="tag">Open Source</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🔗</div>
+                            <h4>Flowise</h4>
+                            <p>Drag-and-drop LLM workflow builder</p>
+                            <span class="tag">Open Source</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🏗️</div>
+                            <h4>Dify</h4>
+                            <p>Full RAG platform with API access</p>
+                            <span class="tag">Free tier</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🎯</div>
+                            <h4>Relevance AI</h4>
+                            <p>Build AI tools and agents visually</p>
+                            <span class="tag">Free tier</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">📦</div>
+                            <h4>Stack AI</h4>
+                            <p>Enterprise-ready workflow automation</p>
+                            <span class="tag">From $199/mo</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="icon">🌐</div>
+                            <h4>Voiceflow</h4>
+                            <p>Conversational AI with knowledge base</p>
+                            <span class="tag">Free tier</span>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Best for:</strong> Teams that want customization without hiring developers. Good middle ground between no-code simplicity and full flexibility.
+                    </div>
+                </div>
+            <div class="slide-number">12</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>For Developers</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">Full control, maximum flexibility</p>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Frameworks</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🦜 LangChain</h4>
+                                <p style="font-size: 0.8em;">Most popular RAG framework. Python & JS. Extensive integrations.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🦙 LlamaIndex</h4>
+                                <p style="font-size: 0.8em;">Data framework optimized for RAG. Great for complex document structures.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔧 Haystack</h4>
+                                <p style="font-size: 0.8em;">Production-ready NLP pipelines. Strong enterprise features.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Vector Databases</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🌲 Pinecone</h4>
+                                <p style="font-size: 0.8em;">Managed, serverless. Easiest to start. Free tier available.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎨 Chroma</h4>
+                                <p style="font-size: 0.8em;">Open source, runs locally. Great for development & prototyping.</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔷 Weaviate</h4>
+                                <p style="font-size: 0.8em;">Full-featured, hybrid search. Cloud or self-hosted.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">13</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Real-World Use Cases</h2>
+                    <div class="usecase-matrix">
+                        <div class="usecase-card">
+                            <div class="icon">📋</div>
+                            <h4>HR Policy Bot</h4>
+                            <p>Answer employee questions about benefits, time off, policies</p>
+                            <ul>
+                                <li>"How many vacation days do I have?"</li>
+                                <li>"What's the parental leave policy?"</li>
+                                <li>"How do I submit expenses?"</li>
+                            </ul>
+                        </div>
+                        <div class="usecase-card">
+                            <div class="icon">🎧</div>
+                            <h4>Customer Support</h4>
+                            <p>Help customers find answers without waiting for agents</p>
+                            <ul>
+                                <li>"How do I reset my password?"</li>
+                                <li>"What's your return policy?"</li>
+                                <li>"Track my order #12345"</li>
+                            </ul>
+                        </div>
+                        <div class="usecase-card">
+                            <div class="icon">📚</div>
+                            <h4>Training Assistant</h4>
+                            <p>Help new employees learn processes and systems</p>
+                            <ul>
+                                <li>"How do I submit a PO?"</li>
+                                <li>"What's the code review process?"</li>
+                                <li>"Where do I find templates?"</li>
+                            </ul>
+                        </div>
+                        <div class="usecase-card">
+                            <div class="icon">⚖️</div>
+                            <h4>Compliance Helper</h4>
+                            <p>Navigate regulations and internal policies</p>
+                            <ul>
+                                <li>"What are GDPR requirements for X?"</li>
+                                <li>"Do we need approval for this?"</li>
+                                <li>"What's the audit trail process?"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">14</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content" style="text-align: center;">
+                    <h2>Live Demo Time!</h2>
+                    <div style="font-size: 4em; margin: 30px 0;">🎬</div>
+                    <h3 style="color: var(--accent-green);">Building a Knowledge Base in Real-Time</h3>
+                    <div class="three-column" style="margin-top: 40px;">
+                        <div class="card">
+                            <h4>Step 1</h4>
+                            <p>Upload sample documents</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>Step 2</h4>
+                            <p>Configure the copilot</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-orange);">
+                            <h4>Step 3</h4>
+                            <p>Ask questions & see sources</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>Follow along:</strong> We'll use a free tool so you can try this yourself!
+                    </div>
+                </div>
+            <div class="slide-number">15</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Demo Option 1: Custom GPT</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Steps to Create</h4>
+                            <div class="framework-step">
+                                <span class="step-number">1</span>
+                                <span>Go to ChatGPT → Explore GPTs → Create</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">2</span>
+                                <span>Name your GPT and write instructions</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">3</span>
+                                <span>Upload your documents (up to 20 files)</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">4</span>
+                                <span>Enable "Knowledge" capability</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">5</span>
+                                <span>Test and refine your prompts</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Sample Instructions</h4>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+You are an HR Policy Assistant for [Company Name].
+
+Your role is to:
+- Answer questions about company policies
+- Always cite the specific document and section
+- If unsure, say "I couldn't find that in the documents"
+- Be friendly and professional
+
+When answering:
+1. Quote relevant policy sections
+2. Provide the source document name
+3. Offer to clarify if needed
+
+Never make up policies that aren't in the documents.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">16</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Demo Option 2: NotebookLM</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Why NotebookLM?</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>✅ <strong>Free</strong> (Google account required)</li>
+                                <li>✅ Always cites sources with highlights</li>
+                                <li>✅ Generates audio summaries (podcasts!)</li>
+                                <li>✅ Create study guides & FAQs</li>
+                                <li>✅ No data used for training</li>
+                            </ul>
+                            <div class="tip-box" style="margin-top: 20px;">
+                                <strong>Best for:</strong> Research, document analysis, creating summaries from multiple sources
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Getting Started</h4>
+                            <div class="framework-step">
+                                <span class="step-number">1</span>
+                                <span>Go to notebooklm.google.com</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">2</span>
+                                <span>Create a new notebook</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">3</span>
+                                <span>Upload sources (PDFs, docs, URLs)</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">4</span>
+                                <span>Start asking questions!</span>
+                            </div>
+                            <div class="framework-step">
+                                <span class="step-number">5</span>
+                                <span>Click citations to see original text</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">17</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>Writing Effective System Prompts</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">The instructions that define your copilot's behavior</p>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: #ff6b6b;">❌ Weak Prompt</h4>
+                            <div class="prompt-example">
+You are a helpful assistant. Answer questions about our company.
+                            </div>
+                            <p style="font-size: 0.8em; color: #888;">Too vague - AI will make things up</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">✅ Strong Prompt</h4>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+You are a Customer Service Assistant for TechCorp.
+
+RULES:
+1. ONLY answer from the provided documents
+2. ALWAYS cite the source document
+3. If info isn't in the docs, say: "I don't have that information. Please contact support@techcorp.com"
+4. Never speculate or make up information
+
+FORMAT your answers:
+- Start with a direct answer
+- Quote relevant sections
+- End with "Source: [document name]"
+
+TONE: Professional, friendly, concise
+                            </div>
+                        </div>
+                    </div>
+                    <div class="warning-box">
+                        <strong>Key Principle:</strong> Be explicit about what the AI should NOT do. Prevent hallucinations by requiring citations.
+                    </div>
+                </div>
+            <div class="slide-number">18</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>Handling Edge Cases</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">Prepare your copilot for tricky situations</p>
+                    <div class="three-column">
+                        <div class="card">
+                            <h4>🤷 "I Don't Know"</h4>
+                            <p style="font-size: 0.85em;">Train it to admit gaps:</p>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+"If you cannot find the answer in the provided documents, respond: 'I couldn't find that information in our knowledge base. Please contact [team] for help.'"
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>🔀 Ambiguous Questions</h4>
+                            <p style="font-size: 0.85em;">Ask for clarification:</p>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+"If a question is ambiguous, ask a clarifying question before answering. Example: 'Are you asking about the US or UK policy?'"
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>⚠️ Sensitive Topics</h4>
+                            <p style="font-size: 0.85em;">Redirect appropriately:</p>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+"For questions about salaries, performance reviews, or personal matters, direct users to HR: 'Please contact HR directly at hr@company.com for this sensitive matter.'"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Pro Tip:</strong> Test your copilot with edge cases before launch. Try to break it—then fix the prompts.
+                    </div>
+                </div>
+            <div class="slide-number">19</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>Measuring Success</h2>
+                    <p style="text-align: center; margin-bottom: 20px;">How do you know if your copilot is working?</p>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Key Metrics</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📊 Usage Rate</h4>
+                                <p style="font-size: 0.85em;">How many people are using it? Increasing over time?</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>✅ Resolution Rate</h4>
+                                <p style="font-size: 0.85em;">% of questions answered without human escalation</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>👍 Satisfaction Score</h4>
+                                <p style="font-size: 0.85em;">Thumbs up/down feedback on responses</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>⏱️ Time Saved</h4>
+                                <p style="font-size: 0.85em;">Compare to previous support ticket volume</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Warning Signs</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>⚠️ High escalation rate → improve content</li>
+                                <li>⚠️ Low usage → promote better, simplify UI</li>
+                                <li>⚠️ Complaints about wrong answers → review sources</li>
+                                <li>⚠️ Same questions repeatedly → content gap</li>
+                            </ul>
+                            <div class="tip-box" style="margin-top: 20px;">
+                                <strong>Quick Win:</strong> Add a feedback button. Review negative feedback weekly to improve.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">20</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Security & Privacy Considerations</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Questions to Ask</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>Where is my data stored?</li>
+                                <li>Is it used to train AI models?</li>
+                                <li>Who has access to conversations?</li>
+                                <li>Can we delete data on request?</li>
+                                <li>Is the service GDPR compliant?</li>
+                                <li>What about SOC 2 / ISO 27001?</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Best Practices</h4>
+                            <div class="tip-box">
+                                <strong>✅ Do:</strong>
+                                <ul style="font-size: 0.85em; margin: 5px 0;">
+                                    <li>Use enterprise tiers with data protection</li>
+                                    <li>Review vendor security documentation</li>
+                                    <li>Involve your security/legal team</li>
+                                    <li>Classify content before uploading</li>
+                                </ul>
+                            </div>
+                            <div class="warning-box">
+                                <strong>❌ Don't:</strong>
+                                <ul style="font-size: 0.85em; margin: 5px 0;">
+                                    <li>Upload PII or sensitive data</li>
+                                    <li>Use free tiers for confidential docs</li>
+                                    <li>Skip the vendor security review</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">21</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Common Pitfalls to Avoid</h2>
+                    <div class="three-column">
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>🗑️ Bad Data</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Outdated documents</li>
+                                <li>Duplicate content</li>
+                                <li>Poor formatting</li>
+                                <li>Inconsistent info</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: var(--accent-green); margin-top: 10px;"><strong>Fix:</strong> Audit and clean before uploading</p>
+                        </div>
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>📏 Wrong Chunks</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Too small = missing context</li>
+                                <li>Too large = irrelevant noise</li>
+                                <li>Breaking mid-sentence</li>
+                                <li>Losing document structure</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: var(--accent-green); margin-top: 10px;"><strong>Fix:</strong> Test different chunk sizes</p>
+                        </div>
+                        <div class="card" style="border-left-color: #ff6b6b;">
+                            <h4>🎯 Scope Creep</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Trying to do everything</li>
+                                <li>Too many document types</li>
+                                <li>Unclear purpose</li>
+                                <li>No success metrics</li>
+                            </ul>
+                            <p style="font-size: 0.75em; color: var(--accent-green); margin-top: 10px;"><strong>Fix:</strong> Start small, expand gradually</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Golden Rule:</strong> Start with ONE use case, ONE document set, measure success, then expand.
+                    </div>
+                </div>
+            <div class="slide-number">22</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Your Getting Started Checklist</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Week 1: Plan</h4>
+                            <div class="exercise-box" style="border-color: var(--itag-blue);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Identify your use case (start with ONE)<br>
+                                    ☐ List the questions people ask most<br>
+                                    ☐ Inventory your existing documents<br>
+                                    ☐ Choose a tool (start simple!)<br>
+                                    ☐ Get stakeholder buy-in
+                                </p>
+                            </div>
+                            <h4 style="color: var(--itag-light); margin-top: 20px;">Week 2: Build</h4>
+                            <div class="exercise-box" style="border-color: var(--itag-blue);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Clean and organize documents<br>
+                                    ☐ Upload to your chosen platform<br>
+                                    ☐ Write system prompts<br>
+                                    ☐ Test with sample questions<br>
+                                    ☐ Refine based on results
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Week 3: Pilot</h4>
+                            <div class="exercise-box" style="border-color: var(--accent-green);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Launch with small test group<br>
+                                    ☐ Gather feedback actively<br>
+                                    ☐ Track usage metrics<br>
+                                    ☐ Fix issues quickly<br>
+                                    ☐ Document what works
+                                </p>
+                            </div>
+                            <h4 style="color: var(--accent-green); margin-top: 20px;">Week 4: Scale</h4>
+                            <div class="exercise-box" style="border-color: var(--accent-green);">
+                                <p style="font-size: 0.85em;">
+                                    ☐ Expand to broader audience<br>
+                                    ☐ Add more content (carefully)<br>
+                                    ☐ Set up ongoing maintenance<br>
+                                    ☐ Plan next use case<br>
+                                    ☐ Celebrate wins! 🎉
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">23</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content">
+                    <h2>Hands-On Exercise</h2>
+                    <div style="text-align: center; font-size: 2em; margin: 20px 0;">✍️</div>
+                    <div class="exercise-box">
+                        <h4>Design Your Copilot (5 minutes)</h4>
+                        <p>Answer these questions for YOUR organization:</p>
+                        <div class="two-column" style="margin-top: 15px;">
+                            <div>
+                                <p><strong>1. Use Case:</strong><br>
+                                What questions do people ask repeatedly?<br>
+                                <span style="color: #888;">Example: "How do I submit an expense report?"</span></p>
+
+                                <p><strong>2. Documents:</strong><br>
+                                What content would answer these questions?<br>
+                                <span style="color: #888;">Example: Expense policy PDF, process guide</span></p>
+                            </div>
+                            <div>
+                                <p><strong>3. Users:</strong><br>
+                                Who would benefit from this copilot?<br>
+                                <span style="color: #888;">Example: All employees, new hires</span></p>
+
+                                <p><strong>4. Tool:</strong><br>
+                                What tool makes sense for your situation?<br>
+                                <span style="color: #888;">Consider: budget, technical skills, security</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Share with your neighbor:</strong> What did you come up with? Any common themes?
+                    </div>
+                </div>
+            <div class="slide-number">24</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Resources & Next Steps</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">Free Tools to Try Today</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📓 NotebookLM</h4>
+                                <p style="font-size: 0.8em;">notebooklm.google.com</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🤖 Custom GPTs</h4>
+                                <p style="font-size: 0.8em;">chat.openai.com/create</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎯 Claude Projects</h4>
+                                <p style="font-size: 0.8em;">claude.ai (Pro plan)</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🔗 Flowise</h4>
+                                <p style="font-size: 0.8em;">flowiseai.com (open source)</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-green);">Learn More</h4>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>📚 Documentation</h4>
+                                <p style="font-size: 0.8em;">LangChain docs, LlamaIndex guides</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎥 Video Tutorials</h4>
+                                <p style="font-size: 0.8em;">YouTube: "RAG tutorial", "Custom GPT"</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>💬 Communities</h4>
+                                <p style="font-size: 0.8em;">r/LocalLLaMA, LangChain Discord</p>
+                            </div>
+                            <div class="card" style="margin: 10px 0;">
+                                <h4>🎓 ITAG Skillnet</h4>
+                                <p style="font-size: 0.8em;">More AI workshops coming soon!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">25</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Key Takeaways</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--accent-green);">1</span>
+                            <span><strong>RAG is your friend</strong> — It's faster, cheaper, and more practical than fine-tuning for most use cases</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--itag-blue);">2</span>
+                            <span><strong>Quality content matters</strong> — Clean, organized documents = better answers</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--accent-orange);">3</span>
+                            <span><strong>Start simple</strong> — Custom GPTs or NotebookLM today, more complex tools later</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: var(--accent-purple);">4</span>
+                            <span><strong>Iterate constantly</strong> — Test, gather feedback, improve, repeat</span>
+                        </div>
+                        <div class="framework-step" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <span class="step-number" style="background: #ff6b6b;">5</span>
+                            <span><strong>Security first</strong> — Know where your data goes and who can access it</span>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">26</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content" style="text-align: center;">
+                    <h2>Questions & Discussion</h2>
+                    <div style="font-size: 4em; margin: 40px 0;">❓</div>
+                    <h3 style="color: var(--accent-green);">What would YOU build?</h3>
+                    <div class="two-column" style="margin-top: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        <div class="card">
+                            <h4>Think About...</h4>
+                            <p style="font-size: 0.9em;">What's your biggest information bottleneck?</p>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4>Share...</h4>
+                            <p style="font-size: 0.9em;">What use case excites you most?</p>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">27</div>
+        </div>
+        
+        <div class="slide center">
+            <div class="slide-content" style="text-align: center;">
+                    <h2>Thank You!</h2>
+                    <div style="font-size: 3em; margin: 30px 0;">🚀</div>
+                    <h3 style="color: var(--accent-green);">Now go build something amazing!</h3>
+                    <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 15px; display: inline-block;">
+                        <p style="margin: 0 0 10px 0; color: var(--itag-light); font-size: 1.1em;">ITAG Skillnet AI Advantage</p>
+                        <p style="margin: 0; color: #888;">Empowering Irish businesses with AI skills</p>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px; display: inline-block;">
+                        <strong>Remember:</strong> Start small, learn fast, scale what works!
+                    </div>
+                    <p class="itag-logo">ITAG Skillnet | AI Advantage Programme</p>
+                </div>
+            <div class="slide-number">28</div>
+        </div>
+        
+</body>
+</html>

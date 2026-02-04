@@ -1,0 +1,60 @@
+{
+  "steps": [
+    {
+      "step": 1,
+      "time": 0,
+      "duration": 2,
+      "title": "RAG Workflow Overview",
+      "description": "The Vector Store RAG template shows two flows: Load Data (bottom) and Retriever (top)"
+    },
+    {
+      "step": 2,
+      "time": 2,
+      "duration": 2,
+      "title": "Load Data Flow",
+      "description": "This flow loads documents, splits them into chunks, creates embeddings, and stores in a vector database"
+    },
+    {
+      "step": 3,
+      "time": 4,
+      "duration": 2,
+      "title": "File Component",
+      "description": "Select your knowledge documents (PDFs, TXT, etc.) to load into the system"
+    },
+    {
+      "step": 4,
+      "time": 6,
+      "duration": 2,
+      "title": "Split Text Component",
+      "description": "Chunk Size: 1000 characters, Overlap: 200 characters for optimal retrieval"
+    },
+    {
+      "step": 5,
+      "time": 8,
+      "duration": 2,
+      "title": "OpenAI Embeddings",
+      "description": "Convert text chunks into vector representations using text-embedding-3-small"
+    },
+    {
+      "step": 6,
+      "time": 10,
+      "duration": 2,
+      "title": "Language Model",
+      "description": "GPT-4o-mini generates answers based on retrieved context (also supports GPT-4, o1, etc.)"
+    },
+    {
+      "step": 7,
+      "time": 12,
+      "duration": 2,
+      "title": "Playground Chat",
+      "description": "Test your AI Copilot with questions - it retrieves relevant context and generates answers"
+    },
+    {
+      "step": 8,
+      "time": 14,
+      "duration": 2,
+      "title": "Complete RAG Pipeline",
+      "description": "Your AI Copilot is ready! Documents are indexed and retrievable via natural language queries"
+    }
+  ]
+}

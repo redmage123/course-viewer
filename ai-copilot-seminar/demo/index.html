@@ -1,0 +1,2723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your AI Copilot - Interactive Demo</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --accent-purple: #9933ff;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-darker: #0d1117;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --langflow-blue: #3b82f6;
+            --langflow-purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            touch-action: pan-y;
+        }
+
+        /* Prevent browser zoom on pinch/wheel, allow only Ctrl+wheel */
+        html {
+            touch-action: pan-y;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #2d3a4f 100%);
+            border-radius: 16px;
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(77, 166, 255, 0.1), transparent);
+            animation: headerGlow 8s linear infinite;
+        }
+
+        @keyframes headerGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        header h1 {
+            color: var(--itag-light);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .typewriter-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.1em;
+            background: var(--itag-light);
+            margin-left: 2px;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Animated text word by word */
+        .animate-text .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease-out;
+        }
+
+        .animate-text .word.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .progress-step:hover {
+            transform: scale(1.05);
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 3px solid #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-step.active .step-circle {
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            border-color: var(--itag-light);
+            transform: scale(1.15);
+            box-shadow: 0 0 25px rgba(77, 166, 255, 0.5);
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(77, 166, 255, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(77, 166, 255, 0.8); }
+        }
+
+        .progress-step.completed .step-circle {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            animation: completeBounce 0.5s ease-out;
+        }
+
+        @keyframes completeBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .step-line {
+            width: 60px;
+            height: 3px;
+            background: #475569;
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-step.completed .step-line {
+            background: var(--accent-green);
+        }
+
+        .step-label {
+            position: absolute;
+            top: 60px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            text-align: center;
+            width: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s;
+        }
+
+        .progress-step.active .step-label {
+            color: var(--itag-light);
+            font-weight: 600;
+        }
+
+        /* Step Content */
+        .step-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .step-content.active {
+            display: block;
+            animation: stepEnter 0.6s ease-out forwards;
+        }
+
+        @keyframes stepEnter {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-panel {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-header {
+            background: linear-gradient(135deg, #1a2332 0%, #243044 100%);
+            padding: 25px 30px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .step-header h2 {
+            color: var(--itag-light);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .step-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .step-body {
+            padding: 30px;
+        }
+
+        /* Langflow Mockup */
+        .langflow-mockup {
+            background: var(--bg-darker);
+            border-radius: 12px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .mockup-toolbar {
+            background: #1a1f2e;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .mockup-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot.red { background: #ff5f57; }
+        .mockup-dot.yellow { background: #ffbd2e; }
+        .mockup-dot.green { background: #28c840; }
+
+        .mockup-title {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .mockup-canvas {
+            padding: 30px;
+            min-height: 300px;
+        }
+
+        /* Welcome screen animation */
+        .welcome-content {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .welcome-content.animate {
+            animation: welcomeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes welcomeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .new-project-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--langflow-blue), var(--langflow-purple));
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .new-project-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        /* Screencast Video Player */
+        .screencast-container {
+            position: relative;
+            width: 100%;
+            background: #0d1117;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+        }
+
+        /* Langflow Canvas Simulation */
+        .langflow-canvas {
+            width: 100%;
+            min-height: 380px;
+            background:
+                linear-gradient(rgba(30, 41, 59, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 41, 59, 0.5) 1px, transparent 1px),
+                linear-gradient(135deg, #0d1117 0%, #111827 100%);
+            background-size: 20px 20px, 20px 20px, 100% 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Langflow Node Styles */
+        .lf-node {
+            position: absolute;
+            background: #1e293b;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            width: 130px;
+            font-size: 11px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .lf-node.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .lf-node.active {
+            border-color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .lf-node-header {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            padding: 10px 15px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lf-node.type-loader .lf-node-header { background: linear-gradient(135deg, #10b981, #059669); }
+        .lf-node.type-splitter .lf-node-header { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .lf-node.type-embedding .lf-node-header { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .lf-node.type-vector .lf-node-header { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .lf-node.type-retriever .lf-node-header { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .lf-node.type-llm .lf-node-header { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .lf-node.type-chat .lf-node-header { background: linear-gradient(135deg, #22c55e, #16a34a); }
+
+        .lf-node-icon {
+            font-size: 1.2rem;
+        }
+
+        .lf-node-title {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .lf-node-body {
+            padding: 12px 15px;
+        }
+
+        .lf-node-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #334155;
+            font-size: 0.75rem;
+        }
+
+        .lf-node-field:last-child {
+            border-bottom: none;
+        }
+
+        .lf-node-label {
+            color: #94a3b8;
+        }
+
+        .lf-node-value {
+            color: #10b981;
+            font-family: monospace;
+        }
+
+        /* Connection ports */
+        .lf-port {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #475569;
+            border: 2px solid #64748b;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .lf-port.input {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .lf-port.output {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .lf-port.connected {
+            background: #10b981;
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Connection lines */
+        .lf-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .lf-connection {
+            stroke: #3b82f6;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+            transition: stroke-dashoffset 0.8s ease-out;
+        }
+
+        .lf-connection.visible {
+            stroke-dashoffset: 0;
+        }
+
+        .lf-connection.active {
+            stroke: #10b981;
+            filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.6));
+        }
+
+        /* Data flow animation */
+        .lf-data-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+            opacity: 0;
+        }
+
+        @keyframes flowData {
+            0% { offset-distance: 0%; opacity: 1; }
+            100% { offset-distance: 100%; opacity: 0; }
+        }
+
+        /* Langflow toolbar */
+        .lf-toolbar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+        }
+
+        .lf-toolbar-btn {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: default;
+        }
+
+        .lf-toolbar-btn.active {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* Component sidebar preview */
+        .lf-sidebar-preview {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 15px;
+            width: 200px;
+            z-index: 20;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.4s ease;
+        }
+
+        .lf-sidebar-preview.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .lf-sidebar-title {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .lf-sidebar-component {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+
+        .lf-sidebar-component.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .lf-sidebar-component.dragging {
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Cursor simulation */
+        .lf-cursor {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 2l10 10-5 1-1 5z'/%3E%3C/svg%3E") no-repeat;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .lf-cursor.visible {
+            opacity: 1;
+        }
+
+        /* Status indicator */
+        .lf-status {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            z-index: 20;
+        }
+
+        .lf-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Floating Annotations */
+        .annotation-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .floating-annotation {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--langflow-blue);
+            border-radius: 12px;
+            padding: 15px 20px;
+            max-width: 280px;
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+            pointer-events: auto;
+        }
+
+        .floating-annotation.visible {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .floating-annotation.highlight-green {
+            border-color: var(--accent-green);
+            box-shadow: 0 8px 32px rgba(0, 204, 102, 0.3);
+        }
+
+        .floating-annotation.highlight-purple {
+            border-color: var(--langflow-purple);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+        }
+
+        .floating-annotation.highlight-orange {
+            border-color: var(--accent-orange);
+            box-shadow: 0 8px 32px rgba(255, 153, 51, 0.3);
+        }
+
+        .annotation-step {
+            display: inline-block;
+            background: var(--langflow-blue);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .floating-annotation.highlight-green .annotation-step {
+            background: var(--accent-green);
+        }
+
+        .floating-annotation.highlight-purple .annotation-step {
+            background: var(--langflow-purple);
+        }
+
+        .floating-annotation.highlight-orange .annotation-step {
+            background: var(--accent-orange);
+        }
+
+        .annotation-title {
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .annotation-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .annotation-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .annotation-arrow.left {
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 12px solid var(--langflow-blue);
+        }
+
+        .annotation-arrow.right {
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 12px solid var(--langflow-blue);
+        }
+
+        .annotation-arrow.top {
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 12px solid var(--langflow-blue);
+        }
+
+        .annotation-arrow.bottom {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 12px solid var(--langflow-blue);
+        }
+
+        /* Screencast Controls - Minimal */
+        .screencast-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px 20px;
+            background: #161b22;
+            border-top: 1px solid #30363d;
+        }
+
+        .screencast-nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid #475569;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .screencast-nav-btn:hover {
+            border-color: var(--langflow-blue);
+            background: rgba(59, 130, 246, 0.15);
+            transform: scale(1.05);
+        }
+
+        .screencast-nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .screencast-play-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--langflow-blue), var(--langflow-purple));
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .screencast-play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        .screencast-step-indicator {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            border: 1px solid #475569;
+        }
+
+        /* Document Cards */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .doc-card {
+            background: var(--bg-darker);
+            border: 2px solid #334155;
+            border-radius: 10px;
+            padding: 18px;
+            transition: all 0.4s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .doc-card.visible {
+            animation: cardSlideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes cardSlideIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .doc-card.added {
+            border-color: var(--accent-green);
+            background: rgba(0, 204, 102, 0.1);
+        }
+
+        .doc-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .doc-card-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .doc-card:hover .doc-card-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .doc-card h4 {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .doc-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .doc-card .check {
+            color: var(--accent-green);
+            margin-left: auto;
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .doc-card.added .check {
+            animation: checkPop 0.4s ease-out forwards;
+        }
+
+        @keyframes checkPop {
+            0% { opacity: 0; transform: scale(0) rotate(-180deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        /* File upload box */
+        .file-upload-box {
+            background: white;
+            border-radius: 10px;
+            padding: 25px 40px;
+            text-align: center;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            animation: uploadBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes uploadBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .file-counter {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--langflow-blue);
+            margin-right: 5px;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--langflow-blue), var(--accent-green));
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        /* Config Panel */
+        .config-panel {
+            background: var(--bg-darker);
+            border-radius: 10px;
+            border: 1px solid #334155;
+            padding: 20px;
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .config-panel.visible {
+            animation: configSlide 0.5s ease-out forwards;
+        }
+
+        @keyframes configSlide {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .config-title {
+            color: var(--langflow-blue);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
+            opacity: 0;
+        }
+
+        .config-row.visible {
+            animation: rowFade 0.4s ease-out forwards;
+        }
+
+        @keyframes rowFade {
+            to { opacity: 1; }
+        }
+
+        .config-row:last-child {
+            border-bottom: none;
+        }
+
+        .config-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .config-value {
+            background: var(--bg-card);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            font-family: monospace;
+        }
+
+        /* Info & Tip Boxes */
+        .info-box, .tip-box {
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .info-box.visible, .tip-box.visible {
+            animation: boxReveal 0.5s ease-out forwards;
+        }
+
+        @keyframes boxReveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--langflow-blue);
+        }
+
+        .info-box h4 {
+            color: var(--langflow-blue);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .tip-box {
+            background: rgba(0, 204, 102, 0.1);
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .tip-box h4 {
+            color: var(--accent-green);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-box p, .tip-box p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #475569;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+            border-color: var(--itag-light);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #059669, var(--accent-green));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 204, 102, 0.3);
+            animation: successPulse 2s infinite;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(0, 204, 102, 0.3); }
+            50% { box-shadow: 0 4px 30px rgba(0, 204, 102, 0.6); }
+        }
+
+        /* Demo Container */
+        .demo-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Pipeline Panel */
+        .pipeline-panel {
+            background: var(--bg-darker);
+            border-radius: 12px;
+            border: 1px solid #334155;
+            padding: 15px;
+        }
+
+        .pipeline-title {
+            color: var(--langflow-purple);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .pipeline-node {
+            background: var(--bg-card);
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pipeline-node.active {
+            border-color: var(--accent-green);
+        }
+
+        .pipeline-node.processing {
+            border-color: var(--accent-orange);
+        }
+
+        .pipeline-node.processing::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 153, 51, 0.3), transparent);
+            animation: dataFlow 0.8s ease-in-out infinite;
+        }
+
+        @keyframes dataFlow {
+            to { left: 100%; }
+        }
+
+        .pipeline-node-icon {
+            font-size: 1.1rem;
+        }
+
+        .pipeline-node-status {
+            margin-left: auto;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #475569;
+            transition: all 0.3s;
+        }
+
+        .pipeline-node-status.ready {
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .pipeline-node-status.working {
+            background: var(--accent-orange);
+            animation: statusPulse 0.5s infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        .pipeline-connector {
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(180deg, var(--langflow-blue), var(--langflow-purple));
+            margin: 0 auto 8px;
+            position: relative;
+        }
+
+        .pipeline-connector.active::after {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: -4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-orange);
+            box-shadow: 0 0 10px var(--accent-orange);
+            animation: flowDown 0.5s ease-in-out infinite;
+        }
+
+        @keyframes flowDown {
+            0% { top: -4px; opacity: 1; }
+            100% { top: 15px; opacity: 0; }
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            background: var(--bg-darker);
+            border-radius: 12px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            max-height: 500px;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h4 {
+            font-size: 1rem;
+        }
+
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--accent-green);
+        }
+
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: statusPulse 2s infinite;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 85%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            animation: messageSlideLeft 0.3s ease-out;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+            animation: messageSlideRight 0.3s ease-out;
+        }
+
+        @keyframes messageSlideLeft {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes messageSlideRight {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-content {
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-source {
+            margin-top: 8px;
+            padding: 6px 10px;
+            background: rgba(139, 92, 246, 0.15);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--langflow-purple);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            animation: typing 1.2s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        .suggested-questions {
+            padding: 12px 15px;
+            border-top: 1px solid #334155;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .suggested-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .suggested-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .suggested-btn {
+            background: var(--bg-card);
+            border: 1px solid #475569;
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .suggested-btn:hover {
+            border-color: var(--itag-light);
+            background: rgba(77, 166, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .chat-input-area {
+            padding: 12px 15px;
+            border-top: 1px solid #334155;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-card);
+            border: 2px solid #475569;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--itag-light);
+            box-shadow: 0 0 15px rgba(77, 166, 255, 0.2);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Auto-play indicator */
+        .auto-play-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auto-play-indicator:hover {
+            transform: translateY(-3px);
+        }
+
+        .auto-play-indicator .play-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: statusPulse 1.5s infinite;
+        }
+
+        .auto-play-indicator.paused .play-icon {
+            background: var(--accent-orange);
+            animation: none;
+        }
+
+        @media (max-width: 600px) {
+            .step-label { display: none; }
+            .step-circle { width: 40px; height: 40px; font-size: 0.9rem; }
+            .step-line { width: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Build Your Own AI Copilot</h1>
+            <p id="headerSubtext"></p>
+        </header>
+
+        <div class="progress-steps">
+            <div class="progress-step active" onclick="goToStep(0)">
+                <div class="step-circle">1</div>
+                <div class="step-label">Choose Tool</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="progress-step" onclick="goToStep(1)">
+                <div class="step-circle">2</div>
+                <div class="step-label">Add Documents</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="progress-step" onclick="goToStep(2)">
+                <div class="step-circle">3</div>
+                <div class="step-label">Build Flow</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="progress-step" onclick="goToStep(3)">
+                <div class="step-circle">4</div>
+                <div class="step-label">Configure</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="progress-step" onclick="goToStep(4)">
+                <div class="step-circle">5</div>
+                <div class="step-label">Connect LLM</div>
+            </div>
+            <div class="step-line"></div>
+            <div class="progress-step" onclick="goToStep(5)">
+                <div class="step-circle">✓</div>
+                <div class="step-label">Try It!</div>
+            </div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-content active" id="step0">
+            <div class="step-panel">
+                <div class="step-header">
+                    <h2 class="animate-text" data-text="📍 Step 1: Choose a No-Code AI Builder"></h2>
+                    <p class="animate-text" data-text="We'll use Langflow - a free, visual tool for building AI applications without writing code."></p>
+                </div>
+                <div class="step-body">
+                    <div class="langflow-mockup">
+                        <div class="mockup-toolbar">
+                            <div class="mockup-dots">
+                                <div class="mockup-dot red"></div>
+                                <div class="mockup-dot yellow"></div>
+                                <div class="mockup-dot green"></div>
+                            </div>
+                            <div class="mockup-title">Langflow - Building a RAG Pipeline with Chroma</div>
+                        </div>
+                        <div class="mockup-canvas" style="min-height: 220px; display: flex; align-items: center; justify-content: center;">
+                            <div class="welcome-content" id="welcomeContent">
+                                <div class="welcome-icon">🔗</div>
+                                <h3 style="color: var(--text-primary); margin-bottom: 10px;">Welcome to Langflow</h3>
+                                <p style="color: var(--text-secondary); margin-bottom: 20px;">Create AI applications by connecting visual components</p>
+                                <div class="new-project-btn">+ New Project</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" id="infoBox1">
+                        <h4>💡 Why Langflow?</h4>
+                        <p class="animate-text" data-text="Free cloud version - No installation needed, just sign up. Visual drag-and-drop - Connect components like building blocks. Pre-built templates - Start with RAG, chatbot, or agent templates. One-click deploy - Get an API endpoint instantly."></p>
+                    </div>
+
+                    <div class="tip-box" id="tipBox1">
+                        <h4>🔧 Other Options</h4>
+                        <p class="animate-text" data-text="Similar tools you can try: Flowise, Dify, n8n"></p>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <div></div>
+                        <button class="btn btn-primary" onclick="nextStep()">Next: Add Documents <span>→</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-content" id="step1">
+            <div class="step-panel">
+                <div class="step-header">
+                    <h2 class="animate-text" data-text="📄 Step 2: Add Your Knowledge Documents"></h2>
+                    <p class="animate-text" data-text="Upload the documents you want your AI copilot to learn from. This becomes its knowledge base."></p>
+                </div>
+                <div class="step-body">
+                    <p class="animate-text" data-text="For our demo, we're adding 4 company documents:" style="color: var(--text-secondary); margin-bottom: 20px;"></p>
+
+                    <div class="doc-grid">
+                        <div class="doc-card" id="doc1">
+                            <div class="doc-card-header">
+                                <span class="doc-card-icon">📋</span>
+                                <h4>HR Policies</h4>
+                                <span class="check">✓</span>
+                            </div>
+                            <p>Leave policies, remote work, expenses</p>
+                        </div>
+                        <div class="doc-card" id="doc2">
+                            <div class="doc-card-header">
+                                <span class="doc-card-icon">❓</span>
+                                <h4>Product FAQ</h4>
+                                <span class="check">✓</span>
+                            </div>
+                            <p>CloudSync features, pricing, support</p>
+                        </div>
+                        <div class="doc-card" id="doc3">
+                            <div class="doc-card-header">
+                                <span class="doc-card-icon">📘</span>
+                                <h4>Company Handbook</h4>
+                                <span class="check">✓</span>
+                            </div>
+                            <p>Values, benefits, onboarding</p>
+                        </div>
+                        <div class="doc-card" id="doc4">
+                            <div class="doc-card-header">
+                                <span class="doc-card-icon">⚙️</span>
+                                <h4>Technical Docs</h4>
+                                <span class="check">✓</span>
+                            </div>
+                            <p>API authentication, SDKs, webhooks</p>
+                        </div>
+                    </div>
+
+                    <div class="langflow-mockup">
+                        <div class="mockup-toolbar">
+                            <div class="mockup-dots">
+                                <div class="mockup-dot red"></div>
+                                <div class="mockup-dot yellow"></div>
+                                <div class="mockup-dot green"></div>
+                            </div>
+                            <div class="mockup-title">Langflow - File Upload</div>
+                        </div>
+                        <div class="mockup-canvas" style="min-height: 150px; display: flex; align-items: center; justify-content: center;">
+                            <div class="file-upload-box">
+                                <div class="upload-icon">📁</div>
+                                <p style="color: #374151; font-weight: 600;"><span class="file-counter" id="fileCounter">0</span> files uploaded</p>
+                                <p style="color: #6b7280; font-size: 0.85rem;" id="fileNames">Waiting for files...</p>
+                                <div class="upload-progress"><div class="upload-progress-bar" id="uploadProgress"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box" id="tipBox2">
+                        <h4>📝 Best Practices</h4>
+                        <p class="animate-text" data-text="Use clear headings and structure. Remove outdated info. Start with 3-5 key documents. Plain text or PDF works best."></p>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()"><span>←</span> Back</button>
+                        <button class="btn btn-primary" onclick="nextStep()">Next: Build Flow <span>→</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Build Flow - SCREENCAST WITH ANNOTATIONS -->
+        <div class="step-content" id="step2">
+            <div class="step-panel">
+                <div class="step-header">
+                    <h2 class="animate-text" data-text="🔗 Step 3: Build the RAG Pipeline"></h2>
+                    <p class="animate-text" data-text="Watch this screencast as we build a Retrieval-Augmented Generation (RAG) flow in Langflow."></p>
+                </div>
+                <div class="step-body">
+                    <div class="langflow-mockup">
+                        <div class="mockup-toolbar">
+                            <div class="mockup-dots">
+                                <div class="mockup-dot red"></div>
+                                <div class="mockup-dot yellow"></div>
+                                <div class="mockup-dot green"></div>
+                            </div>
+                            <div class="mockup-title">Langflow - Building a RAG Pipeline</div>
+                        </div>
+
+                        <!-- Step-by-Step Screenshot Gallery -->
+                        <div class="screenshot-gallery" id="screenshotGallery">
+                            <div class="gallery-container" style="position: relative; width: 100%; background: #1a1a2e; border-radius: 8px; overflow: hidden;">
+                                <!-- Screenshot Display -->
+                                <div class="screenshot-display" style="position: relative;">
+                                    <img id="galleryImage" src="screenshots/step1-flows-page.png" alt="Step 1: Langflow Flows Page" style="width: 100%; height: auto; display: block; border-radius: 8px 8px 0 0;">
+                                </div>
+
+                                <!-- Annotation Box (below screenshot) -->
+                                <div id="galleryAnnotation" style="
+                                    background: #000000;
+                                    border: 2px solid var(--itag-light);
+                                    border-top: none;
+                                    border-radius: 0 0 12px 12px;
+                                    padding: 15px 20px;
+                                    text-align: left;
+                                ">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                        <span id="galleryStepBadge" style="
+                                            background: var(--itag-blue);
+                                            color: white;
+                                            padding: 4px 12px;
+                                            border-radius: 20px;
+                                            font-size: 0.8rem;
+                                            font-weight: bold;
+                                        ">Step 1 of 8</span>
+                                    </div>
+                                    <div id="galleryTitle" style="color: #ffffff; font-size: 1.1rem; font-weight: bold; margin-bottom: 6px;">Open Langflow and Create New Flow</div>
+                                    <div id="galleryDescription" style="color: #e0e0e0; font-size: 0.9rem; line-height: 1.5;">Navigate to Langflow and click "New Flow" to start building your RAG pipeline.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gallery Navigation Controls -->
+                        <div class="screencast-controls">
+                            <button class="screencast-nav-btn" id="galleryPrevBtn" onclick="prevGalleryStep()" title="Previous Step">◀</button>
+                            <button class="screencast-play-btn" id="galleryPlayBtn" onclick="toggleGalleryAutoPlay()" title="Auto-play">▶️</button>
+                            <button class="screencast-nav-btn" id="galleryNextBtn" onclick="nextGalleryStep()" title="Next Step">▶</button>
+                        </div>
+                        <span class="screencast-step-indicator" id="galleryStepIndicator">Step 1 of 8</span>
+
+                        <!-- Thumbnail Strip -->
+                        <div class="thumbnail-strip" style="display: flex; gap: 8px; margin-top: 15px; overflow-x: auto; padding: 10px 0;">
+                            <div class="thumbnail active" onclick="goToGalleryStep(0)" style="cursor: pointer; border: 2px solid var(--itag-light); border-radius: 6px; overflow: hidden; min-width: 80px;">
+                                <img src="screenshots/step1-flows-page.png" alt="Step 1" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="thumbnail" onclick="goToGalleryStep(1)" style="cursor: pointer; border: 2px solid transparent; border-radius: 6px; overflow: hidden; min-width: 80px; opacity: 0.6;">
+                                <img src="screenshots/step2-select-template.png" alt="Step 2" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="thumbnail" onclick="goToGalleryStep(2)" style="cursor: pointer; border: 2px solid transparent; border-radius: 6px; overflow: hidden; min-width: 80px; opacity: 0.6;">
+                                <img src="screenshots/step3-initial-rag-template.png" alt="Step 3" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="thumbnail" onclick="goToGalleryStep(3)" style="cursor: pointer; border: 2px solid transparent; border-radius: 6px; overflow: hidden; min-width: 80px; opacity: 0.6;">
+                                <img src="screenshots/step4-select-astra-db.png" alt="Step 4" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="thumbnail" onclick="goToGalleryStep(4)" style="cursor: pointer; border: 2px solid transparent; border-radius: 6px; overflow: hidden; min-width: 80px; opacity: 0.6;">
+                                <img src="screenshots/step5-astra-db-removed.png" alt="Step 5" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="thumbnail" onclick="goToGalleryStep(5)" style="cursor: pointer; border: 2px solid transparent; border-radius: 6px; overflow: hidden; min-width: 80px; opacity: 0.6;">
+                                <img src="screenshots/step6-search-chroma.png" alt="Step 6" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="thumbnail" onclick="goToGalleryStep(6)" style="cursor: pointer; border: 2px solid transparent; border-radius: 6px; overflow: hidden; min-width: 80px; opacity: 0.6;">
+                                <img src="screenshots/step7-chroma-added.png" alt="Step 7" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="thumbnail" onclick="goToGalleryStep(7)" style="cursor: pointer; border: 2px solid transparent; border-radius: 6px; overflow: hidden; min-width: 80px; opacity: 0.6;">
+                                <img src="screenshots/step8-final-hr-assistant.png" alt="Step 8" style="width: 80px; height: 50px; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" id="infoBox3">
+                        <h4>🔄 How RAG Works</h4>
+                        <p class="animate-text" data-text="1. INDEX: Documents → Split into chunks → Convert to vectors → Store in database. 2. QUERY: User question → Find similar chunks → Send to LLM with context → Generate answer."></p>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()"><span>←</span> Back</button>
+                        <button class="btn btn-primary" onclick="nextStep()">Next: Configure <span>→</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-content" id="step3">
+            <div class="step-panel">
+                <div class="step-header">
+                    <h2 class="animate-text" data-text="⚙️ Step 4: Configure the Components"></h2>
+                    <p class="animate-text" data-text="Click each component to configure its settings. Here are the key parameters:"></p>
+                </div>
+                <div class="step-body">
+                    <div class="config-panel" id="configPanel1">
+                        <div class="config-title">✂️ Text Splitter Settings</div>
+                        <div class="config-row"><span class="config-label">Chunk Size</span><span class="config-value counting" data-target="500" data-suffix=" characters">0 characters</span></div>
+                        <div class="config-row"><span class="config-label">Chunk Overlap</span><span class="config-value counting" data-target="50" data-suffix=" characters">0 characters</span></div>
+                        <div class="config-row"><span class="config-label">Separator</span><span class="config-value">\n\n (paragraphs)</span></div>
+                    </div>
+
+                    <div class="config-panel" id="configPanel2">
+                        <div class="config-title">💾 Vector Store Settings</div>
+                        <div class="config-row"><span class="config-label">Store Type</span><span class="config-value">Chroma (in-memory)</span></div>
+                        <div class="config-row"><span class="config-label">Collection Name</span><span class="config-value">techflow_docs</span></div>
+                    </div>
+
+                    <div class="config-panel" id="configPanel3">
+                        <div class="config-title">🔍 Retriever Settings</div>
+                        <div class="config-row"><span class="config-label">Search Type</span><span class="config-value">Similarity</span></div>
+                        <div class="config-row"><span class="config-label">Top K Results</span><span class="config-value counting" data-target="3" data-suffix="">0</span></div>
+                    </div>
+
+                    <div class="tip-box" id="tipBox4">
+                        <h4>💡 Tuning Tips</h4>
+                        <p class="animate-text" data-text="Smaller chunks (300-500) = Better for specific facts. Larger chunks (800-1000) = Better for context. More overlap = Captures info across boundaries. Higher Top K = More context but slower."></p>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()"><span>←</span> Back</button>
+                        <button class="btn btn-primary" onclick="nextStep()">Next: Connect LLM <span>→</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-content" id="step4">
+            <div class="step-panel">
+                <div class="step-header">
+                    <h2 class="animate-text" data-text="🧠 Step 5: Connect the Language Model"></h2>
+                    <p class="animate-text" data-text="Choose and configure the LLM that will generate answers based on retrieved context."></p>
+                </div>
+                <div class="step-body">
+                    <div class="config-panel" id="configPanel4">
+                        <div class="config-title">🧠 LLM Configuration</div>
+                        <div class="config-row"><span class="config-label">Model Provider</span><span class="config-value">OpenAI / Groq / Ollama</span></div>
+                        <div class="config-row"><span class="config-label">Model</span><span class="config-value">gpt-4o-mini</span></div>
+                        <div class="config-row"><span class="config-label">Temperature</span><span class="config-value">0.1 (factual)</span></div>
+                        <div class="config-row"><span class="config-label">Max Tokens</span><span class="config-value counting" data-target="500" data-suffix="">0</span></div>
+                    </div>
+
+                    <div class="config-panel" id="configPanel5">
+                        <div class="config-title">📝 System Prompt</div>
+                        <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;" id="systemPrompt"></div>
+                    </div>
+
+                    <div class="tip-box" id="tipBox5">
+                        <h4>💰 Free LLM Options</h4>
+                        <p class="animate-text" data-text="Groq - Free tier with Llama 3, very fast. Together AI - Free credits for open models. Ollama - Run locally, completely free. HuggingFace - Free inference for many models."></p>
+                    </div>
+
+                    <div class="info-box" id="infoBox5">
+                        <h4>▶️ Ready to Deploy!</h4>
+                        <p class="animate-text" data-text="Click the Play button in Langflow to run your flow. Once all nodes turn green, open the Chat interface to test your copilot!"></p>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()"><span>←</span> Back</button>
+                        <button class="btn btn-success" onclick="nextStep()">🎉 Try the Live Demo! <span>→</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step-content" id="step5">
+            <div class="step-panel">
+                <div class="step-header">
+                    <h2>🎉 Your AI Copilot is Ready!</h2>
+                    <p>This is exactly what your finished copilot looks like. Try asking questions!</p>
+                </div>
+                <div class="step-body">
+                    <div class="demo-container">
+                        <div class="pipeline-panel">
+                            <div class="pipeline-title">🔗 Live Pipeline</div>
+                            <div class="pipeline-node active" id="pn-docs"><span class="pipeline-node-icon">📄</span><span>Documents</span><div class="pipeline-node-status ready"></div></div>
+                            <div class="pipeline-connector" id="pc1"></div>
+                            <div class="pipeline-node active" id="pn-split"><span class="pipeline-node-icon">✂️</span><span>Splitter</span><div class="pipeline-node-status ready"></div></div>
+                            <div class="pipeline-connector" id="pc2"></div>
+                            <div class="pipeline-node active" id="pn-embed"><span class="pipeline-node-icon">🔢</span><span>Embeddings</span><div class="pipeline-node-status ready"></div></div>
+                            <div class="pipeline-connector" id="pc3"></div>
+                            <div class="pipeline-node active" id="pn-store"><span class="pipeline-node-icon">💾</span><span>Vector Store</span><div class="pipeline-node-status ready"></div></div>
+                            <div class="pipeline-connector" id="pc4"></div>
+                            <div class="pipeline-node active" id="pn-retrieve"><span class="pipeline-node-icon">🔍</span><span>Retriever</span><div class="pipeline-node-status ready" id="retriever-status"></div></div>
+                            <div class="pipeline-connector" id="pc5"></div>
+                            <div class="pipeline-node active" id="pn-llm"><span class="pipeline-node-icon">🧠</span><span>LLM</span><div class="pipeline-node-status ready" id="llm-status"></div></div>
+                            <div class="pipeline-connector" id="pc6"></div>
+                            <div class="pipeline-node active" id="pn-chat"><span class="pipeline-node-icon">💬</span><span>Chat</span><div class="pipeline-node-status ready"></div></div>
+                        </div>
+
+                        <div class="chat-panel">
+                            <div class="chat-header"><h4>💬 TechFlow Assistant</h4><div class="chat-status"><div class="chat-status-dot"></div><span>Online</span></div></div>
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="message assistant"><div class="message-content">👋 Hi! I'm the TechFlow Assistant. Ask me about HR policies, CloudSync Pro, company info, or our API!</div></div>
+                            </div>
+                            <div class="suggested-questions">
+                                <div class="suggested-label">Try asking:</div>
+                                <div class="suggested-btns">
+                                    <button class="suggested-btn" onclick="askQuestion('How many vacation days do I get?')">Vacation days?</button>
+                                    <button class="suggested-btn" onclick="askQuestion('What is the remote work policy?')">Remote work?</button>
+                                    <button class="suggested-btn" onclick="askQuestion('What are the company values?')">Company values?</button>
+                                    <button class="suggested-btn" onclick="askQuestion('How do I reset my password?')">Reset password?</button>
+                                </div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question..." onkeypress="handleKeyPress(event)">
+                                <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box visible" style="margin-top: 25px;">
+                        <h4>🚀 What You Learned</h4>
+                        <p>✓ Choose a no-code AI builder (Langflow)<br>✓ Upload and prepare knowledge documents<br>✓ Build a RAG pipeline with visual components<br>✓ Configure chunking, retrieval, and LLM settings<br>✓ Deploy and test your AI copilot</p>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()"><span>←</span> Back</button>
+                        <button class="btn btn-primary" onclick="goToStep(0)">↺ Start Over</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer><p>ITAG Skillnet AI Advantage | Build Your Own AI Copilot Demo</p></footer>
+    </div>
+
+    <div class="auto-play-indicator" id="autoPlayIndicator" onclick="toggleAutoPlay()">
+        <div class="play-icon"></div>
+        <span id="autoPlayText">Auto-play: ON</span>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const totalSteps = 6;
+        let autoPlay = true;
+        let autoPlayTimer = null;
+
+        // Typewriter for header
+        const headerText = "Follow along as we build a knowledge assistant step-by-step using visual no-code tools";
+        let headerIndex = 0;
+
+        function typeHeader() {
+            const el = document.getElementById('headerSubtext');
+            if (headerIndex < headerText.length) {
+                el.innerHTML = headerText.substring(0, headerIndex + 1) + '<span class="typewriter-cursor"></span>';
+                headerIndex++;
+                setTimeout(typeHeader, 25);
+            } else {
+                el.innerHTML = headerText;
+            }
+        }
+
+        // Animate text word by word
+        function animateText(element) {
+            const text = element.getAttribute('data-text');
+            if (!text) return;
+
+            const words = text.split(' ');
+            element.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
+
+            const wordEls = element.querySelectorAll('.word');
+            wordEls.forEach((word, i) => {
+                setTimeout(() => word.classList.add('visible'), i * 80);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            typeHeader();
+            animateStep0();
+
+            // Fix mouse wheel behavior: wheel = scroll, Ctrl+wheel = zoom
+            // Prevent browser zoom on wheel without Ctrl key
+            document.addEventListener('wheel', function(e) {
+                if (e.ctrlKey) {
+                    // Ctrl+wheel: allow browser zoom (don't interfere)
+                    return;
+                }
+                // Non-Ctrl wheel: prevent browser zoom, allow normal scroll
+                // Check if browser is trying to zoom (some browsers zoom on wheel over certain elements)
+                if (e.deltaMode === 0 && Math.abs(e.deltaY) < 50) {
+                    // This might be a trackpad pinch gesture misidentified - let it scroll
+                }
+            }, { passive: true });
+
+            // Prevent Ctrl+wheel zoom at document level to keep consistent behavior
+            // User can still zoom with Ctrl+Plus/Minus or browser menu
+            window.addEventListener('wheel', function(e) {
+                if (!e.ctrlKey) {
+                    // Normal wheel without Ctrl - ensure it scrolls
+                    return;
+                }
+                // With Ctrl held, allow default zoom behavior
+            }, { passive: true });
+        });
+
+        function animateStep0() {
+            setTimeout(() => document.getElementById('welcomeContent').classList.add('animate'), 300);
+            setTimeout(() => {
+                document.getElementById('infoBox1').classList.add('visible');
+                animateText(document.querySelector('#infoBox1 .animate-text'));
+            }, 600);
+            setTimeout(() => {
+                document.getElementById('tipBox1').classList.add('visible');
+                animateText(document.querySelector('#tipBox1 .animate-text'));
+            }, 1200);
+
+            // Animate header text
+            document.querySelectorAll('#step0 .step-header .animate-text').forEach((el, i) => {
+                setTimeout(() => animateText(el), 100 + i * 300);
+            });
+
+            scheduleAutoPlay(8000);
+        }
+
+        function animateStep1() {
+            // Animate header text
+            document.querySelectorAll('#step1 .step-header .animate-text').forEach((el, i) => {
+                setTimeout(() => animateText(el), 100 + i * 300);
+            });
+
+            const docs = ['doc1', 'doc2', 'doc3', 'doc4'];
+            const fileNames = ['hr-policies.txt', 'product-faq.txt', 'handbook.txt', 'technical-docs.txt'];
+
+            docs.forEach((id, i) => {
+                setTimeout(() => {
+                    const card = document.getElementById(id);
+                    card.classList.add('visible');
+                    setTimeout(() => {
+                        card.classList.add('added');
+                        document.getElementById('fileCounter').textContent = i + 1;
+                        document.getElementById('uploadProgress').style.width = ((i + 1) * 25) + '%';
+                        document.getElementById('fileNames').textContent = fileNames.slice(0, i + 1).join(', ');
+                    }, 300);
+                }, 600 + i * 500);
+            });
+
+            setTimeout(() => {
+                document.getElementById('tipBox2').classList.add('visible');
+                animateText(document.querySelector('#tipBox2 .animate-text'));
+            }, 3200);
+
+            scheduleAutoPlay(6000);
+        }
+
+        // Screencast and annotation variables
+        let screencastPlaying = false;
+        let currentAnnotation = 0;
+        let annotationTimer = null;
+        let demoAnimationRunning = false;
+
+        // Annotation timings (in seconds) - adjust based on your screencast
+        const annotationTimings = [
+            { start: 0, end: 8 },      // Step 1: File Loader
+            { start: 8, end: 16 },     // Step 2: Text Splitter
+            { start: 16, end: 24 },    // Step 3: Embeddings
+            { start: 24, end: 32 },    // Step 4: Vector Store
+            { start: 32, end: 40 },    // Step 5: Retriever
+            { start: 40, end: 48 },    // Step 6: LLM
+            { start: 48, end: 56 }     // Step 7: Chat Output
+        ];
+
+        function animateStep2() {
+            // Animate header text
+            document.querySelectorAll('#step2 .step-header .animate-text').forEach((el, i) => {
+                setTimeout(() => animateText(el), 100 + i * 300);
+            });
+
+            // Start the Langflow canvas animation automatically
+            setTimeout(() => {
+                startDemoAnimation();
+            }, 800);
+
+            setTimeout(() => {
+                document.getElementById('infoBox3').classList.add('visible');
+                animateText(document.querySelector('#infoBox3 .animate-text'));
+            }, 2000);
+
+            scheduleAutoPlay(25000); // Longer time for the full animation
+        }
+
+        // Langflow iframe control functions
+        function refreshLangflow() {
+            const iframe = document.getElementById('langflowFrame');
+            if (iframe) {
+                iframe.src = iframe.src;
+            }
+        }
+
+        function toggleLangflowFullscreen() {
+            const iframe = document.getElementById('langflowFrame');
+            if (iframe) {
+                if (iframe.requestFullscreen) {
+                    iframe.requestFullscreen();
+                } else if (iframe.webkitRequestFullscreen) {
+                    iframe.webkitRequestFullscreen();
+                } else if (iframe.msRequestFullscreen) {
+                    iframe.msRequestFullscreen();
+                }
+            }
+        }
+
+        function openLangflowNewTab() {
+            window.open('http://176.9.99.103:7860/flow/8341adf6-da27-4d0d-89d2-18cdf5f2c164', '_blank');
+        }
+
+        // Screenshot Gallery Functions
+        const gallerySteps = [
+            {
+                image: 'screenshots/step1-flows-page.png',
+                title: 'Open Langflow and Create New Flow',
+                description: 'Navigate to Langflow and click "New Flow" to start building your RAG pipeline.'
+            },
+            {
+                image: 'screenshots/step2-select-template.png',
+                title: 'Select Vector Store RAG Template',
+                description: 'Choose the "Vector Store RAG" template from the gallery. This provides a pre-built RAG structure.'
+            },
+            {
+                image: 'screenshots/step3-initial-rag-template.png',
+                title: 'Initial RAG Template',
+                description: 'The template provides a pre-built RAG structure. We\'ll add Chroma as our local vector store.'
+            },
+            {
+                image: 'screenshots/step4-select-astra-db.png',
+                title: 'HR Assistant RAG Workflow',
+                description: 'The complete RAG workflow with Chroma DB as the local vector store - no cloud credentials required.'
+            },
+            {
+                image: 'screenshots/step5-astra-db-removed.png',
+                title: 'Configure Chroma Collection',
+                description: 'Set the collection name to "hr_assistant" to store your HR document embeddings locally.'
+            },
+            {
+                image: 'screenshots/step6-search-chroma.png',
+                title: 'Search for Chroma Component',
+                description: 'Type "chroma" in the search box to find the Chroma DB vector store component.'
+            },
+            {
+                image: 'screenshots/step7-chroma-added.png',
+                title: 'Add Chroma DB to Canvas',
+                description: 'Double-click Chroma DB to add it to the canvas. This local vector store doesn\'t require cloud credentials.'
+            },
+            {
+                image: 'screenshots/step8-final-hr-assistant.png',
+                title: 'Complete HR Assistant Workflow',
+                description: 'The final workflow with Chroma connected. Configure the collection name and connect all the edges.'
+            }
+        ];
+
+        let currentGalleryStep = 0;
+        let galleryAutoPlayInterval = null;
+
+        function updateGallery() {
+            const step = gallerySteps[currentGalleryStep];
+            document.getElementById('galleryImage').src = step.image;
+            document.getElementById('galleryImage').alt = step.title;
+            document.getElementById('galleryStepBadge').textContent = `Step ${currentGalleryStep + 1} of ${gallerySteps.length}`;
+            document.getElementById('galleryTitle').textContent = step.title;
+            document.getElementById('galleryDescription').textContent = step.description;
+            document.getElementById('galleryStepIndicator').textContent = `Step ${currentGalleryStep + 1} of ${gallerySteps.length}`;
+
+            // Update thumbnails
+            const thumbnails = document.querySelectorAll('.thumbnail-strip .thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                if (index === currentGalleryStep) {
+                    thumb.style.border = '2px solid var(--itag-light)';
+                    thumb.style.opacity = '1';
+                } else {
+                    thumb.style.border = '2px solid transparent';
+                    thumb.style.opacity = '0.6';
+                }
+            });
+
+            // Update nav buttons
+            document.getElementById('galleryPrevBtn').disabled = currentGalleryStep === 0;
+            document.getElementById('galleryNextBtn').disabled = currentGalleryStep === gallerySteps.length - 1;
+        }
+
+        function prevGalleryStep() {
+            if (currentGalleryStep > 0) {
+                currentGalleryStep--;
+                updateGallery();
+            }
+        }
+
+        function nextGalleryStep() {
+            if (currentGalleryStep < gallerySteps.length - 1) {
+                currentGalleryStep++;
+                updateGallery();
+            }
+        }
+
+        function goToGalleryStep(index) {
+            currentGalleryStep = index;
+            updateGallery();
+        }
+
+        function toggleGalleryAutoPlay() {
+            const btn = document.getElementById('galleryPlayBtn');
+            if (galleryAutoPlayInterval) {
+                clearInterval(galleryAutoPlayInterval);
+                galleryAutoPlayInterval = null;
+                btn.textContent = '▶️';
+            } else {
+                btn.textContent = '⏸️';
+                galleryAutoPlayInterval = setInterval(() => {
+                    if (currentGalleryStep < gallerySteps.length - 1) {
+                        nextGalleryStep();
+                    } else {
+                        currentGalleryStep = 0;
+                        updateGallery();
+                    }
+                }, 4000);
+            }
+        }
+
+        // Legacy function stubs for compatibility
+        function toggleScreencast() {
+            // No-op for embedded Langflow
+        }
+
+        function prevAnnotation() {
+            // No-op for embedded Langflow
+        }
+
+        function nextAnnotation() {
+            // No-op for embedded Langflow
+        }
+
+        function seekScreencast(event) {
+            const video = document.getElementById('screencastVideo');
+            if (video.readyState === 0) return;
+
+            const progressBar = event.currentTarget;
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (event.clientX - rect.left) / rect.width;
+            video.currentTime = percent * video.duration;
+        }
+
+        function updateScreencastProgress() {
+            const video = document.getElementById('screencastVideo');
+            const progressFill = document.getElementById('screencastProgressFill');
+            const timeDisplay = document.getElementById('screencastTime');
+
+            const percent = (video.currentTime / video.duration) * 100;
+            progressFill.style.width = percent + '%';
+
+            const current = formatTime(video.currentTime);
+            const total = formatTime(video.duration);
+            timeDisplay.textContent = `${current} / ${total}`;
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateAnnotationsFromTime(time) {
+            annotationTimings.forEach((timing, index) => {
+                if (time >= timing.start && time < timing.end) {
+                    showAnnotation(index);
+                }
+            });
+        }
+
+        function showAnnotation(index, force = false) {
+            if (currentAnnotation === index && !force) return;
+            currentAnnotation = index;
+
+            // Hide all annotations first
+            for (let i = 1; i <= 7; i++) {
+                const anno = document.getElementById(`anno${i}`);
+                if (anno) anno.classList.remove('visible');
+            }
+
+            // Show nodes and connections up to current step
+            for (let i = 1; i <= 7; i++) {
+                const node = document.getElementById(`lfNode${i}`);
+                const conn = document.getElementById(`conn${i}`);
+                const port = node ? node.querySelector('.lf-port.output') : null;
+                const portIn = node ? node.querySelector('.lf-port.input') : null;
+
+                if (i <= index + 1) {
+                    // Show node with animation
+                    if (node) {
+                        node.classList.add('visible');
+                        if (i === index + 1) node.classList.add('active');
+                        else node.classList.remove('active');
+                    }
+                    // Show connection if not the first node
+                    if (i > 1 && conn) {
+                        setTimeout(() => conn.classList.add('visible'), 300);
+                    }
+                    // Mark ports as connected
+                    if (port && i <= index) port.classList.add('connected');
+                    if (portIn && i > 1 && i <= index + 1) portIn.classList.add('connected');
+                } else {
+                    // Hide nodes and connections not yet reached
+                    if (node) {
+                        node.classList.remove('visible');
+                        node.classList.remove('active');
+                    }
+                    if (conn) conn.classList.remove('visible');
+                    if (port) port.classList.remove('connected');
+                    if (portIn) portIn.classList.remove('connected');
+                }
+            }
+
+            // Show current annotation
+            const currentAnno = document.getElementById(`anno${index + 1}`);
+            if (currentAnno) {
+                setTimeout(() => currentAnno.classList.add('visible'), 200);
+            }
+
+            // Update status text
+            const statusText = document.getElementById('lfStatusText');
+            const statusMessages = [
+                'Adding File Loader...',
+                'Configuring Text Splitter...',
+                'Setting up Embeddings...',
+                'Connecting Vector Store...',
+                'Adding Retriever...',
+                'Connecting LLM...',
+                'Pipeline Complete!'
+            ];
+            if (statusText) statusText.textContent = statusMessages[index];
+
+            // Update step indicator
+            const stepIndicator = document.getElementById('screencastStepIndicator');
+            if (stepIndicator) stepIndicator.textContent = `Step ${index + 1} of 7`;
+
+            // Update nav buttons
+            updateNavButtons();
+        }
+
+        function jumpToAnnotation(index) {
+            const video = document.getElementById('screencastVideo');
+
+            if (video.readyState > 0) {
+                // Jump to video time
+                video.currentTime = annotationTimings[index].start;
+                if (!screencastPlaying) {
+                    video.play();
+                    screencastPlaying = true;
+                    document.getElementById('screencastPlayBtn').textContent = '⏸️';
+                }
+            } else {
+                // No video - run demo animation for this step
+                showAnnotation(index);
+            }
+        }
+
+        function startDemoAnimation() {
+            if (demoAnimationRunning) return;
+            demoAnimationRunning = true;
+
+            const btn = document.getElementById('screencastPlayBtn');
+            if (btn) btn.textContent = '⏸️';
+            screencastPlaying = true;
+
+            // Reset all nodes and connections first
+            for (let i = 1; i <= 7; i++) {
+                const node = document.getElementById(`lfNode${i}`);
+                const conn = document.getElementById(`conn${i}`);
+                if (node) {
+                    node.classList.remove('visible');
+                    node.classList.remove('active');
+                }
+                if (conn) conn.classList.remove('visible');
+            }
+
+            // Animate through all steps
+            let step = 0;
+            const stepDuration = 3000; // 3 seconds per step
+
+            function animateNextStep() {
+                if (step >= 7 || !screencastPlaying) {
+                    demoAnimationRunning = false;
+                    if (btn) btn.textContent = '▶️';
+                    screencastPlaying = false;
+                    // Keep final state visible
+                    if (step >= 7) {
+                        const statusText = document.getElementById('lfStatusText');
+                        if (statusText) statusText.textContent = 'Pipeline Complete!';
+                    }
+                    return;
+                }
+
+                showAnnotation(step, true);
+                step++;
+                annotationTimer = setTimeout(animateNextStep, stepDuration);
+            }
+
+            animateNextStep();
+        }
+
+        function stopDemoAnimation() {
+            if (annotationTimer) {
+                clearTimeout(annotationTimer);
+                annotationTimer = null;
+            }
+            demoAnimationRunning = false;
+            screencastPlaying = false;
+            document.getElementById('screencastPlayBtn').textContent = '▶️';
+        }
+
+        function prevAnnotation() {
+            const video = document.getElementById('langflowVideo');
+            if (video && currentAnnotation > 0) {
+                video.currentTime = videoAnnotations[currentAnnotation - 1].time;
+                updateVideoAnnotation();
+            }
+        }
+
+        function nextAnnotation() {
+            const video = document.getElementById('langflowVideo');
+            if (video && currentAnnotation < videoAnnotations.length - 1) {
+                video.currentTime = videoAnnotations[currentAnnotation + 1].time;
+                updateVideoAnnotation();
+            }
+        }
+
+        function updateNavButtons() {
+            const backBtn = document.getElementById('screencastBackBtn');
+            const forwardBtn = document.getElementById('screencastForwardBtn');
+
+            if (backBtn) backBtn.disabled = currentAnnotation <= 0;
+            if (forwardBtn) forwardBtn.disabled = currentAnnotation >= videoAnnotations.length - 1;
+        }
+
+        function animateStep3() {
+            document.querySelectorAll('#step3 .step-header .animate-text').forEach((el, i) => {
+                setTimeout(() => animateText(el), 100 + i * 300);
+            });
+
+            const panels = ['configPanel1', 'configPanel2', 'configPanel3'];
+            panels.forEach((id, i) => {
+                setTimeout(() => {
+                    const panel = document.getElementById(id);
+                    panel.classList.add('visible');
+                    panel.querySelectorAll('.config-row').forEach((row, j) => {
+                        setTimeout(() => {
+                            row.classList.add('visible');
+                            const cv = row.querySelector('.config-value.counting');
+                            if (cv) animateCounter(cv);
+                        }, (j + 1) * 150);
+                    });
+                }, i * 600);
+            });
+
+            setTimeout(() => {
+                document.getElementById('tipBox4').classList.add('visible');
+                animateText(document.querySelector('#tipBox4 .animate-text'));
+            }, 2800);
+
+            scheduleAutoPlay(5000);
+        }
+
+        function animateStep4() {
+            document.querySelectorAll('#step4 .step-header .animate-text').forEach((el, i) => {
+                setTimeout(() => animateText(el), 100 + i * 300);
+            });
+
+            setTimeout(() => {
+                document.getElementById('configPanel4').classList.add('visible');
+                document.querySelectorAll('#configPanel4 .config-row').forEach((row, j) => {
+                    setTimeout(() => {
+                        row.classList.add('visible');
+                        const cv = row.querySelector('.config-value.counting');
+                        if (cv) animateCounter(cv);
+                    }, (j + 1) * 150);
+                });
+            }, 300);
+
+            setTimeout(() => {
+                document.getElementById('configPanel5').classList.add('visible');
+                typeSystemPrompt();
+            }, 1200);
+
+            setTimeout(() => {
+                document.getElementById('tipBox5').classList.add('visible');
+                animateText(document.querySelector('#tipBox5 .animate-text'));
+            }, 2500);
+
+            setTimeout(() => {
+                document.getElementById('infoBox5').classList.add('visible');
+                animateText(document.querySelector('#infoBox5 .animate-text'));
+            }, 3200);
+
+            scheduleAutoPlay(7000);
+        }
+
+        function animateCounter(el) {
+            const target = parseInt(el.dataset.target);
+            const suffix = el.dataset.suffix || '';
+            let current = 0;
+            const increment = target / 20;
+            const interval = setInterval(() => {
+                current += increment;
+                if (current >= target) { current = target; clearInterval(interval); }
+                el.textContent = Math.round(current) + suffix;
+            }, 30);
+        }
+
+        const systemPromptLines = [
+            "You are a helpful assistant for TechFlow Solutions.",
+            "Answer questions based ONLY on the provided context.",
+            "If the answer isn't in the context, say \"I don't have that info.\"",
+            "Always cite which document the information comes from."
+        ];
+
+        function typeSystemPrompt() {
+            const container = document.getElementById('systemPrompt');
+            container.innerHTML = '';
+            let lineIndex = 0;
+
+            function typeLine() {
+                if (lineIndex >= systemPromptLines.length) return;
+                const line = systemPromptLines[lineIndex];
+                const lineEl = document.createElement('div');
+                lineEl.style.marginBottom = '8px';
+                container.appendChild(lineEl);
+
+                let charIndex = 0;
+                function typeChar() {
+                    if (charIndex < line.length) {
+                        lineEl.innerHTML = line.substring(0, charIndex + 1) + '<span class="typewriter-cursor"></span>';
+                        charIndex++;
+                        setTimeout(typeChar, 18);
+                    } else {
+                        lineEl.textContent = line;
+                        lineIndex++;
+                        setTimeout(typeLine, 150);
+                    }
+                }
+                typeChar();
+            }
+            typeLine();
+        }
+
+        function goToStep(step) {
+            if (autoPlayTimer) { clearTimeout(autoPlayTimer); autoPlayTimer = null; }
+            currentStep = step;
+
+            document.querySelectorAll('.step-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+
+            document.querySelectorAll('.progress-step').forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i < step) s.classList.add('completed');
+                if (i === step) s.classList.add('active');
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            switch(step) {
+                case 0: animateStep0(); break;
+                case 1: animateStep1(); break;
+                case 2: animateStep2(); break;
+                case 3: animateStep3(); break;
+                case 4: animateStep4(); break;
+            }
+        }
+
+        function nextStep() { if (currentStep < totalSteps - 1) goToStep(currentStep + 1); }
+        function prevStep() { if (currentStep > 0) goToStep(currentStep - 1); }
+
+        function scheduleAutoPlay(delay) {
+            if (!autoPlay || currentStep >= 5) return;
+            if (autoPlayTimer) clearTimeout(autoPlayTimer);
+            autoPlayTimer = setTimeout(() => { if (autoPlay && currentStep < 5) nextStep(); }, delay);
+        }
+
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            const indicator = document.getElementById('autoPlayIndicator');
+            const text = document.getElementById('autoPlayText');
+            if (autoPlay) {
+                indicator.classList.remove('paused');
+                text.textContent = 'Auto-play: ON';
+                scheduleAutoPlay(5000);
+            } else {
+                indicator.classList.add('paused');
+                text.textContent = 'Auto-play: OFF';
+                if (autoPlayTimer) { clearTimeout(autoPlayTimer); autoPlayTimer = null; }
+            }
+        }
+
+        // Chat functionality
+        const knowledgeBase = {
+            "vacation|annual leave|holiday|days off|pto": { answer: "All full-time employees get <strong>25 days annual leave</strong> per year, plus public holidays. Request 2 weeks in advance for periods over 3 days.", source: "HR Policies" },
+            "sick|sick leave": { answer: "Employees receive <strong>10 paid sick days</strong> per year. Medical certificate required after 3 consecutive days.", source: "HR Policies" },
+            "remote|work from home|wfh|hybrid": { answer: "TechFlow offers <strong>hybrid work</strong> with up to 3 remote days per week. Core hours: 10 AM - 3 PM. <strong>€500 home office allowance</strong> provided.", source: "HR Policies" },
+            "values|mission|culture": { answer: "TechFlow's <strong>5 core values</strong>:<br>1. Innovation First<br>2. Customer Success<br>3. Collaboration<br>4. Integrity<br>5. Growth Mindset", source: "Company Handbook" },
+            "benefits|pension|health|perks": { answer: "Benefits include: <strong>Private health insurance</strong> (fully covered), <strong>5% pension</strong>, 4x salary life assurance, €50/month gym subsidy, <strong>2 mental health days</strong>.", source: "Company Handbook" },
+            "password|reset|forgot|login": { answer: "To reset your password:<br>1. Go to <strong>login.cloudsyncpro.com</strong><br>2. Click \"Forgot Password\"<br>3. Enter email, check inbox<br>4. Create new password (12+ chars)", source: "Product FAQ" },
+            "pricing|cost|plan": { answer: "CloudSync pricing:<br>• <strong>Starter:</strong> €8/user/month<br>• <strong>Business:</strong> €15/user/month<br>• <strong>Enterprise:</strong> Custom<br>All include 14-day free trial.", source: "Product FAQ" },
+            "api|authentication|token": { answer: "CloudSync uses <strong>OAuth 2.0</strong>. Get tokens via POST to /oauth/token. Include as: <code>Authorization: Bearer TOKEN</code>. Rate limits: 100/hr (Free), 1000/hr (Business).", source: "Technical Docs" },
+        };
+
+        const fallbackResponse = { answer: "I don't have that information. I can help with: HR policies, company info, CloudSync Pro, and technical docs.", source: "System" };
+
+        function findAnswer(q) {
+            const lower = q.toLowerCase();
+            for (const [pattern, response] of Object.entries(knowledgeBase)) {
+                if (pattern.split('|').some(kw => lower.includes(kw))) return response;
+            }
+            return fallbackResponse;
+        }
+
+        function askQuestion(q) { document.getElementById('chatInput').value = q; sendMessage(); }
+        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const sendBtn = document.getElementById('sendBtn');
+            input.disabled = true;
+            sendBtn.disabled = true;
+            input.value = '';
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `<div class="message-content">${escapeHtml(message)}</div>`;
+            chatMessages.appendChild(userMsg);
+
+            const typing = document.createElement('div');
+            typing.className = 'message assistant';
+            typing.id = 'typingIndicator';
+            typing.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+            chatMessages.appendChild(typing);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            animatePipeline();
+            await delay(1500 + Math.random() * 800);
+            document.getElementById('typingIndicator').remove();
+
+            const response = findAnswer(message);
+            const assistantMsg = document.createElement('div');
+            assistantMsg.className = 'message assistant';
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            assistantMsg.appendChild(contentDiv);
+            chatMessages.appendChild(assistantMsg);
+
+            await typeResponse(contentDiv, response.answer);
+
+            const sourceDiv = document.createElement('div');
+            sourceDiv.className = 'message-source';
+            sourceDiv.innerHTML = `📎 Source: ${response.source}`;
+            contentDiv.appendChild(sourceDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            resetPipeline();
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
+        }
+
+        async function typeResponse(container, html) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            const text = tempDiv.textContent;
+            let textIndex = 0;
+
+            return new Promise(resolve => {
+                function typeChar() {
+                    if (textIndex < text.length) {
+                        container.innerHTML = html.substring(0, findHtmlIndex(html, textIndex + 1)) + '<span class="typewriter-cursor"></span>';
+                        textIndex++;
+                        setTimeout(typeChar, 12);
+                    } else {
+                        container.innerHTML = html;
+                        resolve();
+                    }
+                }
+                typeChar();
+            });
+        }
+
+        function findHtmlIndex(html, textLength) {
+            let textCount = 0, inTag = false;
+            for (let i = 0; i < html.length; i++) {
+                if (html[i] === '<') inTag = true;
+                else if (html[i] === '>') inTag = false;
+                else if (!inTag) { textCount++; if (textCount >= textLength) return i + 1; }
+            }
+            return html.length;
+        }
+
+        function animatePipeline() {
+            document.getElementById('pn-retrieve').classList.add('processing');
+            document.getElementById('retriever-status').className = 'pipeline-node-status working';
+            document.getElementById('pc4').classList.add('active');
+            document.getElementById('pc5').classList.add('active');
+
+            setTimeout(() => {
+                document.getElementById('pn-retrieve').classList.remove('processing');
+                document.getElementById('retriever-status').className = 'pipeline-node-status ready';
+                document.getElementById('pc4').classList.remove('active');
+                document.getElementById('pc5').classList.remove('active');
+                document.getElementById('pn-llm').classList.add('processing');
+                document.getElementById('llm-status').className = 'pipeline-node-status working';
+                document.getElementById('pc6').classList.add('active');
+            }, 600);
+        }
+
+        function resetPipeline() {
+            document.getElementById('pn-retrieve').classList.remove('processing');
+            document.getElementById('pn-llm').classList.remove('processing');
+            document.getElementById('retriever-status').className = 'pipeline-node-status ready';
+            document.getElementById('llm-status').className = 'pipeline-node-status ready';
+            ['pc4', 'pc5', 'pc6'].forEach(id => document.getElementById(id).classList.remove('active'));
+        }
+
+        function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+    </script>
+</body>
+</html>

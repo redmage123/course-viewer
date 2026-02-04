@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hallucination Detector - Fact-Check AI Content</title>
+    <style>
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --accent-red: #ff4444;
+            --dark-bg: #1a1a2e;
+            --darker-bg: #0d1117;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid var(--itag-blue);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--itag-light);
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #888;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--dark-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+
+        .panel-title {
+            color: var(--itag-light);
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--itag-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: var(--darker-bg);
+            color: #f0f0f0;
+            font-size: 0.95em;
+            font-family: inherit;
+            margin-bottom: 15px;
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--itag-light);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--itag-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--itag-light);
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #f0f0f0;
+            border: 1px solid #444;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #00dd77;
+        }
+
+        .btn-warning {
+            background: var(--accent-orange);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #ffaa44;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sample-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .sample-btn {
+            padding: 8px 12px;
+            font-size: 0.8em;
+            background: var(--darker-bg);
+            border: 1px solid #444;
+            color: #aaa;
+        }
+
+        .sample-btn:hover {
+            border-color: var(--itag-light);
+            color: #fff;
+        }
+
+        .analysis-results {
+            margin-top: 20px;
+        }
+
+        .claim-card {
+            background: var(--darker-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #444;
+        }
+
+        .claim-card.high-risk {
+            border-left-color: var(--accent-red);
+        }
+
+        .claim-card.medium-risk {
+            border-left-color: var(--accent-orange);
+        }
+
+        .claim-card.low-risk {
+            border-left-color: var(--accent-green);
+        }
+
+        .claim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .claim-type {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .claim-type.statistic { background: #4a1a4a; color: #ff88ff; }
+        .claim-type.citation { background: #1a3a4a; color: #88ddff; }
+        .claim-type.quote { background: #4a3a1a; color: #ffdd88; }
+        .claim-type.fact { background: #1a4a3a; color: #88ffdd; }
+
+        .risk-badge {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .risk-badge.high { background: var(--accent-red); }
+        .risk-badge.medium { background: var(--accent-orange); }
+        .risk-badge.low { background: var(--accent-green); }
+
+        .claim-text {
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+        .verification-steps {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .verification-steps ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        .verification-steps li {
+            margin: 5px 0;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%);
+            border: 2px solid var(--itag-light);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--itag-light);
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .verify-framework {
+            background: var(--darker-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .verify-letter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.85em;
+        }
+
+        .verify-letter:last-child {
+            border-bottom: none;
+        }
+
+        .letter-badge {
+            width: 28px;
+            height: 28px;
+            background: var(--itag-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            border-top-color: var(--itag-light);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+        }
+
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+        }
+
+        .prompt-template {
+            background: var(--darker-bg);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 0.85em;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hallucination Detector</h1>
+            <p>Analyze AI-generated content for potential hallucinations</p>
+        </header>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-title">
+                    <span>Input Content</span>
+                </div>
+
+                <label>Load a sample or paste your own AI-generated content:</label>
+                <div class="sample-buttons">
+                    <button class="sample-btn" onclick="loadSample('market')">Market Analysis</button>
+                    <button class="sample-btn" onclick="loadSample('history')">Historical Facts</button>
+                    <button class="sample-btn" onclick="loadSample('science')">Scientific Claims</button>
+                    <button class="sample-btn" onclick="loadSample('quote')">Famous Quotes</button>
+                </div>
+
+                <textarea id="content-input" placeholder="Paste AI-generated content here to analyze for potential hallucinations..."></textarea>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="analyzeContent()" id="analyze-btn">
+                        Analyze for Hallucinations
+                    </button>
+                    <button class="btn-secondary" onclick="clearAll()">
+                        Clear
+                    </button>
+                </div>
+
+                <div class="verify-framework">
+                    <h4 style="color: var(--itag-light); margin-bottom: 10px;">VERIFY Framework</h4>
+                    <div class="verify-letter">
+                        <span class="letter-badge">V</span>
+                        <span><strong>Validate</strong> - Check if sources exist</span>
+                    </div>
+                    <div class="verify-letter">
+                        <span class="letter-badge">E</span>
+                        <span><strong>Examine</strong> - Scrutinize specifics</span>
+                    </div>
+                    <div class="verify-letter">
+                        <span class="letter-badge">R</span>
+                        <span><strong>Research</strong> - Cross-reference claims</span>
+                    </div>
+                    <div class="verify-letter">
+                        <span class="letter-badge">I</span>
+                        <span><strong>Identify</strong> - Look for uncertainty</span>
+                    </div>
+                    <div class="verify-letter">
+                        <span class="letter-badge">F</span>
+                        <span><strong>Flag</strong> - Mark suspicious content</span>
+                    </div>
+                    <div class="verify-letter">
+                        <span class="letter-badge">Y</span>
+                        <span><strong>Yield</strong> - Consult experts</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">
+                    <span>Analysis Results</span>
+                </div>
+
+                <div id="results-area">
+                    <div class="tip-box">
+                        <strong>How to use:</strong> Paste any AI-generated content (from ChatGPT, Claude, etc.) and click "Analyze" to identify potential hallucinations and get verification guidance.
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>Remember:</strong> This tool identifies <em>potential</em> issues. Always verify claims manually using authoritative sources.
+                    </div>
+                </div>
+
+                <div id="prompt-section" style="margin-top: 20px; display: none;">
+                    <h4 style="color: var(--itag-light); margin-bottom: 10px;">Anti-Hallucination Prompt</h4>
+                    <p style="font-size: 0.85em; color: #aaa; margin-bottom: 10px;">Use this prompt to regenerate with fewer hallucinations:</p>
+                    <div class="prompt-template" id="anti-hallucination-prompt"></div>
+                    <button class="btn-success" onclick="copyPrompt()" style="margin-top: 10px;">
+                        Use This Prompt
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Hallucination Detector - Handling Hallucinations Seminar</p>
+            <p style="font-size: 0.9em; margin-top: 5px;">ITAG Skillnet AI Advantage</p>
+        </footer>
+    </div>
+
+    <div class="copy-notification" id="copyNotification">
+        Copied to clipboard!
+    </div>
+
+    <script>
+        const samples = {
+            market: `The global AI market is projected to reach $1.8 trillion by 2030, according to a 2023 McKinsey report titled "AI: The Next Digital Frontier." This represents a compound annual growth rate of 42.6%.
+
+Dr. Amanda Chen, Chief AI Researcher at Stanford's Institute for Human-Centered AI, stated in her keynote at the 2023 World Economic Forum: "Organizations that fail to adopt AI within the next 18 months will face a 60% higher risk of market displacement."
+
+A recent Deloitte survey found that 78.3% of Fortune 500 companies have already implemented generative AI tools, with an average productivity improvement of 34%.`,
+
+            history: `The Treaty of Dublin, signed in 1847 during the Great Famine, established the first international food aid program between Britain and Ireland. Prime Minister Robert Peel personally negotiated the terms over three weeks in Dublin Castle.
+
+According to historian Dr. Margaret O'Sullivan in her 2019 book "Famine Politics," this treaty saved an estimated 250,000 lives and set the precedent for modern humanitarian aid.
+
+The treaty was ratified by Queen Victoria on March 15, 1847, making it the fastest ratification in British parliamentary history.`,
+
+            science: `A groundbreaking 2023 study published in Nature Medicine by researchers at Johns Hopkins University found that a new AI diagnostic tool achieved 97.3% accuracy in detecting early-stage pancreatic cancer, outperforming human radiologists by 23%.
+
+Lead researcher Dr. Michael Torres stated: "This represents the most significant advancement in pancreatic cancer detection since the development of CT scanning in the 1970s."
+
+The study, which analyzed 50,000 patient scans across 12 countries, showed that the AI could detect tumors an average of 18 months earlier than traditional methods.`,
+
+            quote: `As Albert Einstein famously said, "The definition of insanity is doing the same thing over and over and expecting different results." This quote has been cited in over 10,000 academic papers since 1985.
+
+Similarly, Abraham Lincoln once remarked, "The best way to predict the future is to create it," during his 1863 Gettysburg preparation notes.
+
+Mark Twain's observation that "The reports of my death have been greatly exaggerated" was actually written in a letter to the New York Journal in 1897.`
+        };
+
+        function loadSample(type) {
+            document.getElementById('content-input').value = samples[type];
+        }
+
+        function analyzeContent() {
+            const content = document.getElementById('content-input').value.trim();
+            if (!content) {
+                alert('Please enter some content to analyze.');
+                return;
+            }
+
+            const resultsArea = document.getElementById('results-area');
+            resultsArea.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 15px;">Analyzing content for potential hallucinations...</p>
+                </div>
+            `;
+
+            // Simulate analysis delay
+            setTimeout(() => {
+                const analysis = performAnalysis(content);
+                displayResults(analysis);
+            }, 1500);
+        }
+
+        function performAnalysis(content) {
+            const claims = [];
+
+            // Detect statistics
+            const statPatterns = [
+                /(\d+\.?\d*%)/g,
+                /(\$[\d,]+\.?\d*\s*(billion|million|trillion)?)/gi,
+                /(\d+\.?\d*x|\d+\.?\d*\s*times)/gi,
+                /(average|mean|median)\s+of\s+(\d+\.?\d*)/gi
+            ];
+
+            statPatterns.forEach(pattern => {
+                const matches = content.match(pattern);
+                if (matches) {
+                    matches.forEach(match => {
+                        claims.push({
+                            type: 'statistic',
+                            text: extractContext(content, match),
+                            risk: 'high',
+                            verification: [
+                                'Search for this exact statistic in the cited source',
+                                'Check if the methodology supports this precision',
+                                'Verify the date/year of the data',
+                                'Compare with other authoritative sources'
+                            ]
+                        });
+                    });
+                }
+            });
+
+            // Detect citations/sources
+            const citationPatterns = [
+                /according to\s+([^,\.]+)/gi,
+                /study\s+(published\s+in|by|from)\s+([^,\.]+)/gi,
+                /report\s+(titled|called|named)\s+"([^"]+)"/gi,
+                /(McKinsey|Gartner|Deloitte|BCG|Forrester)\s+(report|study|survey|research)/gi,
+                /\((\d{4})\)/g
+            ];
+
+            citationPatterns.forEach(pattern => {
+                const matches = content.match(pattern);
+                if (matches) {
+                    matches.slice(0, 3).forEach(match => {
+                        if (!claims.some(c => c.text.includes(match))) {
+                            claims.push({
+                                type: 'citation',
+                                text: extractContext(content, match),
+                                risk: 'high',
+                                verification: [
+                                    'Search for this publication/report directly',
+                                    'Verify the author/organization exists',
+                                    'Check the publication date',
+                                    'Confirm the quote appears in the source'
+                                ]
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Detect quotes
+            const quotePattern = /"([^"]{20,})"/g;
+            const quotes = content.match(quotePattern);
+            if (quotes) {
+                quotes.forEach(quote => {
+                    claims.push({
+                        type: 'quote',
+                        text: extractContext(content, quote),
+                        risk: 'high',
+                        verification: [
+                            'Search for this exact quote online',
+                            'Verify the attributed speaker said this',
+                            'Check quote databases (Wikiquote, etc.)',
+                            'Find the original source/context'
+                        ]
+                    });
+                });
+            }
+
+            // Detect named individuals
+            const personPattern = /Dr\.\s+([A-Z][a-z]+\s+[A-Z][a-z]+)|Professor\s+([A-Z][a-z]+\s+[A-Z][a-z]+)/g;
+            const people = content.match(personPattern);
+            if (people) {
+                people.forEach(person => {
+                    claims.push({
+                        type: 'fact',
+                        text: extractContext(content, person),
+                        risk: 'medium',
+                        verification: [
+                            'Search for this person on LinkedIn/institutional pages',
+                            'Verify their title and affiliation',
+                            'Check if they work in the stated field',
+                            'Confirm they made the attributed statement'
+                        ]
+                    });
+                });
+            }
+
+            // Detect specific dates
+            const datePattern = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}/gi;
+            const dates = content.match(datePattern);
+            if (dates) {
+                dates.forEach(date => {
+                    claims.push({
+                        type: 'fact',
+                        text: extractContext(content, date),
+                        risk: 'medium',
+                        verification: [
+                            'Verify the event occurred on this date',
+                            'Check historical records',
+                            'Cross-reference with multiple sources'
+                        ]
+                    });
+                });
+            }
+
+            // Remove duplicates and limit
+            const uniqueClaims = [];
+            const seen = new Set();
+            claims.forEach(claim => {
+                const key = claim.text.substring(0, 50);
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    uniqueClaims.push(claim);
+                }
+            });
+
+            return {
+                totalClaims: uniqueClaims.length,
+                highRisk: uniqueClaims.filter(c => c.risk === 'high').length,
+                mediumRisk: uniqueClaims.filter(c => c.risk === 'medium').length,
+                lowRisk: uniqueClaims.filter(c => c.risk === 'low').length,
+                claims: uniqueClaims.slice(0, 10)
+            };
+        }
+
+        function extractContext(content, match) {
+            const index = content.indexOf(match);
+            if (index === -1) return match;
+
+            const start = Math.max(0, index - 50);
+            const end = Math.min(content.length, index + match.length + 50);
+            let context = content.substring(start, end);
+
+            if (start > 0) context = '...' + context;
+            if (end < content.length) context = context + '...';
+
+            return context;
+        }
+
+        function displayResults(analysis) {
+            const resultsArea = document.getElementById('results-area');
+
+            let html = `
+                <div class="summary-box">
+                    <h4 style="color: var(--itag-light); margin-bottom: 15px;">Analysis Summary</h4>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">${analysis.totalClaims}</div>
+                            <div class="stat-label">Claims Found</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" style="color: var(--accent-red);">${analysis.highRisk}</div>
+                            <div class="stat-label">High Risk</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" style="color: var(--accent-orange);">${analysis.mediumRisk}</div>
+                            <div class="stat-label">Medium Risk</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (analysis.claims.length === 0) {
+                html += `
+                    <div class="tip-box">
+                        <strong>No obvious hallucination indicators found.</strong> However, always verify important claims manually. This tool may not catch all issues.
+                    </div>
+                `;
+            } else {
+                html += `<h4 style="color: var(--itag-light); margin-bottom: 15px;">Claims to Verify</h4>`;
+
+                analysis.claims.forEach((claim, index) => {
+                    const typeLabels = {
+                        statistic: 'Statistic',
+                        citation: 'Citation',
+                        quote: 'Quote',
+                        fact: 'Factual Claim'
+                    };
+
+                    html += `
+                        <div class="claim-card ${claim.risk}-risk">
+                            <div class="claim-header">
+                                <span class="claim-type ${claim.type}">${typeLabels[claim.type]}</span>
+                                <span class="risk-badge ${claim.risk}">${claim.risk.toUpperCase()} RISK</span>
+                            </div>
+                            <div class="claim-text">${escapeHtml(claim.text)}</div>
+                            <div class="verification-steps">
+                                <strong>Verification Steps:</strong>
+                                <ul>
+                                    ${claim.verification.map(step => `<li>${step}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            resultsArea.innerHTML = html;
+
+            // Show anti-hallucination prompt
+            const promptSection = document.getElementById('prompt-section');
+            promptSection.style.display = 'block';
+
+            const promptTemplate = `Please provide information about [YOUR TOPIC].
+
+Important guidelines:
+- Only include facts you are highly confident about
+- Do NOT invent statistics or specific numbers
+- If you cite a source, it must be real and verifiable
+- Mark any uncertain claims with [NEEDS VERIFICATION]
+- Say "I don't know" rather than guessing
+- Use qualitative descriptions instead of made-up numbers
+- Acknowledge your knowledge cutoff date for recent events
+
+Format your response with clear sourcing where applicable.`;
+
+            document.getElementById('anti-hallucination-prompt').textContent = promptTemplate;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function clearAll() {
+            document.getElementById('content-input').value = '';
+            document.getElementById('results-area').innerHTML = `
+                <div class="tip-box">
+                    <strong>How to use:</strong> Paste any AI-generated content (from ChatGPT, Claude, etc.) and click "Analyze" to identify potential hallucinations and get verification guidance.
+                </div>
+
+                <div class="warning-box">
+                    <strong>Remember:</strong> This tool identifies <em>potential</em> issues. Always verify claims manually using authoritative sources.
+                </div>
+            `;
+            document.getElementById('prompt-section').style.display = 'none';
+        }
+
+        function copyPrompt() {
+            const prompt = document.getElementById('anti-hallucination-prompt').textContent;
+            const contentInput = document.getElementById('content-input');
+
+            // Clear old content and paste the new prompt
+            contentInput.value = prompt;
+
+            // Scroll to the input area and focus it
+            contentInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            contentInput.focus();
+
+            // Also copy to clipboard
+            navigator.clipboard.writeText(prompt).then(() => {
+                showNotification('Prompt pasted to input & copied to clipboard!');
+            });
+
+            // Highlight the input briefly to draw attention
+            contentInput.style.borderColor = 'var(--accent-green)';
+            contentInput.style.boxShadow = '0 0 10px var(--accent-green)';
+            setTimeout(() => {
+                contentInput.style.borderColor = '';
+                contentInput.style.boxShadow = '';
+            }, 1500);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('copyNotification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

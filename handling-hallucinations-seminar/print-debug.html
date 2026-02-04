@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Handling Hallucinations: Fact-Checking AI - ITAG Skillnet</title>
+    <style>
+    
+    @page {
+        size: 297mm 210mm;
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
+    }
+
+    .slide {
+        width: 297mm;
+        height: 210mm;
+        padding: 25px 35px;
+        page-break-after: always;
+        page-break-inside: avoid;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        font-size: 14pt;
+    }
+
+    .slide:last-child {
+        page-break-after: auto;
+    }
+
+    h1 {
+        color: #4da6ff;
+        font-size: 2.8em;
+        margin: 0 0 25px 0;
+        text-align: center;
+    }
+
+    h2 {
+        color: #4da6ff;
+        font-size: 2.2em;
+        margin: 0 0 25px 0;
+        text-align: center;
+    }
+
+    h3 {
+        color: #94a3b8;
+        font-size: 1.6em;
+        margin: 12px 0;
+    }
+
+    h4 {
+        color: #4da6ff;
+        font-size: 1.4em;
+        margin: 12px 0;
+    }
+
+    p {
+        margin: 12px 0;
+        line-height: 1.6;
+        font-size: 1.1em;
+    }
+
+    /* Override inline small font sizes to be readable */
+    p[style*="font-size: 0.7em"],
+    p[style*="font-size:0.7em"],
+    span[style*="font-size: 0.7em"],
+    span[style*="font-size:0.7em"] {
+        font-size: 1.2em !important;
+    }
+
+    /* Override dark grey text to be more visible */
+    p[style*="color: #666"],
+    p[style*="color:#666"],
+    span[style*="color: #666"],
+    span[style*="color:#666"] {
+        color: #94a3b8 !important;
+    }
+
+    ul, ol {
+        margin: 12px 0;
+        padding-left: 30px;
+    }
+
+    li {
+        margin: 8px 0;
+        line-height: 1.5;
+        font-size: 1.1em;
+    }
+
+    /* Two-column layout */
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .three-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        flex: 1;
+    }
+
+    /* Card styles */
+    .card {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 10px;
+        padding: 18px;
+        border: 1px solid #334155;
+        font-size: 1.1em;
+    }
+
+    /* Tip and warning boxes */
+    .tip-box {
+        background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+        border-left: 5px solid #00cc66;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    .warning-box {
+        background: linear-gradient(135deg, #3d2814 0%, #4d3318 100%);
+        border-left: 5px solid #ff9933;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    .danger-box {
+        background: linear-gradient(135deg, #3d1414 0%, #4d1818 100%);
+        border-left: 5px solid #ff4444;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    .exercise-box {
+        background: linear-gradient(135deg, #1a1a3d 0%, #2d2d5c 100%);
+        border-left: 5px solid #9966ff;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    /* Prompt example box */
+    .prompt-example {
+        background: #1a1a2e;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 18px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 1em;
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    /* VERIFY Framework - specific styling */
+    .verify-circle {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        padding: 30px;
+        max-width: 800px;
+        margin: 20px auto;
+    }
+
+    .verify-center {
+        width: 140px;
+        height: 140px;
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2em;
+        font-weight: bold;
+        color: white;
+        order: 3;
+    }
+
+    .verify-item {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        border: 2px solid #4da6ff;
+        border-radius: 10px;
+        padding: 15px 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 120px;
+        position: static !important;
+        transform: none !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+    }
+
+    .verify-item span:first-child {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #4da6ff;
+    }
+
+    .verify-item span:last-child {
+        font-size: 1.1em;
+        color: #94a3b8;
+    }
+
+    /* Framework steps */
+    .framework-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin: 12px 0;
+        font-size: 1.1em;
+    }
+
+    .step-number {
+        background: linear-gradient(135deg, #0066cc, #4da6ff);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+        font-size: 1.1em;
+    }
+
+    /* Agenda items */
+    .agenda-item {
+        display: flex;
+        align-items: center;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 8px;
+        padding: 14px 20px;
+        margin: 10px 0;
+        border-left: 4px solid #4da6ff;
+        font-size: 1.1em;
+    }
+
+    .agenda-time {
+        color: #4da6ff;
+        font-weight: bold;
+        min-width: 70px;
+        margin-right: 20px;
+        font-size: 1.1em;
+    }
+
+    /* Hallucination type cards */
+    .type-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .type-card {
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .type-card .icon {
+        font-size: 2.5em;
+        margin-bottom: 12px;
+    }
+
+    .type-card h4 {
+        margin: 8px 0;
+        font-size: 1.2em;
+    }
+
+    .type-card p {
+        font-size: 1em;
+        color: #94a3b8;
+        margin: 8px 0;
+    }
+
+    /* Risk level indicators */
+    .risk-high {
+        border-left: 4px solid #ff4444;
+    }
+
+    .risk-medium {
+        border-left: 4px solid #ff9933;
+    }
+
+    .risk-low {
+        border-left: 4px solid #00cc66;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 1.1em;
+    }
+
+    th, td {
+        border: 1px solid #334155;
+        padding: 12px 16px;
+        text-align: left;
+    }
+
+    th {
+        background: rgba(0, 102, 204, 0.3);
+        color: #4da6ff;
+        font-size: 1.1em;
+    }
+
+    tr:nth-child(even) {
+        background: rgba(30, 41, 59, 0.5);
+    }
+
+    /* Checklist items */
+    .checklist {
+        list-style: none;
+        padding-left: 10px;
+    }
+
+    .checklist li {
+        padding-left: 30px;
+        position: relative;
+        margin: 10px 0;
+    }
+
+    .checklist li::before {
+        content: "\2610";
+        position: absolute;
+        left: 0;
+        font-size: 1.2em;
+        color: #4da6ff;
+    }
+
+    /* Footer */
+    .itag-footer {
+        position: absolute;
+        bottom: 12px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 0.9em;
+        color: #64748b;
+    }
+
+    /* Slide number */
+    .slide-number {
+        position: absolute;
+        bottom: 12px;
+        right: 25px;
+        font-size: 1em;
+        color: #64748b;
+    }
+
+    /* Code blocks */
+    pre, code {
+        background: #0f172a;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 1em;
+    }
+
+    pre {
+        padding: 15px 20px;
+        overflow-x: auto;
+        font-size: 1em;
+    }
+
+    /* Hide animations and fragments */
+    .fragment {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    </style>
+</head>
+<body>
+
+        <div class="slide">
+            <div class="slide-content">
+                    <h1>Handling Hallucinations</h1>
+                    <h2 style="border-bottom: none;">Fact-Checking AI</h2>
+                    <p style="color: var(--itag-light); font-size: 1.2em;">ITAG Skillnet AI Advantage</p>
+                    <p style="color: #888; margin-top: 40px;">90-Minute Lunch & Learn</p>
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(0,102,204,0.1); border-radius: 10px;">
+                        <p style="font-size: 0.9em; color: #aaa;">Learn to identify, prevent, and verify AI-generated content</p>
+                    </div>
+                </div>
+            <div class="slide-number">1</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Today's Agenda</h2>
+                    <div style="max-width: 700px; margin: 0 auto;">
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>What Are AI Hallucinations?</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>Why Hallucinations Happen</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>The VERIFY Framework</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">20 min</span>
+                            <span>Hands-On: Spotting & Fixing Hallucinations</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">15 min</span>
+                            <span>Prevention Strategies</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">10 min</span>
+                            <span>Tools & Best Practices</span>
+                        </div>
+                        <div class="agenda-item">
+                            <span class="agenda-time">5 min</span>
+                            <span>Q&A and Wrap-Up</span>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">2</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Learning Objectives</h2>
+                    <div class="two-column" style="margin-top: 30px;">
+                        <div class="card">
+                            <h4>Understand</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>What AI hallucinations are and why they occur</li>
+                                <li>The different types of hallucinations</li>
+                                <li>Risk factors that increase hallucination likelihood</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Apply</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>The VERIFY framework for fact-checking</li>
+                                <li>Prevention techniques in your prompts</li>
+                                <li>Tools to validate AI-generated content</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>By the end:</strong> You'll have practical skills to confidently use AI while maintaining accuracy and trust.
+                    </div>
+                </div>
+            <div class="slide-number">3</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>What is an AI Hallucination?</h2>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <p style="font-size: 1.3em; color: var(--itag-light);">When AI generates content that is:</p>
+                    </div>
+                    <div class="three-column">
+                        <div class="card" style="text-align: center;">
+                            <h4>Factually Incorrect</h4>
+                            <p style="font-size: 0.85em;">States something false as if it were true</p>
+                            <p style="font-size: 2em; margin: 10px 0;">&#x274C;</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Fabricated</h4>
+                            <p style="font-size: 0.85em;">Invents sources, quotes, or data that don't exist</p>
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F4AD;</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Confidently Wrong</h4>
+                            <p style="font-size: 0.85em;">Presents errors with high certainty</p>
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F928;</p>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 30px;">
+                        <strong>Key Insight:</strong> AI doesn't "know" it's wrong. It generates plausible-sounding text based on patterns, not understanding.
+                    </div>
+                </div>
+            <div class="slide-number">4</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Real-World Hallucination Examples</h2>
+                    <div class="two-column">
+                        <div class="hallucination-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; Fabricated Citation</h4>
+                            <p style="font-size: 0.85em;">"According to a 2023 study published in the Journal of Business Analytics by Dr. Sarah Mitchell..."</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>The journal, study, and author don't exist</em></p>
+                        </div>
+                        <div class="hallucination-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; Invented Statistics</h4>
+                            <p style="font-size: 0.85em;">"Research shows that 73% of companies using AI report a 45% increase in productivity."</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>These specific numbers were fabricated</em></p>
+                        </div>
+                        <div class="hallucination-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; False Historical Facts</h4>
+                            <p style="font-size: 0.85em;">"The Treaty of Dublin, signed in 1847, established..."</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>No such treaty exists</em></p>
+                        </div>
+                        <div class="hallucination-example">
+                            <h4 style="color: var(--accent-red);">&#x26A0; Misattributed Quotes</h4>
+                            <p style="font-size: 0.85em;">"As Einstein famously said, 'The definition of insanity is doing the same thing...'"</p>
+                            <p style="font-size: 0.75em; color: #ff8888;"><em>Einstein never said this</em></p>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">5</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>The Scale of the Problem</h2>
+                    <div class="three-column" style="margin-top: 30px;">
+                        <div class="stat-box">
+                            <div class="stat-number">3-27%</div>
+                            <div class="stat-label">Hallucination rate in LLMs<br>(varies by task type)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">40%+</div>
+                            <div class="stat-label">Of legal citations in one study were fabricated</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">$0</div>
+                            <div class="stat-label">Cost for AI to sound confident about wrong answers</div>
+                        </div>
+                    </div>
+                    <div class="danger-box" style="margin-top: 30px;">
+                        <strong>Notable Case:</strong> In 2023, lawyers were sanctioned after submitting a brief with AI-generated fake case citations. The AI had invented 6 non-existent court cases.
+                    </div>
+                </div>
+            <div class="slide-number">6</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Why Do Hallucinations Happen?</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">How LLMs Actually Work</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><span class="highlight">Pattern matching</span> - not knowledge retrieval</li>
+                                <li><span class="highlight">Next-token prediction</span> - optimized for plausibility</li>
+                                <li><span class="highlight">No fact database</span> - can't verify claims</li>
+                                <li><span class="highlight">Training data gaps</span> - incomplete world knowledge</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Key Insight</h4>
+                            <div class="card">
+                                <p style="font-size: 0.9em;">LLMs are designed to generate <em>plausible</em> text, not <em>accurate</em> text.</p>
+                                <p style="font-size: 0.85em; margin-top: 15px;">They don't distinguish between:</p>
+                                <ul style="font-size: 0.8em;">
+                                    <li>What they "know" vs. what they're generating</li>
+                                    <li>Verified facts vs. plausible-sounding content</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">7</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Types of Hallucinations</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Intrinsic Hallucinations</h4>
+                            <p style="font-size: 0.85em;">Contradicts the source/input provided</p>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+                                <strong>Input:</strong> "The meeting is on Tuesday"<br>
+                                <strong>AI Output:</strong> "I've scheduled the meeting for Wednesday"
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>Extrinsic Hallucinations</h4>
+                            <p style="font-size: 0.85em;">Adds information that cannot be verified</p>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+                                <strong>Input:</strong> "Summarize this article"<br>
+                                <strong>AI Output:</strong> "The article also mentions..." (content not in article)
+                            </div>
+                        </div>
+                    </div>
+                    <table class="comparison-table" style="margin-top: 20px;">
+                        <tr>
+                            <th>Hallucination Type</th>
+                            <th>Risk Level</th>
+                            <th>Detection Difficulty</th>
+                        </tr>
+                        <tr>
+                            <td>Fabricated citations/sources</td>
+                            <td><span class="highlight-red">High</span></td>
+                            <td>Medium - requires verification</td>
+                        </tr>
+                        <tr>
+                            <td>Invented statistics</td>
+                            <td><span class="highlight-red">High</span></td>
+                            <td>Hard - sounds authoritative</td>
+                        </tr>
+                        <tr>
+                            <td>Outdated information</td>
+                            <td><span class="highlight-orange">Medium</span></td>
+                            <td>Easy - check dates</td>
+                        </tr>
+                        <tr>
+                            <td>Subtle factual errors</td>
+                            <td><span class="highlight-orange">Medium</span></td>
+                            <td>Hard - requires expertise</td>
+                        </tr>
+                    </table>
+                </div>
+            <div class="slide-number">8</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>High-Risk Domains for Hallucinations</h2>
+                    <div class="three-column">
+                        <div class="card" style="border-left-color: var(--accent-red);">
+                            <h4 style="color: var(--accent-red);">Critical Risk</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Medical advice</li>
+                                <li>Legal citations</li>
+                                <li>Financial data</li>
+                                <li>Safety procedures</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-orange);">
+                            <h4 style="color: var(--accent-orange);">High Risk</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Historical facts</li>
+                                <li>Scientific claims</li>
+                                <li>Technical specifications</li>
+                                <li>Current events</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left-color: var(--accent-green);">
+                            <h4 style="color: var(--accent-green);">Lower Risk</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Creative writing</li>
+                                <li>Brainstorming</li>
+                                <li>Code structure</li>
+                                <li>Format templates</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 25px;">
+                        <strong>Rule of Thumb:</strong> The more specific and verifiable the claim, the higher the risk of hallucination. General patterns are safer than specific facts.
+                    </div>
+                </div>
+            <div class="slide-number">9</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>The VERIFY Framework</h2>
+                    <p style="text-align: center; margin-bottom: 10px; font-size: 0.9em;">A systematic approach to fact-checking AI output</p>
+                    <div class="verify-framework">
+                        <div class="verify-letter">
+                            <span class="letter">V</span>
+                            <div><strong>Validate Sources</strong> - Check if cited sources actually exist</div>
+                        </div>
+                        <div class="verify-letter">
+                            <span class="letter">E</span>
+                            <div><strong>Examine Specifics</strong> - Scrutinize numbers, dates, and names</div>
+                        </div>
+                        <div class="verify-letter">
+                            <span class="letter">R</span>
+                            <div><strong>Research Claims</strong> - Cross-reference with authoritative sources</div>
+                        </div>
+                        <div class="verify-letter">
+                            <span class="letter">I</span>
+                            <div><strong>Identify Uncertainty</strong> - Look for hedging language or confidence markers</div>
+                        </div>
+                        <div class="verify-letter">
+                            <span class="letter">F</span>
+                            <div><strong>Flag Suspicious Content</strong> - Mark claims that need expert review</div>
+                        </div>
+                        <div class="verify-letter">
+                            <span class="letter">Y</span>
+                            <div><strong>Yield to Expertise</strong> - Consult domain experts for critical decisions</div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">10</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>V - Validate Sources</h2>
+                    <div class="two-column">
+                        <div>
+                            <h4 style="color: var(--itag-light);">What to Check</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Do cited papers/articles actually exist?</li>
+                                <li>Are the authors real people?</li>
+                                <li>Do the URLs work?</li>
+                                <li>Is the publication real?</li>
+                                <li>Does the quote appear in the source?</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--itag-light);">Quick Validation Tools</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Google Scholar</strong> - Academic papers</li>
+                                <li><strong>CrossRef</strong> - DOI verification</li>
+                                <li><strong>Wayback Machine</strong> - Archived pages</li>
+                                <li><strong>LinkedIn</strong> - Verify authors exist</li>
+                                <li><strong>Direct URL check</strong> - Visit the source</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="exercise-box" style="margin-top: 20px;">
+                        <h4>Quick Exercise</h4>
+                        <p>AI Output: "According to Johnson & Smith (2022) in the Harvard Business Review..."</p>
+                        <p style="margin-top: 10px;"><strong>Action:</strong> Search HBR for this article. Does it exist? Are these real authors?</p>
+                    </div>
+                </div>
+            <div class="slide-number">11</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>E - Examine Specifics</h2>
+                    <div class="two-column">
+                        <div class="hallucination-example">
+                            <h4 style="color: var(--accent-red);">Red Flags</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Very precise percentages (73.4%)</li>
+                                <li>Round numbers that seem too perfect</li>
+                                <li>Specific dates for vague events</li>
+                                <li>Exact quotes from famous people</li>
+                                <li>Detailed statistics without sources</li>
+                            </ul>
+                        </div>
+                        <div class="correct-example">
+                            <h4 style="color: var(--accent-green);">Verification Steps</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Ask: "Where does this number come from?"</li>
+                                <li>Search for the exact statistic online</li>
+                                <li>Check if the date/timeline is plausible</li>
+                                <li>Verify quotes via quote databases</li>
+                                <li>Cross-reference with official sources</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Pro Tip:</strong> Ask the AI "What is the source for this statistic?" - If it can't provide one or provides a fake one, treat the data as unverified.
+                    </div>
+                </div>
+            <div class="slide-number">12</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>R - Research Claims</h2>
+                    <h4 style="color: var(--itag-light);">The 2-Source Rule</h4>
+                    <div class="card" style="margin: 20px 0;">
+                        <p>For any important factual claim, verify with at least <span class="highlight">2 independent, authoritative sources</span> before using in professional work.</p>
+                    </div>
+                    <div class="three-column">
+                        <div style="text-align: center;">
+                            <h4>Tier 1: Primary</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Official company sites</li>
+                                <li>Government databases</li>
+                                <li>Peer-reviewed journals</li>
+                                <li>Original research</li>
+                            </ul>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4>Tier 2: Secondary</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Major news outlets</li>
+                                <li>Industry publications</li>
+                                <li>Expert analysis</li>
+                                <li>Verified Wikipedia</li>
+                            </ul>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4>Tier 3: Caution</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Blog posts</li>
+                                <li>Social media</li>
+                                <li>Forums</li>
+                                <li>Unverified claims</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">13</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>I - Identify Uncertainty</h2>
+                    <p style="text-align: center;">AI confidence ≠ accuracy. Learn to spot uncertainty markers.</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--accent-green);">Good Signs (AI acknowledges limits)</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>"I believe..." / "I think..."</li>
+                                <li>"Based on my training data..."</li>
+                                <li>"I don't have access to current..."</li>
+                                <li>"You should verify this..."</li>
+                                <li>"Approximately..." / "Around..."</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--accent-red);">Warning Signs (Overconfidence)</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Extremely specific claims</li>
+                                <li>No hedging language</li>
+                                <li>Precise numbers without sources</li>
+                                <li>Definitive statements on evolving topics</li>
+                                <li>"Studies show..." (which studies?)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <strong>Prompt Tip:</strong> Add "Express your confidence level and flag any claims you're uncertain about" to your prompts.
+                    </div>
+                </div>
+            <div class="slide-number">14</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>F & Y - Flag and Yield</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>F - Flag Suspicious Content</h4>
+                            <p style="font-size: 0.85em;">Create a systematic review process:</p>
+                            <ul style="font-size: 0.8em;">
+                                <li>Mark all statistics with [VERIFY]</li>
+                                <li>Highlight quotes for validation</li>
+                                <li>Note claims outside AI's training date</li>
+                                <li>Tag domain-specific assertions</li>
+                            </ul>
+                            <div class="prompt-example" style="font-size: 0.7em; margin-top: 15px;">
+                                "Market grew 45% [VERIFY] according to Gartner [CHECK SOURCE]"
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4>Y - Yield to Expertise</h4>
+                            <p style="font-size: 0.85em;">Know when to involve experts:</p>
+                            <ul style="font-size: 0.8em;">
+                                <li><strong>Legal claims</strong> → Legal team</li>
+                                <li><strong>Medical info</strong> → Healthcare pros</li>
+                                <li><strong>Financial data</strong> → Finance team</li>
+                                <li><strong>Technical specs</strong> → Engineers</li>
+                            </ul>
+                            <div class="tip-box" style="margin-top: 15px; font-size: 0.8em;">
+                                AI assists, humans verify. Final responsibility is always human.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">15</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Hands-On Exercise</h2>
+                    <h3 style="color: var(--itag-light);">Spot the Hallucinations</h3>
+                    <div class="exercise-box">
+                        <p style="font-size: 0.95em;">You'll review AI-generated content and identify potential hallucinations using the VERIFY framework.</p>
+                        <div class="two-column" style="margin-top: 20px;">
+                            <div>
+                                <h4>What You'll Do</h4>
+                                <ul style="font-size: 0.85em;">
+                                    <li>Read AI-generated business content</li>
+                                    <li>Identify suspicious claims</li>
+                                    <li>Apply VERIFY steps</li>
+                                    <li>Rewrite with proper verification</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4>Tools Available</h4>
+                                <ul style="font-size: 0.85em;">
+                                    <li>Google Search</li>
+                                    <li>Google Scholar</li>
+                                    <li>The interactive demo</li>
+                                    <li>Your critical thinking!</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">16</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Exercise: Review This AI Output</h2>
+                    <div class="hallucination-example" style="font-size: 0.85em;">
+                        <h4 style="color: white;">AI-Generated Market Analysis</h4>
+                        <p>"The global AI market is projected to reach $1.8 trillion by 2030, according to a 2023 McKinsey report titled 'AI: The Next Digital Frontier.' This represents a compound annual growth rate of 42.6%.</p>
+                        <p style="margin-top: 15px;">Dr. Amanda Chen, Chief AI Researcher at Stanford's Institute for Human-Centered AI, stated in her keynote at the 2023 World Economic Forum: 'Organizations that fail to adopt AI within the next 18 months will face a 60% higher risk of market displacement.'</p>
+                        <p style="margin-top: 15px;">A recent Deloitte survey found that 78.3% of Fortune 500 companies have already implemented generative AI tools, with an average productivity improvement of 34%."</p>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Your Task:</strong> How many potential hallucinations can you spot? Apply the VERIFY framework.
+                    </div>
+                </div>
+            <div class="slide-number">17</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Exercise Analysis</h2>
+                    <div style="font-size: 0.8em;">
+                        <div class="two-column">
+                            <div>
+                                <h4 style="color: var(--accent-red);">Potential Issues Found</h4>
+                                <ul>
+                                    <li><strong>V:</strong> McKinsey report title needs verification</li>
+                                    <li><strong>E:</strong> 42.6% CAGR - suspiciously precise</li>
+                                    <li><strong>E:</strong> "78.3%" - overly specific percentage</li>
+                                    <li><strong>V:</strong> Is Dr. Amanda Chen real? Verify LinkedIn</li>
+                                    <li><strong>R:</strong> WEF keynote - can we find the speech?</li>
+                                    <li><strong>E:</strong> "60% higher risk" - source needed</li>
+                                    <li><strong>V:</strong> Deloitte survey - does it exist?</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--accent-green);">Verification Results</h4>
+                                <ul>
+                                    <li>McKinsey report exists but title is different</li>
+                                    <li>Market projections vary by source</li>
+                                    <li>Dr. Chen - unable to verify exact quote</li>
+                                    <li>Deloitte survey exists but numbers differ</li>
+                                    <li>"60% risk" claim - no source found</li>
+                                </ul>
+                                <div class="warning-box" style="margin-top: 15px; font-size: 0.9em;">
+                                    <strong>Result:</strong> 5+ claims need correction or removal
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">18</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Prevention Strategy #1: Better Prompts</h2>
+                    <h4 style="color: var(--itag-light);">Reduce hallucinations through prompt engineering</h4>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div class="hallucination-example">
+                            <h4 style="color: var(--accent-red);">Hallucination-Prone Prompt</h4>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+                                "Tell me about the benefits of AI in healthcare with statistics."
+                            </div>
+                            <p style="font-size: 0.8em; margin-top: 10px;">Problems: Vague, invites fabrication of stats</p>
+                        </div>
+                        <div class="correct-example">
+                            <h4 style="color: var(--accent-green);">Hallucination-Resistant Prompt</h4>
+                            <div class="prompt-example" style="font-size: 0.75em;">
+                                "Describe potential benefits of AI in healthcare. Do NOT include specific statistics unless you can cite the exact source. If you're uncertain about a claim, say so."
+                            </div>
+                            <p style="font-size: 0.8em; margin-top: 10px;">Better: Sets boundaries, requests honesty</p>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">19</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Prevention Strategy #2: Constrain the Output</h2>
+                    <div class="card" style="margin: 20px 0;">
+                        <h4>Anti-Hallucination Prompt Additions</h4>
+                        <div class="prompt-example">
+<strong>Add to your prompts:</strong>
+
+"Important guidelines:
+- Only include facts you are highly confident about
+- If you cite a source, it must be a real, verifiable source
+- Mark any uncertain claims with [NEEDS VERIFICATION]
+- Say 'I don't know' rather than guessing
+- Don't invent statistics - use qualitative descriptions instead
+- If asked about events after your training date, acknowledge limitations"
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Key Insight:</strong> LLMs follow instructions. Explicitly telling them NOT to fabricate significantly reduces hallucinations.
+                    </div>
+                </div>
+            <div class="slide-number">20</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Prevention Strategy #3: Ground with Context</h2>
+                    <h4 style="color: var(--itag-light);">RAG - Retrieval Augmented Generation</h4>
+                    <div class="two-column">
+                        <div>
+                            <h4>The Concept</h4>
+                            <p style="font-size: 0.85em;">Instead of relying on AI's training data, provide verified source material in the prompt.</p>
+                            <ul style="font-size: 0.8em;">
+                                <li>Paste relevant documents</li>
+                                <li>Include verified data</li>
+                                <li>Reference specific sources</li>
+                                <li>Constrain to provided info</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="prompt-example" style="font-size: 0.7em;">
+<strong>Grounded Prompt Example:</strong>
+
+"Based ONLY on the following quarterly report data, summarize our Q3 performance:
+
+[Paste actual Q3 data here]
+
+Do not add any information not contained in the above data. If asked about something not covered, say 'This information is not in the provided data.'"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">21</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Prevention Strategy #4: Chain-of-Thought</h2>
+                    <p style="text-align: center;">Ask AI to show its reasoning - makes errors more visible</p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <div class="prompt-example" style="font-size: 0.75em;">
+<strong>Without Chain-of-Thought:</strong>
+"What's the ROI of implementing CRM software?"
+
+<strong>AI Response:</strong>
+"CRM implementation typically yields a 245% ROI within the first year."
+
+<span style="color: var(--accent-red);">&#x274C; No reasoning shown, hard to verify</span>
+                        </div>
+                        <div class="prompt-example" style="font-size: 0.75em;">
+<strong>With Chain-of-Thought:</strong>
+"What factors determine CRM ROI? Think through the calculation step by step, noting any assumptions."
+
+<strong>AI Response:</strong>
+"ROI depends on: 1) Implementation cost, 2) Training costs, 3) Time savings, 4) Sales improvement...
+My assumptions are... These are estimates because..."
+
+<span style="color: var(--accent-green);">&#x2714; Reasoning visible, assumptions clear</span>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">22</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Prevention Strategy #5: Self-Critique</h2>
+                    <h4 style="color: var(--itag-light);">Ask the AI to check its own work</h4>
+                    <div class="card" style="margin: 20px 0;">
+                        <div class="prompt-example" style="font-size: 0.8em;">
+<strong>Two-Step Approach:</strong>
+
+<strong>Step 1 - Generate:</strong>
+"Write a summary of recent AI developments in healthcare."
+
+<strong>Step 2 - Critique:</strong>
+"Review your previous response. Identify any claims that:
+1. Might be outdated (my knowledge cutoff is [date])
+2. Include specific statistics that should be verified
+3. Reference sources that need confirmation
+4. Make definitive claims that should be hedged
+
+List each concern and suggest how to address it."
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <strong>Why it works:</strong> The same pattern-matching that creates hallucinations can also detect them when specifically prompted to look.
+                    </div>
+                </div>
+            <div class="slide-number">23</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Tools for Verification</h2>
+                    <div class="three-column">
+                        <div class="card">
+                            <h4>Source Verification</h4>
+                            <ul style="font-size: 0.75em;">
+                                <li><strong>Google Scholar</strong> - Academic papers</li>
+                                <li><strong>Semantic Scholar</strong> - AI-powered search</li>
+                                <li><strong>CrossRef</strong> - DOI lookup</li>
+                                <li><strong>Snopes</strong> - Fact-checking</li>
+                                <li><strong>PolitiFact</strong> - Claims verification</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>AI Detection Tools</h4>
+                            <ul style="font-size: 0.75em;">
+                                <li><strong>Originality.ai</strong></li>
+                                <li><strong>GPTZero</strong></li>
+                                <li><strong>Copyleaks</strong></li>
+                                <li><strong>Turnitin</strong></li>
+                                <li><em>Note: Detection isn't verification</em></li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Built-in Features</h4>
+                            <ul style="font-size: 0.75em;">
+                                <li><strong>Bing Chat</strong> - Live citations</li>
+                                <li><strong>Perplexity</strong> - Source links</li>
+                                <li><strong>Google Bard</strong> - "Google it" button</li>
+                                <li><strong>ChatGPT</strong> - Browse mode</li>
+                                <li><em>Still verify independently!</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">24</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Building a Review Workflow</h2>
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <div class="framework-step">
+                            <div class="step-number">1</div>
+                            <div><strong>Generate</strong> - Create content with anti-hallucination prompts</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">2</div>
+                            <div><strong>Flag</strong> - Mark all verifiable claims (stats, quotes, sources)</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">3</div>
+                            <div><strong>Verify</strong> - Check each flagged item against authoritative sources</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">4</div>
+                            <div><strong>Revise</strong> - Correct errors, remove unverifiable claims</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">5</div>
+                            <div><strong>Review</strong> - Expert check for domain-specific content</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">6</div>
+                            <div><strong>Publish</strong> - Only after human sign-off</div>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">25</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Best Practices Summary</h2>
+                    <div class="two-column">
+                        <div class="correct-example">
+                            <h4 style="color: var(--accent-green);">Do</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Always verify statistics and sources</li>
+                                <li>Use anti-hallucination prompts</li>
+                                <li>Ground AI with verified context</li>
+                                <li>Apply the VERIFY framework</li>
+                                <li>Have experts review critical content</li>
+                                <li>Maintain healthy skepticism</li>
+                                <li>Document your verification process</li>
+                            </ul>
+                        </div>
+                        <div class="hallucination-example">
+                            <h4 style="color: var(--accent-red);">Don't</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Trust AI citations without checking</li>
+                                <li>Use AI statistics in professional work unverified</li>
+                                <li>Assume confidence = accuracy</li>
+                                <li>Skip verification for "small" details</li>
+                                <li>Publish AI content without review</li>
+                                <li>Ignore your domain expertise</li>
+                                <li>Rely solely on AI for critical decisions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">26</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>The Trust Equation</h2>
+                    <div style="text-align: center; margin: 40px 0;">
+                        <div style="font-size: 1.5em; color: var(--itag-light); background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; border-radius: 15px; display: inline-block;">
+                            AI Output + Human Verification = Trustworthy Content
+                        </div>
+                    </div>
+                    <div class="three-column" style="margin-top: 30px;">
+                        <div class="card" style="text-align: center;">
+                            <h4>Speed</h4>
+                            <p style="font-size: 0.85em;">AI generates drafts quickly</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>+</h4>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Accuracy</h4>
+                            <p style="font-size: 0.85em;">Humans verify and validate</p>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>The Goal:</strong> Use AI to accelerate work while maintaining the accuracy standards your work requires.
+                    </div>
+                </div>
+            <div class="slide-number">27</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Interactive Demo</h2>
+                    <h3 style="color: var(--itag-light);">Hallucination Detector Tool</h3>
+                    <div class="card" style="margin: 20px 0;">
+                        <p>Try our interactive fact-checking tool to practice identifying and verifying AI-generated claims.</p>
+                        <ul style="font-size: 0.9em;">
+                            <li>Paste AI-generated content</li>
+                            <li>Auto-detect potential hallucinations</li>
+                            <li>Get verification suggestions</li>
+                            <li>Generate corrected versions</li>
+                        </ul>
+                    </div>
+                    <div class="exercise-box">
+                        <h4>Access the Demo</h4>
+                        <p>Navigate to the <strong>Demo</strong> section in the course materials</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: #aaa;">Or use any AI tool with the anti-hallucination prompts we've learned</p>
+                    </div>
+                </div>
+            <div class="slide-number">28</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Take-Home Exercise</h2>
+                    <div class="exercise-box">
+                        <h4>Practice Assignment</h4>
+                        <ol style="font-size: 0.9em;">
+                            <li><strong>Generate</strong> - Ask AI to write a 200-word summary about a topic in your field</li>
+                            <li><strong>Analyze</strong> - Apply the VERIFY framework to identify potential issues</li>
+                            <li><strong>Verify</strong> - Fact-check at least 3 specific claims</li>
+                            <li><strong>Revise</strong> - Create a corrected version with proper sourcing</li>
+                            <li><strong>Reflect</strong> - Document what you learned about AI limitations</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <strong>Bonus Challenge:</strong> Try the same prompt with different AI models (ChatGPT, Claude, Gemini) and compare the hallucination patterns.
+                    </div>
+                </div>
+            <div class="slide-number">29</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Key Takeaways</h2>
+                    <div class="four-column">
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F50D;</p>
+                            <h4 style="font-size: 0.9em;">Always Verify</h4>
+                            <p style="font-size: 0.75em;">Trust but verify - especially statistics and sources</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F6E1;</p>
+                            <h4 style="font-size: 0.9em;">Prevent</h4>
+                            <p style="font-size: 0.75em;">Use anti-hallucination prompts</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x2705;</p>
+                            <h4 style="font-size: 0.9em;">VERIFY</h4>
+                            <p style="font-size: 0.75em;">Apply the framework systematically</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <p style="font-size: 2em; margin: 10px 0;">&#x1F91D;</p>
+                            <h4 style="font-size: 0.9em;">Human + AI</h4>
+                            <p style="font-size: 0.75em;">AI assists, humans decide</p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 10px;">
+                        <p style="font-size: 1.1em; color: var(--itag-light);">"The goal isn't to avoid AI - it's to use it wisely."</p>
+                    </div>
+                </div>
+            <div class="slide-number">30</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Resources</h2>
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Further Reading</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Stanford HAI - AI Index Report</li>
+                                <li>MIT Technology Review - AI Coverage</li>
+                                <li>OpenAI Documentation on Limitations</li>
+                                <li>Anthropic's Research on Honesty</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Verification Tools</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>scholar.google.com</li>
+                                <li>snopes.com</li>
+                                <li>crossref.org</li>
+                                <li>perplexity.ai (with citations)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tip-box" style="margin-top: 30px;">
+                        <strong>Stay Updated:</strong> AI capabilities change rapidly. What hallucinates today may improve tomorrow - but verification remains essential.
+                    </div>
+                </div>
+            <div class="slide-number">31</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h2>Questions & Discussion</h2>
+                    <div style="text-align: center; margin: 40px 0;">
+                        <p style="font-size: 1.3em; color: var(--itag-light);">What challenges have you encountered with AI accuracy?</p>
+                    </div>
+                    <div class="three-column">
+                        <div class="card" style="text-align: center;">
+                            <h4>Share</h4>
+                            <p style="font-size: 0.85em;">Your hallucination experiences</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Ask</h4>
+                            <p style="font-size: 0.85em;">About specific use cases</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4>Discuss</h4>
+                            <p style="font-size: 0.85em;">Industry-specific concerns</p>
+                        </div>
+                    </div>
+                </div>
+            <div class="slide-number">32</div>
+        </div>
+        
+        <div class="slide">
+            <div class="slide-content">
+                    <h1>Thank You!</h1>
+                    <div style="margin: 40px 0;">
+                        <p style="font-size: 1.2em; color: var(--itag-light);">Handling Hallucinations: Fact-Checking AI</p>
+                        <p style="color: #888;">ITAG Skillnet AI Advantage</p>
+                    </div>
+                    <div class="card" style="max-width: 500px; margin: 30px auto;">
+                        <h4>Remember the VERIFY Framework</h4>
+                        <p style="font-size: 0.9em;"><strong>V</strong>alidate - <strong>E</strong>xamine - <strong>R</strong>esearch - <strong>I</strong>dentify - <strong>F</strong>lag - <strong>Y</strong>ield</p>
+                    </div>
+                    <div style="margin-top: 40px;">
+                        <p style="font-size: 0.9em; color: #666;">Access course materials and the interactive demo through the course portal</p>
+                    </div>
+                </div>
+            <div class="slide-number">33</div>
+        </div>
+        
+</body>
+</html>

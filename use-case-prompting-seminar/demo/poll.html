@@ -445,8 +445,84 @@
                 </div>
             </div>
 
-            <!-- Poll 2: AI Tools Used -->
+            <!-- Poll 2: What are you using AI for? -->
             <div class="poll-section multi-select" id="poll2">
+                <h2><span class="icon">🎯</span> What are you currently using AI for? (Select all that apply)</h2>
+                <div class="options" data-poll="use-cases">
+                    <div class="option" data-value="writing" onclick="toggleUseCase('writing', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">✍️</span>
+                        <div class="option-content">
+                            <div class="option-label">Writing & Content</div>
+                            <div class="option-desc">Emails, documents, reports, blog posts</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="research" onclick="toggleUseCase('research', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🔬</span>
+                        <div class="option-content">
+                            <div class="option-label">Research & Learning</div>
+                            <div class="option-desc">Finding information, understanding topics, learning new skills</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="analysis" onclick="toggleUseCase('analysis', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">📊</span>
+                        <div class="option-content">
+                            <div class="option-label">Data & Analysis</div>
+                            <div class="option-desc">Spreadsheets, data analysis, summarizing information</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="creative" onclick="toggleUseCase('creative', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🎨</span>
+                        <div class="option-content">
+                            <div class="option-label">Creative Projects</div>
+                            <div class="option-desc">Brainstorming, design ideas, presentations</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="coding" onclick="toggleUseCase('coding', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">💻</span>
+                        <div class="option-content">
+                            <div class="option-label">Coding & Technical</div>
+                            <div class="option-desc">Writing code, debugging, technical documentation</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="not-yet" onclick="toggleUseCase('not-yet', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">🆕</span>
+                        <div class="option-content">
+                            <div class="option-label">Not using it yet</div>
+                            <div class="option-desc">Haven't found a use case for my work</div>
+                        </div>
+                        <span class="option-count hidden">0</span>
+                    </div>
+                    <div class="option" data-value="other-usecase" onclick="toggleUseCase('other-usecase', this)">
+                        <div class="option-bar"></div>
+                        <div class="checkbox"></div>
+                        <span class="option-icon">✏️</span>
+                        <div class="option-content">
+                            <div class="option-label">Other</div>
+                        </div>
+                        <textarea class="other-input" id="useCaseOtherText" placeholder="Please specify..." onclick="event.stopPropagation(); if(!selectedUseCases.has('other-usecase')) toggleUseCase('other-usecase', this.closest('.option'))" rows="1"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Poll 3: AI Tools Used -->
+            <div class="poll-section multi-select" id="poll3">
                 <h2><span class="icon">🤖</span> Which AI systems have you used? (Select all that apply)</h2>
                 <div class="options" data-poll="tools">
                     <div class="option" data-value="frontier" onclick="toggleTool('frontier', this)">
@@ -531,6 +607,7 @@
             <div class="success-message">
                 <h2>Thank You!</h2>
                 <p>Your response has been recorded.</p>
+                <button class="btn btn-secondary" style="margin-top: 20px;" onclick="resetPoll()">Take Poll Again</button>
             </div>
         </div>
 
@@ -539,6 +616,10 @@
             <div class="poll-section">
                 <h2><span class="icon">📊</span> Technical Skill Levels</h2>
                 <div class="options" id="technicalResults"></div>
+            </div>
+            <div class="poll-section">
+                <h2><span class="icon">🎯</span> Current AI Use Cases</h2>
+                <div class="options" id="useCasesResults"></div>
             </div>
             <div class="poll-section">
                 <h2><span class="icon">🤖</span> AI Tools Used</h2>
@@ -560,6 +641,7 @@
     <script>
         const POLL_ID = 'itag-skillnet-poll';
         let selectedTechnical = null;
+        let selectedUseCases = new Set();
         let selectedTools = new Set();
         let currentMode = 'vote';
 
@@ -577,10 +659,40 @@
         }
 
         // Check if already submitted
-        const hasSubmitted = localStorage.getItem(`poll_submitted_${POLL_ID}`);
+        let hasSubmitted = localStorage.getItem(`poll_submitted_${POLL_ID}`);
         if (hasSubmitted) {
             document.getElementById('voteSection').classList.add('hidden');
             document.getElementById('successSection').classList.remove('hidden');
+        }
+
+        function resetPoll() {
+            // Clear submitted state
+            localStorage.removeItem(`poll_submitted_${POLL_ID}`);
+            hasSubmitted = false;
+
+            // Reset selections
+            selectedTechnical = null;
+            selectedUseCases.clear();
+            selectedTools.clear();
+
+            // Clear all selected classes
+            document.querySelectorAll('.option.selected').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Clear text inputs
+            document.getElementById('technicalOtherText').value = '';
+            document.getElementById('useCaseOtherText').value = '';
+            document.getElementById('toolsOtherText').value = '';
+
+            // Reset submit button
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Submit Response';
+
+            // Show vote section
+            document.getElementById('successSection').classList.add('hidden');
+            document.getElementById('voteSection').classList.remove('hidden');
         }
 
         function setMode(mode) {
@@ -617,6 +729,31 @@
             updateSubmitButton();
         }
 
+        function toggleUseCase(value, element) {
+            if (hasSubmitted) return;
+
+            if (selectedUseCases.has(value)) {
+                selectedUseCases.delete(value);
+                element.classList.remove('selected');
+            } else {
+                // If selecting "not-yet", clear others
+                if (value === 'not-yet') {
+                    selectedUseCases.clear();
+                    document.querySelectorAll('[data-poll="use-cases"] .option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                } else {
+                    // If selecting a use case, remove "not-yet"
+                    selectedUseCases.delete('not-yet');
+                    const notYetOption = document.querySelector('[data-poll="use-cases"] [data-value="not-yet"]');
+                    if (notYetOption) notYetOption.classList.remove('selected');
+                }
+                selectedUseCases.add(value);
+                element.classList.add('selected');
+            }
+            updateSubmitButton();
+        }
+
         function toggleTool(value, element) {
             if (hasSubmitted) return;
 
@@ -643,11 +780,11 @@
 
         function updateSubmitButton() {
             const btn = document.getElementById('submitBtn');
-            btn.disabled = !(selectedTechnical && selectedTools.size > 0);
+            btn.disabled = !(selectedTechnical && selectedUseCases.size > 0 && selectedTools.size > 0);
         }
 
         async function submitPoll() {
-            if (!selectedTechnical || selectedTools.size === 0) return;
+            if (!selectedTechnical || selectedUseCases.size === 0 || selectedTools.size === 0) return;
 
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
@@ -659,6 +796,15 @@
                 const otherText = document.getElementById('technicalOtherText').value.trim();
                 technicalValue = otherText ? `other: ${otherText}` : 'other';
             }
+
+            // Build use cases array with "other" text if selected
+            const useCasesArray = Array.from(selectedUseCases).map(useCase => {
+                if (useCase === 'other-usecase') {
+                    const otherText = document.getElementById('useCaseOtherText').value.trim();
+                    return otherText ? `other: ${otherText}` : 'other';
+                }
+                return useCase;
+            });
 
             // Build tools array with "other" text if selected
             const toolsArray = Array.from(selectedTools).map(tool => {
@@ -676,6 +822,7 @@
                     body: JSON.stringify({
                         session_id: generateSessionId(),
                         technical_level: technicalValue,
+                        use_cases: useCasesArray,
                         ai_tools: toolsArray
                     })
                 });
@@ -723,6 +870,32 @@
                             <span class="option-icon">${level.icon}</span>
                             <div class="option-content">
                                 <div class="option-label">${level.label}</div>
+                            </div>
+                            <span class="option-count">${count} (${percent}%)</span>
+                        </div>
+                    `;
+                }).join('');
+
+                // Render use cases
+                const useCasesContainer = document.getElementById('useCasesResults');
+                const useCases = [
+                    { value: 'writing', label: 'Writing & Content', icon: '✍️' },
+                    { value: 'research', label: 'Research & Learning', icon: '🔬' },
+                    { value: 'analysis', label: 'Data & Analysis', icon: '📊' },
+                    { value: 'creative', label: 'Creative Projects', icon: '🎨' },
+                    { value: 'coding', label: 'Coding & Technical', icon: '💻' },
+                    { value: 'not-yet', label: 'Not using it yet', icon: '🆕' }
+                ];
+
+                useCasesContainer.innerHTML = useCases.map(useCase => {
+                    const count = data.use_cases ? (data.use_cases[useCase.value] || 0) : 0;
+                    const percent = totalTech > 0 ? (count / totalTech * 100).toFixed(0) : 0;
+                    return `
+                        <div class="option disabled">
+                            <div class="option-bar" style="width: ${percent}%"></div>
+                            <span class="option-icon">${useCase.icon}</span>
+                            <div class="option-content">
+                                <div class="option-label">${useCase.label}</div>
                             </div>
                             <span class="option-count">${count} (${percent}%)</span>
                         </div>

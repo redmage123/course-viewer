@@ -1,0 +1,138 @@
+# CloudSync Pro - Product FAQ
+
+## General Questions
+
+### What is CloudSync Pro?
+CloudSync Pro is our enterprise file synchronization and sharing platform. It enables teams to store, share, and collaborate on documents securely from any device.
+
+### How much does CloudSync Pro cost?
+- Starter Plan: EUR 8/user/month (up to 10 users)
+- Business Plan: EUR 15/user/month (unlimited users)
+- Enterprise Plan: Custom pricing (includes SSO, advanced security, dedicated support)
+All plans include a 14-day free trial.
+
+### Is there a free version?
+Yes! CloudSync Free includes 5GB storage for individuals. It does not include team collaboration features.
+
+### What platforms are supported?
+- Web browser (Chrome, Firefox, Safari, Edge)
+- Windows 10/11
+- macOS 11+
+- iOS 14+
+- Android 10+
+- Linux (Ubuntu 20.04+, Fedora 34+)
+
+## Features & Functionality
+
+### What is the maximum file size I can upload?
+- Free/Starter: 2GB per file
+- Business: 10GB per file
+- Enterprise: 50GB per file (configurable)
+
+### Does CloudSync Pro support version history?
+Yes! We keep version history for:
+- Free: 30 days
+- Business: 180 days
+- Enterprise: Unlimited (configurable retention)
+
+### Can I share files with external users?
+Yes. You can create shareable links with:
+- Password protection (optional)
+- Expiration dates
+- View-only or edit permissions
+- Download restrictions
+
+### Does CloudSync Pro integrate with other tools?
+We integrate with:
+- Microsoft 365 (Word, Excel, PowerPoint online editing)
+- Google Workspace
+- Slack (file sharing, notifications)
+- Microsoft Teams
+- Salesforce
+- Jira
+- Zapier (for custom automations)
+
+## Security & Compliance
+
+### Is my data encrypted?
+Yes. CloudSync Pro uses:
+- AES-256 encryption at rest
+- TLS 1.3 encryption in transit
+- Optional client-side encryption (Enterprise)
+
+### Where is my data stored?
+Data centers available in:
+- Ireland (EU - default for EU customers)
+- Germany (EU)
+- United States (East/West)
+- Australia
+- Singapore
+Enterprise customers can choose their data residency.
+
+### Is CloudSync Pro GDPR compliant?
+Yes. We are fully GDPR compliant. We also hold:
+- ISO 27001 certification
+- SOC 2 Type II
+- HIPAA compliance (Enterprise with BAA)
+
+### Can administrators see user files?
+By default, no. Administrators can:
+- Manage users and permissions
+- View audit logs
+- Set retention policies
+Content viewing requires explicit legal/compliance authorization.
+
+## Troubleshooting
+
+### Why isn't my file syncing?
+Common causes:
+1. File is open in another application - close and retry
+2. File name contains unsupported characters (< > : " / \ | ? *)
+3. File exceeds size limit
+4. Storage quota exceeded
+5. Poor internet connection
+Try: Right-click sync icon > "Sync Now" or restart the desktop app.
+
+### I forgot my password. How do I reset it?
+1. Go to login.cloudsyncpro.com
+2. Click "Forgot Password"
+3. Enter your email address
+4. Check your inbox for reset link (valid for 24 hours)
+5. Create new password (minimum 12 characters, including number and symbol)
+
+### The desktop app is using too much CPU/memory.
+Try these steps:
+1. Pause syncing temporarily
+2. Reduce number of synced folders
+3. Check for large files being processed
+4. Update to latest version
+5. Contact support if issue persists
+
+### My shared link isn't working for recipients.
+Check:
+- Link hasn't expired
+- Recipient's email is on the allowed list (if restricted)
+- Password was shared correctly
+- File/folder still exists
+- Your account is in good standing
+
+## Support
+
+### How do I contact support?
+- Email: support@cloudsyncpro.com
+- Live Chat: Available 9 AM - 6 PM GMT (Business/Enterprise)
+- Phone: +353 1 555 0199 (Enterprise only)
+- Help Center: help.cloudsyncpro.com
+
+### What are the support response times?
+- Free: Community forum only
+- Starter: 48-hour email response
+- Business: 24-hour email response, live chat
+- Enterprise: 4-hour response, dedicated account manager
+
+### Is there training available?
+Yes! We offer:
+- Video tutorials (help.cloudsyncpro.com/tutorials)
+- Weekly webinars (Tuesdays, 2 PM GMT)
+- On-site training (Enterprise, additional fee)
+- Admin certification program

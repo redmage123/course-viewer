@@ -489,14 +489,27 @@ def create_print_html(slides: list[str], original_styles: str) -> str:
         font-size: 1.1em;
     }}
 
-    /* Flow diagram */
+    /* Flow diagram - row-based layout for process flow */
     .flow-diagram {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin: 20px auto;
+        max-width: 700px;
+    }}
+
+    .flow-row {{
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 15px;
-        flex-wrap: wrap;
-        margin: 20px 0;
+        gap: 20px;
+    }}
+
+    .flow-row.flow-center-right {{
+        width: 100%;
+        justify-content: flex-end;
+        padding-right: 80px;
     }}
 
     .flow-box {{
@@ -506,6 +519,7 @@ def create_print_html(slides: list[str], original_styles: str) -> str:
         padding: 15px 20px;
         text-align: center;
         font-size: 1.1em;
+        min-width: 160px;
     }}
 
     .flow-arrow {{

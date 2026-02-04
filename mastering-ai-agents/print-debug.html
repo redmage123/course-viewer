@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mastering AI Agents - Course Slides</title>
+    <style>
+    
+    @page {
+        size: 297mm 210mm;
+        margin: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #1a1a2e;
+        color: #f1f5f9;
+    }
+
+    .slide {
+        width: 297mm;
+        height: 210mm;
+        padding: 25px 35px;
+        page-break-after: always;
+        page-break-inside: avoid;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        font-size: 12pt;
+    }
+
+    .slide:last-child {
+        page-break-after: auto;
+    }
+
+    /* Center class for title slides */
+    .slide.center {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    h1 {
+        color: #42affa;
+        font-size: 2.4em;
+        margin: 0 0 20px 0;
+        text-align: center;
+    }
+
+    h2 {
+        color: #42affa;
+        font-size: 1.8em;
+        margin: 0 0 20px 0;
+    }
+
+    h3 {
+        color: #94a3b8;
+        font-size: 1.4em;
+        margin: 10px 0;
+    }
+
+    h4 {
+        color: #42affa;
+        font-size: 1.2em;
+        margin: 10px 0;
+    }
+
+    p {
+        margin: 10px 0;
+        line-height: 1.5;
+        font-size: 1em;
+    }
+
+    ul, ol {
+        margin: 10px 0;
+        padding-left: 25px;
+    }
+
+    li {
+        margin: 6px 0;
+        line-height: 1.4;
+        font-size: 0.95em;
+    }
+
+    /* Two-column layout */
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .three-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        flex: 1;
+    }
+
+    /* Card styles */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .card h4 {
+        color: #42affa;
+        margin: 0 0 10px 0;
+    }
+
+    /* Highlight boxes */
+    .highlight-box {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 15px 20px;
+        border-radius: 5px;
+        border-left: 4px solid #42affa;
+        margin: 15px 0;
+    }
+
+    .warning-box {
+        background-color: rgba(255, 152, 0, 0.2);
+        padding: 15px 20px;
+        border-radius: 5px;
+        border-left: 4px solid #ff9800;
+        margin: 15px 0;
+    }
+
+    .success-box {
+        background-color: rgba(76, 175, 80, 0.2);
+        padding: 15px 20px;
+        border-radius: 5px;
+        border-left: 4px solid #4caf50;
+        margin: 15px 0;
+    }
+
+    /* Code blocks */
+    pre {
+        background: #0d1117;
+        border: 2px solid #42affa;
+        border-radius: 8px;
+        padding: 15px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.75em;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 10px 0;
+        max-height: none;
+    }
+
+    pre code {
+        background: none;
+        padding: 0;
+        font-size: inherit;
+    }
+
+    code {
+        background: rgba(66, 175, 250, 0.2);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9em;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 0.85em;
+    }
+
+    th, td {
+        border: 1px solid #334155;
+        padding: 10px 12px;
+        text-align: left;
+    }
+
+    th {
+        background: rgba(66, 175, 250, 0.3);
+        color: #42affa;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background: rgba(30, 41, 59, 0.5);
+    }
+
+    /* Diagram container - hide SVG animations for print */
+    .diagram-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+    }
+
+    .diagram-container svg {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Hide animated elements that don't work in print */
+    .agent-visual,
+    .swarm-container,
+    .protocol-visual {
+        display: none;
+    }
+
+    /* Slide number */
+    .slide-number {
+        position: absolute;
+        bottom: 12px;
+        right: 25px;
+        font-size: 0.9em;
+        color: #64748b;
+    }
+
+    /* Hide inline animation styles */
+    [style*="animation"] {
+        animation: none !important;
+    }
+
+    /* Remove animation delays and effects */
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* SVG animations - make static */
+    svg animate {
+        display: none;
+    }
+
+    /* Make all SVG elements visible */
+    svg rect, svg circle, svg path, svg text {
+        opacity: 1 !important;
+    }
+
+    /* Agent visual - simple static version for print */
+    .agent-node {
+        display: none;
+    }
+
+    /* Flow boxes for diagrams */
+    .flow-box {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        border: 1px solid #42affa;
+        border-radius: 8px;
+        padding: 12px 18px;
+        text-align: center;
+    }
+
+    .flow-arrow {
+        color: #42affa;
+        font-size: 1.5em;
+    }
+
+    /* Protocol agents */
+    .protocol-agent {
+        text-align: center;
+        padding: 10px;
+    }
+
+    .agent-icon {
+        font-size: 2em;
+    }
+
+    /* BDI and neural visuals */
+    .bdi-stack, .neural-visual {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .bdi-layer {
+        padding: 15px 30px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+        min-width: 150px;
+    }
+
+    .bdi-layer.beliefs {
+        background: linear-gradient(135deg, #42affa, #2196f3);
+    }
+
+    .bdi-layer.desires {
+        background: linear-gradient(135deg, #50c878, #4caf50);
+    }
+
+    .bdi-layer.intentions {
+        background: linear-gradient(135deg, #ff6b6b, #f44336);
+    }
+    
+    </style>
+</head>
+<body>
+
+        <div class="slide center">
+            <h1 >Mastering AI Agents</h1>
+    <h3 >Agentic Swarms & Google's A2A Protocol</h3>
+    <p >A 3-Day Intensive Course</p>
+
+    <!-- Animated Agent Icons -->
+    <div class="agent-visual" style="margin: 40px 0;">
+        <div class="agent-node reactive">🤖</div>
+        <div class="agent-node deliberative">🧠</div>
+        <div class="agent-node hybrid">⚡</div>
+    </div>
+
+    <div class="highlight-box" >
+        <p><strong>11 Modules</strong> | <strong>Hands-on Labs</strong> | <strong>Capstone Project</strong></p>
+    </div>
+            <div class="slide-number">1</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Course Overview</h2>
+    <div class="two-column">
+        <div>
+            <h4>Day 1: Foundations</h4>
+            <ul>
+                <li>AI Agent Architecture</li>
+                <li>Swarm Intelligence</li>
+                <li>Multi-Agent Systems</li>
+            </ul>
+            <h4>Day 2: Protocols & Tools</h4>
+            <ul>
+                <li>Google A2A Protocol</li>
+                <li>Agent Development</li>
+                <li>Frameworks (Mesa, Ray)</li>
+            </ul>
+        </div>
+        <div>
+            <h4>Day 3: Applications</h4>
+            <ul>
+                <li>Swarm Optimization</li>
+                <li>Real-World Applications</li>
+                <li>Ethics & Capstone</li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 20px;">
+                <strong>Prerequisites:</strong>
+                <ul style="font-size: 0.8em;">
+                    <li>Python proficiency</li>
+                    <li>Basic ML knowledge</li>
+                    <li>OOP experience</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+            <div class="slide-number">2</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 1</h1>
+        <h2 >Foundations of AI Agents</h2>
+        <p >Understanding autonomous intelligent systems</p>
+
+        <!-- Animated Agent Cycle Diagram -->
+        <div class="diagram-container" style="margin-top: 40px;">
+            <svg width="500" height="250" viewBox="0 0 500 250">
+                <defs>
+                    <marker id="cycle-arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#42affa"/>
+                    </marker>
+                    <filter id="mod1-glow">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+                <!-- Center Agent -->
+                <circle cx="250" cy="125" r="50" fill="#50c878" filter="url(#mod1-glow)">
+                    <animate attributeName="r" values="50;55;50" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <text x="250" y="120" fill="white" text-anchor="middle" font-size="14" font-weight="bold">Agent</text>
+                <text x="250" y="140" fill="white" text-anchor="middle" font-size="24">🤖</text>
+
+                <!-- Perceive (top) -->
+                <rect x="200" y="10" width="100" height="40" fill="#42affa" rx="8" filter="url(#mod1-glow)">
+                    <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+                </rect>
+                <text x="250" y="35" fill="white" text-anchor="middle" font-size="12" font-weight="bold">👁️ Perceive</text>
+
+                <!-- Decide (right) -->
+                <rect x="370" y="105" width="100" height="40" fill="#9c27b0" rx="8" filter="url(#mod1-glow)">
+                    <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" begin="1s" repeatCount="indefinite"/>
+                </rect>
+                <text x="420" y="130" fill="white" text-anchor="middle" font-size="12" font-weight="bold">🧠 Decide</text>
+
+                <!-- Act (bottom) -->
+                <rect x="200" y="200" width="100" height="40" fill="#ff6b6b" rx="8" filter="url(#mod1-glow)">
+                    <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" begin="2s" repeatCount="indefinite"/>
+                </rect>
+                <text x="250" y="225" fill="white" text-anchor="middle" font-size="12" font-weight="bold">⚡ Act</text>
+
+                <!-- Environment (left) -->
+                <rect x="30" y="105" width="100" height="40" fill="#ff9800" rx="8" filter="url(#mod1-glow)">
+                    <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+                </rect>
+                <text x="80" y="130" fill="white" text-anchor="middle" font-size="12" font-weight="bold">🌍 Environment</text>
+
+                <!-- Animated connecting arrows -->
+                <path d="M250 50 L250 75" stroke="#42affa" stroke-width="2" marker-end="url(#cycle-arrow)">
+                    <animate attributeName="stroke-dasharray" values="0,30;30,0" dur="1s" repeatCount="indefinite"/>
+                </path>
+                <path d="M300 125 L370 125" stroke="#9c27b0" stroke-width="2" marker-end="url(#cycle-arrow)">
+                    <animate attributeName="stroke-dasharray" values="0,70;70,0" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+                </path>
+                <path d="M250 175 L250 200" stroke="#ff6b6b" stroke-width="2" marker-end="url(#cycle-arrow)">
+                    <animate attributeName="stroke-dasharray" values="0,30;30,0" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+                </path>
+                <path d="M130 125 L200 125" stroke="#ff9800" stroke-width="2" marker-end="url(#cycle-arrow)">
+                    <animate attributeName="stroke-dasharray" values="0,70;70,0" dur="1s" begin="0.9s" repeatCount="indefinite"/>
+                </path>
+            </svg>
+        </div>
+            <div class="slide-number">3</div>
+        </div>
+        
+        <div class="slide">
+            <h2>What is an AI Agent?</h2>
+        <div class="highlight-box">
+            <p><strong>Definition:</strong> An AI agent is an autonomous entity that perceives its environment through sensors, processes information, and takes actions to achieve specific goals.</p>
+        </div>
+        <div class="diagram-container">
+            <svg width="600" height="200" viewBox="0 0 600 200">
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L9,3 z" fill="white"/>
+                    </marker>
+                    <filter id="agent-glow">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- Environment Box -->
+                <rect x="50" y="60" width="100" height="80" fill="#42affa" rx="10" filter="url(#agent-glow)">
+                    <animate attributeName="opacity" values="0;1" dur="0.5s" fill="freeze"/>
+                </rect>
+                <text x="100" y="105" fill="white" text-anchor="middle" font-size="14" font-weight="bold">Environment</text>
+                <!-- Agent Box (pulsing) -->
+                <rect x="250" y="60" width="100" height="80" fill="#50c878" rx="10" filter="url(#agent-glow)">
+                    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.2s" fill="freeze"/>
+                    <animate attributeName="fill-opacity" values="1;0.7;1" dur="2s" repeatCount="indefinite"/>
+                </rect>
+                <text x="300" y="95" fill="white" text-anchor="middle" font-size="14" font-weight="bold">Agent</text>
+                <text x="300" y="115" fill="white" text-anchor="middle" font-size="11">(Perceive→Decide→Act)</text>
+                <!-- Goals Box -->
+                <rect x="450" y="60" width="100" height="80" fill="#ff6b6b" rx="10" filter="url(#agent-glow)">
+                    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.4s" fill="freeze"/>
+                </rect>
+                <text x="500" y="105" fill="white" text-anchor="middle" font-size="14" font-weight="bold">Goals</text>
+                <!-- Animated Percepts Arrow -->
+                <path d="M150 85 L250 85" stroke="#42affa" stroke-width="3" marker-end="url(#arrow)">
+                    <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1.5s" repeatCount="indefinite"/>
+                </path>
+                <text x="200" y="75" fill="#42affa" font-size="12" text-anchor="middle">Percepts</text>
+                <!-- Animated Actions Arrow -->
+                <path d="M250 115 L150 115" stroke="#50c878" stroke-width="3" marker-end="url(#arrow)">
+                    <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1.5s" begin="0.5s" repeatCount="indefinite"/>
+                </path>
+                <text x="200" y="135" fill="#50c878" font-size="12" text-anchor="middle">Actions</text>
+                <!-- Animated Optimize Arrow -->
+                <path d="M350 100 L450 100" stroke="#ff6b6b" stroke-width="3" marker-end="url(#arrow)">
+                    <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1.5s" begin="1s" repeatCount="indefinite"/>
+                </path>
+                <text x="400" y="90" fill="#ff6b6b" font-size="12" text-anchor="middle">Optimize</text>
+            </svg>
+        </div>
+        <p><strong>Key Properties:</strong> Autonomy, Reactivity, Proactiveness, Social Ability</p>
+            <div class="slide-number">4</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Agent Types</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>Reactive Agents</h4>
+                <p>Simple stimulus-response</p>
+                <ul style="font-size: 0.8em;">
+                    <li>No internal state</li>
+                    <li>Fast response</li>
+                    <li>Limited reasoning</li>
+                </ul>
+                <p style="color: #42affa;">Example: Thermostat</p>
+            </div>
+            <div class="card">
+                <h4>Deliberative Agents</h4>
+                <p>Planning and reasoning</p>
+                <ul style="font-size: 0.8em;">
+                    <li>World model</li>
+                    <li>Goal-directed</li>
+                    <li>Slower but smarter</li>
+                </ul>
+                <p style="color: #42affa;">Example: Chess AI</p>
+            </div>
+            <div class="card">
+                <h4>Hybrid Agents</h4>
+                <p>Best of both worlds</p>
+                <ul style="font-size: 0.8em;">
+                    <li>Reactive layer</li>
+                    <li>Deliberative layer</li>
+                    <li>Meta-control</li>
+                </ul>
+                <p style="color: #42affa;">Example: Autonomous car</p>
+            </div>
+        </div>
+            <div class="slide-number">5</div>
+        </div>
+        
+        <div class="slide">
+            <h2>BDI Architecture</h2>
+        <p><strong>Beliefs, Desires, Intentions</strong> - A cognitive agent model</p>
+        <div class="two-column">
+            <div>
+                <div class="highlight-box">
+                    <p><strong>Beliefs:</strong> Agent's knowledge about the world</p>
+                    <p><strong>Desires:</strong> Goals the agent wants to achieve</p>
+                    <p><strong>Intentions:</strong> Committed plans of action</p>
+                </div>
+                <pre><code class="python">class BDIAgent:
+    def __init__(self):
+        self.beliefs = {}      # World state
+        self.desires = []      # Goals
+        self.intentions = []   # Active plans
+
+    def deliberate(self):
+        # Update beliefs from percepts
+        # Generate options (desires)
+        # Filter to intentions
+        # Execute current intention
+        pass</code></pre>
+            </div>
+            <div class="diagram-container">
+                <svg width="280" height="300" viewBox="0 0 280 300">
+                    <defs>
+                        <marker id="bdi-arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="white"/>
+                        </marker>
+                        <!-- Glow filter -->
+                        <filter id="glow-filter">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Beliefs Box -->
+                    <rect x="90" y="20" width="100" height="50" fill="#42affa" rx="8" filter="url(#glow-filter)">
+                        <animate attributeName="opacity" values="0;1" dur="0.5s" fill="freeze"/>
+                    </rect>
+                    <text x="140" y="50" fill="white" text-anchor="middle" font-weight="bold">Beliefs</text>
+                    <!-- Desires Box -->
+                    <rect x="90" y="100" width="100" height="50" fill="#50c878" rx="8" filter="url(#glow-filter)">
+                        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.2s" fill="freeze"/>
+                    </rect>
+                    <text x="140" y="130" fill="white" text-anchor="middle" font-weight="bold">Desires</text>
+                    <!-- Intentions Box -->
+                    <rect x="90" y="180" width="100" height="50" fill="#ff6b6b" rx="8" filter="url(#glow-filter)">
+                        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.4s" fill="freeze"/>
+                    </rect>
+                    <text x="140" y="210" fill="white" text-anchor="middle" font-weight="bold">Intentions</text>
+                    <!-- Actions Box -->
+                    <rect x="90" y="260" width="100" height="30" fill="#9c27b0" rx="8" filter="url(#glow-filter)">
+                        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.6s" fill="freeze"/>
+                    </rect>
+                    <text x="140" y="280" fill="white" text-anchor="middle" font-size="12" font-weight="bold">Actions</text>
+                    <!-- Animated Arrows -->
+                    <g>
+                        <path d="M140 70 L140 100" stroke="#42affa" stroke-width="3" marker-end="url(#bdi-arrow)">
+                            <animate attributeName="stroke-dasharray" values="0,30;30,0" dur="1s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M140 150 L140 180" stroke="#50c878" stroke-width="3" marker-end="url(#bdi-arrow)">
+                            <animate attributeName="stroke-dasharray" values="0,30;30,0" dur="1s" begin="0.3s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M140 230 L140 260" stroke="#ff6b6b" stroke-width="3" marker-end="url(#bdi-arrow)">
+                            <animate attributeName="stroke-dasharray" values="0,30;30,0" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+                </svg>
+            </div>
+        </div>
+            <div class="slide-number">6</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Environment Types (PEAS)</h2>
+        <p><strong>P</strong>erformance, <strong>E</strong>nvironment, <strong>A</strong>ctuators, <strong>S</strong>ensors</p>
+        <table style="width: 100%; font-size: 0.8em;">
+            <tr>
+                <th>Property</th>
+                <th>Type A</th>
+                <th>Type B</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>Observability</td>
+                <td>Fully Observable</td>
+                <td>Partially Observable</td>
+                <td>Chess vs Poker</td>
+            </tr>
+            <tr>
+                <td>Determinism</td>
+                <td>Deterministic</td>
+                <td>Stochastic</td>
+                <td>Calculator vs Weather</td>
+            </tr>
+            <tr>
+                <td>Episodic</td>
+                <td>Episodic</td>
+                <td>Sequential</td>
+                <td>Image classifier vs Game</td>
+            </tr>
+            <tr>
+                <td>Dynamics</td>
+                <td>Static</td>
+                <td>Dynamic</td>
+                <td>Puzzle vs Trading</td>
+            </tr>
+            <tr>
+                <td>Agents</td>
+                <td>Single-agent</td>
+                <td>Multi-agent</td>
+                <td>Crossword vs Auction</td>
+            </tr>
+        </table>
+            <div class="slide-number">7</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Simple Reactive Agent</h2>
+        <pre><code class="python">class ReactiveAgent:
+    """A simple stimulus-response agent"""
+
+    def __init__(self, rules: dict):
+        self.rules = rules  # condition -> action mapping
+
+    def perceive(self, environment) -> dict:
+        """Get current state from sensors"""
+        return {
+            'temperature': environment.get_temp(),
+            'humidity': environment.get_humidity(),
+            'motion': environment.detect_motion()
+        }
+
+    def decide(self, percepts: dict) -> str:
+        """Match percepts to rules"""
+        for condition, action in self.rules.items():
+            if self._matches(percepts, condition):
+                return action
+        return 'idle'
+
+    def act(self, action: str, environment):
+        """Execute the chosen action"""
+        environment.execute(action)
+
+    def run_cycle(self, environment):
+        """One perception-action cycle"""
+        percepts = self.perceive(environment)
+        action = self.decide(percepts)
+        self.act(action, environment)
+        return action
+
+# Example: Thermostat agent
+thermostat = ReactiveAgent({
+    ('temp < 18',): 'heat_on',
+    ('temp > 24',): 'cool_on',
+    ('18 <= temp <= 24',): 'maintain'
+})</code></pre>
+            <div class="slide-number">8</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 2</h1>
+        <h2 >Swarm Intelligence</h2>
+        <p >Collective behavior from simple rules</p>
+
+        <!-- Animated Swarm Visualization -->
+        <div class="swarm-container">
+            <div class="swarm-agent"></div>
+            <div class="swarm-agent"></div>
+            <div class="swarm-agent"></div>
+            <div class="swarm-agent"></div>
+            <div class="swarm-agent"></div>
+            <div class="swarm-agent"></div>
+            <div class="swarm-agent"></div>
+            <div class="swarm-agent"></div>
+        </div>
+            <div class="slide-number">9</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Biological Inspiration</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>Ant Colonies</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Pheromone trails</li>
+                    <li>Shortest path finding</li>
+                    <li>Division of labor</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Bee Swarms</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Waggle dance</li>
+                    <li>Collective decision</li>
+                    <li>Nest site selection</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Bird Flocks</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>No leader</li>
+                    <li>Local rules only</li>
+                    <li>Emergent patterns</li>
+                </ul>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 20px;">
+            <strong>Key Insight:</strong> Complex global behavior emerges from simple local interactions without central control.
+        </div>
+            <div class="slide-number">10</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Core Principles</h2>
+        <div class="two-column">
+            <div>
+                <h4>1. Decentralization</h4>
+                <p>No single point of control or failure</p>
+
+                <h4>2. Self-Organization</h4>
+                <p>Order emerges from local interactions</p>
+
+                <h4>3. Emergence</h4>
+                <p>Whole is greater than sum of parts</p>
+
+                <h4>4. Stigmergy</h4>
+                <p>Indirect communication via environment</p>
+            </div>
+            <div>
+                <div class="success-box">
+                    <strong>Advantages:</strong>
+                    <ul style="font-size: 0.9em;">
+                        <li>Robust to failures</li>
+                        <li>Scalable</li>
+                        <li>Flexible/adaptive</li>
+                        <li>Simple individual agents</li>
+                    </ul>
+                </div>
+                <div class="warning-box" style="margin-top: 15px;">
+                    <strong>Challenges:</strong>
+                    <ul style="font-size: 0.9em;">
+                        <li>Hard to predict</li>
+                        <li>Difficult to design</li>
+                        <li>May converge slowly</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">11</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Boids Flocking Algorithm</h2>
+        <p>Craig Reynolds' 1986 algorithm for realistic flocking</p>
+        <div class="three-column">
+            <div class="card">
+                <h4>Separation</h4>
+                <p>Avoid crowding neighbors</p>
+                <p style="font-size: 0.8em; color: #42affa;">Steer away from nearby boids</p>
+            </div>
+            <div class="card">
+                <h4>Alignment</h4>
+                <p>Match velocity of neighbors</p>
+                <p style="font-size: 0.8em; color: #42affa;">Steer towards average heading</p>
+            </div>
+            <div class="card">
+                <h4>Cohesion</h4>
+                <p>Move toward group center</p>
+                <p style="font-size: 0.8em; color: #42affa;">Steer towards average position</p>
+            </div>
+        </div>
+        <pre><code class="python">class Boid:
+    def __init__(self, x, y):
+        self.position = np.array([x, y])
+        self.velocity = np.random.randn(2)
+
+    def update(self, boids, weights):
+        neighbors = self.get_neighbors(boids, radius=50)
+
+        sep = self.separation(neighbors) * weights['separation']
+        ali = self.alignment(neighbors) * weights['alignment']
+        coh = self.cohesion(neighbors) * weights['cohesion']
+
+        self.velocity += sep + ali + coh
+        self.velocity = self.limit_speed(self.velocity, max_speed=5)
+        self.position += self.velocity</code></pre>
+            <div class="slide-number">12</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Stigmergy: Indirect Communication</h2>
+        <div class="two-column">
+            <div>
+                <p><strong>Definition:</strong> Agents communicate by modifying the environment rather than direct messaging.</p>
+                <div class="highlight-box">
+                    <strong>Ant Example:</strong>
+                    <ol style="font-size: 0.9em;">
+                        <li>Ant finds food</li>
+                        <li>Deposits pheromone on return</li>
+                        <li>Other ants follow trail</li>
+                        <li>Stronger trails = more ants</li>
+                        <li>Shortest path emerges</li>
+                    </ol>
+                </div>
+            </div>
+            <div>
+                <pre><code class="python">class AntColony:
+    def __init__(self, grid_size):
+        self.pheromones = np.zeros(grid_size)
+        self.evaporation = 0.1
+
+    def deposit(self, x, y, amount):
+        self.pheromones[x, y] += amount
+
+    def evaporate(self):
+        self.pheromones *= (1 - self.evaporation)
+
+    def get_probability(self, x, y):
+        # Higher pheromone = higher probability
+        return self.pheromones[x, y] ** alpha</code></pre>
+            </div>
+        </div>
+            <div class="slide-number">13</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Flocking Implementation</h2>
+        <pre><code class="python">import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+class FlockSimulation:
+    def __init__(self, n_boids=50):
+        self.boids = [Boid(
+            np.random.rand() * 100,
+            np.random.rand() * 100
+        ) for _ in range(n_boids)]
+
+        self.weights = {
+            'separation': 1.5,
+            'alignment': 1.0,
+            'cohesion': 1.0
+        }
+
+    def step(self):
+        for boid in self.boids:
+            boid.update(self.boids, self.weights)
+            boid.wrap_edges(100, 100)  # Wrap around boundaries
+
+    def animate(self, frames=200):
+        fig, ax = plt.subplots(figsize=(8, 8))
+        scatter = ax.scatter([], [], c='blue', s=20)
+
+        def update(frame):
+            self.step()
+            positions = np.array([b.position for b in self.boids])
+            scatter.set_offsets(positions)
+            return scatter,
+
+        anim = FuncAnimation(fig, update, frames=frames, interval=50)
+        plt.show()
+
+# Run simulation
+sim = FlockSimulation(n_boids=100)
+sim.animate()</code></pre>
+            <div class="slide-number">14</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 3</h1>
+        <h2>Multi-Agent Systems Architecture</h2>
+        <p>Designing collaborative agent networks</p>
+            <div class="slide-number">15</div>
+        </div>
+        
+        <div class="slide">
+            <h2>System Topologies</h2>
+        <div class="two-column">
+            <div>
+                <h4>Centralized</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Single coordinator</li>
+                    <li>Easy to manage</li>
+                    <li>Single point of failure</li>
+                </ul>
+
+                <h4>Decentralized</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Peer-to-peer</li>
+                    <li>No single failure point</li>
+                    <li>Complex coordination</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Hierarchical</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Tree structure</li>
+                    <li>Clear authority chain</li>
+                    <li>Scalable</li>
+                </ul>
+
+                <h4>Mesh/Hybrid</h4>
+                <ul style="font-size: 0.9em;">
+                    <li>Mixed connections</li>
+                    <li>Flexible routing</li>
+                    <li>Best for complex systems</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">16</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Communication Patterns</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>Direct Messaging</h4>
+                <pre style="font-size: 0.7em;"><code class="python">agent_b.receive(
+    sender=agent_a,
+    message=msg
+)</code></pre>
+                <p style="font-size: 0.8em;">Point-to-point</p>
+            </div>
+            <div class="card">
+                <h4>Publish-Subscribe</h4>
+                <pre style="font-size: 0.7em;"><code class="python">broker.publish(
+    topic="prices",
+    data=update
+)
+# Subscribers notified</code></pre>
+                <p style="font-size: 0.8em;">Decoupled</p>
+            </div>
+            <div class="card">
+                <h4>Blackboard</h4>
+                <pre style="font-size: 0.7em;"><code class="python">blackboard.post(
+    key="solution",
+    value=partial
+)
+# All agents see it</code></pre>
+                <p style="font-size: 0.8em;">Shared memory</p>
+            </div>
+        </div>
+            <div class="slide-number">17</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Contract Net Protocol</h2>
+        <p>A protocol for task allocation among agents</p>
+        <div class="diagram-container">
+            <svg width="600" height="250" viewBox="0 0 600 250">
+                <rect x="50" y="50" width="80" height="40" fill="#42affa" rx="5"/>
+                <text x="90" y="75" fill="white" text-anchor="middle" font-size="12">Manager</text>
+
+                <rect x="200" y="30" width="70" height="35" fill="#50c878" rx="5"/>
+                <text x="235" y="52" fill="white" text-anchor="middle" font-size="11">Agent 1</text>
+                <rect x="200" y="80" width="70" height="35" fill="#50c878" rx="5"/>
+                <text x="235" y="102" fill="white" text-anchor="middle" font-size="11">Agent 2</text>
+                <rect x="200" y="130" width="70" height="35" fill="#50c878" rx="5"/>
+                <text x="235" y="152" fill="white" text-anchor="middle" font-size="11">Agent 3</text>
+
+                <path d="M130 60 L200 47" stroke="#ff6b6b" stroke-width="2"/>
+                <path d="M130 70 L200 97" stroke="#ff6b6b" stroke-width="2"/>
+                <path d="M130 80 L200 147" stroke="#ff6b6b" stroke-width="2"/>
+                <text x="165" y="35" fill="#ff6b6b" font-size="10">1. CFP</text>
+
+                <path d="M270 47 L340 60" stroke="#9c27b0" stroke-width="2"/>
+                <path d="M270 97 L340 70" stroke="#9c27b0" stroke-width="2"/>
+                <path d="M270 147 L340 80" stroke="#9c27b0" stroke-width="2"/>
+                <text x="305" y="35" fill="#9c27b0" font-size="10">2. Bids</text>
+
+                <rect x="340" y="50" width="80" height="40" fill="#42affa" rx="5"/>
+                <text x="380" y="75" fill="white" text-anchor="middle" font-size="12">Manager</text>
+
+                <path d="M420 70 L490 70" stroke="#4caf50" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="455" y="60" fill="#4caf50" font-size="10">3. Award</text>
+
+                <rect x="490" y="50" width="70" height="40" fill="#50c878" rx="5"/>
+                <text x="525" y="75" fill="white" text-anchor="middle" font-size="11">Winner</text>
+
+                <text x="300" y="200" fill="white" text-anchor="middle" font-size="14">CFP = Call For Proposals</text>
+                <text x="300" y="220" fill="#aaa" text-anchor="middle" font-size="12">Agents bid based on capability and cost</text>
+            </svg>
+        </div>
+            <div class="slide-number">18</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Message Passing Implementation</h2>
+        <pre><code class="python">import asyncio
+from dataclasses import dataclass
+from typing import Any
+
+@dataclass
+class Message:
+    sender: str
+    receiver: str
+    performative: str  # REQUEST, INFORM, PROPOSE, ACCEPT, REJECT
+    content: Any
+
+class Agent:
+    def __init__(self, name: str):
+        self.name = name
+        self.inbox = asyncio.Queue()
+        self.directory = {}  # Other agents
+
+    async def send(self, receiver: str, performative: str, content: Any):
+        msg = Message(self.name, receiver, performative, content)
+        await self.directory[receiver].inbox.put(msg)
+
+    async def receive(self) -> Message:
+        return await self.inbox.get()
+
+    async def run(self):
+        while True:
+            msg = await self.receive()
+            await self.handle_message(msg)
+
+    async def handle_message(self, msg: Message):
+        if msg.performative == "REQUEST":
+            # Process request and respond
+            response = self.process_request(msg.content)
+            await self.send(msg.sender, "INFORM", response)
+
+# Example usage
+async def main():
+    agent_a = Agent("A")
+    agent_b = Agent("B")
+    agent_a.directory["B"] = agent_b
+    agent_b.directory["A"] = agent_a
+
+    await agent_a.send("B", "REQUEST", {"task": "calculate", "data": [1,2,3]})</code></pre>
+            <div class="slide-number">19</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Coordination Strategies</h2>
+        <div class="two-column">
+            <div>
+                <h4>Cooperative</h4>
+                <ul>
+                    <li>Shared goals</li>
+                    <li>Information sharing</li>
+                    <li>Task decomposition</li>
+                    <li>Example: Search & rescue</li>
+                </ul>
+
+                <h4>Competitive</h4>
+                <ul>
+                    <li>Conflicting goals</li>
+                    <li>Strategic behavior</li>
+                    <li>Game theory applies</li>
+                    <li>Example: Trading agents</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Hybrid (Coopetition)</h4>
+                <ul>
+                    <li>Cooperate on some goals</li>
+                    <li>Compete on others</li>
+                    <li>Common in real systems</li>
+                    <li>Example: Supply chains</li>
+                </ul>
+
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <strong>Key Mechanisms:</strong>
+                    <ul style="font-size: 0.9em;">
+                        <li>Voting protocols</li>
+                        <li>Auction mechanisms</li>
+                        <li>Negotiation</li>
+                        <li>Social choice</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">20</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 4</h1>
+        <h2 >Google's A2A Protocol</h2>
+        <p >Agent-to-Agent Communication Standard</p>
+
+        <!-- Animated A2A Communication Visual -->
+        <div class="protocol-visual">
+            <div class="protocol-agent">
+                <div class="agent-icon">🤖</div>
+                <strong>Agent A</strong>
+            </div>
+            <div class="protocol-message">
+                <div class="message-arrow">→ Request →</div>
+                <div class="message-arrow reverse">← Response ←</div>
+            </div>
+            <div class="protocol-agent">
+                <div class="agent-icon">🧠</div>
+                <strong>Agent B</strong>
+            </div>
+        </div>
+            <div class="slide-number">21</div>
+        </div>
+        
+        <div class="slide">
+            <h2>A2A Overview</h2>
+        <div class="highlight-box">
+            <p><strong>Agent-to-Agent (A2A)</strong> is Google's open protocol for agent interoperability, enabling agents built on different frameworks to communicate and collaborate.</p>
+        </div>
+        <div class="two-column" style="margin-top: 20px;">
+            <div>
+                <h4>Key Features</h4>
+                <ul>
+                    <li>Framework agnostic</li>
+                    <li>HTTP(S) + JSON-RPC 2.0</li>
+                    <li>Capability discovery</li>
+                    <li>Task delegation</li>
+                    <li>Streaming support</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Design Principles</h4>
+                <ul>
+                    <li><strong>Opaque:</strong> Internal details hidden</li>
+                    <li><strong>Secure:</strong> Auth & encryption</li>
+                    <li><strong>Async:</strong> Long-running tasks</li>
+                    <li><strong>Extensible:</strong> Custom capabilities</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">22</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Agent Cards</h2>
+        <p>Every A2A agent exposes an Agent Card describing its capabilities</p>
+        <pre><code class="json">{
+    "name": "DataAnalysisAgent",
+    "description": "Analyzes datasets and generates insights",
+    "url": "https://agent.example.com/a2a",
+    "version": "1.0.0",
+    "capabilities": {
+        "streaming": true,
+        "pushNotifications": false
+    },
+    "skills": [
+        {
+            "id": "analyze_data",
+            "name": "Data Analysis",
+            "description": "Perform statistical analysis on datasets",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "data": {"type": "array"},
+                    "analysis_type": {"type": "string"}
+                }
+            },
+            "outputSchema": {
+                "type": "object",
+                "properties": {
+                    "results": {"type": "object"},
+                    "visualizations": {"type": "array"}
+                }
+            }
+        }
+    ],
+    "authentication": {
+        "type": "bearer"
+    }
+}</code></pre>
+            <div class="slide-number">23</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Task Lifecycle</h2>
+        <div class="diagram-container">
+            <svg width="650" height="150" viewBox="0 0 650 150">
+                <rect x="20" y="50" width="90" height="50" fill="#42affa" rx="5"/>
+                <text x="65" y="80" fill="white" text-anchor="middle" font-size="12">PENDING</text>
+
+                <path d="M110 75 L150 75" stroke="white" stroke-width="2" marker-end="url(#arrow)"/>
+
+                <rect x="150" y="50" width="90" height="50" fill="#ff9800" rx="5"/>
+                <text x="195" y="80" fill="white" text-anchor="middle" font-size="12">RUNNING</text>
+
+                <path d="M240 75 L280 75" stroke="white" stroke-width="2" marker-end="url(#arrow)"/>
+
+                <rect x="280" y="20" width="100" height="40" fill="#4caf50" rx="5"/>
+                <text x="330" y="45" fill="white" text-anchor="middle" font-size="12">COMPLETED</text>
+
+                <rect x="280" y="90" width="100" height="40" fill="#f44336" rx="5"/>
+                <text x="330" y="115" fill="white" text-anchor="middle" font-size="12">FAILED</text>
+
+                <path d="M240 65 L280 40" stroke="white" stroke-width="2" marker-end="url(#arrow)"/>
+                <path d="M240 85 L280 110" stroke="white" stroke-width="2" marker-end="url(#arrow)"/>
+
+                <rect x="420" y="50" width="100" height="50" fill="#9c27b0" rx="5"/>
+                <text x="470" y="80" fill="white" text-anchor="middle" font-size="12">CANCELED</text>
+
+                <path d="M195 100 L195 130 L470 130 L470 100" stroke="white" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow)"/>
+                <text x="330" y="145" fill="#aaa" font-size="10">Can cancel from PENDING or RUNNING</text>
+            </svg>
+        </div>
+        <div class="two-column" style="margin-top: 20px;">
+            <div class="highlight-box">
+                <strong>Streaming Updates:</strong>
+                <p style="font-size: 0.9em;">Long-running tasks can send progress updates via Server-Sent Events (SSE)</p>
+            </div>
+            <div class="highlight-box">
+                <strong>Error Handling:</strong>
+                <p style="font-size: 0.9em;">Failed tasks include error codes and messages for debugging</p>
+            </div>
+        </div>
+            <div class="slide-number">24</div>
+        </div>
+        
+        <div class="slide">
+            <h2>A2A Implementation</h2>
+        <pre><code class="python">from flask import Flask, request, jsonify
+import json
+
+app = Flask(__name__)
+
+# Agent Card endpoint
+@app.route('/.well-known/agent.json')
+def agent_card():
+    return jsonify({
+        "name": "CalculatorAgent",
+        "description": "Performs mathematical calculations",
+        "url": "http://localhost:5000/a2a",
+        "skills": [{
+            "id": "calculate",
+            "name": "Calculate",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "expression": {"type": "string"}
+                }
+            }
+        }]
+    })
+
+# JSON-RPC endpoint
+@app.route('/a2a', methods=['POST'])
+def handle_request():
+    data = request.json
+    method = data.get('method')
+    params = data.get('params', {})
+
+    if method == 'tasks/create':
+        task_id = create_task(params)
+        return jsonify({"jsonrpc": "2.0", "result": {"taskId": task_id}, "id": data['id']})
+
+    elif method == 'tasks/get':
+        task = get_task(params['taskId'])
+        return jsonify({"jsonrpc": "2.0", "result": task, "id": data['id']})
+
+    return jsonify({"jsonrpc": "2.0", "error": {"code": -32601, "message": "Method not found"}})</code></pre>
+            <div class="slide-number">25</div>
+        </div>
+        
+        <div class="slide">
+            <h2>A2A Client</h2>
+        <pre><code class="python">import requests
+import json
+
+class A2AClient:
+    def __init__(self, agent_url: str):
+        self.agent_url = agent_url
+        self.agent_card = self._fetch_agent_card()
+
+    def _fetch_agent_card(self):
+        response = requests.get(f"{self.agent_url}/.well-known/agent.json")
+        return response.json()
+
+    def _rpc_call(self, method: str, params: dict):
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params,
+            "id": 1
+        }
+        response = requests.post(f"{self.agent_url}/a2a", json=payload)
+        return response.json()
+
+    def create_task(self, skill_id: str, input_data: dict):
+        return self._rpc_call("tasks/create", {
+            "skillId": skill_id,
+            "input": input_data
+        })
+
+    def get_task(self, task_id: str):
+        return self._rpc_call("tasks/get", {"taskId": task_id})
+
+    def list_skills(self):
+        return self.agent_card.get('skills', [])
+
+# Usage
+client = A2AClient("http://localhost:5000")
+print("Available skills:", client.list_skills())
+result = client.create_task("calculate", {"expression": "2 + 2"})</code></pre>
+            <div class="slide-number">26</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 5</h1>
+        <h2>Advanced Agent Development</h2>
+        <p>Memory, learning, and fault tolerance</p>
+            <div class="slide-number">27</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Agent Memory Systems</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>Short-Term</h4>
+                <p>Current context</p>
+                <ul style="font-size: 0.8em;">
+                    <li>Conversation history</li>
+                    <li>Working memory</li>
+                    <li>Limited capacity</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Long-Term</h4>
+                <p>Persistent knowledge</p>
+                <ul style="font-size: 0.8em;">
+                    <li>Vector databases</li>
+                    <li>Semantic search</li>
+                    <li>Facts & procedures</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Episodic</h4>
+                <p>Past experiences</p>
+                <ul style="font-size: 0.8em;">
+                    <li>Event sequences</li>
+                    <li>Temporal context</li>
+                    <li>Learning from history</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">28</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Agent with Memory</h2>
+        <pre><code class="python">from langchain.memory import ConversationBufferWindowMemory
+from langchain.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings
+
+class MemoryAgent:
+    def __init__(self):
+        # Short-term: Last K conversations
+        self.short_term = ConversationBufferWindowMemory(k=5)
+
+        # Long-term: Vector store for semantic retrieval
+        self.long_term = Chroma(
+            embedding_function=OpenAIEmbeddings(),
+            persist_directory="./agent_memory"
+        )
+
+        # Episodic: List of past experiences
+        self.episodic = []
+
+    def remember_short(self, input_text: str, output_text: str):
+        self.short_term.save_context(
+            {"input": input_text},
+            {"output": output_text}
+        )
+
+    def remember_long(self, text: str, metadata: dict = None):
+        self.long_term.add_texts([text], metadatas=[metadata or {}])
+
+    def remember_episode(self, episode: dict):
+        self.episodic.append({
+            "timestamp": datetime.now(),
+            **episode
+        })
+
+    def recall(self, query: str, k: int = 3):
+        # Combine short-term context with long-term retrieval
+        context = self.short_term.load_memory_variables({})
+        relevant = self.long_term.similarity_search(query, k=k)
+        return {"context": context, "relevant_docs": relevant}</code></pre>
+            <div class="slide-number">29</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Fault Tolerance Patterns</h2>
+        <div class="two-column">
+            <div>
+                <h4>Retry with Backoff</h4>
+                <pre><code class="python">import time
+from functools import wraps
+
+def retry(max_attempts=3, backoff=2):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        raise
+                    time.sleep(backoff ** attempt)
+        return wrapper
+    return decorator
+
+@retry(max_attempts=3)
+def risky_operation():
+    # May fail temporarily
+    pass</code></pre>
+            </div>
+            <div>
+                <h4>Circuit Breaker</h4>
+                <pre><code class="python">class CircuitBreaker:
+    def __init__(self, threshold=5):
+        self.failures = 0
+        self.threshold = threshold
+        self.state = "CLOSED"
+
+    def call(self, func, *args):
+        if self.state == "OPEN":
+            raise Exception("Circuit open")
+
+        try:
+            result = func(*args)
+            self.failures = 0
+            return result
+        except Exception:
+            self.failures += 1
+            if self.failures >= self.threshold:
+                self.state = "OPEN"
+            raise</code></pre>
+            </div>
+        </div>
+            <div class="slide-number">30</div>
+        </div>
+        
+        <div class="slide">
+            <h2>State Management</h2>
+        <pre><code class="python">from enum import Enum, auto
+from typing import Optional
+
+class AgentState(Enum):
+    IDLE = auto()
+    PERCEIVING = auto()
+    REASONING = auto()
+    ACTING = auto()
+    WAITING = auto()
+    ERROR = auto()
+
+class StatefulAgent:
+    def __init__(self):
+        self.state = AgentState.IDLE
+        self.state_data = {}
+        self.history = []
+
+    def transition(self, new_state: AgentState, data: dict = None):
+        self.history.append({
+            "from": self.state,
+            "to": new_state,
+            "timestamp": datetime.now()
+        })
+        self.state = new_state
+        self.state_data = data or {}
+
+    def save_checkpoint(self, path: str):
+        checkpoint = {
+            "state": self.state.name,
+            "state_data": self.state_data,
+            "history": self.history[-100:]  # Last 100 transitions
+        }
+        with open(path, 'w') as f:
+            json.dump(checkpoint, f)
+
+    def restore_checkpoint(self, path: str):
+        with open(path) as f:
+            checkpoint = json.load(f)
+        self.state = AgentState[checkpoint["state"]]
+        self.state_data = checkpoint["state_data"]</code></pre>
+            <div class="slide-number">31</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 6</h1>
+        <h2>Frameworks and Tools</h2>
+        <p>Mesa, PySwarm, Ray, and RLlib</p>
+            <div class="slide-number">32</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Framework Comparison</h2>
+        <table style="width: 100%; font-size: 0.75em;">
+            <tr>
+                <th>Framework</th>
+                <th>Best For</th>
+                <th>Key Features</th>
+                <th>Scale</th>
+            </tr>
+            <tr>
+                <td><strong>Mesa</strong></td>
+                <td>Agent-based modeling</td>
+                <td>Visualization, data collection</td>
+                <td>Single machine</td>
+            </tr>
+            <tr>
+                <td><strong>PySwarm</strong></td>
+                <td>Swarm optimization</td>
+                <td>PSO algorithms</td>
+                <td>Single machine</td>
+            </tr>
+            <tr>
+                <td><strong>Ray</strong></td>
+                <td>Distributed computing</td>
+                <td>Actors, scaling</td>
+                <td>Cluster</td>
+            </tr>
+            <tr>
+                <td><strong>RLlib</strong></td>
+                <td>Multi-agent RL</td>
+                <td>Training, policies</td>
+                <td>Cluster</td>
+            </tr>
+        </table>
+            <div class="slide-number">33</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Mesa: Agent-Based Modeling</h2>
+        <pre><code class="python">from mesa import Agent, Model
+from mesa.time import RandomActivation
+from mesa.space import MultiGrid
+from mesa.datacollection import DataCollector
+
+class SchellingAgent(Agent):
+    def __init__(self, unique_id, model, agent_type):
+        super().__init__(unique_id, model)
+        self.type = agent_type
+
+    def step(self):
+        neighbors = self.model.grid.get_neighbors(
+            self.pos, moore=True, include_center=False
+        )
+        similar = sum(1 for n in neighbors if n.type == self.type)
+
+        if len(neighbors) > 0 and similar / len(neighbors) < 0.3:
+            self.model.grid.move_to_empty(self)
+
+class SchellingModel(Model):
+    def __init__(self, width, height, density):
+        self.grid = MultiGrid(width, height, True)
+        self.schedule = RandomActivation(self)
+
+        for i, cell in enumerate(self.grid.coord_iter()):
+            if self.random.random() < density:
+                agent_type = 0 if self.random.random() < 0.5 else 1
+                agent = SchellingAgent(i, self, agent_type)
+                self.grid.place_agent(agent, cell[1:])
+                self.schedule.add(agent)
+
+    def step(self):
+        self.schedule.step()</code></pre>
+            <div class="slide-number">34</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Ray: Distributed Agents</h2>
+        <pre><code class="python">import ray
+
+ray.init()
+
+@ray.remote
+class DistributedAgent:
+    def __init__(self, agent_id):
+        self.agent_id = agent_id
+        self.state = {}
+
+    def perceive(self, environment_ref):
+        env = ray.get(environment_ref)
+        return env.get_local_state(self.agent_id)
+
+    def decide(self, percepts):
+        # Decision logic
+        return {"action": "move", "direction": "north"}
+
+    def act(self, action, environment_ref):
+        env = ray.get(environment_ref)
+        return env.apply_action(self.agent_id, action)
+
+# Create distributed agents
+agents = [DistributedAgent.remote(i) for i in range(100)]
+
+# Run in parallel
+futures = [agent.perceive.remote(env_ref) for agent in agents]
+percepts = ray.get(futures)
+
+# All agents decide and act in parallel
+actions = ray.get([agent.decide.remote(p) for agent, p in zip(agents, percepts)])
+results = ray.get([agent.act.remote(a, env_ref) for agent, a in zip(agents, actions)])</code></pre>
+            <div class="slide-number">35</div>
+        </div>
+        
+        <div class="slide">
+            <h2>RLlib: Multi-Agent RL</h2>
+        <pre><code class="python">from ray.rllib.algorithms.ppo import PPOConfig
+from ray.tune.registry import register_env
+
+# Define multi-agent environment
+def env_creator(env_config):
+    return MultiAgentTrafficEnv(env_config)
+
+register_env("traffic", env_creator)
+
+# Configure multi-agent training
+config = (
+    PPOConfig()
+    .environment("traffic")
+    .multi_agent(
+        policies={
+            "traffic_light": (None, obs_space, act_space, {}),
+            "vehicle": (None, obs_space, act_space, {}),
+        },
+        policy_mapping_fn=lambda agent_id, *args:
+            "traffic_light" if "light" in agent_id else "vehicle"
+    )
+    .training(
+        gamma=0.99,
+        lr=0.0003,
+        train_batch_size=4000
+    )
+)
+
+# Train
+algo = config.build()
+for i in range(100):
+    result = algo.train()
+    print(f"Iteration {i}: reward = {result['episode_reward_mean']}")</code></pre>
+            <div class="slide-number">36</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 7</h1>
+        <h2>Swarm Optimization</h2>
+        <p>PSO, ACO, and Consensus Algorithms</p>
+            <div class="slide-number">37</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Particle Swarm Optimization</h2>
+        <div class="highlight-box">
+            <p>PSO optimizes by having particles fly through the search space, attracted to their personal best and the global best positions.</p>
+        </div>
+        <pre><code class="python">import numpy as np
+
+class PSO:
+    def __init__(self, n_particles, dimensions, bounds):
+        self.n_particles = n_particles
+        self.dimensions = dimensions
+        self.bounds = bounds
+
+        # Initialize particles
+        self.positions = np.random.uniform(
+            bounds[0], bounds[1], (n_particles, dimensions)
+        )
+        self.velocities = np.zeros((n_particles, dimensions))
+        self.personal_best_pos = self.positions.copy()
+        self.personal_best_val = np.full(n_particles, np.inf)
+        self.global_best_pos = None
+        self.global_best_val = np.inf
+
+    def optimize(self, objective_func, iterations=100, w=0.7, c1=1.5, c2=1.5):
+        for _ in range(iterations):
+            # Evaluate fitness
+            fitness = np.array([objective_func(p) for p in self.positions])
+
+            # Update personal bests
+            improved = fitness < self.personal_best_val
+            self.personal_best_pos[improved] = self.positions[improved]
+            self.personal_best_val[improved] = fitness[improved]
+
+            # Update global best
+            best_idx = np.argmin(fitness)
+            if fitness[best_idx] < self.global_best_val:
+                self.global_best_val = fitness[best_idx]
+                self.global_best_pos = self.positions[best_idx].copy()
+
+            # Update velocities and positions
+            r1, r2 = np.random.rand(2)
+            self.velocities = (w * self.velocities +
+                c1 * r1 * (self.personal_best_pos - self.positions) +
+                c2 * r2 * (self.global_best_pos - self.positions))
+            self.positions += self.velocities
+
+        return self.global_best_pos, self.global_best_val</code></pre>
+            <div class="slide-number">38</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Ant Colony Optimization</h2>
+        <pre><code class="python">class AntColonyOptimization:
+    def __init__(self, distances, n_ants, alpha=1, beta=2, evaporation=0.5):
+        self.distances = distances
+        self.n_cities = len(distances)
+        self.n_ants = n_ants
+        self.alpha = alpha  # Pheromone importance
+        self.beta = beta    # Distance importance
+        self.evaporation = evaporation
+        self.pheromones = np.ones((self.n_cities, self.n_cities))
+
+    def run(self, iterations=100):
+        best_path = None
+        best_distance = np.inf
+
+        for _ in range(iterations):
+            paths = [self._construct_path() for _ in range(self.n_ants)]
+
+            # Update pheromones
+            self.pheromones *= (1 - self.evaporation)
+            for path in paths:
+                distance = self._path_distance(path)
+                if distance < best_distance:
+                    best_distance = distance
+                    best_path = path
+                self._deposit_pheromones(path, distance)
+
+        return best_path, best_distance
+
+    def _construct_path(self):
+        path = [np.random.randint(self.n_cities)]
+        while len(path) < self.n_cities:
+            probs = self._transition_probs(path[-1], path)
+            next_city = np.random.choice(self.n_cities, p=probs)
+            path.append(next_city)
+        return path</code></pre>
+            <div class="slide-number">39</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Raft Consensus Algorithm</h2>
+        <div class="two-column">
+            <div>
+                <h4>Key Concepts</h4>
+                <ul>
+                    <li><strong>Leader Election:</strong> One leader per term</li>
+                    <li><strong>Log Replication:</strong> Leader sends entries</li>
+                    <li><strong>Safety:</strong> Committed = replicated to majority</li>
+                </ul>
+
+                <h4>Node States</h4>
+                <ul>
+                    <li><strong>Follower:</strong> Default state</li>
+                    <li><strong>Candidate:</strong> Seeking votes</li>
+                    <li><strong>Leader:</strong> Handles requests</li>
+                </ul>
+            </div>
+            <div>
+                <pre><code class="python">class RaftNode:
+    def __init__(self, node_id, peers):
+        self.id = node_id
+        self.peers = peers
+        self.state = "follower"
+        self.term = 0
+        self.voted_for = None
+        self.log = []
+        self.commit_index = 0
+
+    def request_vote(self, term, candidate_id):
+        if term > self.term:
+            self.term = term
+            self.voted_for = None
+
+        if (self.voted_for is None and
+            term >= self.term):
+            self.voted_for = candidate_id
+            return True
+        return False
+
+    def become_candidate(self):
+        self.state = "candidate"
+        self.term += 1
+        votes = 1  # Vote for self
+        # Request votes from peers
+        # If majority: become leader</code></pre>
+            </div>
+        </div>
+            <div class="slide-number">40</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 8</h1>
+        <h2>Real-World Applications</h2>
+        <p>Case studies in production systems</p>
+            <div class="slide-number">41</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Warehouse Automation (Kiva/Amazon)</h2>
+        <div class="two-column">
+            <div>
+                <h4>System Overview</h4>
+                <ul>
+                    <li>1000s of robots per warehouse</li>
+                    <li>Decentralized path planning</li>
+                    <li>Dynamic task assignment</li>
+                    <li>Collision avoidance</li>
+                </ul>
+
+                <h4>Key Algorithms</h4>
+                <ul>
+                    <li>A* for path planning</li>
+                    <li>Hungarian algorithm for assignment</li>
+                    <li>Auction-based task allocation</li>
+                </ul>
+            </div>
+            <div>
+                <div class="success-box">
+                    <strong>Results:</strong>
+                    <ul style="font-size: 0.9em;">
+                        <li>4x faster order fulfillment</li>
+                        <li>50% less floor space needed</li>
+                        <li>Near-zero collision rate</li>
+                    </ul>
+                </div>
+                <div class="highlight-box" style="margin-top: 15px;">
+                    <strong>Multi-Agent Techniques:</strong>
+                    <ul style="font-size: 0.9em;">
+                        <li>Stigmergy (virtual paths)</li>
+                        <li>Swarm coordination</li>
+                        <li>Distributed consensus</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="slide-number">42</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Smart City Applications</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>Traffic Control</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Adaptive signals</li>
+                    <li>Emergency priority</li>
+                    <li>Congestion prediction</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Energy Grid</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Demand response</li>
+                    <li>Renewable integration</li>
+                    <li>Peer-to-peer trading</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Emergency Response</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Resource dispatch</li>
+                    <li>Route optimization</li>
+                    <li>Cross-agency coord.</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">43</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Financial Trading Systems</h2>
+        <pre><code class="python">class TradingAgent:
+    def __init__(self, strategy: str, capital: float):
+        self.strategy = strategy
+        self.capital = capital
+        self.portfolio = {}
+        self.orders = []
+
+    def analyze_market(self, market_data: dict):
+        if self.strategy == "momentum":
+            return self._momentum_signal(market_data)
+        elif self.strategy == "mean_reversion":
+            return self._mean_reversion_signal(market_data)
+
+    def _momentum_signal(self, data):
+        # Buy if price trending up
+        returns = data['returns'][-10:]
+        if np.mean(returns) > 0.01:
+            return {"action": "buy", "confidence": 0.8}
+        return {"action": "hold", "confidence": 0.5}
+
+    def execute(self, signal, exchange):
+        if signal['action'] == 'buy' and signal['confidence'] > 0.7:
+            order = exchange.submit_order(
+                symbol="AAPL",
+                quantity=self.calculate_position_size(),
+                order_type="market"
+            )
+            self.orders.append(order)</code></pre>
+            <div class="slide-number">44</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 9</h1>
+        <h2>Monitoring and Troubleshooting</h2>
+        <p>Observability for multi-agent systems</p>
+            <div class="slide-number">45</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Key Metrics</h2>
+        <div class="two-column">
+            <div>
+                <h4>Agent-Level</h4>
+                <ul>
+                    <li>Response time</li>
+                    <li>Success/failure rate</li>
+                    <li>Resource usage (CPU, memory)</li>
+                    <li>Message queue depth</li>
+                </ul>
+
+                <h4>System-Level</h4>
+                <ul>
+                    <li>Throughput (tasks/second)</li>
+                    <li>Latency distribution</li>
+                    <li>Convergence time</li>
+                    <li>Network traffic</li>
+                </ul>
+            </div>
+            <div>
+                <pre><code class="python">from prometheus_client import Counter, Histogram
+
+agent_requests = Counter(
+    'agent_requests_total',
+    'Total agent requests',
+    ['agent_id', 'action']
+)
+
+response_time = Histogram(
+    'agent_response_seconds',
+    'Agent response time',
+    ['agent_id']
+)
+
+class MonitoredAgent:
+    def act(self, action):
+        with response_time.labels(
+            self.agent_id
+        ).time():
+            result = self._execute(action)
+
+        agent_requests.labels(
+            self.agent_id, action
+        ).inc()
+
+        return result</code></pre>
+            </div>
+        </div>
+            <div class="slide-number">46</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Debugging Distributed Behavior</h2>
+        <div class="highlight-box">
+            <strong>Common Issues:</strong>
+            <ul>
+                <li><strong>Deadlock:</strong> Agents waiting on each other</li>
+                <li><strong>Livelock:</strong> Agents repeatedly changing state but making no progress</li>
+                <li><strong>Starvation:</strong> Some agents never get resources</li>
+                <li><strong>Message loss:</strong> Network failures</li>
+            </ul>
+        </div>
+        <pre><code class="python">import logging
+
+class DebugAgent:
+    def __init__(self, agent_id):
+        self.logger = logging.getLogger(f"Agent-{agent_id}")
+        self.logger.setLevel(logging.DEBUG)
+
+    def send_message(self, recipient, message):
+        self.logger.debug(f"SEND -> {recipient}: {message[:100]}")
+        # Add correlation ID for tracing
+        message['correlation_id'] = str(uuid.uuid4())
+        message['timestamp'] = datetime.now().isoformat()
+        self._send(recipient, message)
+
+    def receive_message(self, message):
+        self.logger.debug(f"RECV <- {message['sender']}: correlation={message['correlation_id']}")
+        self._process(message)</code></pre>
+            <div class="slide-number">47</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 10</h1>
+        <h2>Ethics and Future Directions</h2>
+        <p>Responsible AI agent development</p>
+            <div class="slide-number">48</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Ethical Considerations</h2>
+        <div class="two-column">
+            <div>
+                <h4>Accountability</h4>
+                <ul>
+                    <li>Who is responsible for agent actions?</li>
+                    <li>Audit trails and logging</li>
+                    <li>Human oversight requirements</li>
+                </ul>
+
+                <h4>Transparency</h4>
+                <ul>
+                    <li>Explainable decisions</li>
+                    <li>Clear agent identification</li>
+                    <li>Disclosed limitations</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Safety</h4>
+                <ul>
+                    <li>Bounded autonomy</li>
+                    <li>Kill switches</li>
+                    <li>Graceful degradation</li>
+                </ul>
+
+                <h4>Privacy</h4>
+                <ul>
+                    <li>Data minimization</li>
+                    <li>Consent for data use</li>
+                    <li>Secure communication</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">49</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Emerging Trends</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>LLM Agents</h4>
+                <p>Large language models as agent brains</p>
+                <ul style="font-size: 0.8em;">
+                    <li>Natural language understanding</li>
+                    <li>Reasoning capabilities</li>
+                    <li>Tool use</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Neuromorphic</h4>
+                <p>Brain-inspired computing</p>
+                <ul style="font-size: 0.8em;">
+                    <li>Event-driven processing</li>
+                    <li>Low power consumption</li>
+                    <li>Real-time learning</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Quantum Agents</h4>
+                <p>Quantum-enhanced optimization</p>
+                <ul style="font-size: 0.8em;">
+                    <li>Faster search</li>
+                    <li>Better optimization</li>
+                    <li>Novel algorithms</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">50</div>
+        </div>
+        
+        <div class="slide center">
+            <h1 >Module 11</h1>
+        <h2>Capstone Project</h2>
+        <p>Build a complete multi-agent system</p>
+            <div class="slide-number">51</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Project Options</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>Option A: Warehouse</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Multi-robot coordination</li>
+                    <li>Task allocation</li>
+                    <li>Path planning</li>
+                    <li>Performance metrics</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Option B: Smart Grid</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Energy producers/consumers</li>
+                    <li>Price negotiation</li>
+                    <li>Load balancing</li>
+                    <li>Renewable integration</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Option C: Trading</h4>
+                <ul style="font-size: 0.8em;">
+                    <li>Multiple strategies</li>
+                    <li>Market simulation</li>
+                    <li>Risk management</li>
+                    <li>Performance analysis</li>
+                </ul>
+            </div>
+        </div>
+            <div class="slide-number">52</div>
+        </div>
+        
+        <div class="slide">
+            <h2>Requirements</h2>
+        <div class="two-column">
+            <div>
+                <h4>Technical</h4>
+                <ul>
+                    <li>Minimum 5 agents</li>
+                    <li>A2A protocol for communication</li>
+                    <li>At least 2 agent types</li>
+                    <li>Visualization dashboard</li>
+                    <li>Monitoring and logging</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Deliverables</h4>
+                <ul>
+                    <li>Working code (GitHub)</li>
+                    <li>Architecture documentation</li>
+                    <li>Performance analysis report</li>
+                    <li>10-minute demo presentation</li>
+                    <li>Lessons learned</li>
+                </ul>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 20px;">
+            <strong>Evaluation Criteria:</strong> Functionality (40%), Code Quality (20%), Documentation (20%), Presentation (20%)
+        </div>
+            <div class="slide-number">53</div>
+        </div>
+        
+        <div class="slide center">
+            <h1>Thank You!</h1>
+    <h3>Mastering AI Agents</h3>
+    <p>You now have the foundation to build intelligent multi-agent systems</p>
+    <div class="highlight-box" style="margin-top: 40px; display: inline-block;">
+        <p><strong>Key Takeaways:</strong></p>
+        <ul style="text-align: left;">
+            <li>Agent architectures: Reactive, Deliberative, BDI</li>
+            <li>Swarm intelligence: Emergence from simple rules</li>
+            <li>Communication: A2A protocol for interoperability</li>
+            <li>Frameworks: Mesa, Ray, RLlib for production</li>
+            <li>Applications: From warehouses to trading floors</li>
+        </ul>
+    </div>
+            <div class="slide-number">54</div>
+        </div>
+        
+</body>
+</html>

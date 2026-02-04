@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Take-Home Exercise: Build Your Own AI Copilot</title>
+    <style>
+    
+    @page {
+        size: A4;
+        margin: 20mm 15mm;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 11pt;
+        line-height: 1.5;
+        color: #1a1a2e;
+        max-width: 100%;
+    }
+
+    h1 {
+        color: #0066cc;
+        font-size: 22pt;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 10px;
+        margin-top: 30px;
+        page-break-after: avoid;
+    }
+
+    h2 {
+        color: #16213e;
+        font-size: 16pt;
+        margin-top: 25px;
+        border-bottom: 2px solid #4da6ff;
+        padding-bottom: 5px;
+        page-break-after: avoid;
+    }
+
+    h3 {
+        color: #0066cc;
+        font-size: 13pt;
+        margin-top: 20px;
+        page-break-after: avoid;
+    }
+
+    h4 {
+        color: #16213e;
+        font-size: 11pt;
+        margin-top: 15px;
+        page-break-after: avoid;
+    }
+
+    p {
+        margin: 10px 0;
+    }
+
+    ul, ol {
+        margin: 10px 0;
+        padding-left: 25px;
+    }
+
+    li {
+        margin: 5px 0;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #ccc;
+        margin: 20px 0;
+    }
+
+    code {
+        background: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9em;
+    }
+
+    pre {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-left: 4px solid #0066cc;
+        border-radius: 5px;
+        padding: 15px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 9pt;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 15px 0;
+        page-break-inside: avoid;
+    }
+
+    pre code {
+        background: none;
+        padding: 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 10pt;
+        page-break-inside: avoid;
+    }
+
+    th, td {
+        border: 1px solid #dee2e6;
+        padding: 8px 10px;
+        text-align: left;
+    }
+
+    th {
+        background: #0066cc;
+        color: white;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+
+    /* Fill-in blanks */
+    td:empty::after,
+    td:has(br:only-child)::after {
+        content: "______________________";
+        color: #999;
+    }
+
+    /* Checkbox styling */
+    li input[type="checkbox"] {
+        margin-right: 8px;
+    }
+
+    /* Page break hints */
+    h1, h2 {
+        page-break-after: avoid;
+    }
+
+    pre, table, .card {
+        page-break-inside: avoid;
+    }
+
+    /* Header styling for ITAG */
+    body::before {
+        content: "ITAG Skillnet AI Advantage";
+        display: block;
+        text-align: right;
+        font-size: 9pt;
+        color: #666;
+        margin-bottom: 20px;
+    }
+    
+    </style>
+</head>
+<body>
+<h1>Take-Home Exercise: Build Your Own AI Copilot</h1>
+<h2>ITAG Skillnet AI Advantage</h2>
+<hr />
+<h2>Before You Begin</h2>
+<p><strong>What you'll need:</strong>
+- A computer with internet access
+- Access to Langflow Cloud (https://astra.datastax.com/langflow) - free account
+- Access to ChatGPT or Claude for testing prompts
+- About 60-75 minutes of focused time
+- 2-3 text documents from your work (policies, FAQs, guides)</p>
+<p><strong>How to complete this exercise:</strong>
+1. Work through each part in order - they build on each other
+2. Follow the step-by-step instructions to build your copilot
+3. Document your configuration choices as you go
+4. Test your copilot with real questions from your work</p>
+<p><strong>What you'll learn:</strong>
+- How to create an AI copilot using no-code visual tools
+- How RAG (Retrieval-Augmented Generation) works in practice
+- How to configure chunking, embeddings, and retrieval
+- How to optimize your copilot for accuracy</p>
+<hr />
+<h1>PART 1: Prepare Your Knowledge Base</h1>
+<p><strong>Time: 15 minutes</strong></p>
+<p>Before building your AI copilot, you need to prepare the documents it will learn from.</p>
+<hr />
+<h2>Exercise 1.1: Document Selection</h2>
+<p><strong>What you'll do:</strong> Choose and prepare documents for your AI copilot.</p>
+<p><strong>STEP 1: Identify 2-3 documents from your work that would make a helpful assistant.</strong> Consider:</p>
+<table>
+<thead>
+<tr>
+<th>Document Type</th>
+<th>Example Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HR Policies</td>
+<td>Answer employee questions about leave, expenses, benefits</td>
+</tr>
+<tr>
+<td>Product FAQ</td>
+<td>Help customers understand features and troubleshoot</td>
+</tr>
+<tr>
+<td>Process Guide</td>
+<td>Walk colleagues through standard procedures</td>
+</tr>
+<tr>
+<td>Technical Docs</td>
+<td>Answer questions about APIs, integrations, systems</td>
+</tr>
+<tr>
+<td>Company Handbook</td>
+<td>Onboarding info, values, organizational details</td>
+</tr>
+</tbody>
+</table>
+<p><strong>STEP 2: List your chosen documents:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Topic</th>
+<th>Size (approx.)</th>
+<th>Why This Document?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Exercise 1.2: Document Preparation</h2>
+<p><strong>What you'll do:</strong> Prepare your documents for optimal AI processing.</p>
+<p><strong>STEP 1: Review each document and answer:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Preparation Check</th>
+<th>Doc 1</th>
+<th>Doc 2</th>
+<th>Doc 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clear section headings?</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+</tr>
+<tr>
+<td>Outdated info removed?</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+</tr>
+<tr>
+<td>In plain text or PDF format?</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+</tr>
+<tr>
+<td>Under 50 pages?</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+<td>Yes/No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>STEP 2: If needed, clean up your documents:</strong>
+- Add clear headings if missing
+- Remove outdated sections
+- Convert to .txt or .pdf if in other formats
+- Break very long documents into logical sections</p>
+<p><strong>KEY INSIGHT:</strong> Better-structured documents = better AI answers. Time spent here pays off.</p>
+<hr />
+<h2>Exercise 1.3: Define Your Use Case</h2>
+<p><strong>What you'll do:</strong> Clearly define what your copilot will help with.</p>
+<p><strong>STEP 1: Complete this use case definition:</strong></p>
+<p><strong>Copilot Name:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p><strong>Primary Users:</strong> (Who will ask questions?)
+- [ ] Employees
+- [ ] Customers
+- [ ] Partners
+- [ ] Other: <strong><em>_</em></strong><strong><em>_</em></strong>_</p>
+<p><strong>Types of Questions It Should Answer:</strong>
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em>
+2. </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>
+3. </em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>__</p>
+<p><strong>Types of Questions It Should Decline:</strong>
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em>
+2. </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>___</p>
+<p><strong>Example Good Question:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p><strong>Example Out-of-Scope Question:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<hr />
+<h1>PART 2: Build Your RAG Pipeline</h1>
+<p><strong>Time: 25 minutes</strong></p>
+<p>Now you'll build your AI copilot using Langflow's visual interface.</p>
+<hr />
+<h2>Exercise 2.1: Set Up Langflow</h2>
+<p><strong>What you'll do:</strong> Create a new RAG project in Langflow.</p>
+<p><strong>STEP 1: Go to https://astra.datastax.com/langflow</strong> and sign up/log in (free).</p>
+<p><strong>STEP 2: Click "New Flow"</strong> and select the <strong>"Vector Store RAG"</strong> template.</p>
+<p><strong>STEP 3: Take a screenshot or note what components you see:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File</td>
+<td></td>
+</tr>
+<tr>
+<td>Text Splitter</td>
+<td></td>
+</tr>
+<tr>
+<td>Embeddings</td>
+<td></td>
+</tr>
+<tr>
+<td>Vector Store</td>
+<td></td>
+</tr>
+<tr>
+<td>Retriever</td>
+<td></td>
+</tr>
+<tr>
+<td>LLM</td>
+<td></td>
+</tr>
+<tr>
+<td>Chat</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>KEY INSIGHT:</strong> This is exactly the pipeline from our demo - documents flow through splitting, embedding, storage, and retrieval before reaching the LLM.</p>
+<hr />
+<h2>Exercise 2.2: Configure the Text Splitter</h2>
+<p><strong>What you'll do:</strong> Set how your documents get broken into chunks.</p>
+<p><strong>STEP 1: Click the Text Splitter component</strong> and configure:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Recommended Value</th>
+<th>Your Choice</th>
+<th>Why This Setting?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chunk Size</td>
+<td>500 characters</td>
+<td></td>
+<td>Smaller = specific answers</td>
+</tr>
+<tr>
+<td>Chunk Overlap</td>
+<td>50 characters</td>
+<td></td>
+<td>Captures info across boundaries</td>
+</tr>
+<tr>
+<td>Separator</td>
+<td>\n\n (paragraphs)</td>
+<td></td>
+<td>Respects document structure</td>
+</tr>
+</tbody>
+</table>
+<p><strong>STEP 2: Consider your content type:</strong></p>
+<ul>
+<li><strong>For factual Q&amp;A (policies, specs):</strong> Use smaller chunks (300-500)</li>
+<li><strong>For contextual answers (guides, explanations):</strong> Use larger chunks (800-1000)</li>
+<li><strong>For mixed content:</strong> Start with 500 and adjust based on results</li>
+</ul>
+<p><strong>Your decision:</strong></p>
+<p>I'm using chunk size <strong><em>_</em> because </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>______</p>
+<hr />
+<h2>Exercise 2.3: Configure the Vector Store</h2>
+<p><strong>What you'll do:</strong> Set up where your document embeddings will be stored.</p>
+<p><strong>STEP 1: Choose your vector store:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Pros</th>
+<th>Cons</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chroma (in-memory)</td>
+<td>Free, simple, fast setup</td>
+<td>Data lost on restart</td>
+<td>Testing, demos</td>
+</tr>
+<tr>
+<td>Chroma (persistent)</td>
+<td>Free, data persists</td>
+<td>Requires local storage</td>
+<td>Development</td>
+</tr>
+<tr>
+<td>Astra DB</td>
+<td>Cloud-hosted, scalable</td>
+<td>Requires account setup</td>
+<td>Production</td>
+</tr>
+</tbody>
+</table>
+<p><strong>STEP 2: Configure your choice:</strong></p>
+<p>Vector Store Type: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p>Collection Name: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____
+(Use something descriptive like "hr_assistant_docs" or "product_faq")</p>
+<hr />
+<h2>Exercise 2.4: Configure the Retriever</h2>
+<p><strong>What you'll do:</strong> Set how many relevant chunks to retrieve for each question.</p>
+<p><strong>STEP 1: Configure retriever settings:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Your Reasoning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Search Type</td>
+<td>Similarity</td>
+<td></td>
+</tr>
+<tr>
+<td>Top K (number of results)</td>
+<td>3-5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>STEP 2: Understand the trade-off:</strong></p>
+<ul>
+<li><strong>Lower K (2-3):</strong> Faster, more focused answers, might miss relevant info</li>
+<li><strong>Higher K (5-7):</strong> More context, better coverage, but potentially slower and noisier</li>
+</ul>
+<p><strong>Your decision:</strong></p>
+<p>I'm using Top K = <strong><em>_</em> because </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>______</p>
+<hr />
+<h2>Exercise 2.5: Configure the LLM</h2>
+<p><strong>What you'll do:</strong> Choose and configure the language model that generates answers.</p>
+<p><strong>STEP 1: Select your LLM provider:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Model</th>
+<th>Cost</th>
+<th>Speed</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenAI</td>
+<td>gpt-4o-mini</td>
+<td>$$</td>
+<td>Fast</td>
+<td>Great quality, requires API key</td>
+</tr>
+<tr>
+<td>Groq</td>
+<td>llama-3-70b</td>
+<td>Free tier</td>
+<td>Very fast</td>
+<td>Good for testing</td>
+</tr>
+<tr>
+<td>Ollama</td>
+<td>Various</td>
+<td>Free</td>
+<td>Varies</td>
+<td>Runs locally</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Your choice:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p><strong>STEP 2: Configure LLM settings:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Recommended</th>
+<th>Your Choice</th>
+<th>Why?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Temperature</td>
+<td>0.1</td>
+<td></td>
+<td>Lower = factual, higher = creative</td>
+</tr>
+<tr>
+<td>Max Tokens</td>
+<td>500</td>
+<td></td>
+<td>Limits response length</td>
+</tr>
+</tbody>
+</table>
+<p><strong>STEP 3: Write your system prompt:</strong></p>
+<p>Use this template and customize for your use case:</p>
+<pre><code>You are a helpful assistant for [ORGANIZATION/DEPARTMENT].
+Answer questions based ONLY on the provided context.
+If the answer isn't in the context, say &quot;I don't have information about that in my knowledge base.&quot;
+Always be professional and [SPECIFIC TONE - helpful/formal/friendly].
+[ANY SPECIFIC INSTRUCTIONS FOR YOUR USE CASE]
+</code></pre>
+<p><strong>Your system prompt:</strong></p>
+<pre><code>
+
+
+
+</code></pre>
+<hr />
+<h1>PART 3: Test and Optimize</h1>
+<p><strong>Time: 15 minutes</strong></p>
+<p>Now test your copilot and improve its performance.</p>
+<hr />
+<h2>Exercise 3.1: Upload and Index Your Documents</h2>
+<p><strong>What you'll do:</strong> Upload your prepared documents and process them.</p>
+<p><strong>STEP 1: Upload your documents</strong> to the File component.</p>
+<p><strong>STEP 2: Click the Play button</strong> to run the indexing pipeline.</p>
+<p><strong>STEP 3: Note any issues:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Exercise 3.2: Test Your Copilot</h2>
+<p><strong>What you'll do:</strong> Ask questions and evaluate the answers.</p>
+<p><strong>STEP 1: Test with 5 questions from your expected use cases:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Expected Answer (Key Points)</th>
+<th>Actual Answer</th>
+<th>Score (1-5)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scoring Guide:</strong>
+- 5 = Perfect, accurate, complete
+- 4 = Good, mostly accurate, minor gaps
+- 3 = Acceptable, some inaccuracies
+- 2 = Poor, significant problems
+- 1 = Unusable, wrong or no answer</p>
+<p><strong>Average Score:</strong> _____ / 5</p>
+<hr />
+<h2>Exercise 3.3: Diagnose and Improve</h2>
+<p><strong>What you'll do:</strong> Identify issues and make improvements.</p>
+<p><strong>STEP 1: Analyze your test results:</strong></p>
+<table>
+<thead>
+<tr>
+<th>If You Noticed...</th>
+<th>Likely Cause</th>
+<th>Solution to Try</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Answers too vague</td>
+<td>Chunks too large</td>
+<td>Reduce chunk size to 300-400</td>
+</tr>
+<tr>
+<td>Missing obvious info</td>
+<td>Top K too low</td>
+<td>Increase to 5-7</td>
+</tr>
+<tr>
+<td>Irrelevant info in answers</td>
+<td>Top K too high</td>
+<td>Reduce to 2-3</td>
+</tr>
+<tr>
+<td>Answers too long</td>
+<td>Max tokens too high</td>
+<td>Reduce to 300</td>
+</tr>
+<tr>
+<td>Wrong tone</td>
+<td>System prompt</td>
+<td>Refine tone instructions</td>
+</tr>
+<tr>
+<td>Hallucinations</td>
+<td>Temperature too high</td>
+<td>Reduce to 0.0-0.1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>STEP 2: Make ONE change and retest:</strong></p>
+<p>Change made: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p>New score: _____ / 5</p>
+<p>Improvement: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<hr />
+<h2>Exercise 3.4: Test Edge Cases</h2>
+<p><strong>What you'll do:</strong> Test how your copilot handles tricky situations.</p>
+<table>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Your Question</th>
+<th>Expected Behavior</th>
+<th>Actual Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Out-of-scope question</td>
+<td></td>
+<td>Should decline gracefully</td>
+<td></td>
+</tr>
+<tr>
+<td>Multi-part question</td>
+<td></td>
+<td>Should address all parts</td>
+<td></td>
+</tr>
+<tr>
+<td>Ambiguous question</td>
+<td></td>
+<td>Should clarify or provide options</td>
+<td></td>
+</tr>
+<tr>
+<td>Question with wrong assumption</td>
+<td></td>
+<td>Should correct gently</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1>PART 4: Document Your Copilot</h1>
+<p><strong>Time: 10 minutes</strong></p>
+<p>Create documentation for your copilot so others can use and maintain it.</p>
+<hr />
+<h2>Exercise 4.1: Complete the Copilot Spec</h2>
+<p><strong>What you'll do:</strong> Document your configuration choices.</p>
+<h3>AI Copilot Specification</h3>
+<p><strong>Name:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p><strong>Purpose:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p><strong>Owner:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p><strong>Date Created:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<h3>Configuration Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text Splitter</td>
+<td>Chunk Size</td>
+<td></td>
+</tr>
+<tr>
+<td>Text Splitter</td>
+<td>Chunk Overlap</td>
+<td></td>
+</tr>
+<tr>
+<td>Text Splitter</td>
+<td>Separator</td>
+<td></td>
+</tr>
+<tr>
+<td>Vector Store</td>
+<td>Type</td>
+<td></td>
+</tr>
+<tr>
+<td>Vector Store</td>
+<td>Collection Name</td>
+<td></td>
+</tr>
+<tr>
+<td>Retriever</td>
+<td>Search Type</td>
+<td></td>
+</tr>
+<tr>
+<td>Retriever</td>
+<td>Top K</td>
+<td></td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>Provider/Model</td>
+<td></td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>Temperature</td>
+<td></td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>Max Tokens</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>System Prompt</h3>
+<pre><code>
+
+</code></pre>
+<h3>Knowledge Base Documents</h3>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Version</th>
+<th>Last Updated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>Known Limitations</h3>
+<ol>
+<li>
+<hr />
+</li>
+<li>
+<hr />
+</li>
+</ol>
+<h3>Maintenance Notes</h3>
+<ul>
+<li>How often to update documents: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</li>
+<li>Who can update the knowledge base: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</li>
+</ul>
+<hr />
+<h2>Exercise 4.2: Plan for Improvement</h2>
+<p><strong>What you'll do:</strong> Identify next steps to improve your copilot.</p>
+<p><strong>Short-term Improvements (This Week):</strong>
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em>
+2. </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>___</p>
+<p><strong>Medium-term Improvements (This Month):</strong>
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em>
+2. </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>___</p>
+<p><strong>Additional Documents to Add:</strong>
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em>
+2. </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>___</p>
+<hr />
+<h1>Wrap-Up: Reflection &amp; Next Steps</h1>
+<h2>What I Learned</h2>
+<p><strong>STEP 1: Answer these questions:</strong></p>
+<ol>
+<li>The most challenging part of building my copilot was:</li>
+</ol>
+<hr />
+<ol>
+<li>The configuration that had the biggest impact on quality was:</li>
+</ol>
+<hr />
+<ol>
+<li>I was surprised that:</li>
+</ol>
+<hr />
+<ol>
+<li>For my next copilot, I would do differently:</li>
+</ol>
+<hr />
+<hr />
+<h2>7-Day Challenge</h2>
+<p><strong>Commit to improving and using your copilot this week:</strong></p>
+<ul>
+<li>[ ] <strong>Day 1:</strong> Have a colleague test your copilot and give feedback</li>
+<li>[ ] <strong>Day 2:</strong> Add one more document to the knowledge base</li>
+<li>[ ] <strong>Day 3:</strong> Refine your system prompt based on user feedback</li>
+<li>[ ] <strong>Day 4:</strong> Test 10 new questions and note any gaps</li>
+<li>[ ] <strong>Day 5:</strong> Experiment with different chunk sizes</li>
+<li>[ ] <strong>Day 6:</strong> Share your copilot with your team</li>
+<li>[ ] <strong>Day 7:</strong> Document lessons learned and plan improvements</li>
+</ul>
+<hr />
+<h2>Resources for Continued Learning</h2>
+<ul>
+<li><strong>Langflow Documentation:</strong> https://docs.langflow.org/</li>
+<li><strong>RAG Best Practices:</strong> https://www.pinecone.io/learn/retrieval-augmented-generation/</li>
+<li><strong>OpenAI Embedding Guide:</strong> https://platform.openai.com/docs/guides/embeddings</li>
+<li><strong>Chroma Documentation:</strong> https://docs.trychroma.com/</li>
+</ul>
+<hr />
+<h2>Quick Reference Card</h2>
+<h3>RAG Pipeline Flow</h3>
+<pre><code>Documents --&gt; Split into Chunks --&gt; Convert to Vectors --&gt; Store in Database
+                                                                    |
+                                                                    v
+    Answer &lt;-- Generate with LLM &lt;-- Retrieve Similar Chunks &lt;-- User Query
+</code></pre>
+<h3>Configuration Cheat Sheet</h3>
+<table>
+<thead>
+<tr>
+<th>Goal</th>
+<th>Chunk Size</th>
+<th>Top K</th>
+<th>Temperature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Factual Q&amp;A</td>
+<td>300-500</td>
+<td>3-4</td>
+<td>0.0-0.1</td>
+</tr>
+<tr>
+<td>Explanations</td>
+<td>600-800</td>
+<td>4-5</td>
+<td>0.1-0.3</td>
+</tr>
+<tr>
+<td>Creative content</td>
+<td>500-700</td>
+<td>5-7</td>
+<td>0.5-0.7</td>
+</tr>
+</tbody>
+</table>
+<h3>Troubleshooting Guide</h3>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"I don't know" for known info</td>
+<td>Increase Top K, check document uploaded</td>
+</tr>
+<tr>
+<td>Answers include wrong info</td>
+<td>Decrease Top K, lower temperature</td>
+</tr>
+<tr>
+<td>Answers too generic</td>
+<td>Decrease chunk size, improve system prompt</td>
+</tr>
+<tr>
+<td>Slow responses</td>
+<td>Decrease Top K, use faster model</td>
+</tr>
+<tr>
+<td>Inconsistent quality</td>
+<td>Lower temperature, add examples to prompt</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Congratulations on building your AI copilot! Keep iterating and improving based on real user feedback.</em></p>
+<p><em>ITAG Skillnet AI Advantage - Build Your Own AI Copilot</em></p>
+</body>
+</html>

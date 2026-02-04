@@ -357,6 +357,10 @@ COURSES = {
         "icon": "💡",
         "duration": "90 minutes",
         "category": "itag-skillnet",
+        "syllabus": ["What AI Actually Is", "Machine Learning vs Deep Learning", "How ChatGPT & LLMs Work", "AI Use Cases for Business", "Risks & Limitations", "Getting Started with AI Tools"],
+        "goals": ["Understand core AI concepts without technical jargon", "Identify practical AI applications for your role", "Evaluate AI tools and vendors with confidence", "Recognise common AI myths and misconceptions"],
+        "audience": "Business professionals and decision-makers with no technical background",
+        "prerequisites": None,
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -374,6 +378,10 @@ COURSES = {
         "description": "Complete course on AI and Large Language Models from fundamentals to advanced topics",
         "icon": "🤖",
         "category": "ai-technical",
+        "syllabus": ["ML Foundations & Statistics", "Neural Networks & Deep Learning", "Natural Language Processing", "Transformer Architecture", "Large Language Models", "Retrieval-Augmented Generation (RAG)", "AI Agents & Orchestration", "Attention Mechanisms"],
+        "goals": ["Build ML models from scratch using Python and PyTorch", "Understand transformer architecture and attention mechanisms", "Implement RAG pipelines for knowledge-grounded AI", "Design and deploy AI agent systems"],
+        "audience": "Developers and ML engineers seeking comprehensive AI mastery",
+        "prerequisites": "Intermediate Python programming and basic statistics",
         "sections": {
             "part1": {
                 "title": "Part 1: ML Foundations & AI Introduction",
@@ -416,6 +424,10 @@ COURSES = {
         "icon": "🐍",
         "duration": "4 hours",
         "category": "python",
+        "syllabus": ["Variables & Data Types", "Strings & String Methods", "Lists & Dictionaries", "Control Flow (if/else)", "Loops & Iteration", "Functions", "Error Handling", "File I/O", "Modules & Imports", "Tuples & Sets", "Boolean Logic", "Sorting & Nested Data", "JSON Processing", "PEP 8 Style Guide"],
+        "goals": ["Write and run Python scripts confidently", "Work with core data structures: lists, dicts, tuples, and sets", "Control program flow with conditionals and loops", "Define reusable functions and handle errors gracefully"],
+        "audience": "Complete beginners with no prior programming experience",
+        "prerequisites": None,
         "sections": {
             "materials": {
                 "title": "Course Materials",
@@ -441,6 +453,10 @@ COURSES = {
         "icon": "🐍",
         "duration": "8 hours",
         "category": "python",
+        "syllabus": ["Object-Oriented Programming", "Classes & Inheritance", "Polymorphism & Properties", "Pattern Matching", "Functional Programming", "Lambda, Map, Filter, Reduce", "Closures & Decorators", "Generators & Iterators", "Partial Functions & Currying", "Lazy Evaluation", "Unit Testing with unittest", "Testing with pytest"],
+        "goals": ["Design classes using OOP principles: inheritance, encapsulation, polymorphism", "Apply functional programming patterns with higher-order functions", "Write decorators and generators for clean, reusable code", "Build and run test suites with unittest and pytest"],
+        "audience": "Developers with basic Python knowledge ready to level up",
+        "prerequisites": "Python Fundamentals or equivalent experience with variables, loops, and functions",
         "sections": {
             "materials": {
                 "title": "Course Materials",
@@ -465,6 +481,10 @@ COURSES = {
         "icon": "🏢",
         "duration": "5 days",
         "category": "ai-business",
+        "syllabus": ["AI Strategy Development", "AI Readiness Assessment", "Governance Frameworks", "Workflow Mapping & Automation", "Change Management", "Risk Assessment & Mitigation", "Stakeholder Analysis", "30-60-90 Day Implementation Plans", "AI for Managers", "Technical Deep-Dive Module"],
+        "goals": ["Develop an actionable AI adoption strategy for your organisation", "Build governance and risk frameworks for responsible AI use", "Map existing workflows and identify automation opportunities", "Lead change management for AI transformation initiatives"],
+        "audience": "Senior leaders, managers, and transformation leads driving AI adoption",
+        "prerequisites": "No technical background required; management or leadership experience recommended",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -516,6 +536,10 @@ COURSES = {
         "icon": "🤖",
         "duration": "3 days",
         "category": "ai-technical",
+        "syllabus": ["Reactive vs Deliberative Agents", "Agent Architectures & Patterns", "Tool Use & Function Calling", "Multi-Agent Systems", "Swarm Intelligence", "Google A2A Protocol", "Agent Orchestration Frameworks", "Building Production Agents"],
+        "goals": ["Understand the spectrum of AI agent architectures", "Build reactive and deliberative agents from scratch", "Implement multi-agent swarms for complex problem-solving", "Integrate agents using Google's Agent-to-Agent (A2A) protocol"],
+        "audience": "Developers and ML engineers building autonomous AI systems",
+        "prerequisites": "Intermediate Python and basic understanding of LLMs and prompt engineering",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -552,6 +576,10 @@ COURSES = {
         "icon": "💬",
         "duration": "90 minutes",
         "category": "itag-skillnet",
+        "syllabus": ["CRAFT Prompt Framework", "Context Engineering", "AI Use Case Identification", "Prompt Engineering Techniques", "Iterative Prompt Refinement", "Hands-on CRAFT Builder"],
+        "goals": ["Master the CRAFT framework for writing effective prompts", "Identify high-value AI use cases in your daily work", "Write prompts that produce consistent, reliable outputs", "Apply context engineering to improve AI responses"],
+        "audience": "Business professionals exploring AI for productivity and decision-making",
+        "prerequisites": None,
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -583,6 +611,10 @@ COURSES = {
         "icon": "🤖",
         "duration": "90 minutes",
         "category": "itag-skillnet",
+        "syllabus": ["What is RAG?", "Knowledge Bases & Vector Stores", "Document Chunking Strategies", "Building a Custom Copilot", "Grounding AI with Your Data", "RAG Simulator Demo"],
+        "goals": ["Understand how Retrieval-Augmented Generation (RAG) works", "Learn to turn your documents into an AI knowledge base", "Evaluate tools for building custom AI copilots", "See a live RAG pipeline in action"],
+        "audience": "Business professionals and team leads interested in custom AI assistants",
+        "prerequisites": None,
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -615,6 +647,10 @@ COURSES = {
         "icon": "📝",
         "duration": "90 minutes",
         "category": "itag-skillnet",
+        "syllabus": ["WRITE Framework for AI Documents", "Proposal Structure & Templates", "Report Generation Workflow", "Quality & Compliance Checks", "Tone & Style Consistency", "Live AI Writing Demo"],
+        "goals": ["Use the WRITE framework to draft proposals and reports with AI", "Maintain quality, compliance, and brand consistency", "Speed up document creation while keeping human oversight", "Apply AI-assisted editing and revision techniques"],
+        "audience": "Professionals who write proposals, reports, or business documents regularly",
+        "prerequisites": None,
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -645,6 +681,10 @@ COURSES = {
         "icon": "🔍",
         "duration": "90 minutes",
         "category": "itag-skillnet",
+        "syllabus": ["Why AI Hallucinates", "Types of AI Hallucinations", "The VERIFY Framework", "Fact-Checking Techniques", "Prompt Strategies to Reduce Errors", "Hallucination Detector Demo"],
+        "goals": ["Recognise the different types of AI hallucinations", "Apply the VERIFY framework to fact-check AI outputs", "Write prompts that minimise hallucination risk", "Build a personal verification workflow for AI content"],
+        "audience": "Professionals using AI-generated content who need accuracy and reliability",
+        "prerequisites": None,
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -675,6 +715,10 @@ COURSES = {
         "icon": "🛡️",
         "duration": "90 minutes",
         "category": "itag-skillnet",
+        "syllabus": ["The SHIELD Framework", "Data Protection & GDPR", "Privacy in AI Systems", "Bias & Fairness", "Ethical AI Decision-Making", "Data Safety Assessment Tool"],
+        "goals": ["Apply the SHIELD framework for responsible AI use", "Understand GDPR and data protection implications of AI", "Identify and mitigate bias in AI-driven decisions", "Conduct a data safety assessment for your AI tools"],
+        "audience": "Professionals handling sensitive data or making decisions with AI assistance",
+        "prerequisites": None,
         "sections": {
             "slides": {
                 "title": "Workshop Materials",
@@ -705,6 +749,10 @@ COURSES = {
         "icon": "💰",
         "duration": "90 minutes",
         "category": "itag-skillnet",
+        "syllabus": ["The VALUE Framework", "Free & Open-Source AI Tools", "Budget AI Tool Comparison", "Building Your AI Stack", "Cost Optimisation Strategies", "AI Toolkit Budget Calculator"],
+        "goals": ["Build a powerful AI toolkit for under €50/month", "Evaluate free and open-source AI alternatives", "Apply the VALUE framework to tool selection decisions", "Create a personalised AI budget plan"],
+        "audience": "Budget-conscious professionals and small teams looking to adopt AI affordably",
+        "prerequisites": None,
         "sections": {
             "slides": {
                 "title": "Workshop Materials",
@@ -736,6 +784,10 @@ COURSES = {
         "icon": "📈",
         "duration": "2 days",
         "category": "ai-business",
+        "syllabus": ["AI-Powered Content Generation", "The CRAFT Prompt Framework", "Lead Scoring with AI", "Campaign Analytics & Optimisation", "Customer Engagement & Personalisation", "A/B Testing with AI", "Prompt Library Templates", "Implementation Strategy"],
+        "goals": ["Generate marketing content using AI tools and the CRAFT framework", "Build AI-driven lead scoring and customer segmentation models", "Analyse campaign performance with AI-powered analytics", "Create a practical AI implementation roadmap for your team"],
+        "audience": "Sales and marketing professionals looking to leverage AI in their workflows",
+        "prerequisites": "No technical background required; familiarity with marketing concepts helpful",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -771,6 +823,10 @@ COURSES = {
         "icon": "🧠",
         "duration": "3 days",
         "category": "ai-technical",
+        "syllabus": ["ML Foundations & Model Selection", "Data Preprocessing & Feature Engineering", "Evaluation Metrics & Validation", "Deep Learning with CNNs & RNNs", "Transformers & Transfer Learning", "AutoML & Multimodal AI", "MLOps & Model Deployment", "Model Monitoring & Drift Detection", "Responsible AI & Explainability"],
+        "goals": ["Apply modern ML techniques from preprocessing to production deployment", "Build deep learning models with PyTorch including CNNs and Transformers", "Implement MLOps best practices for model lifecycle management", "Evaluate models with appropriate metrics and ensure responsible AI practices"],
+        "audience": "Data scientists and business analysts deepening their AI/ML expertise",
+        "prerequisites": "Python programming experience and basic statistics/linear algebra",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -801,6 +857,10 @@ COURSES = {
         "icon": "\ud83d\udcca",
         "duration": "3 days",
         "category": "ai-technical",
+        "syllabus": ["Data Science Foundations", "Data Exploration & Visualisation", "Data Engineering Fundamentals", "Building Data Pipelines", "ETL Processes", "End-to-End ML Projects", "Model Training & Evaluation", "Data Wrangling with Pandas"],
+        "goals": ["Explore and visualise datasets using Python data science libraries", "Build robust data pipelines for production data workflows", "Train and evaluate machine learning models end-to-end", "Transition confidently from IT/development into data roles"],
+        "audience": "IT professionals and developers transitioning into data science or engineering roles",
+        "prerequisites": "Basic Python programming and familiarity with SQL concepts",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -834,6 +894,10 @@ COURSES = {
         "icon": "🤖",
         "duration": "3 days",
         "category": "azure",
+        "syllabus": ["AI Workloads & Considerations", "ML Principles on Azure", "Azure AI Services Overview", "Natural Language Processing", "Computer Vision", "Generative AI on Azure", "Responsible AI Principles", "Practice Exam Questions"],
+        "goals": ["Understand core AI and ML concepts tested on the AI-900 exam", "Navigate Azure AI services: Cognitive Services, Bot Service, ML Studio", "Apply responsible AI principles in real-world scenarios", "Pass the Microsoft Azure AI Fundamentals (AI-900) certification"],
+        "audience": "IT professionals preparing for the Azure AI-900 certification exam",
+        "prerequisites": "Basic understanding of cloud computing concepts",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -863,6 +927,10 @@ COURSES = {
         "icon": "☁️",
         "duration": "3 days",
         "category": "azure",
+        "syllabus": ["Cloud Concepts & Models", "Azure Architecture & Services", "Compute & Networking", "Storage Solutions", "Identity & Access (Entra ID)", "Governance & Compliance", "Cost Management & SLAs", "Practice Exam Questions"],
+        "goals": ["Describe cloud concepts including IaaS, PaaS, and SaaS models", "Navigate Azure architecture, regions, and availability zones", "Understand Azure identity, governance, and compliance tools", "Pass the Microsoft Azure Fundamentals (AZ-900) certification"],
+        "audience": "IT professionals preparing for the Azure AZ-900 certification exam",
+        "prerequisites": "No prior cloud experience required",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -892,6 +960,10 @@ COURSES = {
         "icon": "🛡️",
         "duration": "3 days",
         "category": "azure",
+        "syllabus": ["Security Concepts & Zero Trust", "Microsoft Entra (Azure AD)", "Network & Endpoint Security", "Microsoft Defender XDR", "Microsoft Sentinel (SIEM)", "Microsoft Purview Compliance", "Information Protection & DLP", "Practice Exam Questions"],
+        "goals": ["Describe security, compliance, and identity concepts including Zero Trust", "Navigate Microsoft Entra for identity and access management", "Understand Microsoft Defender XDR and Sentinel for threat protection", "Pass the Microsoft SC-900 certification exam"],
+        "audience": "IT professionals preparing for the SC-900 security certification exam",
+        "prerequisites": "Basic understanding of networking and cloud concepts",
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -921,6 +993,10 @@ COURSES = {
         "icon": "🔧",
         "duration": "2 days",
         "category": "ai-technical",
+        "syllabus": ["When to Fine-Tune vs Prompt", "LoRA & QLoRA Methods", "PEFT (Parameter-Efficient Fine-Tuning)", "Data Preparation & Formatting", "Hugging Face Ecosystem", "Hands-on Training with Mistral-7B", "Evaluation Metrics (BLEU, ROUGE)", "Adapter Merging & Deployment", "Cost Optimisation"],
+        "goals": ["Decide when fine-tuning is the right approach vs prompting or RAG", "Fine-tune open-source LLMs using QLoRA and the Hugging Face stack", "Evaluate fine-tuned models with BLEU, ROUGE, and custom metrics", "Merge adapters and deploy fine-tuned models to production"],
+        "audience": "ML engineers and developers customising LLMs for domain-specific tasks",
+        "prerequisites": "Python programming, basic ML concepts, and familiarity with Hugging Face Transformers",
         "sections": {
             "slides": {
                 "title": "Course Slides",

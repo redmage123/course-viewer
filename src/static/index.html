@@ -995,6 +995,110 @@
             margin-bottom: 16px;
             font-size: 1rem;
         }
+
+        /* Enhanced Guest Preview Styles */
+        .course-preview-section-title-new {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .course-preview-section-title-new .section-icon {
+            font-size: 1.1rem;
+        }
+        .course-preview-goals {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .course-preview-goals ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .course-preview-goals li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .course-preview-goals li::before {
+            content: '\2705';
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .course-preview-prereqs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        .course-preview-prereqs .prereq-label {
+            font-weight: 600;
+            color: #f1f5f9;
+            white-space: nowrap;
+        }
+        .course-preview-prereqs .prereq-none {
+            color: #4ade80;
+            font-weight: 500;
+        }
+        .course-preview-prereqs .prereq-value {
+            color: #fbbf24;
+        }
+        .course-preview-syllabus {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .course-preview-syllabus-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .course-preview-syllabus-pill {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .course-preview-syllabus-pill:hover {
+            border-color: #38bdf8;
+            color: #e2e8f0;
+        }
+        .course-preview-audience-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: #38bdf8;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -2216,9 +2320,44 @@
                                     </div>
                                 </div>
                                 <div className="course-preview-description">{selectedCourse.description}</div>
-                                {selectedCourse.duration && (
-                                    <div className="course-preview-meta">
+                                <div className="course-preview-meta">
+                                    {selectedCourse.duration && (
                                         <span className="course-preview-badge">⏱ {selectedCourse.duration}</span>
+                                    )}
+                                    {courseDetail && courseDetail.audience && (
+                                        <span className="course-preview-audience-badge">👤 {courseDetail.audience}</span>
+                                    )}
+                                </div>
+                                {courseDetail && courseDetail.goals && courseDetail.goals.length > 0 && (
+                                    <div className="course-preview-goals">
+                                        <div className="course-preview-section-title-new">
+                                            <span className="section-icon">🎯</span> What You'll Learn
+                                        </div>
+                                        <ul>
+                                            {courseDetail.goals.map((goal, i) => (
+                                                <li key={i}>{goal}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                                <div className="course-preview-prereqs">
+                                    <span className="prereq-label">📋 Prerequisites:</span>
+                                    {courseDetail && courseDetail.prerequisites ? (
+                                        <span className="prereq-value">{courseDetail.prerequisites}</span>
+                                    ) : (
+                                        <span className="prereq-none">None — open to all levels!</span>
+                                    )}
+                                </div>
+                                {courseDetail && courseDetail.syllabus && courseDetail.syllabus.length > 0 && (
+                                    <div className="course-preview-syllabus">
+                                        <div className="course-preview-section-title-new">
+                                            <span className="section-icon">📚</span> Topics Covered
+                                        </div>
+                                        <div className="course-preview-syllabus-grid">
+                                            {courseDetail.syllabus.map((topic, i) => (
+                                                <span key={i} className="course-preview-syllabus-pill">{topic}</span>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                                 {courseDetail && courseDetail.sections && (

@@ -309,85 +309,91 @@
             color: #64748b;
         }
 
-        /* ========== CATEGORY SECTIONS (Accordion) ========== */
-        .categories-container {
+        /* ========== TOPIC GRID (Homepage) ========== */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem 0;
             max-width: 1200px;
             margin: 0 auto;
         }
-        .category-section {
-            margin-bottom: 8px;
+        .topic-card {
             background: #1e293b;
             border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #334155;
-            transition: all 0.2s ease;
-        }
-        .category-section:hover {
-            border-color: #475569;
-        }
-        .category-section.expanded {
-            border-color: #38bdf8;
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
-        }
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
+            padding: 2rem;
             cursor: pointer;
-            user-select: none;
-            transition: background 0.15s;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            border: 1px solid #334155;
+            text-align: center;
         }
-        .category-header:hover {
-            background: rgba(255, 255, 255, 0.03);
+        .topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+            border-color: #38bdf8;
         }
-        .category-chevron {
-            font-size: 0.875rem;
-            color: #64748b;
-            transition: transform 0.3s ease;
-            margin-right: 4px;
+        .topic-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
-        .category-chevron.expanded {
-            transform: rotate(90deg);
-        }
-        .category-icon {
-            font-size: 1.5rem;
-        }
-        .category-title {
-            font-size: 1.1rem;
-            font-weight: 600;
+        .topic-card-name {
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #f1f5f9;
-            flex: 1;
+            margin-bottom: 0.5rem;
         }
-        .category-description {
-            font-size: 0.8rem;
-            color: #64748b;
-            max-width: 300px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .category-count {
-            font-size: 0.7rem;
-            background: #334155;
+        .topic-card-description {
             color: #94a3b8;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
         }
-        .category-section.expanded .category-count {
+        .topic-card-count {
             background: #0ea5e9;
             color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            display: inline-block;
         }
-        .category-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            padding: 0 20px;
+
+        /* ========== CATEGORY PAGE ========== */
+        .category-page-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .category-content.expanded {
-            max-height: 2000px;
-            padding: 0 20px 20px;
+        .category-page-icon {
+            font-size: 2.5rem;
+        }
+        .category-page-info {
+            flex: 1;
+        }
+        .category-page-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+        .category-page-desc {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+        .back-button {
+            background: none;
+            border: 1px solid #475569;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #38bdf8;
+            transition: background 0.2s;
+        }
+        .back-button:hover {
+            background: #334155;
         }
 
         /* ========== COURSE WELCOME ========== */
@@ -1793,21 +1799,30 @@
             const [runningLab, setRunningLab] = useState(null);
             const [loading, setLoading] = useState(true);
             const [initialLoad, setInitialLoad] = useState(true);
-            const [expandedCategories, setExpandedCategories] = useState({});
+            const [selectedCategory, setSelectedCategory] = useState(null);
 
             // Parse URL on load to restore state
             const getStateFromUrl = () => {
                 const path = window.location.pathname;
-                const match = path.match(/^\/course\/([^\/]+)(?:\/item\/([^\/]+))?/);
-                return match ? { courseId: match[1], itemId: match[2] } : null;
+                const courseMatch = path.match(/^\/course\/([^\/]+)(?:\/item\/([^\/]+))?/);
+                if (courseMatch) {
+                    return { courseId: courseMatch[1], itemId: courseMatch[2], categoryId: null };
+                }
+                const categoryMatch = path.match(/^\/category\/([^\/]+)/);
+                if (categoryMatch) {
+                    return { courseId: null, itemId: null, categoryId: categoryMatch[1] };
+                }
+                return { courseId: null, itemId: null, categoryId: null };
             };
 
             // Update URL when state changes
-            const updateUrl = (course, item) => {
+            const updateUrl = (course, item, categoryId) => {
                 let newPath = '/';
                 if (course) {
                     newPath = `/course/${course.id}`;
                     if (item) newPath += `/item/${item.id}`;
+                } else if (categoryId) {
+                    newPath = `/category/${categoryId}`;
                 }
                 if (window.location.pathname !== newPath) {
                     window.history.pushState({}, '', newPath);
@@ -1828,16 +1843,17 @@
                 ]).then(([coursesData, categoriesData]) => {
                     setCourses(coursesData);
                     setCategories(categoriesData);
-                    // Initialize first category as expanded
-                    if (categoriesData.length > 0) {
-                        setExpandedCategories({ [categoriesData[0].id]: true });
-                    }
                     setLoading(false);
                     // Restore state from URL on initial load
                     const urlState = getStateFromUrl();
-                    if (urlState && initialLoad) {
-                        const course = coursesData.find(c => c.id === urlState.courseId);
-                        if (course) setSelectedCourse(course);
+                    if (initialLoad) {
+                        if (urlState.courseId) {
+                            const course = coursesData.find(c => c.id === urlState.courseId);
+                            if (course) setSelectedCourse(course);
+                        } else if (urlState.categoryId) {
+                            const cat = categoriesData.find(c => c.id === urlState.categoryId);
+                            if (cat) setSelectedCategory(cat);
+                        }
                     }
                     setInitialLoad(false);
                 });
@@ -1872,18 +1888,26 @@
             useEffect(() => {
                 const handlePopState = () => {
                     const urlState = getStateFromUrl();
-                    if (urlState) {
+                    if (urlState.courseId) {
                         const course = courses.find(c => c.id === urlState.courseId);
                         if (course) setSelectedCourse(course);
+                        setSelectedCategory(null);
+                    } else if (urlState.categoryId) {
+                        const cat = categories.find(c => c.id === urlState.categoryId);
+                        setSelectedCategory(cat || null);
+                        setSelectedCourse(null);
+                        setSelectedItem(null);
+                        setMaterials(null);
                     } else {
                         setSelectedCourse(null);
                         setSelectedItem(null);
                         setMaterials(null);
+                        setSelectedCategory(null);
                     }
                 };
                 window.addEventListener('popstate', handlePopState);
                 return () => window.removeEventListener('popstate', handlePopState);
-            }, [courses]);
+            }, [courses, categories]);
 
             const handleLogout = async () => {
                 await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
@@ -1911,21 +1935,18 @@
                 return count;
             };
 
-            const toggleCategory = (categoryId) => {
-                setExpandedCategories(prev => ({
-                    ...prev,
-                    [categoryId]: !prev[categoryId]
-                }));
+            const navigateToCategory = (cat) => {
+                setSelectedCategory(cat);
+                setSelectedCourse(null);
+                updateUrl(null, null, cat.id);
             };
 
-            const expandAllCategories = () => {
-                const all = {};
-                categories.forEach(cat => { all[cat.id] = true; });
-                setExpandedCategories(all);
-            };
-
-            const collapseAllCategories = () => {
-                setExpandedCategories({});
+            const navigateHome = () => {
+                setSelectedCategory(null);
+                setSelectedCourse(null);
+                setSelectedItem(null);
+                setMaterials(null);
+                updateUrl(null, null, null);
             };
 
             if (!authChecked || loading) {
@@ -1965,7 +1986,7 @@
                             <div className="sidebar-header">
                                 <div className="sidebar-brand">
                                     <div className="sidebar-brand-text"><span>🎓</span> AI Elevate</div>
-                                    <button className="back-home" onClick={() => { setSelectedCourse(null); setMaterials(null); setSelectedItem(null); setRunningLab(null); }}>
+                                    <button className="back-home" onClick={() => { setSelectedCourse(null); setSelectedCategory(null); setMaterials(null); setSelectedItem(null); setRunningLab(null); updateUrl(null, null, null); }}>
                                         ← Home
                                     </button>
                                 </div>
@@ -2057,6 +2078,27 @@
                                     </div>
                                 )}
                             </div>
+                        ) : selectedCategory ? (
+                            <div className="home">
+                                <div className="category-page-header">
+                                    <button className="back-button" onClick={navigateHome}>← All Topics</button>
+                                    <span className="category-page-icon">{selectedCategory.icon}</span>
+                                    <div className="category-page-info">
+                                        <div className="category-page-name">{selectedCategory.name}</div>
+                                        {selectedCategory.description && <div className="category-page-desc">{selectedCategory.description}</div>}
+                                    </div>
+                                </div>
+                                <div className="course-grid" style={{maxWidth:'1200px',margin:'0 auto'}}>
+                                    {selectedCategory.courses.map(course => (
+                                        <div key={course.id} className="course-card" onClick={() => { setSelectedCourse(courses.find(c => c.id === course.id)); setSelectedCategory(null); }}>
+                                            <div className="course-card-icon">{course.icon}</div>
+                                            <h3>{course.name}</h3>
+                                            <p>{course.description}</p>
+                                            {course.duration && <div className="course-card-duration">{course.duration}</div>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         ) : (
                             <div className="home">
                                 <div className="home-hero">
@@ -2081,41 +2123,15 @@
                                         <p style={{marginTop: '24px', color: '#94a3b8'}}>Welcome back, {user.full_name || user.username}! Select a course below to get started.</p>
                                     )}
                                 </div>
-                                <div className="categories-container">
-                                    <div style={{display:'flex',justifyContent:'flex-end',gap:'8px',marginBottom:'16px'}}>
-                                        <button className="btn btn-ghost" onClick={expandAllCategories} style={{fontSize:'0.75rem',padding:'6px 12px'}}>
-                                            Expand All
-                                        </button>
-                                        <button className="btn btn-ghost" onClick={collapseAllCategories} style={{fontSize:'0.75rem',padding:'6px 12px'}}>
-                                            Collapse All
-                                        </button>
-                                    </div>
-                                    {categories.map(cat => {
-                                        const isExpanded = expandedCategories[cat.id] || false;
-                                        return (
-                                            <div key={cat.id} className={`category-section ${isExpanded ? 'expanded' : ''}`}>
-                                                <div className="category-header" onClick={() => toggleCategory(cat.id)}>
-                                                    <span className={`category-chevron ${isExpanded ? 'expanded' : ''}`}>▶</span>
-                                                    <span className="category-icon">{cat.icon}</span>
-                                                    <span className="category-title">{cat.name}</span>
-                                                    {cat.description && <span className="category-description">{cat.description}</span>}
-                                                    <span className="category-count">{cat.courses.length} course{cat.courses.length !== 1 ? 's' : ''}</span>
-                                                </div>
-                                                <div className={`category-content ${isExpanded ? 'expanded' : ''}`}>
-                                                    <div className="course-grid">
-                                                        {cat.courses.map(course => (
-                                                            <div key={course.id} className="course-card" onClick={() => setSelectedCourse(courses.find(c => c.id === course.id))}>
-                                                                <div className="course-card-icon">{course.icon}</div>
-                                                                <h3>{course.name}</h3>
-                                                                <p>{course.description}</p>
-                                                                {course.duration && <div className="course-card-duration">{course.duration}</div>}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
+                                <div className="topic-grid">
+                                    {categories.map(cat => (
+                                        <div key={cat.id} className="topic-card" onClick={() => navigateToCategory(cat)}>
+                                            <div className="topic-card-icon">{cat.icon}</div>
+                                            <div className="topic-card-name">{cat.name}</div>
+                                            {cat.description && <div className="topic-card-description">{cat.description}</div>}
+                                            <span className="topic-card-count">{cat.courses.length} course{cat.courses.length !== 1 ? 's' : ''}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         )}

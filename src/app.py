@@ -794,6 +794,39 @@ COURSES = {
             }
         }
     },
+    "intro-data-science-engineering": {
+        "id": "intro-data-science-engineering",
+        "name": "Introduction to Data Science & Engineering",
+        "description": "3-day course for IT professionals and developers transitioning into data roles, covering data science foundations, data engineering fundamentals, and end-to-end machine learning",
+        "icon": "\ud83d\udcca",
+        "duration": "3 days",
+        "category": "ai-technical",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "idse-slides", "name": "Presentation Slides", "file": "intro-data-science-engineering/intro-data-science-engineering-slides.html", "type": "slides"},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "idse-notes", "name": "Student Notes", "file": "intro-data-science-engineering/student-notes.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "idse-lab1", "name": "Lab 1: Data Exploration & Visualization", "file": "intro-data-science-engineering/labs/lab-01-data-exploration.ipynb", "type": "lab", "runnable": True},
+                    {"id": "idse-lab1-sol", "name": "Lab 1: Data Exploration (Solutions)", "file": "intro-data-science-engineering/labs/lab-01-data-exploration-solution.ipynb", "type": "lab", "runnable": True},
+                    {"id": "idse-lab2", "name": "Lab 2: Building a Data Pipeline", "file": "intro-data-science-engineering/labs/lab-02-data-pipeline.ipynb", "type": "lab", "runnable": True},
+                    {"id": "idse-lab2-sol", "name": "Lab 2: Data Pipeline (Solutions)", "file": "intro-data-science-engineering/labs/lab-02-data-pipeline-solution.ipynb", "type": "lab", "runnable": True},
+                    {"id": "idse-lab3", "name": "Lab 3: End-to-End ML Project", "file": "intro-data-science-engineering/labs/lab-03-ml-end-to-end.ipynb", "type": "lab", "runnable": True},
+                    {"id": "idse-lab3-sol", "name": "Lab 3: ML Project (Solutions)", "file": "intro-data-science-engineering/labs/lab-03-ml-end-to-end-solution.ipynb", "type": "lab", "runnable": True},
+                ]
+            }
+        }
+    },
     "azure-ai-900": {
         "id": "azure-ai-900",
         "name": "Azure AI-900 Certification Prep",

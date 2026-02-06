@@ -887,6 +887,41 @@ COURSES = {
             }
         }
     },
+    "ai-data-discovery": {
+        "id": "ai-data-discovery",
+        "name": "Data Discovery: Harnessing AI, AGI & Vector Databases",
+        "description": "2-day technical workshop on AI-powered data discovery, classification, vector databases, sensitive data detection, and compliance risk scoring",
+        "icon": "\ud83d\udd0d",
+        "duration": "2 days",
+        "category": "ai-technical",
+        "syllabus": ["Data Discovery Fundamentals", "AI-Driven Classification", "Vector Databases & Semantic Search", "Unsupervised Clustering", "Sensitive Data Detection", "Hybrid Regex + NER Detection", "Compliance Risk Scoring", "Data Governance & Ethics"],
+        "goals": ["Build AI-powered data discovery pipelines using ML classification and vector search", "Detect sensitive data (PII, PHI, financial) with hybrid regex and NER techniques", "Compute automated compliance risk scores and build governance dashboards", "Deploy semantic search catalogues with ChromaDB and sentence transformers"],
+        "audience": "Data engineers, data scientists, compliance professionals, and IT architects responsible for data governance",
+        "prerequisites": "Basic Python programming and familiarity with pandas and scikit-learn",
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "add-slides", "name": "Presentation Slides", "file": "ai-data-discovery/ai-data-discovery-slides.html", "type": "slides"},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "add-notes", "name": "Student Notes", "file": "ai-data-discovery/student-notes.md", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "add-lab1", "name": "Lab 1: Data Discovery & Classification", "file": "ai-data-discovery/labs/lab-01-data-discovery-classification.ipynb", "type": "lab", "runnable": True},
+                    {"id": "add-lab1-sol", "name": "Lab 1: Data Discovery & Classification (Solutions)", "file": "ai-data-discovery/labs/lab-01-data-discovery-classification-solution.ipynb", "type": "lab", "runnable": True},
+                    {"id": "add-lab2", "name": "Lab 2: Sensitive Data Detection", "file": "ai-data-discovery/labs/lab-02-sensitive-data-detection.ipynb", "type": "lab", "runnable": True},
+                    {"id": "add-lab2-sol", "name": "Lab 2: Sensitive Data Detection (Solutions)", "file": "ai-data-discovery/labs/lab-02-sensitive-data-detection-solution.ipynb", "type": "lab", "runnable": True},
+                ]
+            }
+        }
+    },
     "azure-ai-900": {
         "id": "azure-ai-900",
         "name": "Azure AI-900 Certification Prep",

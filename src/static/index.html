@@ -1087,6 +1087,21 @@
             border-color: #38bdf8;
             color: #e2e8f0;
         }
+        .course-preview-syllabus-pill { cursor: pointer; }
+
+        /* Topic Description Modal */
+        .topic-modal { max-width: 500px; }
+        .topic-modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .topic-modal h2 { text-align: left; margin-bottom: 0; }
+        .topic-modal-close {
+            background: none; border: none; color: #94a3b8;
+            font-size: 1.5rem; cursor: pointer; padding: 4px 8px;
+        }
+        .topic-modal-close:hover { color: #f1f5f9; }
+        .topic-modal-body { color: #cbd5e1; font-size: 0.95rem; line-height: 1.7; }
         .course-preview-audience-badge {
             display: inline-flex;
             align-items: center;
@@ -2030,6 +2045,7 @@
             const [initialLoad, setInitialLoad] = useState(true);
             const [selectedCategory, setSelectedCategory] = useState(null);
             const [courseDetail, setCourseDetail] = useState(null);
+            const [topicPopup, setTopicPopup] = useState(null);
 
             // Parse URL on load to restore state
             const getStateFromUrl = () => {
@@ -2218,6 +2234,18 @@
                 <div className={`app ${selectedCourse && user ? 'with-sidebar' : ''}`}>
                     {showAuth && <AuthModal onLogin={(u) => { setUser(u); setShowAuth(false); }} onSkip={() => setShowAuth(false)} />}
 
+                    {topicPopup && (
+                        <div className="modal-overlay" onClick={() => setTopicPopup(null)}>
+                            <div className="modal topic-modal" onClick={e => e.stopPropagation()}>
+                                <div className="topic-modal-header">
+                                    <h2>{topicPopup.name}</h2>
+                                    <button className="topic-modal-close" onClick={() => setTopicPopup(null)}>&times;</button>
+                                </div>
+                                <div className="topic-modal-body">{topicPopup.description}</div>
+                            </div>
+                        </div>
+                    )}
+
                     {(!selectedCourse || !user) && (
                         <header className="header">
                             <div className="header-brand"><span>🎓</span> AI Elevate</div>
@@ -2355,7 +2383,9 @@
                                         </div>
                                         <div className="course-preview-syllabus-grid">
                                             {courseDetail.syllabus.map((topic, i) => (
-                                                <span key={i} className="course-preview-syllabus-pill">{topic}</span>
+                                                <span key={i} className="course-preview-syllabus-pill"
+                                                    onClick={() => courseDetail.topic_descriptions && courseDetail.topic_descriptions[topic] &&
+                                                        setTopicPopup({name: topic, description: courseDetail.topic_descriptions[topic]})}>{topic}</span>
                                             ))}
                                         </div>
                                     </div>

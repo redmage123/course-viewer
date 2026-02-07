@@ -361,6 +361,14 @@ COURSES = {
         "goals": ["Understand core AI concepts without technical jargon", "Identify practical AI applications for your role", "Evaluate AI tools and vendors with confidence", "Recognise common AI myths and misconceptions"],
         "audience": "Business professionals and decision-makers with no technical background",
         "prerequisites": None,
+        "topic_descriptions": {
+            "What AI Actually Is": "Demystifies artificial intelligence by cutting through the hype and explaining what AI systems actually do under the hood. Covers the difference between narrow AI and general AI, how modern AI is essentially sophisticated pattern recognition, and why understanding these fundamentals matters for every professional.",
+            "Machine Learning vs Deep Learning": "Breaks down the relationship between AI, machine learning, and deep learning in plain terms. Explains how machines learn from data through examples and feedback, and when deep learning's neural network approach offers advantages over traditional machine learning techniques.",
+            "How ChatGPT & LLMs Work": "Explains the technology behind large language models like ChatGPT, including how they are trained on text data and generate responses. Covers key concepts like tokens, context windows, and probabilistic text generation without requiring any technical background.",
+            "AI Use Cases for Business": "Surveys the most impactful ways businesses are applying AI today, from customer service automation to data-driven decision making. Provides concrete examples across industries so participants can identify opportunities relevant to their own organizations.",
+            "Risks & Limitations": "Addresses the real limitations of current AI systems, including hallucinations, bias, data privacy concerns, and overreliance on AI outputs. Equips participants with a practical understanding of what AI cannot do and how to mitigate common risks when adopting AI tools.",
+            "Getting Started with AI Tools": "Provides a practical roadmap for beginning to use AI tools effectively in day-to-day work. Covers popular AI assistants and platforms, best practices for prompting and interaction, and how to evaluate which tools are appropriate for specific tasks.",
+        },
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -382,6 +390,16 @@ COURSES = {
         "goals": ["Build ML models from scratch using Python and PyTorch", "Understand transformer architecture and attention mechanisms", "Implement RAG pipelines for knowledge-grounded AI", "Design and deploy AI agent systems"],
         "audience": "Developers and ML engineers seeking comprehensive AI mastery",
         "prerequisites": "Intermediate Python programming and basic statistics",
+        "topic_descriptions": {
+            "ML Foundations & Statistics": "Establishes the mathematical and statistical bedrock required for understanding machine learning algorithms. Covers probability distributions, hypothesis testing, regression, and classification fundamentals that underpin all modern ML systems.",
+            "Neural Networks & Deep Learning": "Explores the architecture and training of neural networks from single perceptrons to deep multi-layer networks. Students learn about activation functions, backpropagation, gradient descent, and how to build and train networks for real-world tasks.",
+            "Natural Language Processing": "Covers the core techniques for processing and understanding human language computationally. Topics include tokenization, embeddings, sequence modeling, and the evolution from bag-of-words approaches to modern contextual language understanding.",
+            "Transformer Architecture": "Provides a detailed examination of the Transformer architecture that revolutionized NLP and beyond. Students dissect encoder-decoder structures, positional encoding, multi-head attention, and understand why this architecture enables massive parallelization and superior performance.",
+            "Large Language Models": "Explores how large language models like GPT and LLaMA are built, trained, and fine-tuned at scale. Covers pre-training objectives, scaling laws, emergent capabilities, instruction tuning, and reinforcement learning from human feedback (RLHF).",
+            "Retrieval-Augmented Generation (RAG)": "Teaches how to ground LLM outputs in factual, up-to-date information by combining retrieval systems with generative models. Students learn about vector databases, embedding-based search, chunking strategies, and how to build end-to-end RAG pipelines.",
+            "AI Agents & Orchestration": "Examines autonomous AI agents that can plan, reason, and execute multi-step tasks using tools and external APIs. Covers agent architectures, tool use, memory systems, multi-agent orchestration patterns, and frameworks for building reliable agentic systems.",
+            "Attention Mechanisms": "Provides a deep dive into the attention mechanism that is the core innovation behind modern AI breakthroughs. Students work through self-attention, cross-attention, and scaled dot-product attention mathematically and intuitively, understanding how attention allows models to dynamically focus on relevant information.",
+        },
         "sections": {
             "part1": {
                 "title": "Part 1: ML Foundations & AI Introduction",
@@ -428,6 +446,22 @@ COURSES = {
         "goals": ["Write and run Python scripts confidently", "Work with core data structures: lists, dicts, tuples, and sets", "Control program flow with conditionals and loops", "Define reusable functions and handle errors gracefully"],
         "audience": "Complete beginners with no prior programming experience",
         "prerequisites": None,
+        "topic_descriptions": {
+            "Variables & Data Types": "Introduces how Python stores and manages data through variables, covering integers, floats, strings, and booleans. Students learn about dynamic typing, type conversion, and best practices for naming variables in Python programs.",
+            "Strings & String Methods": "Covers Python's powerful string handling capabilities, including slicing, concatenation, formatting with f-strings, and essential built-in methods. Students practice manipulating text data using methods like split, join, strip, replace, and format.",
+            "Lists & Dictionaries": "Explores Python's two most essential data structures for storing collections of data. Students learn to create, access, modify, and iterate over lists and dictionaries, and understand when to use each structure for different programming tasks.",
+            "Control Flow (if/else)": "Teaches how to make programs respond to different conditions using if, elif, and else statements. Covers comparison operators, logical operators, nested conditionals, and how to structure decision-making logic clearly and effectively.",
+            "Loops & Iteration": "Covers for loops and while loops for repeating operations over sequences and until conditions are met. Students learn to iterate over lists, dictionaries, and ranges while understanding loop mechanics and common iteration patterns.",
+            "Functions": "Introduces how to organize code into reusable, modular functions using def statements. Covers parameters, return values, default arguments, scope, and docstrings, establishing the foundation for writing clean and maintainable Python code.",
+            "Error Handling": "Teaches how to anticipate and gracefully handle runtime errors using try, except, else, and finally blocks. Students learn about common exception types, how to raise custom exceptions, and defensive programming practices that make code robust.",
+            "File I/O": "Covers reading from and writing to files using Python's built-in file handling capabilities. Students learn to work with text files using open, read, write, and the context manager pattern, as well as handling file paths and common file operations.",
+            "Modules & Imports": "Explains how to leverage Python's module system to organize code and use external libraries. Covers import statements, the standard library, creating custom modules, and understanding packages and namespaces.",
+            "Tuples & Sets": "Introduces tuples as immutable sequences and sets as unordered collections of unique elements. Students learn when to choose tuples over lists for data integrity, and how to use sets for membership testing, deduplication, and set operations like union and intersection.",
+            "Boolean Logic": "Provides a thorough understanding of boolean values, logical operators (and, or, not), and truthiness in Python. Covers short-circuit evaluation, truthy and falsy values, and how to write clear boolean expressions for program logic.",
+            "Sorting & Nested Data": "Teaches how to sort lists and other iterables using sorted() and the sort method with custom key functions. Covers working with nested data structures like lists of dictionaries, accessing deeply nested values, and organizing complex data.",
+            "JSON Processing": "Covers how to work with JSON, the most common data interchange format in modern applications. Students learn to parse JSON strings, read and write JSON files, convert between Python dictionaries and JSON, and handle real-world API response data.",
+            "PEP 8 Style Guide": "Introduces Python's official style guide and the importance of writing clean, readable, and consistent code. Covers naming conventions, indentation rules, line length, import ordering, and how to use linting tools to enforce style standards automatically.",
+        },
         "sections": {
             "materials": {
                 "title": "Course Materials",
@@ -457,6 +491,20 @@ COURSES = {
         "goals": ["Design classes using OOP principles: inheritance, encapsulation, polymorphism", "Apply functional programming patterns with higher-order functions", "Write decorators and generators for clean, reusable code", "Build and run test suites with unittest and pytest"],
         "audience": "Developers with basic Python knowledge ready to level up",
         "prerequisites": "Python Fundamentals or equivalent experience with variables, loops, and functions",
+        "topic_descriptions": {
+            "Object-Oriented Programming": "Introduces the principles and philosophy of object-oriented programming, including encapsulation, abstraction, and code organization around objects. Students learn why OOP is a dominant paradigm in software development and how it promotes reusable, maintainable code.",
+            "Classes & Inheritance": "Covers how to define classes with attributes and methods, and how to build class hierarchies using inheritance. Students learn about constructors, instance vs class variables, method overriding, and the super() function for extending parent class behavior.",
+            "Polymorphism & Properties": "Explores how different classes can share a common interface through polymorphism, enabling flexible and extensible code. Also covers Python's property decorator for creating managed attributes with getters, setters, and deleters that maintain clean APIs.",
+            "Pattern Matching": "Teaches Python's structural pattern matching syntax introduced in Python 3.10 using match/case statements. Students learn to match against literal values, sequences, mappings, and class instances, replacing complex if/elif chains with more readable and powerful constructs.",
+            "Functional Programming": "Introduces the functional programming paradigm in Python, emphasizing pure functions, immutability, and function composition. Students learn how functional approaches can complement OOP to produce cleaner, more testable, and more concise code.",
+            "Lambda, Map, Filter, Reduce": "Covers anonymous functions with lambda and the key higher-order functions for transforming data. Students practice using map for element-wise transformations, filter for selecting elements by condition, and reduce for aggregating sequences into single values.",
+            "Closures & Decorators": "Explains how closures capture variables from enclosing scopes and how decorators use this mechanism to modify function behavior. Students learn to write and apply decorators for cross-cutting concerns like logging, timing, authentication, and caching.",
+            "Generators & Iterators": "Teaches how to create memory-efficient iterables using generator functions with yield and generator expressions. Students learn about the iterator protocol, lazy evaluation benefits, and how to process large datasets that cannot fit entirely in memory.",
+            "Partial Functions & Currying": "Covers techniques for creating specialized functions from more general ones using functools.partial and currying patterns. Students learn how to reduce function arity, create reusable function factories, and apply these techniques to simplify callback-heavy code.",
+            "Lazy Evaluation": "Explores the concept of deferring computation until results are actually needed, improving performance and memory efficiency. Students learn how Python implements lazy evaluation through generators, itertools, and other deferred execution patterns for processing large or infinite data streams.",
+            "Unit Testing with unittest": "Introduces Python's built-in unittest framework for writing and organizing automated tests. Covers TestCase classes, assertion methods, setUp and tearDown fixtures, test discovery, and best practices for structuring a test suite.",
+            "Testing with pytest": "Covers the pytest framework as a more modern and Pythonic alternative for testing Python code. Students learn about simple assert-based tests, fixtures, parameterized testing, markers, and plugins that make testing more expressive and productive.",
+        },
         "sections": {
             "materials": {
                 "title": "Course Materials",
@@ -485,6 +533,18 @@ COURSES = {
         "goals": ["Develop an actionable AI adoption strategy for your organisation", "Build governance and risk frameworks for responsible AI use", "Map existing workflows and identify automation opportunities", "Lead change management for AI transformation initiatives"],
         "audience": "Senior leaders, managers, and transformation leads driving AI adoption",
         "prerequisites": "No technical background required; management or leadership experience recommended",
+        "topic_descriptions": {
+            "AI Strategy Development": "Guides participants through creating a comprehensive AI strategy aligned with business objectives and organizational capabilities. Covers vision setting, opportunity identification, prioritization frameworks, and building a strategic roadmap that connects AI initiatives to measurable business outcomes.",
+            "AI Readiness Assessment": "Provides frameworks for evaluating an organization's current readiness to adopt and scale AI across data maturity, technical infrastructure, talent, and culture. Students learn to conduct gap analyses and build actionable plans to address readiness shortfalls before committing to AI investments.",
+            "Governance Frameworks": "Covers the essential structures, policies, and oversight mechanisms needed to govern AI responsibly within an enterprise. Topics include model validation processes, data governance, ethical review boards, accountability structures, and regulatory compliance considerations.",
+            "Workflow Mapping & Automation": "Teaches how to identify, document, and analyze existing business workflows to find high-impact automation opportunities. Students learn process mapping techniques, criteria for selecting workflows suitable for AI augmentation, and how to design human-AI collaborative processes.",
+            "Change Management": "Addresses the people side of AI adoption, covering strategies for managing resistance, building buy-in, and driving cultural transformation. Students learn proven change management frameworks adapted specifically for AI initiatives, including communication strategies and training program design.",
+            "Risk Assessment & Mitigation": "Provides a structured approach to identifying, evaluating, and mitigating the risks associated with enterprise AI deployments. Covers technical risks like model drift and data quality, organizational risks like skill gaps, and external risks including regulatory changes and reputational concerns.",
+            "Stakeholder Analysis": "Teaches how to identify, categorize, and engage the key stakeholders who will influence or be affected by AI initiatives. Students learn stakeholder mapping techniques, influence-interest matrices, and strategies for tailoring communication and engagement plans to different stakeholder groups.",
+            "30-60-90 Day Implementation Plans": "Guides participants through creating phased implementation plans with clear milestones, deliverables, and success metrics for the first 90 days. Covers quick-win identification for the first 30 days, scaling strategies for days 31-60, and optimization and measurement approaches for days 61-90.",
+            "AI for Managers": "Equips managers with the practical knowledge they need to lead AI-enabled teams and make informed decisions about AI adoption. Covers how to evaluate AI vendor claims, set realistic expectations, manage AI projects, and foster a data-driven culture within their departments.",
+            "Technical Deep-Dive Module": "Provides a more technical exploration of AI technologies for participants who want deeper understanding of the underlying systems. Covers machine learning pipelines, model training and evaluation basics, API integration patterns, and infrastructure considerations for deploying AI in production environments.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -540,6 +600,16 @@ COURSES = {
         "goals": ["Understand the spectrum of AI agent architectures", "Build reactive and deliberative agents from scratch", "Implement multi-agent swarms for complex problem-solving", "Integrate agents using Google's Agent-to-Agent (A2A) protocol"],
         "audience": "Developers and ML engineers building autonomous AI systems",
         "prerequisites": "Intermediate Python and basic understanding of LLMs and prompt engineering",
+        "topic_descriptions": {
+            "Reactive vs Deliberative Agents": "Explore the two fundamental paradigms of AI agent design: reactive agents that respond directly to environmental stimuli, and deliberative agents that maintain internal models and plan ahead. You will learn when each approach is appropriate and how modern systems often combine both strategies for robust behavior.",
+            "Agent Architectures & Patterns": "Study the core architectural patterns used to build AI agents, including BDI (Belief-Desire-Intention), subsumption architectures, and layered hybrid designs. You will examine how these patterns address challenges like scalability, modularity, and real-time decision-making in complex environments.",
+            "Tool Use & Function Calling": "Learn how AI agents extend their capabilities by invoking external tools, APIs, and functions during reasoning and execution. You will implement function-calling patterns that allow large language models to interact with databases, code interpreters, web services, and other external systems reliably.",
+            "Multi-Agent Systems": "Understand how multiple AI agents collaborate, negotiate, and coordinate to solve problems that exceed the capability of any single agent. You will explore communication protocols, shared memory architectures, and conflict resolution strategies used in distributed agent systems.",
+            "Swarm Intelligence": "Discover how decentralized, self-organizing agent collectives can produce emergent intelligent behavior inspired by biological systems like ant colonies and bird flocks. You will implement swarm algorithms and learn how simple local rules give rise to sophisticated global problem-solving without centralized control.",
+            "Google A2A Protocol": "Examine Google's Agent-to-Agent (A2A) protocol, an open standard for enabling interoperability and communication between AI agents built on different platforms. You will learn the protocol's message format, discovery mechanisms, and task lifecycle management for building cross-platform agent ecosystems.",
+            "Agent Orchestration Frameworks": "Survey the leading frameworks for orchestrating AI agents, including LangGraph, CrewAI, AutoGen, and others. You will compare their approaches to workflow definition, state management, error handling, and human-in-the-loop patterns to select the right tool for your use case.",
+            "Building Production Agents": "Apply everything you have learned to design, build, and deploy production-grade AI agents with proper error handling, observability, and guardrails. You will address real-world concerns including latency management, cost optimization, safety constraints, and techniques for testing and monitoring agents in live environments.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -580,6 +650,14 @@ COURSES = {
         "goals": ["Master the CRAFT framework for writing effective prompts", "Identify high-value AI use cases in your daily work", "Write prompts that produce consistent, reliable outputs", "Apply context engineering to improve AI responses"],
         "audience": "Business professionals exploring AI for productivity and decision-making",
         "prerequisites": None,
+        "topic_descriptions": {
+            "CRAFT Prompt Framework": "Learn the CRAFT framework \u2014 Context, Role, Action, Format, Target \u2014 a structured methodology for composing effective prompts that consistently produce high-quality AI outputs. You will practice applying each element of the framework to transform vague requests into precise, actionable instructions.",
+            "Context Engineering": "Understand how to design and supply the right context to an AI model so it can generate accurate, relevant responses. You will explore techniques for selecting background information, setting constraints, and framing problems in ways that dramatically improve output quality.",
+            "AI Use Case Identification": "Develop a systematic approach to identifying high-value AI use cases within your organization or domain. You will learn evaluation criteria for assessing feasibility, impact, and effort so you can prioritize opportunities where AI delivers the greatest return.",
+            "Prompt Engineering Techniques": "Master a toolkit of proven prompt engineering techniques including few-shot examples, chain-of-thought reasoning, role assignment, and output formatting directives. You will learn how each technique influences model behavior and when to apply them for optimal results.",
+            "Iterative Prompt Refinement": "Practice the disciplined process of testing, evaluating, and improving prompts through successive iterations. You will learn how to diagnose common failure modes in AI outputs and apply targeted adjustments to progressively achieve the quality and consistency you need.",
+            "Hands-on CRAFT Builder": "Put your skills into practice in a guided, interactive session where you build complete CRAFT prompts for real-world scenarios. You will work through multiple exercises, receive feedback, and leave with a personal library of refined prompts you can use immediately.",
+        },
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -615,6 +693,14 @@ COURSES = {
         "goals": ["Understand how Retrieval-Augmented Generation (RAG) works", "Learn to turn your documents into an AI knowledge base", "Evaluate tools for building custom AI copilots", "See a live RAG pipeline in action"],
         "audience": "Business professionals and team leads interested in custom AI assistants",
         "prerequisites": None,
+        "topic_descriptions": {
+            "What is RAG?": "Learn the fundamentals of Retrieval-Augmented Generation, a technique that enhances AI responses by grounding them in relevant external documents retrieved at query time. You will understand how RAG addresses the limitations of static training data and reduces hallucinations by anchoring outputs in verified sources.",
+            "Knowledge Bases & Vector Stores": "Explore how knowledge bases and vector databases store and retrieve information using semantic embeddings rather than traditional keyword matching. You will learn how documents are converted into vector representations and how similarity search enables AI systems to find the most relevant information for any query.",
+            "Document Chunking Strategies": "Understand why and how documents must be split into appropriately sized chunks before being embedded and stored for retrieval. You will compare chunking strategies \u2014 fixed-size, semantic, recursive, and hierarchical \u2014 and learn how chunk size and overlap affect retrieval accuracy and response quality.",
+            "Building a Custom Copilot": "Walk through the end-to-end process of building a custom AI copilot tailored to your organization's specific knowledge and workflows. You will learn how to connect a language model to your own data sources, configure retrieval pipelines, and design conversational interfaces that provide domain-specific assistance.",
+            "Grounding AI with Your Data": "Learn techniques for ensuring AI-generated responses are grounded in your organization's actual documents, policies, and data rather than generic training knowledge. You will explore methods for source attribution, confidence scoring, and contextual filtering that build trust and accuracy in enterprise AI applications.",
+            "RAG Simulator Demo": "Experience an interactive demonstration of a working RAG system that lets you experiment with different configurations and see their effects in real time. You will observe how changes to retrieval parameters, chunk sizes, and prompt templates influence the quality and relevance of AI-generated answers.",
+        },
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -651,6 +737,14 @@ COURSES = {
         "goals": ["Use the WRITE framework to draft proposals and reports with AI", "Maintain quality, compliance, and brand consistency", "Speed up document creation while keeping human oversight", "Apply AI-assisted editing and revision techniques"],
         "audience": "Professionals who write proposals, reports, or business documents regularly",
         "prerequisites": None,
+        "topic_descriptions": {
+            "WRITE Framework for AI Documents": "Learn the WRITE framework \u2014 a structured methodology for producing professional documents with AI assistance that maintains quality, consistency, and compliance standards. You will understand how each step in the framework guides the AI through drafting, reviewing, and refining documents to meet professional expectations.",
+            "Proposal Structure & Templates": "Study the essential components of winning proposals, including executive summaries, scope definitions, methodology sections, and pricing structures. You will learn how to create reusable templates that AI can populate intelligently while maintaining your organization's voice and formatting standards.",
+            "Report Generation Workflow": "Master a systematic workflow for using AI to generate reports from raw data, research findings, or project updates. You will learn how to structure inputs, guide the AI through logical analysis, and produce polished reports that communicate insights clearly and persuasively to your target audience.",
+            "Quality & Compliance Checks": "Discover techniques for using AI to verify that generated documents meet quality benchmarks and regulatory or organizational compliance requirements. You will build checklists and automated review prompts that catch errors, inconsistencies, and compliance gaps before documents reach stakeholders.",
+            "Tone & Style Consistency": "Learn how to maintain a consistent professional tone, voice, and style across AI-generated documents, even when multiple authors or sessions are involved. You will practice crafting style guides and reference examples that anchor the AI's output to your brand standards and audience expectations.",
+            "Live AI Writing Demo": "Participate in a live demonstration where a complete professional document is drafted, refined, and finalized using AI in real time. You will see the full workflow in action, from initial brief through iterative improvement, and learn practical tips for achieving publication-ready results efficiently.",
+        },
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -685,6 +779,14 @@ COURSES = {
         "goals": ["Recognise the different types of AI hallucinations", "Apply the VERIFY framework to fact-check AI outputs", "Write prompts that minimise hallucination risk", "Build a personal verification workflow for AI content"],
         "audience": "Professionals using AI-generated content who need accuracy and reliability",
         "prerequisites": None,
+        "topic_descriptions": {
+            "Why AI Hallucinates": "Understand the technical and architectural reasons why large language models generate plausible-sounding but factually incorrect information. You will explore how training data gaps, probabilistic token generation, and lack of true world knowledge contribute to hallucinations.",
+            "Types of AI Hallucinations": "Learn to identify and categorize the different forms of AI hallucination, including factual fabrication, source invention, logical inconsistency, and context drift. You will study real-world examples of each type so you can quickly recognize when an AI output requires additional scrutiny or correction.",
+            "The VERIFY Framework": "Master the VERIFY framework, a systematic approach for evaluating AI-generated content for accuracy and reliability before it is used or shared. You will learn each step of the framework and practice applying it to real outputs, building a repeatable process that dramatically reduces the risk of acting on false information.",
+            "Fact-Checking Techniques": "Develop practical skills for efficiently fact-checking AI-generated claims using authoritative sources, cross-referencing strategies, and triangulation methods. You will learn how to prioritize which claims to verify, where to find reliable sources, and how to build verification workflows that balance thoroughness with speed.",
+            "Prompt Strategies to Reduce Errors": "Explore prompt engineering techniques specifically designed to minimize hallucinations, including grounding instructions, citation requirements, confidence qualifiers, and chain-of-verification prompting. You will learn how to structure prompts that encourage the model to acknowledge uncertainty rather than fabricate answers.",
+            "Hallucination Detector Demo": "Experience a hands-on demonstration of tools and techniques for automatically detecting potential hallucinations in AI-generated text. You will see how detection systems flag suspicious claims, compare outputs against source material, and provide confidence scores that help you decide which content to trust.",
+        },
         "sections": {
             "workshop": {
                 "title": "Workshop Materials",
@@ -719,6 +821,14 @@ COURSES = {
         "goals": ["Apply the SHIELD framework for responsible AI use", "Understand GDPR and data protection implications of AI", "Identify and mitigate bias in AI-driven decisions", "Conduct a data safety assessment for your AI tools"],
         "audience": "Professionals handling sensitive data or making decisions with AI assistance",
         "prerequisites": None,
+        "topic_descriptions": {
+            "The SHIELD Framework": "Learn a structured approach to data safety using the SHIELD framework, which covers Security, Handling, Integrity, Ethics, Legal compliance, and Documentation. This practical model provides a repeatable methodology for assessing and managing data risks across any organisation.",
+            "Data Protection & GDPR": "Understand the core principles of data protection legislation, with a focus on the General Data Protection Regulation and its impact on how organisations collect, store, and process personal data. You will learn about lawful bases for processing, data subject rights, and the responsibilities of data controllers and processors.",
+            "Privacy in AI Systems": "Explore the unique privacy challenges that arise when AI systems process large volumes of personal and sensitive data. Topics include data minimisation, anonymisation and pseudonymisation techniques, and strategies for building privacy-preserving machine learning pipelines.",
+            "Bias & Fairness": "Examine how bias can enter AI systems at every stage of the development lifecycle, from data collection and labelling to model training and deployment. You will learn practical techniques for detecting, measuring, and mitigating bias to promote fair and equitable outcomes.",
+            "Ethical AI Decision-Making": "Develop a working understanding of ethical frameworks and principles that guide responsible AI development and deployment. This topic covers transparency, accountability, human oversight, and how to navigate the complex trade-offs that arise when AI systems make or inform consequential decisions.",
+            "Data Safety Assessment Tool": "Apply your learning by using a hands-on data safety assessment tool to evaluate real-world scenarios and organisational practices. You will learn how to conduct structured assessments, identify risk areas, and produce actionable recommendations for improving data safety posture.",
+        },
         "sections": {
             "slides": {
                 "title": "Workshop Materials",
@@ -753,6 +863,14 @@ COURSES = {
         "goals": ["Build a powerful AI toolkit for under €50/month", "Evaluate free and open-source AI alternatives", "Apply the VALUE framework to tool selection decisions", "Create a personalised AI budget plan"],
         "audience": "Budget-conscious professionals and small teams looking to adopt AI affordably",
         "prerequisites": None,
+        "topic_descriptions": {
+            "The VALUE Framework": "Learn the VALUE framework for evaluating AI tools based on Viability, Accessibility, Longevity, Usability, and Effectiveness. This structured approach ensures you make informed decisions when selecting AI tools that deliver genuine return on investment without unnecessary spend.",
+            "Free & Open-Source AI Tools": "Survey the landscape of free and open-source AI tools available for common business tasks including text generation, image creation, data analysis, and automation. You will gain hands-on familiarity with tools that can deliver professional-grade results at zero licensing cost.",
+            "Budget AI Tool Comparison": "Learn how to systematically compare AI tools across dimensions such as capability, cost, ease of integration, and scalability. This topic provides evaluation templates and criteria that help you objectively assess which tools best meet your specific needs and budget constraints.",
+            "Building Your AI Stack": "Discover how to assemble a cohesive set of AI tools that work together to support your workflows and business objectives. You will learn strategies for integrating free and low-cost tools into a unified stack that maximises productivity while minimising redundancy.",
+            "Cost Optimisation Strategies": "Explore proven strategies for reducing AI-related costs, including leveraging free tiers, optimising API usage, batching requests, and choosing the right model size for each task. You will learn how to monitor spending and identify opportunities to maintain capability while cutting expenses.",
+            "AI Toolkit Budget Calculator": "Put your knowledge into practice using an interactive budget calculator that helps you plan and forecast AI tool expenditure. You will learn to model different scenarios, compare build-versus-buy decisions, and create a realistic budget plan for your AI toolkit.",
+        },
         "sections": {
             "slides": {
                 "title": "Workshop Materials",
@@ -788,6 +906,16 @@ COURSES = {
         "goals": ["Generate marketing content using AI tools and the CRAFT framework", "Build AI-driven lead scoring and customer segmentation models", "Analyse campaign performance with AI-powered analytics", "Create a practical AI implementation roadmap for your team"],
         "audience": "Sales and marketing professionals looking to leverage AI in their workflows",
         "prerequisites": "No technical background required; familiarity with marketing concepts helpful",
+        "topic_descriptions": {
+            "AI-Powered Content Generation": "Learn how to leverage AI tools to create compelling marketing content including blog posts, social media copy, email campaigns, and product descriptions. You will explore techniques for maintaining brand voice and quality while dramatically increasing content production speed.",
+            "The CRAFT Prompt Framework": "Master the CRAFT prompt engineering framework, which stands for Context, Role, Action, Format, and Target. This structured approach to writing prompts ensures you consistently get high-quality, relevant outputs from any generative AI tool you use in your sales and marketing work.",
+            "Lead Scoring with AI": "Discover how AI can transform lead scoring by analysing behavioural signals, demographic data, and engagement patterns to predict conversion likelihood. You will learn to build and refine AI-driven scoring models that help sales teams prioritise their efforts on the highest-value prospects.",
+            "Campaign Analytics & Optimisation": "Explore how AI enhances campaign analytics by uncovering patterns, predicting performance, and recommending optimisations in real time. You will learn to use AI tools to analyse campaign data, identify underperforming segments, and make data-driven adjustments that improve ROI.",
+            "Customer Engagement & Personalisation": "Understand how AI enables hyper-personalised customer experiences across channels by analysing preferences, behaviour, and context. You will learn strategies for implementing personalised recommendations, dynamic content, and tailored messaging that increase engagement and loyalty.",
+            "A/B Testing with AI": "Learn how AI accelerates and improves A/B testing by automating hypothesis generation, optimising test design, and analysing results with greater statistical rigor. You will explore multi-armed bandit approaches and AI-driven experimentation platforms that reduce testing cycles and improve outcomes.",
+            "Prompt Library Templates": "Build a reusable library of proven prompt templates tailored to common sales and marketing tasks such as outreach emails, ad copy, customer responses, and competitive analysis. You will learn how to organise, version, and continuously improve your prompt library for team-wide use.",
+            "Implementation Strategy": "Develop a practical roadmap for integrating AI into your sales and marketing operations, covering tool selection, team training, workflow redesign, and success metrics. You will learn change management techniques and how to build a phased implementation plan that delivers quick wins while building toward long-term transformation.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -827,6 +955,17 @@ COURSES = {
         "goals": ["Apply modern ML techniques from preprocessing to production deployment", "Build deep learning models with PyTorch including CNNs and Transformers", "Implement MLOps best practices for model lifecycle management", "Evaluate models with appropriate metrics and ensure responsible AI practices"],
         "audience": "Data scientists and business analysts deepening their AI/ML expertise",
         "prerequisites": "Python programming experience and basic statistics/linear algebra",
+        "topic_descriptions": {
+            "ML Foundations & Model Selection": "Build a solid understanding of core machine learning paradigms including supervised, unsupervised, and reinforcement learning, along with the key algorithms in each category. You will learn systematic approaches to model selection, understanding when to apply linear models, tree-based methods, SVMs, or ensemble techniques based on your data and problem characteristics.",
+            "Data Preprocessing & Feature Engineering": "Master the essential techniques for preparing raw data for machine learning, including handling missing values, encoding categorical variables, scaling, and normalisation. You will also learn feature engineering strategies such as polynomial features, interaction terms, and domain-driven transformations that can significantly boost model performance.",
+            "Evaluation Metrics & Validation": "Learn how to rigorously evaluate model performance using appropriate metrics for classification, regression, and ranking tasks, including accuracy, precision, recall, F1, AUC-ROC, and RMSE. You will also master validation strategies such as k-fold cross-validation, stratified sampling, and proper train-validation-test splits to ensure your models generalise well.",
+            "Deep Learning with CNNs & RNNs": "Explore the architectures and training procedures for convolutional neural networks and recurrent neural networks, understanding when and why each is suited to different data types. You will gain hands-on experience building CNNs for image tasks and RNNs for sequential data, learning about key concepts such as pooling, dropout, LSTM cells, and gradient flow.",
+            "Transformers & Transfer Learning": "Dive into the transformer architecture that underpins modern AI breakthroughs, understanding self-attention mechanisms, positional encoding, and encoder-decoder structures. You will learn how to leverage transfer learning and pre-trained models to achieve strong performance on downstream tasks with limited data and compute.",
+            "AutoML & Multimodal AI": "Discover how AutoML platforms automate the machine learning pipeline from feature engineering through hyperparameter tuning and model selection. You will also explore multimodal AI systems that can process and reason across text, images, audio, and structured data simultaneously.",
+            "MLOps & Model Deployment": "Learn the principles and practices of MLOps for taking models from experimentation to production reliably and repeatably. Topics include containerisation, model serving APIs, CI/CD for ML, model registries, and infrastructure considerations for deploying models at scale.",
+            "Model Monitoring & Drift Detection": "Understand how to monitor deployed models for performance degradation, data drift, and concept drift over time. You will learn to implement automated monitoring pipelines, set up alerting thresholds, and design retraining strategies that keep your models accurate and reliable in production.",
+            "Responsible AI & Explainability": "Explore the principles and techniques for building AI systems that are transparent, fair, and accountable. You will learn to apply explainability methods such as SHAP, LIME, and feature importance analysis, and understand how to conduct fairness audits and document model behaviour for stakeholders.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -861,6 +1000,16 @@ COURSES = {
         "goals": ["Explore and visualise datasets using Python data science libraries", "Build robust data pipelines for production data workflows", "Train and evaluate machine learning models end-to-end", "Transition confidently from IT/development into data roles"],
         "audience": "IT professionals and developers transitioning into data science or engineering roles",
         "prerequisites": "Basic Python programming and familiarity with SQL concepts",
+        "topic_descriptions": {
+            "Data Science Foundations": "Establish a solid understanding of the data science lifecycle, from problem formulation and data collection through analysis, modelling, and communication of results. You will learn the core statistical concepts, analytical thinking patterns, and tooling ecosystem that underpin effective data science practice.",
+            "Data Exploration & Visualisation": "Learn systematic techniques for exploring datasets to uncover patterns, distributions, outliers, and relationships before building models. You will master visualisation libraries and best practices for creating clear, informative charts and dashboards that communicate insights effectively to both technical and non-technical audiences.",
+            "Data Engineering Fundamentals": "Understand the role of data engineering in the modern data stack, including data storage architectures, databases, data warehouses, and data lakes. You will learn how data engineers ensure data is reliable, accessible, and properly structured to support analytics and machine learning workloads.",
+            "Building Data Pipelines": "Learn how to design and implement robust data pipelines that move data from source systems through transformation stages to analytical destinations. You will explore pipeline orchestration tools, scheduling, error handling, and best practices for building pipelines that are maintainable and scalable.",
+            "ETL Processes": "Master Extract, Transform, and Load processes that form the backbone of data integration in any organisation. You will learn practical techniques for extracting data from diverse sources, applying cleaning and transformation logic, and loading results into target systems while maintaining data quality and consistency.",
+            "End-to-End ML Projects": "Walk through the complete lifecycle of a machine learning project, from business problem definition and data gathering through model development, evaluation, and deployment. You will learn project management techniques specific to ML, including experiment tracking, reproducibility practices, and stakeholder communication.",
+            "Model Training & Evaluation": "Gain hands-on experience training machine learning models using popular frameworks, and learn how to evaluate their performance using appropriate metrics and validation strategies. You will understand overfitting, underfitting, hyperparameter tuning, and how to select the best model for your specific use case.",
+            "Data Wrangling with Pandas": "Develop proficiency with the Pandas library for cleaning, reshaping, merging, and analysing structured data in Python. You will learn to handle real-world messy data using techniques such as filtering, grouping, pivoting, handling missing values, and working with time series data efficiently.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -898,6 +1047,16 @@ COURSES = {
         "goals": ["Build AI-powered data discovery pipelines using ML classification and vector search", "Detect sensitive data (PII, PHI, financial) with hybrid regex and NER techniques", "Compute automated compliance risk scores and build governance dashboards", "Deploy semantic search catalogues with ChromaDB and sentence transformers"],
         "audience": "Data engineers, data scientists, compliance professionals, and IT architects responsible for data governance",
         "prerequisites": "Basic Python programming and familiarity with pandas and scikit-learn",
+        "topic_descriptions": {
+            "Data Discovery Fundamentals": "Learn the core principles and methodologies behind data discovery, including how organizations catalog, profile, and understand their data assets. This topic covers the data discovery lifecycle from initial inventory through metadata enrichment, establishing the foundation for automated and AI-assisted approaches.",
+            "AI-Driven Classification": "Explore how machine learning models can automatically classify and categorize data assets based on content, structure, and context. Students will learn to build and apply classification pipelines that label datasets by type, sensitivity, and business relevance with far greater speed and consistency than manual tagging.",
+            "Vector Databases & Semantic Search": "Understand how vector embeddings represent data semantically and how vector databases such as Pinecone, Weaviate, and ChromaDB enable similarity-based retrieval. This topic covers indexing strategies, approximate nearest neighbor search, and how semantic search surfaces related data assets that keyword-based approaches would miss.",
+            "Unsupervised Clustering": "Learn how unsupervised learning techniques such as K-Means, DBSCAN, and hierarchical clustering can reveal hidden groupings and patterns within large data repositories. Students will apply clustering algorithms to organize unstructured and semi-structured data into meaningful categories without the need for pre-labeled training data.",
+            "Sensitive Data Detection": "Discover techniques for automatically identifying personally identifiable information (PII), protected health information (PHI), financial data, and other sensitive content across enterprise data stores. This topic covers pattern-based detection, contextual analysis, and strategies for scanning data at scale to reduce exposure risk.",
+            "Hybrid Regex + NER Detection": "Master the combination of regular expression patterns and Named Entity Recognition (NER) models to build robust sensitive data detection pipelines. Students will learn how regex provides precision for structured patterns like credit card numbers, while NER models handle contextual entities such as names, addresses, and organizations.",
+            "Compliance Risk Scoring": "Learn how to quantify and prioritize data compliance risks by building scoring models that assess sensitivity levels, access patterns, and regulatory exposure. This topic covers frameworks for mapping data assets to regulatory requirements such as GDPR, HIPAA, and PCI-DSS, enabling organizations to focus remediation efforts where risk is greatest.",
+            "Data Governance & Ethics": "Examine the principles and frameworks that guide responsible data management, including data stewardship, lineage tracking, access controls, and ethical considerations in AI-driven discovery. Students will learn how to establish governance policies that balance data utility with privacy, fairness, and organizational accountability.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -918,6 +1077,10 @@ COURSES = {
                     {"id": "add-lab1-sol", "name": "Lab 1: Data Discovery & Classification (Solutions)", "file": "ai-data-discovery/labs/lab-01-data-discovery-classification-solution.ipynb", "type": "lab", "runnable": True},
                     {"id": "add-lab2", "name": "Lab 2: Sensitive Data Detection", "file": "ai-data-discovery/labs/lab-02-sensitive-data-detection.ipynb", "type": "lab", "runnable": True},
                     {"id": "add-lab2-sol", "name": "Lab 2: Sensitive Data Detection (Solutions)", "file": "ai-data-discovery/labs/lab-02-sensitive-data-detection-solution.ipynb", "type": "lab", "runnable": True},
+                    {"id": "add-lab3", "name": "Lab 3: Semantic Search & Data Catalogue RAG", "file": "ai-data-discovery/labs/lab-03-semantic-search-rag.ipynb", "type": "lab", "runnable": True},
+                    {"id": "add-lab3-sol", "name": "Lab 3: Semantic Search & RAG (Solutions)", "file": "ai-data-discovery/labs/lab-03-semantic-search-rag-solution.ipynb", "type": "lab", "runnable": True},
+                    {"id": "add-lab4", "name": "Lab 4: Data Governance & Policy Engine", "file": "ai-data-discovery/labs/lab-04-governance-policy-engine.ipynb", "type": "lab", "runnable": True},
+                    {"id": "add-lab4-sol", "name": "Lab 4: Governance & Policy Engine (Solutions)", "file": "ai-data-discovery/labs/lab-04-governance-policy-engine-solution.ipynb", "type": "lab", "runnable": True},
                 ]
             }
         }
@@ -933,6 +1096,16 @@ COURSES = {
         "goals": ["Understand core AI and ML concepts tested on the AI-900 exam", "Navigate Azure AI services: Cognitive Services, Bot Service, ML Studio", "Apply responsible AI principles in real-world scenarios", "Pass the Microsoft Azure AI Fundamentals (AI-900) certification"],
         "audience": "IT professionals preparing for the Azure AI-900 certification exam",
         "prerequisites": "Basic understanding of cloud computing concepts",
+        "topic_descriptions": {
+            "AI Workloads & Considerations": "Explore the common categories of AI workloads including prediction, anomaly detection, computer vision, natural language processing, and conversational AI. Students will learn how to identify appropriate AI solutions for different business scenarios and understand the key considerations for selecting and deploying AI workloads on Azure.",
+            "ML Principles on Azure": "Learn the foundational concepts of machine learning including supervised, unsupervised, and reinforcement learning, and how these principles apply within the Azure ecosystem. This topic covers the end-to-end ML workflow from data preparation through model training, evaluation, and deployment using Azure Machine Learning.",
+            "Azure AI Services Overview": "Survey the breadth of Azure's pre-built AI services including Azure OpenAI Service, Azure AI Search, and the Azure AI Studio platform. Students will understand how these managed services abstract away infrastructure complexity and enable rapid integration of AI capabilities into applications without deep ML expertise.",
+            "Natural Language Processing": "Discover how Azure AI Language and related services enable text analytics, sentiment analysis, key phrase extraction, entity recognition, and language understanding. Students will learn to leverage these NLP capabilities to build solutions that extract insights from unstructured text and understand user intent.",
+            "Computer Vision": "Learn how Azure AI Vision, Custom Vision, and Face API enable applications to analyze images and video, detect objects, read text via OCR, and identify visual patterns. This topic covers practical use cases from document processing to spatial analysis and the configuration of these services for production scenarios.",
+            "Generative AI on Azure": "Understand the principles of generative AI and how Azure OpenAI Service provides access to large language models such as GPT-4 and DALL-E. Students will explore prompt engineering fundamentals, responsible deployment patterns, and how to integrate generative capabilities into applications using Azure's managed infrastructure.",
+            "Responsible AI Principles": "Examine Microsoft's six responsible AI principles: fairness, reliability and safety, privacy and security, inclusiveness, transparency, and accountability. This topic covers how these principles translate into practical guidelines, tools, and organizational practices for building AI systems that are trustworthy and ethically sound.",
+            "Practice Exam Questions": "Consolidate your learning through a comprehensive set of practice questions modeled on the AI-900 certification exam format. This topic provides targeted review across all exam domains, helping students identify knowledge gaps and build the confidence needed to pass the Azure AI Fundamentals certification.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -966,6 +1139,16 @@ COURSES = {
         "goals": ["Describe cloud concepts including IaaS, PaaS, and SaaS models", "Navigate Azure architecture, regions, and availability zones", "Understand Azure identity, governance, and compliance tools", "Pass the Microsoft Azure Fundamentals (AZ-900) certification"],
         "audience": "IT professionals preparing for the Azure AZ-900 certification exam",
         "prerequisites": "No prior cloud experience required",
+        "topic_descriptions": {
+            "Cloud Concepts & Models": "Learn the fundamental concepts of cloud computing including the shared responsibility model, and the differences between IaaS, PaaS, and SaaS service models. This topic also covers public, private, and hybrid cloud deployment models, along with the core economic benefits of cloud adoption such as elasticity, scalability, and capital expenditure reduction.",
+            "Azure Architecture & Services": "Explore Azure's global infrastructure including regions, availability zones, and resource groups that underpin service reliability and data residency. Students will learn how Azure organizes resources through subscriptions and management groups, and gain an understanding of the Azure Resource Manager (ARM) deployment model.",
+            "Compute & Networking": "Understand Azure's core compute offerings including Virtual Machines, App Service, Azure Functions, and Azure Kubernetes Service, and when to use each. This topic also covers Azure networking fundamentals such as Virtual Networks, VPN Gateway, ExpressRoute, and DNS, providing the foundation for designing connected cloud solutions.",
+            "Storage Solutions": "Learn about Azure's storage services including Blob Storage, File Storage, Queue Storage, and Table Storage, along with their respective access tiers and redundancy options. Students will understand how to select the appropriate storage solution based on performance, cost, durability, and data access pattern requirements.",
+            "Identity & Access (Entra ID)": "Discover how Microsoft Entra ID (formerly Azure Active Directory) provides identity and access management for cloud resources. This topic covers authentication methods, single sign-on, multi-factor authentication, conditional access policies, and role-based access control (RBAC) for securing Azure environments.",
+            "Governance & Compliance": "Learn how Azure Policy, Blueprints, Management Groups, and resource locks enable organizations to enforce standards and maintain regulatory compliance at scale. Students will understand how to implement governance strategies that ensure consistent resource configuration, cost control, and adherence to organizational and industry requirements.",
+            "Cost Management & SLAs": "Understand Azure's pricing models, the factors that affect cost, and the tools available for estimating, monitoring, and optimizing cloud spending. This topic also covers Azure Service Level Agreements (SLAs), how composite SLAs are calculated, and strategies for designing solutions that meet availability and budget targets.",
+            "Practice Exam Questions": "Reinforce your understanding through practice questions that mirror the AZ-900 certification exam in format and difficulty. This topic provides comprehensive review across all exam domains, enabling students to assess their readiness and focus study efforts on areas that need the most attention before the Azure Fundamentals exam.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -999,6 +1182,16 @@ COURSES = {
         "goals": ["Describe security, compliance, and identity concepts including Zero Trust", "Navigate Microsoft Entra for identity and access management", "Understand Microsoft Defender XDR and Sentinel for threat protection", "Pass the Microsoft SC-900 certification exam"],
         "audience": "IT professionals preparing for the SC-900 security certification exam",
         "prerequisites": "Basic understanding of networking and cloud concepts",
+        "topic_descriptions": {
+            "Security Concepts & Zero Trust": "Learn the foundational security concepts including defense in depth, the CIA triad (confidentiality, integrity, availability), and the Zero Trust security model. Students will understand how the Zero Trust principles of verify explicitly, least privilege access, and assume breach reshape modern security architectures across cloud and hybrid environments.",
+            "Microsoft Entra (Azure AD)": "Explore Microsoft Entra ID's identity services including user and group management, authentication methods, conditional access, and identity governance. This topic covers how Entra ID serves as the central identity provider for Microsoft cloud services and how features like Privileged Identity Management and Identity Protection mitigate identity-based threats.",
+            "Network & Endpoint Security": "Understand how to protect network perimeters and endpoints using Azure Firewall, Network Security Groups, Azure DDoS Protection, and Microsoft Defender for Endpoint. Students will learn how these services work together to segment networks, filter traffic, detect intrusions, and secure devices across the organization.",
+            "Microsoft Defender XDR": "Learn how Microsoft Defender XDR (Extended Detection and Response) unifies threat detection and response across endpoints, email, identity, and cloud applications. This topic covers how Defender for Office 365, Defender for Identity, and Defender for Cloud Apps correlate signals to provide automated investigation and coordinated incident response.",
+            "Microsoft Sentinel (SIEM)": "Discover how Microsoft Sentinel provides cloud-native Security Information and Event Management (SIEM) and Security Orchestration, Automation, and Response (SOAR) capabilities. Students will learn how Sentinel collects data from diverse sources, uses analytics rules and machine learning to detect threats, and automates response through playbooks.",
+            "Microsoft Purview Compliance": "Explore how Microsoft Purview provides a unified compliance platform for managing data governance, risk, and regulatory obligations. This topic covers Compliance Manager, compliance score calculation, and how organizations use Purview to assess their compliance posture against standards such as GDPR, ISO 27001, and NIST.",
+            "Information Protection & DLP": "Learn how Microsoft Purview Information Protection and Data Loss Prevention (DLP) policies classify, label, and protect sensitive data across Microsoft 365 and beyond. Students will understand how sensitivity labels, encryption, and DLP rules work together to prevent unauthorized sharing and ensure data remains protected throughout its lifecycle.",
+            "Practice Exam Questions": "Test your knowledge with practice questions aligned to the SC-900 certification exam objectives and format. This topic provides a structured review across security, compliance, and identity domains, helping students identify weak areas and build confidence for the Microsoft Security, Compliance, and Identity Fundamentals exam.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",
@@ -1032,6 +1225,17 @@ COURSES = {
         "goals": ["Decide when fine-tuning is the right approach vs prompting or RAG", "Fine-tune open-source LLMs using QLoRA and the Hugging Face stack", "Evaluate fine-tuned models with BLEU, ROUGE, and custom metrics", "Merge adapters and deploy fine-tuned models to production"],
         "audience": "ML engineers and developers customising LLMs for domain-specific tasks",
         "prerequisites": "Python programming, basic ML concepts, and familiarity with Hugging Face Transformers",
+        "topic_descriptions": {
+            "When to Fine-Tune vs Prompt": "Understand the decision framework for choosing between prompt engineering, retrieval-augmented generation, and fine-tuning based on your use case, data availability, and performance requirements. Students will learn to evaluate trade-offs in cost, latency, control, and accuracy to determine when fine-tuning provides genuine value over simpler alternatives.",
+            "LoRA & QLoRA Methods": "Learn how Low-Rank Adaptation (LoRA) enables efficient fine-tuning by injecting trainable low-rank matrices into frozen model layers, dramatically reducing memory and compute requirements. This topic also covers QLoRA, which combines 4-bit quantization with LoRA to make fine-tuning of large models feasible on consumer-grade GPUs.",
+            "PEFT (Parameter-Efficient Fine-Tuning)": "Explore the broader landscape of parameter-efficient fine-tuning methods including prefix tuning, prompt tuning, and adapter layers alongside LoRA. Students will learn how PEFT techniques modify only a small fraction of model parameters while achieving performance comparable to full fine-tuning.",
+            "Data Preparation & Formatting": "Master the critical steps of curating, cleaning, and formatting training data for instruction fine-tuning of large language models. This topic covers dataset construction best practices, chat template formats such as Alpaca and ChatML, quality filtering strategies, and how data composition and volume directly impact fine-tuned model behavior.",
+            "Hugging Face Ecosystem": "Navigate the Hugging Face ecosystem including the Transformers library, Model Hub, Datasets library, and the TRL training framework. Students will gain practical fluency with the tools and workflows that have become the industry standard for accessing, fine-tuning, and sharing open-source language models.",
+            "Hands-on Training with Mistral-7B": "Apply fine-tuning techniques in a guided hands-on lab using the Mistral-7B model as the base for QLoRA instruction tuning. Students will configure training hyperparameters, manage GPU memory, monitor training metrics, and iteratively refine their approach to produce a fine-tuned model tailored to a specific task.",
+            "Evaluation Metrics (BLEU, ROUGE)": "Learn how to rigorously evaluate fine-tuned language models using automated metrics including BLEU, ROUGE, perplexity, and task-specific benchmarks. This topic covers the strengths and limitations of each metric, how to design evaluation datasets, and how to combine quantitative scores with qualitative human evaluation for a complete assessment.",
+            "Adapter Merging & Deployment": "Understand how to merge trained LoRA adapters back into the base model to create standalone deployable models, and explore serving options. Students will learn merging strategies, model quantization for efficient inference, and deployment approaches using frameworks such as vLLM, text-generation-inference, and Ollama for production use.",
+            "Cost Optimisation": "Explore strategies for minimizing the compute, storage, and operational costs of fine-tuning and deploying large language models. This topic covers GPU selection and cloud instance sizing, training efficiency techniques such as gradient checkpointing and mixed precision, and inference optimization methods that reduce serving costs without sacrificing quality.",
+        },
         "sections": {
             "slides": {
                 "title": "Course Slides",

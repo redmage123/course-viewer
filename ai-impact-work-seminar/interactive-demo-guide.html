@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Demo Guide - AI's Impact on Work &amp; Rolling Out AI Successfully</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6; color: #333;
+            max-width: 900px; margin: 0 auto; padding: 40px 20px;
+        }
+        h1 { color: #0066cc; border-bottom: 3px solid #0066cc; padding-bottom: 10px; margin-bottom: 30px; }
+        h2 { color: #0066cc; margin-top: 30px; margin-bottom: 15px; border-left: 4px solid #0066cc; padding-left: 15px; }
+        h3 { color: #333; margin-top: 20px; margin-bottom: 10px; }
+        p { margin-bottom: 15px; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+        .demo-step {
+            background: #f8f9fa; border-left: 4px solid #0066cc;
+            padding: 15px 20px; margin: 15px 0; border-radius: 0 8px 8px 0;
+        }
+        .demo-step h4 { color: #0066cc; margin-bottom: 8px; }
+        .talking-point {
+            background: #e6f2ff; border-left: 4px solid #4da6ff;
+            padding: 12px 15px; margin: 10px 0; border-radius: 0 5px 5px 0;
+            font-style: italic;
+        }
+        .talking-point::before { content: "\01F4AC "; }
+        .instructor-note {
+            background: #fff3e6; border-left: 4px solid #ff9933;
+            padding: 12px 15px; margin: 10px 0; border-radius: 0 5px 5px 0;
+        }
+        .instructor-note::before { content: "\01F4CB Instructor Note: "; font-weight: bold; }
+        .timing {
+            display: inline-block; background: #0066cc; color: white;
+            padding: 3px 10px; border-radius: 15px; font-size: 0.85em; font-weight: bold;
+        }
+        .audience-exercise {
+            background: #e6ffe6; border: 2px solid #00cc66;
+            padding: 15px 20px; margin: 15px 0; border-radius: 8px;
+        }
+        .audience-exercise h4 { color: #006633; margin-bottom: 8px; }
+        .audience-exercise::before { content: "\01F3AF "; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; }
+        .transition-note {
+            text-align: center; color: #999; margin: 20px 0;
+            font-style: italic; border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #0066cc; color: #666; font-size: 0.9em; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>Instructor Demo Guide<br><small style="font-size: 0.6em; color: #666;">AI's Impact on Work &amp; Rolling Out AI Successfully</small></h1>
+
+    <!-- ===== OVERVIEW ===== -->
+    <h2>Overview</h2>
+    <p>This guide supports the instructor delivering the 90-minute ITAG Skillnet seminar on AI's impact on the modern workplace and practical strategies for rolling out AI across an organisation. The seminar is designed for business leaders, department heads, HR professionals, and team leads who need to understand both the "why" and the "how" of enterprise AI adoption.</p>
+
+    <h3>Seminar Goals</h3>
+    <ul>
+        <li>Help participants understand how AI is reshaping jobs, tasks, and workforce requirements</li>
+        <li>Introduce the <strong>LAUNCH</strong> framework as a practical roadmap for AI rollout</li>
+        <li>Address change management challenges and common resistance patterns</li>
+        <li>Guide participants through an interactive AI Readiness Assessment</li>
+        <li>Equip each attendee with a concrete 90-day action plan they can take back to their organisation</li>
+    </ul>
+
+    <h3>Target Audience</h3>
+    <p>Mid-to-senior professionals across industries, particularly those tasked with evaluating or leading AI initiatives. No technical background required.</p>
+
+    <h3>Timing Breakdown</h3>
+    <ul>
+        <li><span class="timing">10 min</span> Introduction &amp; AI in the Workplace</li>
+        <li><span class="timing">15 min</span> How AI is Transforming Jobs &amp; Roles</li>
+        <li><span class="timing">15 min</span> The LAUNCH Framework</li>
+        <li><span class="timing">15 min</span> Change Management &amp; Workforce Readiness</li>
+        <li><span class="timing">10 min</span> Building Your AI Rollout Plan</li>
+        <li><span class="timing">20 min</span> Interactive AI Readiness Assessment</li>
+        <li><span class="timing">5 min</span> Wrap-up &amp; Next Steps</li>
+    </ul>
+
+    <h3>Required Materials</h3>
+    <ul>
+        <li>Projector and screen (or large display) with HDMI/USB-C connectivity</li>
+        <li>Laptop with the slide deck loaded and internet access</li>
+        <li>AI Readiness Assessment tool open in a browser tab</li>
+        <li>Printed or digital copies of the take-home exercise for all participants</li>
+        <li>Whiteboard or flip chart (optional, for capturing group input)</li>
+        <li>Backup: PDF export of the slide deck on a USB drive</li>
+    </ul>
+
+    <!-- ===== PRE-SESSION CHECKLIST ===== -->
+    <h2>Pre-Session Checklist</h2>
+
+    <div class="instructor-note">Complete these items at least 30 minutes before the session begins.</div>
+
+    <ol>
+        <li><strong>Room Setup:</strong> Confirm projector works, screen is visible from all seats, audio is functional if needed</li>
+        <li><strong>Slide Deck:</strong> Open <code>ai-impact-work-slides.html</code> in your browser and verify navigation works from slide 1 to the final slide</li>
+        <li><strong>AI Readiness Assessment:</strong> Open the interactive assessment tool in a separate browser tab; test that it loads and scores correctly</li>
+        <li><strong>Internet Access:</strong> Confirm Wi-Fi is available; test by loading a live AI tool (ChatGPT, Copilot, or Claude) to show during the demo if needed</li>
+        <li><strong>Handouts:</strong> Distribute the take-home exercise PDF to all seats, or confirm the digital link is ready to share</li>
+        <li><strong>This Guide:</strong> Have this demo guide open on your personal device (tablet, phone, or second laptop screen) for reference throughout</li>
+        <li><strong>Backup Plan:</strong> Ensure you have the slide PDF and screenshots of the AI Readiness Assessment in case of technical failure</li>
+        <li><strong>Name Tags/Tent Cards:</strong> If the group is small enough (under 30), consider having name cards so you can call on participants by name</li>
+    </ol>
+
+    <div class="transition-note">--- Session Begins ---</div>
+
+    <!-- ===== SECTION 1 ===== -->
+    <h2>Section 1: Introduction &amp; AI in the Workplace</h2>
+    <p><span class="timing">10 minutes</span></p>
+
+    <div class="demo-step">
+        <h4>Step 1: Welcome and Context Setting (3 min)</h4>
+        <p>Introduce yourself, ITAG Skillnet, and the purpose of the session. Frame the 90 minutes as practical and action-oriented, not theoretical.</p>
+    </div>
+
+    <div class="talking-point">Welcome everyone. Over the next 90 minutes, we are going to cut through the noise around AI and focus on two things: how AI is actually changing work right now, and what you can do on Monday morning to start rolling it out responsibly in your organisation.</div>
+
+    <div class="demo-step">
+        <h4>Step 2: Audience Engagement - Show of Hands (2 min)</h4>
+        <p>Get the room active immediately with a quick interactive poll.</p>
+    </div>
+
+    <div class="audience-exercise">
+        <h4>Quick Show of Hands</h4>
+        <p>Ask the following questions in rapid succession:</p>
+        <ul>
+            <li>"Who has used an AI tool at work this week?" (expect 40-60% of hands)</li>
+            <li>"Who has a formal AI policy at their organisation?" (expect 10-20%)</li>
+            <li>"Who feels confident they could lead an AI rollout today?" (expect very few)</li>
+        </ul>
+        <p>Use the gap between the first and third question to frame the session value.</p>
+    </div>
+
+    <div class="talking-point">That gap between using AI casually and leading an AI rollout confidently is exactly what we are here to bridge today.</div>
+
+    <div class="demo-step">
+        <h4>Step 3: Key Statistics (5 min)</h4>
+        <p>Walk through the opening statistics slides. Emphasise the pace of change, not just the numbers themselves.</p>
+    </div>
+
+    <div class="instructor-note">Pause briefly after each statistic to let it land. Do not rush through the data. If audience members react, invite a brief comment before moving on.</div>
+
+    <div class="talking-point">The headline is not that AI is coming. It is that AI adoption is accelerating faster than any previous technology wave, and organisations that wait for perfect conditions will find themselves playing catch-up.</div>
+
+    <p>Key statistics to emphasise:</p>
+    <ul>
+        <li>McKinsey estimates 30% of work hours could be automated by 2030 with generative AI</li>
+        <li>70% of employees report they would delegate as much work as possible to AI to reduce workload (Microsoft Work Trend Index)</li>
+        <li>Only 1 in 4 companies have a clear AI strategy, yet nearly all are experimenting informally</li>
+        <li>The skills half-life has dropped from 10-15 years to 3-5 years in many roles</li>
+    </ul>
+
+    <div class="transition-note">Transition: "So what does this mean for the actual jobs people do every day?"</div>
+
+    <!-- ===== SECTION 2 ===== -->
+    <h2>Section 2: How AI is Transforming Jobs &amp; Roles</h2>
+    <p><span class="timing">15 minutes</span></p>
+
+    <div class="demo-step">
+        <h4>Step 1: Reframe the Conversation (3 min)</h4>
+        <p>Start by addressing the elephant in the room: fear of job loss. Pivot quickly from "replacement" to "transformation."</p>
+    </div>
+
+    <div class="talking-point">The question is not "Will AI take my job?" The better question is "Which tasks within my job will AI transform, and what new tasks will emerge?" History tells us technology creates more jobs than it destroys, but it changes the nature of those jobs significantly.</div>
+
+    <div class="demo-step">
+        <h4>Step 2: AI Readiness Assessment Preview (5 min)</h4>
+        <p>Briefly show the AI Readiness Assessment tool on screen. Walk through one sample department assessment so participants can see what they will be doing later in the session.</p>
+    </div>
+
+    <div class="instructor-note">Do not spend more than 5 minutes here. The goal is to give a preview, not a full walkthrough. Save the deep dive for Section 6. Show one completed example, ideally for a generic "Operations" or "Customer Service" department that most audiences can relate to.</div>
+
+    <div class="demo-step">
+        <h4>Step 3: Job Transformation Examples (4 min)</h4>
+        <p>Walk through 3-4 concrete examples of how specific roles are being augmented, not replaced.</p>
+    </div>
+
+    <p>Examples to use:</p>
+    <ul>
+        <li><strong>Financial Analyst:</strong> AI handles data gathering and initial pattern detection; humans focus on interpretation, strategy, and stakeholder communication</li>
+        <li><strong>HR Recruiter:</strong> AI screens CVs and identifies candidates; humans focus on cultural fit assessment, relationship building, and negotiation</li>
+        <li><strong>Customer Service Agent:</strong> AI handles routine queries and generates response drafts; humans manage complex issues, empathy-driven interactions, and escalations</li>
+        <li><strong>Marketing Manager:</strong> AI generates content variations and analyses campaign data; humans handle brand strategy, creative direction, and cross-channel orchestration</li>
+    </ul>
+
+    <div class="audience-exercise">
+        <h4>Individual Reflection (3 min)</h4>
+        <p>Ask participants to think silently and jot down answers to this question:</p>
+        <p><strong>"Think of 3 tasks in your role that AI could augment. For each, write down what the AI would do and what you would still do."</strong></p>
+        <p>Give them 2 minutes to write, then ask 2-3 volunteers to share briefly. Acknowledge all contributions positively.</p>
+    </div>
+
+    <div class="talking-point">Notice how in every example, the human role shifts toward higher-value activities: judgement, creativity, relationship management, and strategic thinking. AI handles the repetitive heavy lifting so you can focus on what only humans do well.</div>
+
+    <div class="transition-note">Transition: "Now that we see how AI changes individual roles, let us zoom out to the organisational level. How do you actually roll this out?"</div>
+
+    <!-- ===== SECTION 3 ===== -->
+    <h2>Section 3: The LAUNCH Framework</h2>
+    <p><span class="timing">15 minutes</span></p>
+
+    <div class="instructor-note">This is the core intellectual framework of the seminar. Spend roughly 2 minutes on each letter. Use the mnemonic consistently and encourage participants to write it down.</div>
+
+    <div class="demo-step">
+        <h4>Step 1: Introduce the Framework (2 min)</h4>
+        <p>Present the LAUNCH acronym as a six-step roadmap for AI adoption. Emphasise that these steps are sequential but iterative -- organisations often revisit earlier steps as they learn.</p>
+    </div>
+
+    <div class="talking-point">We developed the LAUNCH framework because most organisations either jump straight to buying tools without a strategy, or they get stuck in analysis paralysis. LAUNCH gives you a structured path from assessment to scale.</div>
+
+    <div class="demo-step">
+        <h4>L - Landscape Assessment (2 min)</h4>
+        <p>Assess your current state: where AI is already being used informally, what tools people are experimenting with, what data you have, and where the biggest pain points lie.</p>
+    </div>
+
+    <div class="talking-point">Most organisations are surprised to find that AI adoption is already happening, just not in a coordinated way. Shadow AI is real. Your first job is to understand what is already happening before you plan what should happen.</div>
+
+    <p>Key activities: technology audit, stakeholder interviews, process mapping, data inventory.</p>
+
+    <div class="demo-step">
+        <h4>A - Alignment with Strategy (2 min)</h4>
+        <p>Connect AI initiatives directly to business objectives. AI for its own sake creates waste; AI aligned with strategy creates value.</p>
+    </div>
+
+    <div class="talking-point">If you cannot draw a straight line from an AI initiative to a business outcome your leadership team cares about, go back and find one. The most common reason AI pilots fail is not technology; it is lack of strategic alignment.</div>
+
+    <p>Real-world example: A financial services firm aligned their AI investment with their strategic goal of reducing customer onboarding time from 5 days to same-day. This gave the project executive sponsorship and clear success metrics.</p>
+
+    <div class="demo-step">
+        <h4>U - Upskilling the Workforce (2 min)</h4>
+        <p>Build AI literacy across the organisation. Not everyone needs to be a data scientist, but everyone needs to understand what AI can and cannot do.</p>
+    </div>
+
+    <div class="talking-point">Think of AI skills as a pyramid. At the base, everyone needs literacy: understanding what AI is, when to use it, and what the risks are. In the middle, many roles need proficiency: knowing how to use AI tools effectively in their daily work. At the top, a smaller group needs expertise: the ability to build, customise, and manage AI systems.</div>
+
+    <div class="demo-step">
+        <h4>N - Navigate Change Management (2 min)</h4>
+        <p>Address the human side of AI adoption: fear, resistance, misinformation, and the need for psychological safety.</p>
+    </div>
+
+    <div class="talking-point">Technology adoption is 20% technology and 80% people. If your teams do not trust the AI, do not understand why it is being introduced, or fear it threatens their livelihood, your rollout will stall regardless of how good the technology is.</div>
+
+    <p>Real-world example: A manufacturing company created "AI Ambassadors" in each department -- trusted team members who received early training and served as peer mentors. Adoption rates were 3x higher in teams with ambassadors compared to those without.</p>
+
+    <div class="demo-step">
+        <h4>C - Champion Quick Wins (2 min)</h4>
+        <p>Start with small, visible, low-risk projects that demonstrate value quickly. Build momentum before tackling transformative initiatives.</p>
+    </div>
+
+    <div class="talking-point">Your first AI project should not be your most ambitious. Pick something that is painful today, clearly measurable, and achievable within 30-60 days. The goal is not to transform the business overnight; it is to build confidence and credibility.</div>
+
+    <p>Good first projects: automated meeting summaries, email drafting assistance, data entry automation, report generation, customer FAQ chatbot.</p>
+
+    <div class="demo-step">
+        <h4>H - Harvest &amp; Scale (1 min)</h4>
+        <p>Measure results from pilots, capture lessons learned, and use successes to justify broader investment. Scale what works; discontinue what does not.</p>
+    </div>
+
+    <div class="talking-point">Scaling is where many organisations stumble. What worked for one department may not translate directly to another. Build a playbook from your pilots: what worked, what failed, what you wish you had known. Then use that playbook to accelerate the next rollout.</div>
+
+    <div class="instructor-note">After walking through all six letters, do a quick recap by asking the audience to call out each letter and its meaning. This reinforces the mnemonic.</div>
+
+    <div class="transition-note">Transition: "The N in LAUNCH, Navigate Change Management, deserves special attention. Let us dig deeper."</div>
+
+    <!-- ===== SECTION 4 ===== -->
+    <h2>Section 4: Change Management &amp; Workforce Readiness</h2>
+    <p><span class="timing">15 minutes</span></p>
+
+    <div class="demo-step">
+        <h4>Step 1: Discussion Prompt (5 min)</h4>
+        <p>Open with a facilitated discussion to surface real concerns from the room.</p>
+    </div>
+
+    <div class="audience-exercise">
+        <h4>Table Discussion (or Pairs)</h4>
+        <p>Ask participants to turn to a neighbour and discuss for 2 minutes:</p>
+        <p><strong>"What is the biggest concern your team or organisation has about AI adoption?"</strong></p>
+        <p>After 2 minutes, ask 3-4 pairs to share their top concern. Write these on the whiteboard/flip chart if available. Group similar themes together.</p>
+    </div>
+
+    <div class="instructor-note">Common themes you will hear: job security fears, data privacy, accuracy/hallucination concerns, skills gaps, cost, lack of leadership buy-in. Validate all concerns before addressing them.</div>
+
+    <div class="demo-step">
+        <h4>Step 2: Addressing Common Objections (5 min)</h4>
+        <p>Walk through the most frequent objections and provide practical responses.</p>
+    </div>
+
+    <h3>Common Objections and Responses</h3>
+
+    <div class="talking-point">"AI will replace our jobs." -- The evidence consistently shows that AI augments roles rather than eliminates them. However, roles will change. The people most at risk are not those whose jobs AI can do, but those who refuse to learn how to work alongside AI.</div>
+
+    <div class="talking-point">"We do not have the data for AI." -- You likely have more useful data than you think. Start with the data you already collect: emails, documents, customer interactions, process logs. The question is not whether you have data, but whether you have identified where data-driven decisions could improve outcomes.</div>
+
+    <div class="talking-point">"Our industry is different." -- Every industry said the same about the internet, mobile, and cloud. AI adoption patterns vary by sector, but no industry is exempt. The question is whether you lead adoption in your space or respond to competitors who do.</div>
+
+    <div class="talking-point">"We tried AI and it did not work." -- Most failed AI projects fail due to poor scoping, not poor technology. Ask: was the problem well-defined? Were success metrics established upfront? Did the right stakeholders have ownership? Usually the answer to at least one of these is no.</div>
+
+    <div class="demo-step">
+        <h4>Step 3: Building AI Champions (5 min)</h4>
+        <p>Discuss the concept of distributed AI leadership and how to build a network of champions.</p>
+    </div>
+
+    <div class="talking-point">You do not need an AI Centre of Excellence to get started. What you need are AI champions -- curious, influential team members who are willing to experiment, share their learnings, and mentor others. Identify these people, give them time and resources, and make their successes visible.</div>
+
+    <p>Characteristics of effective AI champions:</p>
+    <ul>
+        <li>Respected by peers (influence matters more than seniority)</li>
+        <li>Comfortable with experimentation and learning from failure</li>
+        <li>Strong communicators who can translate technical concepts for non-technical audiences</li>
+        <li>Genuinely enthusiastic, not just compliant</li>
+        <li>Willing to document and share what they learn</li>
+    </ul>
+
+    <div class="instructor-note">If time permits, ask the audience: "Who in your organisation could be an AI champion? What would they need from leadership to succeed in that role?" This personalises the concept.</div>
+
+    <div class="transition-note">Transition: "Let us take everything we have discussed and turn it into a concrete plan you can act on."</div>
+
+    <!-- ===== SECTION 5 ===== -->
+    <h2>Section 5: Building Your AI Rollout Plan</h2>
+    <p><span class="timing">10 minutes</span></p>
+
+    <div class="demo-step">
+        <h4>Step 1: Introduce the 90-Day Template (4 min)</h4>
+        <p>Display the 90-day AI rollout plan template on screen. Walk through the three phases.</p>
+    </div>
+
+    <h3>90-Day Rollout Structure</h3>
+    <ul>
+        <li><strong>Days 1-30 (Assess &amp; Align):</strong> Complete landscape assessment, identify strategic alignment, select pilot project, form champion network</li>
+        <li><strong>Days 31-60 (Pilot &amp; Learn):</strong> Launch pilot project, begin upskilling programme, establish governance guardrails, collect baseline metrics</li>
+        <li><strong>Days 61-90 (Evaluate &amp; Plan Scale):</strong> Measure pilot results against success criteria, document lessons learned, build business case for scaling, present to leadership</li>
+    </ul>
+
+    <div class="talking-point">Ninety days is enough time to move from assessment to measurable results if you scope tightly. Resist the temptation to boil the ocean. One well-executed pilot is worth more than ten half-finished experiments.</div>
+
+    <div class="instructor-note">Emphasise that each phase maps back to the LAUNCH framework: Days 1-30 cover L and A, Days 31-60 cover U, N, and C, and Days 61-90 cover H. Make this connection explicit on the slide.</div>
+
+    <div class="demo-step">
+        <h4>Step 2: Pilot Project Selection Criteria (3 min)</h4>
+        <p>Help participants understand what makes a good first AI project.</p>
+    </div>
+
+    <p>A strong pilot project is:</p>
+    <ul>
+        <li><strong>Bounded:</strong> Clear start, end, and scope</li>
+        <li><strong>Measurable:</strong> You can quantify success (time saved, errors reduced, satisfaction improved)</li>
+        <li><strong>Visible:</strong> Others in the organisation can see and understand the results</li>
+        <li><strong>Low-risk:</strong> Failure does not cause significant harm</li>
+        <li><strong>Repeatable:</strong> If it works, the approach can be applied elsewhere</li>
+    </ul>
+
+    <div class="audience-exercise">
+        <h4>Individual Exercise: Identify Your Pilot Project (3 min)</h4>
+        <p>Ask participants to answer these four questions on their handout:</p>
+        <ol>
+            <li>What process in your organisation is most time-consuming and repetitive?</li>
+            <li>What would success look like if AI improved that process?</li>
+            <li>Who would need to sponsor this pilot?</li>
+            <li>What is the smallest version of this project you could run in 30 days?</li>
+        </ol>
+        <p>Ask 2-3 volunteers to share briefly. Provide encouraging feedback and gentle refinement where projects seem too broad.</p>
+    </div>
+
+    <div class="transition-note">Transition: "Now let us put this all to the test with a hands-on assessment."</div>
+
+    <!-- ===== SECTION 6 ===== -->
+    <h2>Section 6: Interactive AI Readiness Assessment</h2>
+    <p><span class="timing">20 minutes</span></p>
+
+    <div class="instructor-note">This is the centrepiece interactive segment. Ensure the assessment tool is loaded and visible. If the audience is large, you may run the assessment as a group exercise (instructor drives, audience votes). For smaller groups, participants can complete it individually on their devices.</div>
+
+    <div class="demo-step">
+        <h4>Step 1: Set Up the Assessment (3 min)</h4>
+        <p>Explain what the assessment measures and how it works.</p>
+    </div>
+
+    <div class="talking-point">This assessment is not a test and there are no wrong answers. It is a diagnostic tool designed to help you understand where your organisation stands today across five dimensions of AI readiness: leadership and strategy, data and infrastructure, skills and talent, culture and change readiness, and governance and ethics.</div>
+
+    <p>Explain the scoring:</p>
+    <ul>
+        <li>Each dimension is scored on a 1-5 scale</li>
+        <li>1 = Not yet started, 5 = Mature and operational</li>
+        <li>The overall score indicates readiness phase: Foundation, Emerging, Developing, Advanced, or Leading</li>
+    </ul>
+
+    <div class="demo-step">
+        <h4>Step 2: Walk Through Each Dimension (10 min)</h4>
+        <p>Read each question aloud. For group assessments, ask the room to vote (hands up for each score 1-5) and take the mode. For individual assessments, give 1-2 minutes per dimension.</p>
+    </div>
+
+    <h3>Dimension Walk-Through</h3>
+
+    <p><strong>Dimension 1: Leadership &amp; Strategy</strong></p>
+    <div class="talking-point">Does your leadership team have a stated position on AI? Is there a named executive sponsor? Is AI mentioned in your strategic plan? If the answer to all three is no, that is your starting point.</div>
+
+    <p><strong>Dimension 2: Data &amp; Infrastructure</strong></p>
+    <div class="talking-point">AI runs on data. How organised is yours? Do you know where your critical data lives? Is it accessible, clean, and governed? You do not need perfect data to start, but you need to know the state of what you have.</div>
+
+    <p><strong>Dimension 3: Skills &amp; Talent</strong></p>
+    <div class="talking-point">How many people in your organisation could explain what a large language model does? Could your team evaluate an AI vendor claims critically? Skills gaps are the most commonly cited barrier to AI adoption.</div>
+
+    <p><strong>Dimension 4: Culture &amp; Change Readiness</strong></p>
+    <div class="talking-point">Is your organisation generally open to new technology, or does change typically meet resistance? Have previous technology rollouts gone well or poorly? Your AI adoption will follow the same cultural patterns.</div>
+
+    <p><strong>Dimension 5: Governance &amp; Ethics</strong></p>
+    <div class="talking-point">Do you have an AI usage policy? Do your teams know what data they can and cannot put into AI tools? Governance is not about slowing things down; it is about creating the safety rails that allow you to move fast with confidence.</div>
+
+    <div class="demo-step">
+        <h4>Step 3: Review and Discuss Results (5 min)</h4>
+        <p>Show the overall score and the breakdown by dimension. Facilitate a brief discussion.</p>
+    </div>
+
+    <div class="audience-exercise">
+        <h4>Group Discussion: Assessment Results</h4>
+        <p>Ask the following questions:</p>
+        <ul>
+            <li>"Which dimension scored lowest? Does that surprise you?"</li>
+            <li>"Which dimension would be easiest to improve in the next 30 days?"</li>
+            <li>"What is one specific action you could take next week to move one dimension up by one point?"</li>
+        </ul>
+    </div>
+
+    <div class="instructor-note">Normalise low scores. Most organisations score 2-3 on average. Emphasise that awareness of gaps is the first step and that the LAUNCH framework gives them the path forward.</div>
+
+    <div class="demo-step">
+        <h4>Step 4: Backup if Technology Fails (2 min reserve)</h4>
+        <p>If the interactive tool does not load or the internet is down, use these backup questions as a verbal exercise.</p>
+    </div>
+
+    <p>Backup verbal assessment questions (audience raises 1-5 fingers):</p>
+    <ol>
+        <li>"On a scale of 1-5, how clearly has your leadership communicated a vision for AI?"</li>
+        <li>"On a scale of 1-5, how confident are you in the quality and accessibility of your organisation data?"</li>
+        <li>"On a scale of 1-5, how prepared is your workforce to use AI tools effectively?"</li>
+        <li>"On a scale of 1-5, how open is your organisational culture to adopting new technologies?"</li>
+        <li>"On a scale of 1-5, how robust are your policies governing AI use and data ethics?"</li>
+    </ol>
+
+    <div class="instructor-note">Calculate a rough average by scanning the room for each question. This low-tech approach can actually generate more discussion than the digital tool because participants see each other responses in real time.</div>
+
+    <div class="transition-note">Transition: "Let us bring everything together."</div>
+
+    <!-- ===== SECTION 7 ===== -->
+    <h2>Section 7: Wrap-up &amp; Next Steps</h2>
+    <p><span class="timing">5 minutes</span></p>
+
+    <div class="demo-step">
+        <h4>Step 1: Key Takeaways (2 min)</h4>
+        <p>Reinforce the three messages you want participants to remember tomorrow.</p>
+    </div>
+
+    <div class="talking-point">If you remember three things from today: First, AI transforms tasks, not just jobs -- focus on augmentation, not replacement. Second, use the LAUNCH framework to structure your rollout: Landscape, Alignment, Upskilling, Navigate change, Champion quick wins, Harvest and scale. Third, start small, measure rigorously, and scale what works.</div>
+
+    <div class="demo-step">
+        <h4>Step 2: Introduce the Take-Home Exercise (2 min)</h4>
+        <p>Direct participants to the handout/PDF they received.</p>
+    </div>
+
+    <div class="talking-point">On your handout you will find a structured exercise to complete over the next two weeks. It walks you through a mini version of the LAUNCH framework for your own organisation. You will identify one pilot project, map out stakeholders, and draft a 30-day action plan. This is your bridge from today session to real action.</div>
+
+    <div class="instructor-note">Briefly walk through the sections of the take-home exercise so participants know what to expect. Do not go into detail -- just enough so they feel confident starting it on their own.</div>
+
+    <div class="demo-step">
+        <h4>Step 3: Closing Remarks (1 min)</h4>
+        <p>End with energy and encouragement.</p>
+    </div>
+
+    <div class="talking-point">The organisations that will thrive in the AI era are not necessarily the ones with the biggest budgets or the most advanced technology. They are the ones that start now, learn fast, and put their people at the centre of the transformation. You now have the framework and the tools to be one of those organisations. Thank you for your time and engagement today.</div>
+
+    <div class="instructor-note">Remain available for 5-10 minutes after the session for individual questions. Some of the best conversations happen in the informal time after the session ends.</div>
+
+    <div class="transition-note">--- Session Ends ---</div>
+
+    <!-- ===== APPENDIX ===== -->
+    <h2>Appendix: Backup Demos &amp; Discussion Questions</h2>
+
+    <h3>Alternative Activities if Time Runs Short</h3>
+    <p>If you need to trim time, cut in this order of priority (least critical first):</p>
+    <ol>
+        <li>Reduce the pilot project exercise in Section 5 from 3 minutes to 1 minute (individual reflection only, no sharing)</li>
+        <li>Shorten the LAUNCH walkthrough by combining C and H into a single 2-minute segment</li>
+        <li>Skip the table discussion in Section 4 and address objections directly from your prepared list</li>
+    </ol>
+
+    <h3>Additional Activities if Time Runs Long</h3>
+    <p>If you finish early or the audience is highly engaged, use these extensions:</p>
+
+    <div class="audience-exercise">
+        <h4>Extended Exercise: AI Impact Mapping (5-7 min)</h4>
+        <p>In small groups (3-4 people), ask participants to:</p>
+        <ol>
+            <li>Choose one department or function they know well</li>
+            <li>List the top 5 tasks performed in that function</li>
+            <li>Rate each task on "AI augmentation potential" (Low / Medium / High)</li>
+            <li>Identify the biggest barrier to AI adoption for that function</li>
+        </ol>
+        <p>Have each group share their highest-potential task and biggest barrier.</p>
+    </div>
+
+    <div class="audience-exercise">
+        <h4>Extended Exercise: Objection Role-Play (5 min)</h4>
+        <p>Pair up participants. One plays a sceptical team member, the other plays an AI champion. The sceptic raises one of the common objections; the champion practises responding using the frameworks discussed. Switch roles after 2 minutes.</p>
+    </div>
+
+    <h3>Additional Discussion Prompts</h3>
+    <ul>
+        <li>"What would need to be true for your CEO to make AI a top-3 strategic priority next year?"</li>
+        <li>"How would you measure the ROI of an AI upskilling programme?"</li>
+        <li>"What is the riskiest thing your organisation could do with AI? What is the riskiest thing about not adopting AI?"</li>
+        <li>"If you had an unlimited budget but only 90 days, what AI initiative would you launch?"</li>
+        <li>"How do you balance moving fast with AI adoption versus ensuring responsible and ethical use?"</li>
+        <li>"What role should middle management play in AI rollout? Are they typically enablers or blockers?"</li>
+    </ul>
+
+    <h3>FAQ: Common Audience Questions</h3>
+
+    <div class="demo-step">
+        <h4>"Where should we start if we have done nothing with AI yet?"</h4>
+        <p>Start with the L in LAUNCH: understand your landscape. Survey your teams to find out who is already using AI tools informally. Simultaneously, identify your top 3 pain points that involve repetitive, data-heavy, or time-consuming work. That intersection is your starting point.</p>
+    </div>
+
+    <div class="demo-step">
+        <h4>"How much should we budget for AI adoption?"</h4>
+        <p>For a pilot programme, surprisingly little. Many AI tools have free tiers or low-cost subscriptions. The bigger investment is in people time: training, experimentation, and change management. Budget 70% of your AI investment for people and process, 30% for technology.</p>
+    </div>
+
+    <div class="demo-step">
+        <h4>"What about data privacy and GDPR?"</h4>
+        <p>This is a critical consideration, especially for EU organisations. Key principles: never put personal data into public AI tools without explicit consent, ensure your AI vendors have appropriate data processing agreements, and establish clear policies about what data categories are approved for AI use. Consider enterprise-tier AI tools that offer data residency guarantees within the EU.</p>
+    </div>
+
+    <div class="demo-step">
+        <h4>"How do we get buy-in from leadership?"</h4>
+        <p>Speak their language: business outcomes, not technology features. Build a one-page business case that ties AI to a specific KPI they already care about. If possible, run a small proof-of-concept first and bring data to the conversation. Leaders respond to evidence, not enthusiasm alone.</p>
+    </div>
+
+    <div class="demo-step">
+        <h4>"What if our employees are resistant to change?"</h4>
+        <p>Resistance is natural and should be expected, not punished. Address it through transparency (explain the "why"), involvement (let teams choose their pilot projects), safety (guarantee that AI is about augmentation, not headcount reduction), and support (provide training and time to learn). The AI champions model discussed in Section 4 is particularly effective at overcoming peer-level resistance.</p>
+    </div>
+
+    <div class="footer">
+        <p>This guide supports the "AI's Impact on Work &amp; Rolling Out AI Successfully" seminar for ITAG Skillnet.</p>
+        <p>Confidential -- For Instructor Use Only</p>
+    </div>
+
+</body>
+</html>

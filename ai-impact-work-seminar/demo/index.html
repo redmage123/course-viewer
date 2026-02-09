@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Readiness Assessment - ITAG Skillnet</title>
+<style>
+:root{--itag-blue:#0066cc;--itag-light:#4da6ff;--accent-green:#00cc66;--accent-orange:#ff9933;--accent-red:#ff4444;--bg-dark:#0a0a1a;--bg-mid:#1a1a2e;--bg-card:#16213e;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--border-color:#334155}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh}
+.container{max-width:900px;margin:0 auto;padding:20px}
+.screen{display:none}.screen.active{display:block}
+.landing-header{text-align:center;padding:40px 0 30px}
+.landing-header h1{font-size:2.2rem;background:linear-gradient(135deg,var(--itag-light),var(--accent-green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
+.landing-header p{color:var(--text-secondary);font-size:1.1rem;max-width:600px;margin:0 auto;line-height:1.6}
+.dim-preview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:30px 0}
+.dim-preview-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:20px;transition:transform .2s,border-color .2s}
+.dim-preview-card:hover{transform:translateY(-3px);border-color:var(--itag-light)}
+.dim-preview-card h3{color:var(--itag-light);font-size:1.05rem;margin-bottom:8px}
+.dim-preview-card .dim-icon{font-size:1.8rem;margin-bottom:10px;display:block}
+.dim-preview-card p{color:var(--text-secondary);font-size:.85rem;line-height:1.5}
+.info-box{background:var(--bg-mid);border-left:4px solid var(--itag-light);border-radius:8px;padding:16px 20px;margin:20px 0}
+.info-box p{color:var(--text-secondary);font-size:.9rem;line-height:1.5}
+.btn{padding:14px 32px;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:linear-gradient(135deg,var(--itag-blue),var(--itag-light));color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,102,204,.4)}
+.btn-secondary{background:transparent;border:1px solid var(--border-color);color:var(--text-primary)}
+.btn-secondary:hover{background:var(--bg-card)}
+.btn-success{background:linear-gradient(135deg,var(--accent-green),#00994d);color:#fff}
+.btn-success:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,204,102,.4)}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-top:25px;flex-wrap:wrap}
+.progress-container{margin-bottom:25px}
+.progress-steps{display:flex;justify-content:space-between;margin-bottom:8px}
+.progress-step{font-size:.75rem;color:var(--text-secondary);text-align:center;flex:1;transition:color .3s}
+.progress-step.active{color:var(--itag-light);font-weight:600}
+.progress-step.done{color:var(--accent-green)}
+.progress-bar{width:100%;height:6px;background:var(--bg-dark);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--itag-blue),var(--itag-light));border-radius:3px;transition:width .4s ease}
+.question-panel{background:var(--bg-card);border-radius:12px;padding:30px;border:1px solid var(--border-color)}
+.question-panel h2{color:var(--itag-light);font-size:1.4rem;margin-bottom:6px}
+.question-panel .dim-desc{color:var(--text-secondary);font-size:.9rem;margin-bottom:25px}
+.question-item{background:var(--bg-mid);border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.question-item .q-text{font-size:.95rem;margin-bottom:12px;line-height:1.5}
+.likert-row{display:flex;gap:0;justify-content:space-between}
+.likert-option{flex:1;text-align:center}
+.likert-option input[type="radio"]{display:none}
+.likert-option label{display:block;padding:8px 4px;border:1px solid var(--border-color);background:var(--bg-dark);cursor:pointer;font-size:.75rem;color:var(--text-secondary);transition:all .2s;line-height:1.3}
+.likert-option:first-child label{border-radius:6px 0 0 6px}
+.likert-option:last-child label{border-radius:0 6px 6px 0}
+.likert-option input[type="radio"]:checked+label{background:var(--itag-blue);border-color:var(--itag-light);color:#fff;font-weight:600}
+.likert-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-secondary);margin-top:4px;padding:0 4px}
+.nav-row{display:flex;justify-content:space-between;margin-top:25px}
+.results-header{text-align:center;margin-bottom:30px}
+.results-header h1{font-size:2rem;color:var(--itag-light);margin-bottom:8px}
+.overall-score-card{background:var(--bg-card);border-radius:16px;padding:30px;text-align:center;border:2px solid var(--border-color);margin-bottom:30px}
+.score-big{font-size:4rem;font-weight:800;margin-bottom:5px}
+.score-label{font-size:1.3rem;font-weight:600;margin-bottom:10px}
+.score-desc{color:var(--text-secondary);font-size:.95rem;max-width:500px;margin:0 auto;line-height:1.5}
+.chart-container{background:var(--bg-card);border-radius:12px;padding:25px;border:1px solid var(--border-color);margin-bottom:30px;text-align:center}
+.chart-container h2{color:var(--itag-light);margin-bottom:15px}
+canvas#radarChart{max-width:100%}
+.dim-scores-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:30px}
+.dim-score-card{background:var(--bg-card);border-radius:12px;padding:20px;border:1px solid var(--border-color)}
+.dim-score-card h3{color:var(--itag-light);font-size:1rem;margin-bottom:10px}
+.dim-bar-container{background:var(--bg-dark);border-radius:6px;height:10px;margin-bottom:8px;overflow:hidden}
+.dim-bar-fill{height:100%;border-radius:6px;transition:width .6s ease}
+.dim-pct{font-size:1.5rem;font-weight:700;margin-bottom:2px}
+.rec-list{margin-top:10px;padding-left:18px}
+.rec-list li{font-size:.85rem;color:var(--text-secondary);margin-bottom:6px;line-height:1.4}
+.footer{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-color);color:var(--text-secondary);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="screen active" id="screenLanding">
+<div class="landing-header">
+<h1>AI Readiness Assessment</h1>
+<p>Evaluate your organisation's readiness to adopt and scale AI across five critical dimensions. Takes approximately 5-10 minutes.</p>
+</div>
+<div class="dim-preview-grid">
+<div class="dim-preview-card"><span class="dim-icon">&#127919;</span><h3>Leadership &amp; Vision</h3><p>Strategic alignment, executive sponsorship, and AI investment commitment.</p></div>
+<div class="dim-preview-card"><span class="dim-icon">&#128202;</span><h3>Data &amp; Infrastructure</h3><p>Data quality, accessibility, governance, and technical infrastructure.</p></div>
+<div class="dim-preview-card"><span class="dim-icon">&#128101;</span><h3>People &amp; Skills</h3><p>AI literacy, talent availability, training programmes, and collaboration.</p></div>
+<div class="dim-preview-card"><span class="dim-icon">&#9881;</span><h3>Process &amp; Governance</h3><p>Workflows, ethical frameworks, risk management, and compliance.</p></div>
+<div class="dim-preview-card"><span class="dim-icon">&#127793;</span><h3>Culture &amp; Change Readiness</h3><p>Innovation mindset, change management, experimentation, and collaboration.</p></div>
+</div>
+<div class="info-box"><p>Rate each statement from 1 (Strongly Disagree) to 5 (Strongly Agree). Your results will include an overall readiness score, a radar chart, and tailored recommendations for each dimension.</p></div>
+<div class="btn-row"><button class="btn btn-primary" onclick="startAssessment()">Begin Assessment</button></div>
+</div>
+<div class="screen" id="screenQuestions">
+<div class="progress-container">
+<div class="progress-steps" id="progressSteps"></div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+<div class="question-panel" id="questionPanel"></div>
+</div>
+<div class="screen" id="screenResults">
+<div class="results-header"><h1>Your AI Readiness Results</h1><p style="color:var(--text-secondary);">Here is a breakdown of your organisation's AI readiness.</p></div>
+<div id="overallCard" class="overall-score-card"></div>
+<div class="chart-container"><h2>Readiness Radar</h2><canvas id="radarChart" width="420" height="420"></canvas></div>
+<h2 style="color:var(--itag-light);margin-bottom:16px;">Dimension Breakdown &amp; Recommendations</h2>
+<div class="dim-scores-grid" id="dimScoresGrid"></div>
+<div class="btn-row">
+<button class="btn btn-success" onclick="downloadResults()">Download Results</button>
+<button class="btn btn-secondary" onclick="restartAssessment()">Retake Assessment</button>
+</div>
+</div>
+<div class="footer">ITAG Skillnet AI Advantage | AI's Impact on Work &amp; Rolling Out AI Successfully</div>
+</div>
+<script>
+const DIMS=[
+{key:'leadership',name:'Leadership & Vision',desc:'How well does your leadership team understand and champion AI?',questions:['Our senior leadership has a clear vision for how AI will benefit the organisation.','There is dedicated executive sponsorship for AI initiatives.','AI is included as a priority in our strategic plans and roadmaps.','Leadership actively communicates the value and purpose of AI to all employees.','Budget and resources have been allocated specifically for AI projects.']},
+{key:'data',name:'Data & Infrastructure',desc:'How prepared is your data ecosystem and technical infrastructure for AI?',questions:['Our data is well-organised, accessible, and of high quality.','We have clear data governance policies and procedures in place.','Our IT infrastructure can support AI/ML workloads (cloud, compute, storage).','Data is shared effectively across departments and teams.','We have processes for data cleaning, labelling, and preparation.']},
+{key:'people',name:'People & Skills',desc:'Does your workforce have the skills and support needed for AI adoption?',questions:['Employees across the organisation have a basic understanding of AI concepts.','We have access to (or are developing) specialised AI/ML talent.','There are training programmes in place to upskill employees on AI tools.','Teams collaborate effectively on cross-functional AI projects.']},
+{key:'process',name:'Process & Governance',desc:'Are your workflows and governance structures ready for AI integration?',questions:['We have identified specific business processes where AI could add value.','There is a clear framework for evaluating and prioritising AI use cases.','We have established ethical guidelines for AI use within the organisation.','Risk assessment processes are in place for AI-related initiatives.','There are feedback loops to measure the impact and performance of AI solutions.']},
+{key:'culture',name:'Culture & Change Readiness',desc:'Is your organisational culture receptive to AI-driven transformation?',questions:['Our organisation embraces experimentation and learning from failure.','Employees are generally open to adopting new technologies and processes.','Change management support is provided when new tools are introduced.','There is a culture of continuous improvement and innovation.','Employees feel that AI will augment (not replace) their work.']}
+];
+
+const RECS={
+leadership:{low:['Organise an AI awareness session for the senior leadership team.','Identify an executive sponsor who will champion AI initiatives.','Develop a 1-page AI vision statement tied to business objectives.','Set aside a small budget for an initial AI pilot project.'],mid:['Formalise AI goals within the strategic planning cycle.','Establish a quarterly AI review with leadership stakeholders.','Create an AI steering committee with cross-functional representation.','Develop communication materials to share AI progress organisation-wide.'],high:['Expand AI investments into new departments and use cases.','Position the organisation as an AI thought leader in the industry.','Establish an AI centre of excellence to coordinate efforts.','Mentor other organisations on their AI adoption journeys.']},
+data:{low:['Conduct a data audit to understand what data exists and its quality.','Begin developing a data governance policy with clear ownership.','Invest in basic data infrastructure (cloud storage, databases).','Create a cross-team data sharing agreement to break down silos.'],mid:['Implement automated data quality monitoring and alerting.','Develop a centralised data catalogue or data lake for easier access.','Standardise data formats and labelling practices across teams.','Invest in scalable cloud infrastructure that supports ML workloads.'],high:['Explore advanced data strategies such as real-time streaming analytics.','Implement MLOps pipelines for continuous model training and deployment.','Adopt data mesh or similar decentralised data architectures.','Become a benchmark for data governance excellence in your sector.']},
+people:{low:['Launch a foundational AI literacy programme for all employees.','Identify AI champion roles within each department.','Partner with training providers (like ITAG Skillnet) for upskilling.','Hire or contract AI/ML specialists for initial projects.'],mid:['Create role-specific AI training paths (e.g., marketing, finance, HR).','Build internal AI communities of practice for knowledge sharing.','Develop a mentorship programme pairing AI experts with business teams.','Offer hands-on workshops where employees apply AI tools to their own work.'],high:['Establish an internal AI academy with certification tracks.','Contribute to industry AI talent development initiatives.','Develop advanced training on responsible AI and emerging techniques.','Create cross-functional innovation teams that integrate AI into every project.']},
+process:{low:['Run a use-case identification workshop to find high-impact AI opportunities.','Draft initial ethical AI guidelines based on industry best practices.','Define a simple scoring rubric for evaluating AI project proposals.','Establish a basic risk assessment checklist for AI deployments.'],mid:['Build a formal AI use-case pipeline with prioritisation criteria.','Implement regular impact reviews for deployed AI solutions.','Develop a comprehensive responsible AI framework (fairness, transparency, accountability).','Create standardised templates for AI project proposals and business cases.'],high:['Automate governance workflows for AI model approval and monitoring.','Integrate AI performance metrics into organisational KPIs.','Publish your AI governance framework as a best-practice guide.','Lead industry working groups on AI ethics and regulation.']},
+culture:{low:['Share AI success stories (internal and external) to build enthusiasm.','Run a no-blame AI experiment to demonstrate safe-to-fail culture.','Address fears about AI replacing jobs with transparent communication.','Provide change management support for teams adopting AI tools.'],mid:['Launch an AI innovation challenge inviting ideas from all employees.','Create dedicated time or space for AI experimentation (e.g., innovation days).','Recognise and reward teams that successfully integrate AI into their work.','Develop an internal change management playbook for technology adoption.'],high:['Embed AI thinking into all business planning and strategy processes.','Foster external partnerships with universities and AI research groups.','Share your AI transformation journey publicly to inspire others.','Build a culture where continuous learning and adaptation are second nature.']}
+};
+
+const LEVELS=[
+{max:40,name:'Beginning',color:'var(--accent-red)',desc:'Your organisation is in the early stages of AI readiness. Focus on building awareness, securing leadership buy-in, and laying foundational data and skills groundwork.'},
+{max:60,name:'Developing',color:'var(--accent-orange)',desc:'You have started the AI journey with some initiatives in place. Strengthen your data practices, expand training, and formalise governance to accelerate progress.'},
+{max:80,name:'Advancing',color:'var(--itag-light)',desc:'Your organisation has solid AI foundations. Focus on scaling successful pilots, deepening skills, and integrating AI into core business processes.'},
+{max:100,name:'Leading',color:'var(--accent-green)',desc:'You are well-positioned to lead in AI adoption. Continue innovating, share best practices, and push the boundaries of what AI can achieve for your organisation.'}
+];
+
+let currentDim=0, answers={};
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startAssessment(){
+  currentDim=0; answers={};
+  DIMS.forEach(d=>{answers[d.key]={};});
+  showScreen('screenQuestions');
+  renderProgressSteps();
+  renderDimension();
+}
+
+function renderProgressSteps(){
+  var c=document.getElementById('progressSteps');
+  c.innerHTML=DIMS.map(function(d,i){
+    var cls='';
+    if(i<currentDim) cls='done';
+    else if(i===currentDim) cls='active';
+    return '<div class="progress-step '+cls+'">'+d.name.split(' ')[0]+'</div>';
+  }).join('');
+  document.getElementById('progressFill').style.width=(currentDim/DIMS.length)*100+'%';
+}
+
+function renderDimension(){
+  renderProgressSteps();
+  var dim=DIMS[currentDim];
+  var panel=document.getElementById('questionPanel');
+  var html='<h2>'+dim.name+'</h2><p class="dim-desc">'+dim.desc+'</p>';
+  dim.questions.forEach(function(q,qi){
+    var sv=answers[dim.key][qi];
+    html+='<div class="question-item"><div class="q-text">'+(qi+1)+'. '+q+'</div><div class="likert-row">';
+    for(var v=1;v<=5;v++){
+      var chk=sv===v?'checked':'';
+      html+='<div class="likert-option">';
+      html+='<input type="radio" name="q_'+currentDim+'_'+qi+'" id="q_'+currentDim+'_'+qi+'_'+v+'" value="'+v+'" '+chk+' onchange="setAnswer(\''+dim.key+'\','+qi+','+v+')">';
+      html+='<label for="q_'+currentDim+'_'+qi+'_'+v+'">'+v+'</label></div>';
+    }
+    html+='</div><div class="likert-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div></div>';
+  });
+  html+='<div class="nav-row">';
+  if(currentDim>0) html+='<button class="btn btn-secondary" onclick="prevDimension()">Previous</button>';
+  else html+='<span></span>';
+  if(currentDim<DIMS.length-1) html+='<button class="btn btn-primary" onclick="nextDimension()">Next</button>';
+  else html+='<button class="btn btn-success" onclick="showResults()">View Results</button>';
+  html+='</div>';
+  panel.innerHTML=html;
+}
+
+function setAnswer(dk,qi,v){answers[dk][qi]=v;}
+
+function prevDimension(){
+  if(currentDim>0){currentDim--;renderDimension();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function nextDimension(){
+  if(currentDim<DIMS.length-1){currentDim++;renderDimension();window.scrollTo({top:0,behavior:'smooth'});}
+}
+
+function calcScores(){
+  var scores={}, ts=0, tm=0;
+  DIMS.forEach(function(d){
+    var sum=0, cnt=d.questions.length;
+    for(var i=0;i<cnt;i++) sum+=answers[d.key][i]||1;
+    var pct=Math.round((sum/(cnt*5))*100);
+    scores[d.key]={sum:sum,max:cnt*5,pct:pct};
+    ts+=sum; tm+=cnt*5;
+  });
+  scores._overall=Math.round((ts/tm)*100);
+  return scores;
+}
+
+function showResults(){
+  var scores=calcScores();
+  showScreen('screenResults');
+  renderOverallCard(scores._overall);
+  drawRadarChart(scores);
+  renderDimCards(scores);
+}
+
+function renderOverallCard(pct){
+  var level=LEVELS.find(function(l){return pct<=l.max})||LEVELS[3];
+  var card=document.getElementById('overallCard');
+  card.innerHTML='<div class="score-big" style="color:'+level.color+'">'+pct+'%</div>'
+    +'<div class="score-label" style="color:'+level.color+'">'+level.name+'</div>'
+    +'<div class="score-desc">'+level.desc+'</div>';
+  card.style.borderColor=level.color;
+}
+
+function drawRadarChart(scores){
+  var canvas=document.getElementById('radarChart');
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width, H=canvas.height, cx=W/2, cy=H/2;
+  var maxR=Math.min(cx,cy)-60, n=DIMS.length;
+  ctx.clearRect(0,0,W,H);
+  for(var ring=1;ring<=5;ring++){
+    var r=(ring/5)*maxR;
+    ctx.beginPath();
+    for(var i=0;i<=n;i++){
+      var angle=(Math.PI*2*i)/n-Math.PI/2;
+      var x=cx+r*Math.cos(angle), y=cy+r*Math.sin(angle);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle='rgba(51,65,85,0.6)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='#64748b'; ctx.font='11px sans-serif';
+    ctx.fillText((ring*20)+'%',cx+4,cy-r+14);
+  }
+  for(var i=0;i<n;i++){
+    var angle=(Math.PI*2*i)/n-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+maxR*Math.cos(angle),cy+maxR*Math.sin(angle));
+    ctx.strokeStyle='rgba(51,65,85,0.4)'; ctx.stroke();
+  }
+  ctx.beginPath();
+  DIMS.forEach(function(d,i){
+    var pct=scores[d.key].pct/100;
+    var angle=(Math.PI*2*i)/n-Math.PI/2;
+    var x=cx+maxR*pct*Math.cos(angle), y=cy+maxR*pct*Math.sin(angle);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(0,102,204,0.25)'; ctx.fill();
+  ctx.strokeStyle='#4da6ff'; ctx.lineWidth=2.5; ctx.stroke();
+  DIMS.forEach(function(d,i){
+    var pct=scores[d.key].pct/100;
+    var angle=(Math.PI*2*i)/n-Math.PI/2;
+    var x=cx+maxR*pct*Math.cos(angle), y=cy+maxR*pct*Math.sin(angle);
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle='#4da6ff'; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+  });
+  ctx.fillStyle='#f1f5f9'; ctx.font='bold 12px sans-serif'; ctx.textAlign='center';
+  DIMS.forEach(function(d,i){
+    var angle=(Math.PI*2*i)/n-Math.PI/2;
+    var labelR=maxR+35;
+    var x=cx+labelR*Math.cos(angle), y=cy+labelR*Math.sin(angle);
+    var words=d.name.split(' & ');
+    if(words.length===2){ctx.fillText(words[0]+' &',x,y-7);ctx.fillText(words[1],x,y+9);}
+    else{ctx.fillText(d.name,x,y+4);}
+  });
+}
+
+function renderDimCards(sc){
+  var g=document.getElementById('dimScoresGrid');
+  g.innerHTML=DIMS.map(function(d){
+    var p=sc[d.key].pct;
+    var lv=LEVELS.find(function(l){return p<=l.max})||LEVELS[3];
+    var t=p<=40?'low':p<=70?'mid':'high';
+    var rc=RECS[d.key][t];
+    return '<div class="dim-score-card"><h3>'+d.name+'</h3>'
+      +'<div class="dim-pct" style="color:'+lv.color+'">'+p+'%</div>'
+      +'<div class="dim-bar-container"><div class="dim-bar-fill" style="width:'+p+'%;background:'+lv.color+'"></div></div>'
+      +'<div style="font-size:.85rem;color:'+lv.color+';font-weight:600;margin-bottom:8px">'+lv.name+'</div>'
+      +'<div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:6px;font-weight:600">Recommendations:</div>'
+      +'<ul class="rec-list">'+rc.map(function(r){return '<li>'+r+'</li>'}).join('')+'</ul></div>';
+  }).join('');
+}
+
+function downloadResults(){
+  var sc=calcScores(), ov=sc._overall;
+  var lv=LEVELS.find(function(l){return ov<=l.max})||LEVELS[3];
+  var now=new Date().toLocaleDateString('en-IE');
+  var txt='AI READINESS ASSESSMENT RESULTS\nGenerated: '+now+'\n'
+    +'='.repeat(50)+'\n\nOVERALL SCORE: '+ov+'% - '+lv.name+'\n'+lv.desc
+    +'\n\n'+'='.repeat(50)+'\nDIMENSION BREAKDOWN\n'+'='.repeat(50)+'\n\n';
+  DIMS.forEach(function(d){
+    var p=sc[d.key].pct;
+    var dl=LEVELS.find(function(l){return p<=l.max})||LEVELS[3];
+    var t=p<=40?'low':p<=70?'mid':'high';
+    var rc=RECS[d.key][t];
+    txt+=d.name+': '+p+'% ('+dl.name+')\n'+'-'.repeat(40)+'\nRecommendations:\n';
+    rc.forEach(function(r,i){txt+='  '+(i+1)+'. '+r+'\n';});
+    txt+='\n';
+  });
+  txt+='='.repeat(50)+'\nITAG Skillnet AI Advantage\n';
+  var blob=new Blob([txt],{type:'text/plain'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='ai-readiness-results-'+now.replace(/\//g,'-')+'.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function restartAssessment(){showScreen('screenLanding');}
+</script>
+</body>
+</html>

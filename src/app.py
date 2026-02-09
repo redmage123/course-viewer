@@ -895,6 +895,50 @@ COURSES = {
             }
         }
     },
+    "ai-impact-work": {
+        "id": "ai-impact-work",
+        "name": "AI's Impact on Work & Rolling Out AI Successfully",
+        "description": "90-minute seminar on understanding how AI transforms the workplace and building a practical rollout strategy using the LAUNCH framework",
+        "icon": "🚀",
+        "duration": "90 minutes",
+        "category": "itag-skillnet",
+        "syllabus": ["The LAUNCH Framework", "AI's Impact on Jobs & Roles", "Workforce Readiness Assessment", "Change Management for AI", "Building Your AI Rollout Plan", "Measuring AI Success & ROI"],
+        "goals": ["Understand how AI is transforming jobs, roles, and workflows", "Apply the LAUNCH framework to plan a successful AI rollout", "Assess your organisation's AI readiness across 5 key dimensions", "Build a 90-day AI rollout plan with measurable KPIs"],
+        "audience": "Business leaders, managers, and professionals responsible for AI adoption and digital transformation",
+        "prerequisites": None,
+        "topic_descriptions": {
+            "The LAUNCH Framework": "Learn the LAUNCH framework — Landscape, Alignment, Upskilling, Navigate, Champion, Harvest — a structured six-step methodology for planning and executing successful AI rollouts in any organisation. You will understand how each phase builds on the previous one to create a sustainable, people-centred approach to AI adoption.",
+            "AI's Impact on Jobs & Roles": "Explore how AI is reshaping the workplace through augmentation, automation, and the creation of entirely new roles. You will examine real-world data on which tasks and industries are most affected, and learn to distinguish between jobs that will be transformed versus those that will emerge in the AI era.",
+            "Workforce Readiness Assessment": "Conduct a structured assessment of your organisation's readiness for AI adoption across five critical dimensions: leadership and vision, data and infrastructure, people and skills, process and governance, and culture and change readiness. You will use a practical scoring tool to identify strengths and gaps.",
+            "Change Management for AI": "Master the people side of AI adoption by learning proven change management strategies tailored specifically to technology transformation. You will explore techniques for building AI champions, managing resistance, crafting effective communication plans, and creating psychological safety during periods of change.",
+            "Building Your AI Rollout Plan": "Design a practical 90-day AI rollout plan that takes your organisation from pilot selection through implementation to evaluation and scaling. You will learn criteria for choosing high-impact, low-risk pilot projects and create a structured timeline with clear milestones and accountability.",
+            "Measuring AI Success & ROI": "Develop a comprehensive measurement framework for tracking AI impact across efficiency, quality, revenue, and employee satisfaction dimensions. You will learn how to define meaningful KPIs, establish baselines, set realistic targets, and build an AI dashboard that demonstrates clear return on investment to stakeholders.",
+        },
+        "sections": {
+            "workshop": {
+                "title": "Workshop Materials",
+                "items": [
+                    {"id": "aiw-slides", "name": "Presentation Slides", "file": "ai-impact-work-seminar/ai-impact-work-slides.html", "type": "slides"},
+                    {"id": "aiw-pdf", "name": "Slides (PDF Download)", "file": "ai-impact-work-seminar/ai-impact-work-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "demo": {
+                "title": "Interactive Demo",
+                "items": [
+                    {"id": "aiw-readiness", "name": "AI Readiness Assessment Tool (Interactive)", "file": "ai-impact-work-seminar/demo/index.html", "type": "demo", "external": True},
+                    {"id": "aiw-poll", "name": "Audience Poll (AI Experience)", "file": "use-case-prompting-seminar/demo/poll.html", "type": "demo", "external": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "aiw-notes", "name": "Student Notes", "file": "ai-impact-work-seminar/student-notes.html", "type": "notes"},
+                    {"id": "aiw-demo-guide", "name": "Instructor Demo Guide", "file": "ai-impact-work-seminar/interactive-demo-guide.html", "type": "notes"},
+                    {"id": "aiw-exercise", "name": "Take-Home Exercise (PDF)", "file": "ai-impact-work-seminar/take-home-exercise.pdf", "type": "notes", "printable": True},
+                ]
+            }
+        }
+    },
     "ai-sales-marketing": {
         "id": "ai-sales-marketing",
         "name": "AI for Sales and Marketing",

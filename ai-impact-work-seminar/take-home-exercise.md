@@ -71,12 +71,12 @@ Identify the key stakeholders who would be affected by AI adoption in your area.
 ## Part 2: LAUNCH Framework Application (25 minutes)
 
 The LAUNCH framework provides a structured approach to rolling out AI initiatives:
-- **L** - Learn: Build understanding and awareness
-- **A** - Assess: Evaluate readiness and opportunities
-- **U** - Understand: Map stakeholders and change impact
-- **N** - Navigate: Plan the implementation path
-- **C** - Create: Build and deploy solutions
-- **H** - Harvest: Measure results and iterate
+- **L** - Landscape Assessment: Audit processes, data, and infrastructure
+- **A** - Alignment with Strategy: Link AI initiatives to business goals
+- **U** - Upskilling the Workforce: Build AI literacy and tool proficiency
+- **N** - Navigate Change Management: Address resistance and build buy-in
+- **C** - Champion Quick Wins: Run pilots that demonstrate fast value
+- **H** - Harvest & Scale: Measure results, iterate, and expand
 
 ### Exercise 4: LAUNCH Planning Template
 
@@ -293,7 +293,7 @@ _Your answer:_
 
 ### Useful Frameworks
 - **CRAFT Prompt Framework** - Context, Role, Action, Format, Tone
-- **LAUNCH Framework** - Learn, Assess, Understand, Navigate, Create, Harvest
+- **LAUNCH Framework** - Landscape, Alignment, Upskilling, Navigate, Champion, Harvest
 - **AI Readiness Assessment** - Use the interactive tool from today's seminar
 
 ### Stay Connected

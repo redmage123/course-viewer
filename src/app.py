@@ -2181,6 +2181,14 @@ def serve_content(filename):
         # Validate and resolve path within materials directory
         safe_path = get_safe_path_in_materials(filename)
 
+        # If it's a directory, try to serve index.html from it
+        if os.path.isdir(safe_path):
+            index_path = os.path.join(safe_path, 'index.html')
+            if os.path.isfile(index_path):
+                safe_path = index_path
+            else:
+                return jsonify({'error': 'Directory listing not available. Please specify a file.'}), 404
+
         # Only serve allowed file types
         allowed_extensions = {'.html', '.css', '.js', '.png', '.jpg', '.jpeg',
                              '.gif', '.svg', '.ico', '.pdf', '.ipynb', '.json', '.md', '.csv',

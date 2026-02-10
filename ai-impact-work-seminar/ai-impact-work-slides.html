@@ -8,159 +8,794 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/night.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
     <style>
-        :root { --itag-blue: #0066cc; --itag-light: #4da6ff; --accent-green: #00cc66; --accent-orange: #ff9933; }
-        .reveal { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; color: var(--itag-light); }
-        .reveal h1 { font-size: 2.2em; }
-        .reveal h2 { font-size: 1.6em; border-bottom: 3px solid var(--itag-blue); padding-bottom: 10px; }
-        .reveal pre { width: 100%; font-size: 0.55em; border: 2px solid var(--itag-blue); border-radius: 8px; margin: 20px 0; background: #1a1a2e; overflow: auto; max-height: 500px; }
-        .reveal pre code { padding: 20px; font-family: 'Courier New', monospace; display: block; overflow-x: auto; }
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; text-align: left; }
-        .three-column { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; text-align: left; }
-        .four-column { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; text-align: left; }
-        .card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px; border-radius: 10px; border-left: 4px solid var(--itag-blue); }
-        .card h4 { color: var(--itag-light); margin-top: 0; }
-        .tip-box { background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%); padding: 15px 20px; border-radius: 8px; border-left: 4px solid var(--accent-green); margin: 15px 0; text-align: left; }
-        .warning-box { background: linear-gradient(135deg, #4d2600 0%, #663300 100%); padding: 15px 20px; border-radius: 8px; border-left: 4px solid var(--accent-orange); margin: 15px 0; text-align: left; }
-        .highlight { color: var(--accent-green); font-weight: bold; }
-        .exercise-box { background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%); padding: 20px; border-radius: 10px; border: 2px solid var(--itag-light); margin: 20px 0; text-align: left; }
-        .exercise-box h4 { color: var(--itag-light); margin-top: 0; }
-        .prompt-example { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin: 10px 0; font-family: 'Courier New', monospace; font-size: 0.8em; text-align: left; overflow: auto; max-height: 400px; }
-        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.7em; }
-        .comparison-table th { background: var(--itag-blue); color: white; padding: 12px; text-align: left; }
-        .comparison-table td { padding: 10px; border-bottom: 1px solid #333; }
-        .comparison-table tr:nth-child(even) { background: rgba(0,102,204,0.1); }
-        .framework-step { display: flex; align-items: center; margin: 15px 0; text-align: left; }
-        .step-number { background: var(--itag-blue); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; flex-shrink: 0; }
-        .agenda-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; }
-        .agenda-time { color: var(--itag-light); font-weight: bold; width: 80px; }
-        ul { text-align: left; }
-        li { margin: 10px 0; }
-        .fullscreen-btn { position: fixed; bottom: 20px; right: 20px; background: var(--itag-blue); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; z-index: 1000; font-size: 14px; }
-        .fullscreen-btn:hover { background: var(--itag-light); }
-        .reveal .slides section { overflow: visible !important; }
-        .slide-content { width: 100%; max-height: 85vh; overflow-y: auto; overflow-x: hidden; padding: 10px 20px 40px 20px; box-sizing: border-box; }
-        .slide-content::-webkit-scrollbar { width: 10px; }
-        .slide-content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 5px; }
-        .slide-content::-webkit-scrollbar-thumb { background: var(--itag-blue); border-radius: 5px; border: 2px solid rgba(0, 0, 0, 0.3); }
-        .slide-content::-webkit-scrollbar-thumb:hover { background: var(--itag-light); }
-        .slide-content { scrollbar-width: auto; scrollbar-color: var(--itag-blue) rgba(0, 0, 0, 0.3); }
-        .itag-logo { font-size: 0.6em; color: #888; position: absolute; bottom: 10px; left: 20px; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes flowRight { 0% { transform: translateX(-10px); opacity: 0.3; } 50% { transform: translateX(10px); opacity: 1; } 100% { transform: translateX(-10px); opacity: 0.3; } }
-        @keyframes glow { 0%, 100% { box-shadow: 0 0 5px var(--itag-blue); } 50% { box-shadow: 0 0 20px var(--itag-light), 0 0 30px var(--itag-blue); } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes fillBar { 0% { width: 0; } 100% { width: var(--fill-width); } }
-        .launch-circle { position: relative; width: 420px; height: 420px; margin: 0 auto; }
-        .launch-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 130px; height: 130px; background: linear-gradient(135deg, var(--itag-blue), var(--itag-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6em; font-weight: bold; animation: pulse 2s ease-in-out infinite; z-index: 10; text-align: center; line-height: 1.2; }
-        .launch-item { position: absolute; width: 105px; height: 105px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border: 3px solid var(--itag-blue); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0; animation: fadeInUp 0.5s ease-out forwards; }
-        .launch-item span:first-child { font-size: 1.5em; font-weight: bold; color: var(--itag-light); }
-        .launch-item span:last-child { font-size: 0.6em; color: #aaa; margin-top: 4px; padding: 0 5px; }
-        .launch-item:nth-child(2) { top: 0; left: 50%; transform: translateX(-50%); animation-delay: 0.1s; }
-        .launch-item:nth-child(3) { top: 15%; right: 0; animation-delay: 0.2s; }
-        .launch-item:nth-child(4) { bottom: 15%; right: 0; animation-delay: 0.3s; }
-        .launch-item:nth-child(5) { bottom: 0; left: 50%; transform: translateX(-50%); animation-delay: 0.4s; }
-        .launch-item:nth-child(6) { bottom: 15%; left: 0; animation-delay: 0.5s; }
-        .launch-item:nth-child(7) { top: 15%; left: 0; animation-delay: 0.6s; }
-        .launch-letter { display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: linear-gradient(135deg, var(--itag-blue), var(--itag-light)); border-radius: 50%; font-size: 1.8em; font-weight: bold; color: white; margin-right: 15px; vertical-align: middle; animation: pulse 2s ease-in-out infinite; }
-        .readiness-radar { max-width: 600px; margin: 20px auto; }
-        .radar-dimension { display: flex; align-items: center; margin: 12px 0; }
-        .radar-label { width: 140px; text-align: right; padding-right: 15px; font-size: 0.85em; font-weight: bold; color: var(--itag-light); }
-        .radar-bar-bg { flex: 1; height: 28px; background: rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; position: relative; }
-        .radar-bar-fill { height: 100%; border-radius: 14px; animation: fillBar 1.5s ease-out forwards; width: 0; }
-        .radar-score { width: 50px; text-align: center; font-weight: bold; font-size: 0.9em; padding-left: 10px; }
-        .stat-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 25px 15px; border-radius: 12px; border-top: 4px solid var(--itag-blue); text-align: center; }
-        .stat-card .stat-number { font-size: 2.2em; font-weight: bold; color: var(--itag-light); margin-bottom: 5px; }
-        .stat-card .stat-label { font-size: 0.8em; color: #aaa; }
-        .pilot-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.7em; }
-        .pilot-table th { background: var(--itag-blue); color: white; padding: 10px; text-align: left; }
-        .pilot-table td { padding: 8px 10px; border-bottom: 1px solid #333; }
-        .pilot-table tr:nth-child(even) { background: rgba(0,102,204,0.1); }
-        .score-high { color: var(--accent-green); font-weight: bold; }
-        .score-med { color: var(--accent-orange); font-weight: bold; }
-        .score-low { color: #ff6666; font-weight: bold; }
-        .timeline { position: relative; padding: 20px 0; }
-        .timeline-item { display: flex; align-items: flex-start; margin: 15px 0; opacity: 0; animation: fadeInLeft 0.5s ease-out forwards; }
+        :root {
+            --itag-blue: #0066cc;
+            --itag-light: #4da6ff;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+        }
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            color: var(--itag-light);
+        }
+        .reveal h1 {
+            font-size: 2.2em;
+        }
+        .reveal h2 {
+            font-size: 1.4em;
+            border-bottom: 3px solid var(--itag-blue);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .reveal p {
+            font-size: 0.85em;
+        }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.55em;
+            border: 2px solid var(--itag-blue);
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #1a1a2e;
+            overflow: auto;
+            max-height: 500px;
+        }
+        .reveal pre code {
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            display: block;
+            overflow-x: auto;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            text-align: left;
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .four-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+        }
+        .card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--itag-blue);
+        }
+        .card h4 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-green);
+            margin: 10px 0;
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            margin: 10px 0;
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .highlight {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .exercise-box {
+            background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid var(--itag-light);
+            margin: 10px 0;
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .exercise-box h4 {
+            color: var(--itag-light);
+            margin-top: 0;
+        }
+        .prompt-example {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            text-align: left;
+            overflow: auto;
+            max-height: 400px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.7em;
+        }
+        .comparison-table th {
+            background: var(--itag-blue);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: rgba(0,102,204,0.1);
+        }
+        .framework-step {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            text-align: left;
+        }
+        .step-number {
+            background: var(--itag-blue);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .agenda-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.85em;
+        }
+        .agenda-time {
+            color: var(--itag-light);
+            font-weight: bold;
+            min-width: 70px;
+            white-space: nowrap;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        ul {
+            text-align: left;
+        }
+        li {
+            margin: 6px 0;
+        }
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--itag-blue);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+        }
+        .fullscreen-btn:hover {
+            background: var(--itag-light);
+        }
+        .reveal .slides section {
+            overflow: visible !important;
+        }
+        .slide-content {
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px 20px 40px 20px;
+            box-sizing: border-box;
+        }
+        .slide-content::-webkit-scrollbar {
+            width: 10px;
+        }
+        .slide-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+        .slide-content::-webkit-scrollbar-thumb {
+            background: var(--itag-blue);
+            border-radius: 5px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+        }
+        .slide-content::-webkit-scrollbar-thumb:hover {
+            background: var(--itag-light);
+        }
+        .slide-content {
+            scrollbar-width: auto;
+            scrollbar-color: var(--itag-blue) rgba(0, 0, 0, 0.3);
+        }
+        .itag-logo {
+            font-size: 0.6em;
+            color: #888;
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes flowRight {
+            0% { transform: translateX(-10px); opacity: 0.3; }
+            50% { transform: translateX(10px); opacity: 1; }
+            100% { transform: translateX(-10px); opacity: 0.3; }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--itag-blue); }
+            50% { box-shadow: 0 0 20px var(--itag-light), 0 0 30px var(--itag-blue); }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes fillBar {
+            0% { width: 0; }
+            100% { width: var(--fill-width); }
+        }
+
+        /* LAUNCH Grid */
+        .launch-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin: 10px auto;
+            max-width: 700px;
+        }
+        .launch-grid-item {
+            text-align: center;
+            padding: 10px 5px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-top: 3px solid var(--itag-blue);
+            opacity: 0;
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        .launch-grid-item:nth-child(1) { animation-delay: 0s; }
+        .launch-grid-item:nth-child(2) { animation-delay: 0.1s; }
+        .launch-grid-item:nth-child(3) { animation-delay: 0.2s; }
+        .launch-grid-item:nth-child(4) { animation-delay: 0.3s; }
+        .launch-grid-item:nth-child(5) { animation-delay: 0.4s; }
+        .launch-grid-item:nth-child(6) { animation-delay: 0.5s; }
+        .launch-grid-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            border-radius: 50%;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 6px;
+        }
+        .launch-grid-label {
+            font-size: 0.65em;
+            color: #ccc;
+            line-height: 1.3;
+        }
+
+        /* LAUNCH Letter Badge */
+        .launch-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--itag-blue), var(--itag-light));
+            border-radius: 50%;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: white;
+            margin-right: 12px;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        /* Readiness Radar */
+        .readiness-radar {
+            max-width: 600px;
+            margin: 10px auto;
+        }
+        .radar-dimension {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .radar-label {
+            width: 120px;
+            text-align: right;
+            padding-right: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            color: var(--itag-light);
+        }
+        .radar-bar-bg {
+            flex: 1;
+            height: 22px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 11px;
+            overflow: hidden;
+            position: relative;
+        }
+        .radar-bar-fill {
+            height: 100%;
+            border-radius: 14px;
+            animation: fillBar 1.5s ease-out forwards;
+            width: 0;
+        }
+        .radar-score {
+            width: 50px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            padding-left: 10px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 15px 12px;
+            border-radius: 12px;
+            border-top: 4px solid var(--itag-blue);
+            text-align: center;
+        }
+        .stat-card .stat-number {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: var(--itag-light);
+            margin-bottom: 4px;
+        }
+        .stat-card .stat-label {
+            font-size: 0.7em;
+            color: #aaa;
+        }
+        .stat-card .stat-source {
+            font-size: 0.55em;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Pilot Score Table */
+        .pilot-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.7em;
+        }
+        .pilot-table th {
+            background: var(--itag-blue);
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        .pilot-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #333;
+        }
+        .pilot-table tr:nth-child(even) {
+            background: rgba(0,102,204,0.1);
+        }
+        .score-high {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .score-med {
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+        .score-low {
+            color: #ff6666;
+            font-weight: bold;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out forwards;
+        }
         .timeline-item:nth-child(1) { animation-delay: 0.1s; }
         .timeline-item:nth-child(2) { animation-delay: 0.3s; }
         .timeline-item:nth-child(3) { animation-delay: 0.5s; }
-        .timeline-week { background: var(--itag-blue); color: white; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.8em; min-width: 90px; text-align: center; margin-right: 15px; flex-shrink: 0; }
-        .timeline-content { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 12px 18px; border-radius: 8px; border-left: 3px solid var(--itag-light); flex: 1; }
-        .timeline-content h5 { margin: 0 0 5px 0; color: var(--itag-light); }
-        .timeline-content p { margin: 0; font-size: 0.85em; color: #ccc; }
-        @media print {
-            .reveal .slides { width: 100% !important; height: auto !important; overflow: visible !important; transform: none !important; }
-            .reveal .slides > section, .reveal .slides > section > section { width: 100% !important; height: 100vh !important; min-height: 100vh !important; max-height: 100vh !important; overflow: hidden !important; page-break-after: always !important; page-break-inside: avoid !important; transform: none !important; position: relative !important; display: block !important; padding: 30px 40px !important; box-sizing: border-box !important; }
-            .slide-content { max-height: none !important; overflow: visible !important; height: auto !important; }
-            .two-column { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 15px !important; page-break-inside: avoid !important; height: auto !important; }
-            .three-column { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 10px !important; page-break-inside: avoid !important; height: auto !important; }
-            .four-column { display: grid !important; grid-template-columns: 1fr 1fr 1fr 1fr !important; gap: 10px !important; page-break-inside: avoid !important; height: auto !important; }
-            .card { height: auto !important; align-self: start !important; }
-            .card, .tip-box, .warning-box, .exercise-box, .prompt-example { page-break-inside: avoid !important; overflow: visible !important; }
-            .comparison-table, .pilot-table { page-break-inside: avoid !important; width: 100% !important; }
-            .launch-circle { height: auto !important; min-height: 400px !important; page-break-inside: avoid !important; }
-            .launch-item, .timeline-item { opacity: 1 !important; animation: none !important; }
-            .launch-center, .launch-letter { animation: none !important; }
-            .radar-bar-fill { animation: none !important; width: var(--fill-width) !important; }
-            .stat-card, .framework-step, .agenda-item { page-break-inside: avoid !important; }
-            ul, ol, li { page-break-inside: avoid !important; }
-            .fullscreen-btn { display: none !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
-            .reveal .slides > section.stack { display: block !important; }
-            .reveal .slides > section.stack > section { display: block !important; position: relative !important; }
-            pre, code, .prompt-example { white-space: pre-wrap !important; word-wrap: break-word !important; overflow: visible !important; max-height: none !important; }
-            .card ul, .tip-box ul, .warning-box ul { overflow: visible !important; }
+        .timeline-item:nth-child(4) { animation-delay: 0.7s; }
+        .timeline-week {
+            background: var(--itag-blue);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8em;
+            min-width: 90px;
+            text-align: center;
+            margin-right: 15px;
+            flex-shrink: 0;
         }
-        html.print-pdf .reveal .slides section { height: auto !important; min-height: 680px !important; overflow: visible !important; }
-        html.print-pdf .slide-content { max-height: none !important; overflow: visible !important; }
-        html.print-pdf .launch-item, html.print-pdf .timeline-item { opacity: 1 !important; animation: none !important; }
-        html.print-pdf .launch-center, html.print-pdf .launch-letter { animation: none !important; }
-        html.print-pdf .radar-bar-fill { animation: none !important; width: var(--fill-width) !important; }
-        html.print-pdf .two-column, html.print-pdf .three-column, html.print-pdf .four-column { display: grid !important; }
-        html.print-pdf .reveal .slides { overflow: hidden !important; }
-        html.print-pdf .reveal .slides > section, html.print-pdf .reveal .slides > section > section { overflow: hidden !important; height: 100% !important; max-height: 100% !important; page-break-inside: avoid !important; break-inside: avoid !important; transform-origin: top center !important; }
-        html.print-pdf .reveal { font-size: 18px !important; }
-        html.print-pdf .reveal h1 { font-size: 1.8em !important; margin-bottom: 0.3em !important; }
-        html.print-pdf .reveal h2 { font-size: 1.5em !important; margin-bottom: 0.3em !important; }
-        html.print-pdf .reveal h3 { font-size: 1.2em !important; margin-bottom: 0.2em !important; }
-        html.print-pdf .reveal p, html.print-pdf .reveal li { font-size: 0.85em !important; line-height: 1.3 !important; margin-bottom: 0.2em !important; }
-        html.print-pdf .reveal section { padding: 15px !important; }
-        html.print-pdf .reveal ul, html.print-pdf .reveal ol { margin: 0.3em 0 !important; padding-left: 1.2em !important; }
-        html.print-pdf .reveal li { margin: 0.15em 0 !important; }
-        html.print-pdf ul, html.print-pdf ol { overflow: visible !important; max-height: none !important; }
-        html.print-pdf li { display: list-item !important; visibility: visible !important; }
-        html.print-pdf table, html.print-pdf tbody, html.print-pdf tr, html.print-pdf td, html.print-pdf th { overflow: visible !important; display: table !important; visibility: visible !important; }
+        .timeline-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-left: 3px solid var(--itag-light);
+            flex: 1;
+        }
+        .timeline-content h5 {
+            margin: 0 0 5px 0;
+            color: var(--itag-light);
+        }
+        .timeline-content p {
+            margin: 0;
+            font-size: 0.85em;
+            color: #ccc;
+        }
+
+        /* Case Study Box */
+        .case-study {
+            background: linear-gradient(135deg, #1a1a3e 0%, #1e2a4a 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #9966ff;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .case-study h4 {
+            color: #bb99ff;
+            margin-top: 0;
+        }
+
+        /* Print Styles */
+        @media print {
+            .reveal .slides {
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                transform: none !important;
+            }
+            .reveal .slides > section,
+            .reveal .slides > section > section {
+                width: 100% !important;
+                height: 100vh !important;
+                min-height: 100vh !important;
+                max-height: 100vh !important;
+                overflow: hidden !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                transform: none !important;
+                position: relative !important;
+                display: block !important;
+                padding: 30px 40px !important;
+                box-sizing: border-box !important;
+            }
+            .slide-content {
+                max-height: none !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+            .two-column {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 15px !important;
+                page-break-inside: avoid !important;
+                height: auto !important;
+            }
+            .three-column {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr 1fr !important;
+                gap: 10px !important;
+                page-break-inside: avoid !important;
+                height: auto !important;
+            }
+            .four-column {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr 1fr 1fr !important;
+                gap: 10px !important;
+                page-break-inside: avoid !important;
+                height: auto !important;
+            }
+            .card {
+                height: auto !important;
+                align-self: start !important;
+            }
+            .card, .tip-box, .warning-box, .exercise-box, .prompt-example, .case-study {
+                page-break-inside: avoid !important;
+                overflow: visible !important;
+            }
+            .comparison-table, .pilot-table {
+                page-break-inside: avoid !important;
+                width: 100% !important;
+            }
+            .launch-circle {
+                height: auto !important;
+                min-height: 400px !important;
+                page-break-inside: avoid !important;
+            }
+            .launch-item, .timeline-item {
+                opacity: 1 !important;
+                animation: none !important;
+            }
+            .launch-center, .launch-letter {
+                animation: none !important;
+            }
+            .radar-bar-fill {
+                animation: none !important;
+                width: var(--fill-width) !important;
+            }
+            .stat-card, .framework-step, .agenda-item {
+                page-break-inside: avoid !important;
+            }
+            ul, ol, li {
+                page-break-inside: avoid !important;
+            }
+            .fullscreen-btn {
+                display: none !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .reveal .slides > section.stack {
+                display: block !important;
+            }
+            .reveal .slides > section.stack > section {
+                display: block !important;
+                position: relative !important;
+            }
+            pre, code, .prompt-example {
+                white-space: pre-wrap !important;
+                word-wrap: break-word !important;
+                overflow: visible !important;
+                max-height: none !important;
+            }
+            .card ul, .tip-box ul, .warning-box ul {
+                overflow: visible !important;
+            }
+        }
+        html.print-pdf .reveal .slides section {
+            height: auto !important;
+            min-height: 680px !important;
+            overflow: visible !important;
+        }
+        html.print-pdf .slide-content {
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        html.print-pdf .launch-item,
+        html.print-pdf .timeline-item {
+            opacity: 1 !important;
+            animation: none !important;
+        }
+        html.print-pdf .launch-center,
+        html.print-pdf .launch-letter {
+            animation: none !important;
+        }
+        html.print-pdf .radar-bar-fill {
+            animation: none !important;
+            width: var(--fill-width) !important;
+        }
+        html.print-pdf .two-column,
+        html.print-pdf .three-column,
+        html.print-pdf .four-column {
+            display: grid !important;
+        }
+        html.print-pdf .reveal .slides {
+            overflow: hidden !important;
+        }
+        html.print-pdf .reveal .slides > section,
+        html.print-pdf .reveal .slides > section > section {
+            overflow: hidden !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            transform-origin: top center !important;
+        }
+        html.print-pdf .reveal {
+            font-size: 18px !important;
+        }
+        html.print-pdf .reveal h1 {
+            font-size: 1.8em !important;
+            margin-bottom: 0.3em !important;
+        }
+        html.print-pdf .reveal h2 {
+            font-size: 1.5em !important;
+            margin-bottom: 0.3em !important;
+        }
+        html.print-pdf .reveal h3 {
+            font-size: 1.2em !important;
+            margin-bottom: 0.2em !important;
+        }
+        html.print-pdf .reveal p,
+        html.print-pdf .reveal li {
+            font-size: 0.85em !important;
+            line-height: 1.3 !important;
+            margin-bottom: 0.2em !important;
+        }
+        html.print-pdf .reveal section {
+            padding: 15px !important;
+        }
+        html.print-pdf .reveal ul,
+        html.print-pdf .reveal ol {
+            margin: 0.3em 0 !important;
+            padding-left: 1.2em !important;
+        }
+        html.print-pdf .reveal li {
+            margin: 0.15em 0 !important;
+        }
+        html.print-pdf ul,
+        html.print-pdf ol {
+            overflow: visible !important;
+            max-height: none !important;
+        }
+        html.print-pdf li {
+            display: list-item !important;
+            visibility: visible !important;
+        }
+        html.print-pdf table,
+        html.print-pdf tbody,
+        html.print-pdf tr,
+        html.print-pdf td,
+        html.print-pdf th {
+            overflow: visible !important;
+            display: table !important;
+            visibility: visible !important;
+        }
         html.print-pdf tbody { display: table-row-group !important; }
         html.print-pdf tr { display: table-row !important; }
         html.print-pdf td, html.print-pdf th { display: table-cell !important; }
-        html.print-pdf .card, html.print-pdf .tip-box, html.print-pdf .warning-box, html.print-pdf .exercise-box, html.print-pdf .prompt-example { overflow: visible !important; max-height: none !important; height: auto !important; }
-        html.print-pdf .agenda-item { display: flex !important; visibility: visible !important; }
-        html.print-pdf .launch-item { display: flex !important; visibility: visible !important; opacity: 1 !important; }
-        html.print-pdf .launch-circle { display: block !important; overflow: visible !important; height: auto !important; }
-        html.print-pdf .timeline-item { display: flex !important; visibility: visible !important; opacity: 1 !important; }
-        html.print-pdf [style*="animation"], html.print-pdf [class*="animate"] { animation: none !important; opacity: 1 !important; visibility: visible !important; transform: none !important; }
-        html.print-pdf .two-column { display: grid !important; grid-template-columns: 1fr 1fr !important; overflow: visible !important; }
-        html.print-pdf .three-column { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; overflow: visible !important; }
-        html.print-pdf .four-column { display: grid !important; grid-template-columns: 1fr 1fr 1fr 1fr !important; overflow: visible !important; }
-        html.print-pdf .framework-step { display: flex !important; visibility: visible !important; }
-        html.print-pdf .agenda-item { padding: 6px 10px !important; margin: 3px 0 !important; font-size: 0.8em !important; }
-        html.print-pdf .agenda-time { font-size: 0.75em !important; min-width: 50px !important; }
-        html.print-pdf .card, html.print-pdf .tip-box, html.print-pdf .warning-box, html.print-pdf .exercise-box, html.print-pdf .prompt-example { padding: 8px 12px !important; margin: 5px 0 !important; font-size: 0.8em !important; }
-        html.print-pdf .launch-circle { width: 90% !important; max-width: 550px !important; margin: 0 auto !important; }
-        html.print-pdf .launch-item { font-size: 0.75em !important; padding: 6px !important; }
-        html.print-pdf table { font-size: 0.75em !important; }
-        html.print-pdf th, html.print-pdf td { padding: 4px 8px !important; }
-        html.print-pdf .framework-step { padding: 6px 10px !important; margin: 4px 0 !important; font-size: 0.8em !important; }
+        html.print-pdf .card,
+        html.print-pdf .tip-box,
+        html.print-pdf .warning-box,
+        html.print-pdf .exercise-box,
+        html.print-pdf .prompt-example,
+        html.print-pdf .case-study {
+            overflow: visible !important;
+            max-height: none !important;
+            height: auto !important;
+        }
+        html.print-pdf .agenda-item {
+            display: flex !important;
+            visibility: visible !important;
+        }
+        html.print-pdf .launch-item {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        html.print-pdf .launch-circle {
+            display: block !important;
+            overflow: visible !important;
+            height: auto !important;
+        }
+        html.print-pdf .timeline-item {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        html.print-pdf [style*="animation"],
+        html.print-pdf [class*="animate"] {
+            animation: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: none !important;
+        }
+        html.print-pdf .two-column {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            overflow: visible !important;
+        }
+        html.print-pdf .three-column {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            overflow: visible !important;
+        }
+        html.print-pdf .four-column {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr 1fr !important;
+            overflow: visible !important;
+        }
+        html.print-pdf .framework-step {
+            display: flex !important;
+            visibility: visible !important;
+        }
+        html.print-pdf .agenda-item {
+            padding: 6px 10px !important;
+            margin: 3px 0 !important;
+            font-size: 0.8em !important;
+        }
+        html.print-pdf .agenda-time {
+            font-size: 0.75em !important;
+            min-width: 50px !important;
+        }
+        html.print-pdf .card,
+        html.print-pdf .tip-box,
+        html.print-pdf .warning-box,
+        html.print-pdf .exercise-box,
+        html.print-pdf .prompt-example,
+        html.print-pdf .case-study {
+            padding: 8px 12px !important;
+            margin: 5px 0 !important;
+            font-size: 0.8em !important;
+        }
+        html.print-pdf .launch-circle {
+            width: 90% !important;
+            max-width: 550px !important;
+            margin: 0 auto !important;
+        }
+        html.print-pdf .launch-item {
+            font-size: 0.75em !important;
+            padding: 6px !important;
+        }
+        html.print-pdf table {
+            font-size: 0.75em !important;
+        }
+        html.print-pdf th,
+        html.print-pdf td {
+            padding: 4px 8px !important;
+        }
+        html.print-pdf .framework-step {
+            padding: 6px 10px !important;
+            margin: 4px 0 !important;
+            font-size: 0.8em !important;
+        }
         html.print-pdf .two-column { gap: 15px !important; }
         html.print-pdf .three-column { gap: 10px !important; }
         html.print-pdf .four-column { gap: 8px !important; }
         html.print-pdf .stat-card { padding: 10px !important; }
         html.print-pdf .stat-card .stat-number { font-size: 1.6em !important; }
-        html.print-pdf .timeline-item { margin: 6px 0 !important; font-size: 0.8em !important; }
+        html.print-pdf .timeline-item {
+            margin: 6px 0 !important;
+            font-size: 0.8em !important;
+        }
         html.print-pdf .radar-dimension { margin: 6px 0 !important; }
         html.print-pdf .radar-label { font-size: 0.75em !important; }
         html.print-pdf section:empty { display: none !important; }
@@ -170,292 +805,923 @@
     <button class="fullscreen-btn" onclick="toggleFullscreen()">Fullscreen (F)</button>
     <div class="reveal">
         <div class="slides">
-            <!-- Slide 1: Title -->
+
+            <!-- ==================== SLIDE 1: TITLE ==================== -->
             <section>
-                <h1>AI's Impact on Work &amp;<br>Rolling Out AI Successfully</h1>
-                <h3 style="color: #888;">ITAG Skillnet AI Advantage</h3>
-                <p style="margin-top: 50px;"><span style="color: var(--itag-light);">90-Minute Interactive Seminar</span></p>
-                <p style="font-size: 0.7em; color: #666; margin-top: 30px;">Understand AI's Workplace Impact | The LAUNCH Framework | Build Your Rollout Plan</p>
+            <h1 style="font-size: 1.8em;">AI's Impact on Work &amp;<br>Rolling Out AI Successfully</h1>
+            <h3 style="color: #888;">ITAG Skillnet AI Advantage</h3>
+            <p style="margin-top: 20px;">
+                <span style="color: var(--itag-light);">90-Minute Interactive Seminar</span>
+            </p>
+            <p style="font-size: 0.7em; color: #666; margin-top: 15px;">
+                Understand AI's Workplace Impact &bull; The LAUNCH Framework &bull; Build Your Rollout Plan
+            </p>
             </section>
-            <!-- Slide 2: Agenda -->
+
+            <!-- ==================== SLIDE 2: AGENDA ==================== -->
             <section>
-                <h2>Agenda</h2>
-                <div style="text-align: left; max-width: 700px; margin: 0 auto;">
-                    <div class="agenda-item"><span class="agenda-time">10 min</span><span>The AI Workplace Revolution</span></div>
-                    <div class="agenda-item"><span class="agenda-time">10 min</span><span>How Jobs Are Changing</span></div>
-                    <div class="agenda-item"><span class="agenda-time">20 min</span><span>The LAUNCH Framework for AI Rollout</span></div>
-                    <div class="agenda-item"><span class="agenda-time">10 min</span><span>AI Readiness &amp; Rollout Planning</span></div>
-                    <div class="agenda-item"><span class="agenda-time">10 min</span><span>Measuring AI ROI</span></div>
-                    <div class="agenda-item" style="background: linear-gradient(90deg, rgba(0,204,102,0.2) 0%, transparent 100%); border-radius: 8px; padding: 10px 15px; margin: 5px 0;"><span class="agenda-time" style="color: var(--accent-green);">20 min</span><span><strong style="color: var(--accent-green);">Interactive AI Readiness Assessment &amp; Group Discussion</strong></span></div>
-                    <div class="agenda-item"><span class="agenda-time">10 min</span><span>Wrap-up &amp; Next Steps</span></div>
+            <h2>Agenda</h2>
+            <div style="text-align: left; max-width: 700px; margin: 0 auto;">
+                <div class="agenda-item">
+                    <span class="agenda-time">10 min</span>
+                    <span>The AI Workplace Revolution</span>
+                </div>
+                <div class="agenda-item">
+                    <span class="agenda-time">15 min</span>
+                    <span>How AI Is Transforming Jobs &amp; Roles</span>
+                </div>
+                <div class="agenda-item">
+                    <span class="agenda-time">25 min</span>
+                    <span>The LAUNCH Framework for AI Rollout</span>
+                </div>
+                <div class="agenda-item">
+                    <span class="agenda-time">10 min</span>
+                    <span>AI Readiness &amp; Rollout Planning</span>
+                </div>
+                <div class="agenda-item">
+                    <span class="agenda-time">5 min</span>
+                    <span>Measuring AI ROI</span>
+                </div>
+                <div class="agenda-item" style="background: linear-gradient(90deg, rgba(0,204,102,0.2) 0%, transparent 100%); border-radius: 8px; padding: 10px 15px; margin: 5px 0;">
+                    <span class="agenda-time" style="color: var(--accent-green);">20 min</span>
+                    <span><strong style="color: var(--accent-green);">Interactive: AI Readiness Assessment &amp; Group Discussion</strong></span>
+                </div>
+                <div class="agenda-item">
+                    <span class="agenda-time">5 min</span>
+                    <span>Wrap-up &amp; Next Steps</span>
+                </div>
+            </div>
+            </section>
+
+            <!-- ==================== SECTION 1: AI WORKPLACE REVOLUTION ==================== -->
+
+            <!-- 1.1: Opening Stats -->
+            <section>
+                <h2>The AI Workplace Revolution</h2>
+                <p>AI is transforming every industry at an unprecedented pace</p>
+                <div class="three-column" style="margin-top: 30px;">
+                    <div class="stat-card" style="opacity: 0; animation: fadeInUp 0.6s ease-out 0.1s forwards;">
+                        <div class="stat-number">72%</div>
+                        <div class="stat-label">of companies have adopted AI in at least one business function</div>
+                        <div style="font-size: 0.55em; color: #666; margin-top: 8px;">Source: McKinsey Global Survey on AI, May 2024</div>
+                    </div>
+                    <div class="stat-card" style="opacity: 0; animation: fadeInUp 0.6s ease-out 0.3s forwards;">
+                        <div class="stat-number">$2.6&ndash;4.4T</div>
+                        <div class="stat-label">annual value generative AI could add to the global economy</div>
+                        <div style="font-size: 0.55em; color: #666; margin-top: 8px;">Source: McKinsey Global Institute, June 2023</div>
+                    </div>
+                    <div class="stat-card" style="opacity: 0; animation: fadeInUp 0.6s ease-out 0.5s forwards;">
+                        <div class="stat-number">40%</div>
+                        <div class="stat-label">of working hours could be impacted by AI augmentation or automation</div>
+                        <div style="font-size: 0.55em; color: #666; margin-top: 8px;">Source: Accenture, "A New Era of Generative AI," 2023</div>
+                    </div>
+                </div>
+                <div class="tip-box" style="margin-top: 25px;">
+                    <strong>Key Insight:</strong> AI is not replacing entire jobs &mdash; it is transforming <em>tasks within jobs</em>. The organisations that adapt fastest will lead their industries.
                 </div>
             </section>
-            <!-- Section 1: AI Workplace Revolution (3 vertical) -->
+
+            <!-- 1.2: AI Across Industries -->
             <section>
-                <section>
-                    <h2>The AI Workplace Revolution</h2>
-                    <p>AI is transforming every industry at an unprecedented pace</p>
-                    <div class="three-column" style="margin-top: 30px;">
-                        <div class="stat-card" style="opacity: 0; animation: fadeInUp 0.6s ease-out 0.1s forwards;"><div class="stat-number">72%</div><div class="stat-label">of companies have adopted AI in at least one business function</div></div>
-                        <div class="stat-card" style="opacity: 0; animation: fadeInUp 0.6s ease-out 0.3s forwards;"><div class="stat-number">.4T</div><div class="stat-label">projected annual value AI could add to the global economy</div></div>
-                        <div class="stat-card" style="opacity: 0; animation: fadeInUp 0.6s ease-out 0.5s forwards;"><div class="stat-number">40%</div><div class="stat-label">of working hours could be impacted by AI-powered automation</div></div>
+                <h2>AI Across Industries</h2>
+                <p>Every sector is experiencing transformation</p>
+                <div class="three-column" style="margin-top: 20px;">
+                    <div class="card">
+                        <h4>Financial Services</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Fraud detection &amp; prevention</li>
+                            <li>Automated underwriting</li>
+                            <li>Personalised financial advice</li>
+                            <li>Regulatory compliance monitoring</li>
+                        </ul>
                     </div>
-                    <div class="tip-box" style="margin-top: 25px;"><strong>Key Insight:</strong> AI is not replacing entire jobs -- it is transforming <em>tasks within jobs</em>. The organisations that adapt fastest will lead.</div>
-                </section>
-                <section>
-                    <h2>How Jobs Are Changing</h2>
-                    <p>AI transforms roles rather than eliminating them</p>
-                    <div class="two-column" style="margin-top: 20px;">
-                        <div>
-                            <h4 style="color: var(--accent-green);">Tasks AI Augments</h4>
-                            <ul style="font-size: 0.85em;"><li>Data analysis &amp; reporting</li><li>Content drafting &amp; summarisation</li><li>Customer support triage</li><li>Code generation &amp; review</li><li>Scheduling &amp; logistics</li><li>Market research &amp; forecasting</li></ul>
-                        </div>
-                        <div>
-                            <h4 style="color: var(--accent-orange);">Tasks Requiring Humans</h4>
-                            <ul style="font-size: 0.85em;"><li>Strategic decision-making</li><li>Stakeholder relationship management</li><li>Creative ideation &amp; innovation</li><li>Ethical judgement &amp; oversight</li><li>Team leadership &amp; motivation</li><li>Complex negotiation</li></ul>
-                        </div>
+                    <div class="card">
+                        <h4>Healthcare</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Diagnostic imaging analysis</li>
+                            <li>Drug discovery acceleration</li>
+                            <li>Patient triage optimisation</li>
+                            <li>Clinical documentation</li>
+                        </ul>
                     </div>
-                    <div class="warning-box" style="margin-top: 15px;"><strong>Reality Check:</strong> The risk is not "AI takes my job" -- it is "someone using AI takes my job." Upskilling is essential.</div>
-                </section>
-                <section>
-                    <h2>Skills for the AI Era</h2>
-                    <p>The new professional skill stack</p>
-                    <div class="three-column" style="margin-top: 20px;">
-                        <div class="card"><h4>AI Literacy</h4><ul style="font-size: 0.8em;"><li>Understanding AI capabilities</li><li>Prompt engineering basics</li><li>Knowing when to use AI</li><li>Evaluating AI outputs</li></ul></div>
-                        <div class="card"><h4>Critical Thinking</h4><ul style="font-size: 0.8em;"><li>Verifying AI-generated work</li><li>Identifying biases in data</li><li>Asking the right questions</li><li>Human-in-the-loop judgement</li></ul></div>
-                        <div class="card"><h4>Adaptability</h4><ul style="font-size: 0.8em;"><li>Continuous learning mindset</li><li>Embracing new workflows</li><li>Cross-functional collaboration</li><li>Change leadership</li></ul></div>
+                    <div class="card">
+                        <h4>Manufacturing</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Predictive maintenance</li>
+                            <li>Quality control automation</li>
+                            <li>Supply chain optimisation</li>
+                            <li>Demand forecasting</li>
+                        </ul>
                     </div>
-                    <div class="tip-box" style="margin-top: 15px;"><strong>Action Item:</strong> Audit your team's current skill gaps against these three pillars. Where are the biggest opportunities?</div>
-                </section>
+                </div>
+                <div class="warning-box" style="margin-top: 15px;">
+                    <strong>Ireland-Specific:</strong> IDA Ireland's 2025-2029 strategy identifies AI &amp; Digitalisation as one of four strategic growth pillars for FDI. Total FDI investments were up ~38% year-over-year in 2024. <span style="font-size: 0.75em; color: #999;">(Source: IDA Ireland Annual Report 2024; IDA Strategy 2025-2029)</span>
+                </div>
             </section>
-            <!-- Section 2: LAUNCH Framework (7 vertical) -->
+
+            <!-- 1.3: How Jobs Are Changing -->
             <section>
-                <section>
-                    <h2>The LAUNCH Framework</h2>
-                    <p>A proven methodology for rolling out AI successfully</p>
-                    <div class="launch-circle">
-                        <div class="launch-center">LAUNCH</div>
-                        <div class="launch-item"><span>L</span><span>Landscape Assessment</span></div>
-                        <div class="launch-item"><span>A</span><span>Alignment with Strategy</span></div>
-                        <div class="launch-item"><span>U</span><span>Upskilling Workforce</span></div>
-                        <div class="launch-item"><span>N</span><span>Navigate Change</span></div>
-                        <div class="launch-item"><span>C</span><span>Champion Quick Wins</span></div>
-                        <div class="launch-item"><span>H</span><span>Harvest &amp; Scale</span></div>
+                <h2>How Jobs Are Changing</h2>
+                <p>AI transforms roles rather than eliminating them</p>
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <h4 style="color: var(--accent-green);">Tasks AI Augments</h4>
+                        <ul style="font-size: 0.85em;">
+                            <li>Data analysis &amp; reporting</li>
+                            <li>Content drafting &amp; summarisation</li>
+                            <li>Customer support triage</li>
+                            <li>Code generation &amp; review</li>
+                            <li>Scheduling &amp; logistics</li>
+                            <li>Market research &amp; forecasting</li>
+                        </ul>
                     </div>
-                </section>
-                <section>
-                    <h2><span class="launch-letter">L</span> Landscape Assessment</h2>
-                    <p>Understand where AI fits in your organisation today</p>
-                    <div class="two-column" style="margin-top: 20px;">
-                        <div>
-                            <div class="framework-step"><div class="step-number">1</div><div><strong>Audit existing processes:</strong> Map workflows and identify repetitive, data-heavy tasks</div></div>
-                            <div class="framework-step"><div class="step-number">2</div><div><strong>Assess data readiness:</strong> What data do you have? Is it clean, accessible, governed?</div></div>
-                            <div class="framework-step"><div class="step-number">3</div><div><strong>Evaluate infrastructure:</strong> Cloud vs. on-premise, compute capacity, security posture</div></div>
-                            <div class="framework-step"><div class="step-number">4</div><div><strong>Benchmark competitors:</strong> What are peers in your industry doing with AI?</div></div>
+                    <div>
+                        <h4 style="color: var(--accent-orange);">Tasks Requiring Humans</h4>
+                        <ul style="font-size: 0.85em;">
+                            <li>Strategic decision-making</li>
+                            <li>Stakeholder relationship management</li>
+                            <li>Creative ideation &amp; innovation</li>
+                            <li>Ethical judgement &amp; oversight</li>
+                            <li>Team leadership &amp; motivation</li>
+                            <li>Complex negotiation</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="warning-box" style="margin-top: 15px;">
+                    <strong>Reality Check:</strong> The risk is not "AI takes my job" &mdash; it is "someone using AI takes my job." Upskilling is essential.
+                </div>
+            </section>
+
+            <!-- 1.4: Skills for the AI Era -->
+            <section>
+                <h2>Skills for the AI Era</h2>
+                <p>The new professional skill stack</p>
+                <div class="three-column" style="margin-top: 20px;">
+                    <div class="card">
+                        <h4>AI Literacy</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Understanding AI capabilities</li>
+                            <li>Prompt engineering basics</li>
+                            <li>Knowing when to use AI</li>
+                            <li>Evaluating AI outputs</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>Critical Thinking</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Verifying AI-generated work</li>
+                            <li>Identifying biases in data</li>
+                            <li>Asking the right questions</li>
+                            <li>Human-in-the-loop judgement</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>Adaptability</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Continuous learning mindset</li>
+                            <li>Embracing new workflows</li>
+                            <li>Cross-functional collaboration</li>
+                            <li>Change leadership</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="exercise-box" style="margin-top: 15px;">
+                    <h4>Quick Reflection (2 minutes)</h4>
+                    <p>Think about your current role. Which of the three skill pillars above is your <strong>strongest</strong>? Which has the <strong>biggest gap</strong>? Jot down one action you could take this week to close that gap.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 2: THE LAUNCH FRAMEWORK ==================== -->
+            <!-- 2.1: LAUNCH Circle Overview -->
+            <section>
+                <h2>The LAUNCH Framework</h2>
+                <p>A proven methodology for rolling out AI successfully</p>
+                <div class="launch-grid">
+                    <div class="launch-grid-item">
+                        <div class="launch-grid-letter">L</div>
+                        <div class="launch-grid-label">Landscape<br>Assessment</div>
+                    </div>
+                    <div class="launch-grid-item">
+                        <div class="launch-grid-letter">A</div>
+                        <div class="launch-grid-label">Alignment<br>with Strategy</div>
+                    </div>
+                    <div class="launch-grid-item">
+                        <div class="launch-grid-letter">U</div>
+                        <div class="launch-grid-label">Upskilling<br>Workforce</div>
+                    </div>
+                    <div class="launch-grid-item">
+                        <div class="launch-grid-letter">N</div>
+                        <div class="launch-grid-label">Navigate<br>Change</div>
+                    </div>
+                    <div class="launch-grid-item">
+                        <div class="launch-grid-letter">C</div>
+                        <div class="launch-grid-label">Champion<br>Quick Wins</div>
+                    </div>
+                    <div class="launch-grid-item">
+                        <div class="launch-grid-letter">H</div>
+                        <div class="launch-grid-label">Harvest<br>&amp; Scale</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2.2: L - Landscape Assessment -->
+            <section>
+                <h2><span class="launch-letter">L</span> Landscape Assessment</h2>
+                <p>Understand where AI fits in your organisation today</p>
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <div class="framework-step">
+                            <div class="step-number">1</div>
+                            <div><strong>Audit existing processes:</strong> Map workflows and identify repetitive, data-heavy tasks that consume disproportionate staff time</div>
                         </div>
-                        <div>
-                            <div class="tip-box"><strong>Key Question:</strong> "Where do our people spend the most time on tasks a machine could assist with?"</div>
-                            <div class="warning-box" style="margin-top: 10px;"><strong>Common Pitfall:</strong> Jumping to solutions before understanding the problem landscape. Always assess before you act.</div>
+                        <div class="framework-step">
+                            <div class="step-number">2</div>
+                            <div><strong>Assess data readiness:</strong> What data do you have? Is it clean, accessible, and governed? Data quality is the #1 predictor of AI success</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">3</div>
+                            <div><strong>Evaluate infrastructure:</strong> Cloud vs. on-premise, compute capacity, security posture, API readiness</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">4</div>
+                            <div><strong>Benchmark competitors:</strong> What are peers in your industry doing with AI? Where are you ahead or behind?</div>
                         </div>
                     </div>
-                </section>
-                <section>
-                    <h2><span class="launch-letter">A</span> Alignment with Strategy</h2>
-                    <p>Ensure AI initiatives serve business objectives</p>
-                    <div class="two-column" style="margin-top: 20px;">
-                        <div>
-                            <div class="framework-step"><div class="step-number">1</div><div><strong>Link to business goals:</strong> Every AI project should map to a strategic objective (revenue, efficiency, CX)</div></div>
-                            <div class="framework-step"><div class="step-number">2</div><div><strong>Secure executive sponsorship:</strong> AI needs top-down support and visible champions</div></div>
-                            <div class="framework-step"><div class="step-number">3</div><div><strong>Define success metrics:</strong> Agree on KPIs <em>before</em> starting the project</div></div>
-                            <div class="framework-step"><div class="step-number">4</div><div><strong>Prioritise ruthlessly:</strong> Not every process needs AI -- focus on highest impact</div></div>
+                    <div>
+                        <div class="case-study">
+                            <h4>Why Assessment-First Works</h4>
+                            <p style="font-size: 0.85em;">BCG found that 74% of companies struggle to achieve and scale value from AI. The most common reason? Organisations jump to tool selection before understanding their process landscape and data readiness. <span style="font-size: 0.85em; color: #999;">(Source: BCG, "Where's the Value in AI?", October 2024)</span></p>
                         </div>
+                        <div class="tip-box" style="margin-top: 10px;">
+                            <strong>Key Question:</strong> "Where do our people spend the most time on tasks a machine could assist with?"
+                        </div>
+                        <div class="warning-box" style="margin-top: 10px;">
+                            <strong>Common Pitfall:</strong> Jumping to solutions before understanding the problem landscape. Always assess before you act.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2.3: A - Alignment with Strategy -->
+            <section>
+                <h2><span class="launch-letter">A</span> Alignment with Strategy</h2>
+                <p>Ensure AI initiatives serve business objectives</p>
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <div class="framework-step">
+                            <div class="step-number">1</div>
+                            <div><strong>Link to business goals:</strong> Every AI project must map to a strategic objective &mdash; revenue growth, cost reduction, or customer experience</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">2</div>
+                            <div><strong>Secure executive sponsorship:</strong> AI needs visible top-down support. Without it, projects stall at the first obstacle</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">3</div>
+                            <div><strong>Define success metrics:</strong> Agree on KPIs <em>before</em> starting. What does "good" look like in 30, 60, 90 days?</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">4</div>
+                            <div><strong>Prioritise ruthlessly:</strong> Not every process needs AI. Score opportunities on impact vs. feasibility and focus on the top 2-3</div>
+                        </div>
+                    </div>
+                    <div>
                         <div class="card">
                             <h4>Strategic Alignment Checklist</h4>
-                            <ul style="font-size: 0.8em;"><li>Does this AI initiative address a top-3 business priority?</li><li>Is there an executive sponsor committed to this?</li><li>Can we measure success within 90 days?</li><li>Do we have the data and infrastructure?</li><li>Is the team willing and able to adopt it?</li></ul>
+                            <ul style="font-size: 0.8em;">
+                                <li>Does this AI initiative address a top-3 business priority?</li>
+                                <li>Is there an executive sponsor committed to this?</li>
+                                <li>Can we measure success within 90 days?</li>
+                                <li>Do we have the data and infrastructure?</li>
+                                <li>Is the team willing and able to adopt it?</li>
+                            </ul>
+                        </div>
+                        <div class="warning-box" style="margin-top: 10px;">
+                            <strong>Anti-Pattern &mdash; The AI Island:</strong> BCG reports that only 26% of companies have moved AI beyond pilot stage. A common reason: technology teams build solutions in isolation without business alignment. <strong>Lesson:</strong> Start with the business problem, not the technology. <span style="font-size: 0.8em; color: #999;">(Source: BCG, October 2024)</span>
                         </div>
                     </div>
-                </section>
-                <section>
-                    <h2><span class="launch-letter">U</span> Upskilling the Workforce</h2>
-                    <p>People are your most important AI asset</p>
-                    <div class="two-column" style="margin-top: 20px;">
-                        <div>
-                            <div class="card">
-                                <h4>Tiered Training Approach</h4>
-                                <ul style="font-size: 0.8em;"><li><strong>All Staff:</strong> AI literacy, responsible use, prompt basics</li><li><strong>Power Users:</strong> Advanced prompting, workflow automation, tool selection</li><li><strong>Technical Teams:</strong> Fine-tuning, RAG systems, deployment, MLOps</li><li><strong>Leadership:</strong> Strategy, governance, risk management, ROI</li></ul>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="tip-box"><strong>Best Practice:</strong> Create internal "AI Champions" -- enthusiasts in each department who mentor colleagues and share use cases.</div>
-                            <div class="warning-box" style="margin-top: 10px;"><strong>Do Not:</strong> Roll out tools without training. Untrained users produce poor results, lose trust, and abandon AI entirely.</div>
-                        </div>
-                    </div>
-                </section>
-                <section>
-                    <h2><span class="launch-letter">N</span> Navigate Change Management</h2>
-                    <p>Technology is easy; people are hard</p>
-                    <div class="three-column" style="margin-top: 20px;">
-                        <div class="card"><h4>Communicate</h4><ul style="font-size: 0.8em;"><li>Be transparent about AI's role</li><li>Address job security fears directly</li><li>Share success stories early</li><li>Create feedback channels</li></ul></div>
-                        <div class="card"><h4>Involve</h4><ul style="font-size: 0.8em;"><li>Include end-users in pilot selection</li><li>Co-design workflows with teams</li><li>Let teams choose their first use case</li><li>Celebrate early adopters</li></ul></div>
-                        <div class="card"><h4>Sustain</h4><ul style="font-size: 0.8em;"><li>Track adoption metrics weekly</li><li>Address resistance with empathy</li><li>Iterate based on real feedback</li><li>Build AI into performance goals</li></ul></div>
-                    </div>
-                    <div class="tip-box" style="margin-top: 15px;"><strong>Remember:</strong> Change management accounts for over 70% of AI project failures. Invest in people as much as technology.</div>
-                </section>
-                <section>
-                    <h2><span class="launch-letter">C</span> Champion Quick Wins</h2>
-                    <p>Start small, prove value, build momentum</p>
-                    <table class="pilot-table">
-                        <tr><th>Pilot Criteria</th><th>Low Score (1-2)</th><th>High Score (4-5)</th></tr>
-                        <tr><td><strong>Business Impact</strong></td><td class="score-low">Nice to have</td><td class="score-high">Directly tied to KPI</td></tr>
-                        <tr><td><strong>Data Readiness</strong></td><td class="score-low">Data scattered/dirty</td><td class="score-high">Clean, accessible data</td></tr>
-                        <tr><td><strong>Team Enthusiasm</strong></td><td class="score-low">Resistant/sceptical</td><td class="score-high">Eager early adopters</td></tr>
-                        <tr><td><strong>Time to Value</strong></td><td class="score-low">6+ months</td><td class="score-high">Results in 2-4 weeks</td></tr>
-                        <tr><td><strong>Risk Level</strong></td><td class="score-low">Customer-facing/regulated</td><td class="score-high">Internal, low-risk process</td></tr>
-                    </table>
-                    <div class="tip-box" style="margin-top: 10px;"><strong>Ideal First Pilot:</strong> An internal process with an enthusiastic team, clean data, and measurable results within 30 days.</div>
-                </section>
-                <section>
-                    <h2><span class="launch-letter">H</span> Harvest &amp; Scale</h2>
-                    <p>Turn pilot successes into organisation-wide transformation</p>
-                    <div class="two-column" style="margin-top: 20px;">
-                        <div>
-                            <div class="framework-step"><div class="step-number">1</div><div><strong>Document learnings:</strong> Capture what worked, what didn't, and why</div></div>
-                            <div class="framework-step"><div class="step-number">2</div><div><strong>Standardise processes:</strong> Create repeatable playbooks for AI deployment</div></div>
-                            <div class="framework-step"><div class="step-number">3</div><div><strong>Scale horizontally:</strong> Apply successful patterns to similar use cases across departments</div></div>
-                            <div class="framework-step"><div class="step-number">4</div><div><strong>Establish governance:</strong> Create AI policies, review boards, and ethical guidelines</div></div>
-                        </div>
-                        <div>
-                            <div class="card"><h4>Scaling Checklist</h4><ul style="font-size: 0.8em;"><li>Pilot results documented and shared</li><li>ROI validated against initial metrics</li><li>Deployment playbook created</li><li>Governance framework in place</li><li>Training programme scaled</li><li>Budget allocated for next phase</li></ul></div>
-                            <div class="tip-box" style="margin-top: 10px;"><strong>Key:</strong> Scaling is not about doing more -- it is about doing what works, better and broader.</div>
-                        </div>
-                    </div>
-                </section>
-            </section>
-            <!-- Section 3: AI Readiness & Rollout (3 vertical) -->
-            <section>
-                <section>
-                    <h2>AI Readiness Assessment</h2>
-                    <p>How ready is your organisation for AI?</p>
-                    <div class="readiness-radar">
-                        <div class="radar-dimension"><div class="radar-label">Data Maturity</div><div class="radar-bar-bg"><div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--itag-light)); --fill-width: 65%;"></div></div><div class="radar-score" style="color: var(--accent-orange);">65%</div></div>
-                        <div class="radar-dimension"><div class="radar-label">Infrastructure</div><div class="radar-bar-bg"><div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--itag-light)); --fill-width: 55%;"></div></div><div class="radar-score" style="color: var(--accent-orange);">55%</div></div>
-                        <div class="radar-dimension"><div class="radar-label">Skills &amp; Talent</div><div class="radar-bar-bg"><div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--accent-green)); --fill-width: 40%;"></div></div><div class="radar-score" style="color: #ff6666;">40%</div></div>
-                        <div class="radar-dimension"><div class="radar-label">Leadership Buy-in</div><div class="radar-bar-bg"><div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--accent-green)); --fill-width: 80%;"></div></div><div class="radar-score" style="color: var(--accent-green);">80%</div></div>
-                        <div class="radar-dimension"><div class="radar-label">Governance</div><div class="radar-bar-bg"><div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--accent-orange)); --fill-width: 30%;"></div></div><div class="radar-score" style="color: #ff6666;">30%</div></div>
-                    </div>
-                    <div class="warning-box" style="margin-top: 10px;"><strong>Sample scores shown above.</strong> In the interactive exercise, you will rate your own organisation across these dimensions.</div>
-                </section>
-                <section>
-                    <h2>90-Day Rollout Template</h2>
-                    <p>A structured plan to go from assessment to results</p>
-                    <div class="timeline">
-                        <div class="timeline-item"><div class="timeline-week">Weeks 1-2</div><div class="timeline-content"><h5>Assess &amp; Align</h5><p>Complete readiness assessment, identify pilot candidates, secure executive sponsor, set success metrics</p></div></div>
-                        <div class="timeline-item"><div class="timeline-week">Weeks 3-6</div><div class="timeline-content"><h5>Pilot &amp; Learn</h5><p>Launch first AI pilot with selected team, provide hands-on training, collect feedback weekly, iterate rapidly</p></div></div>
-                        <div class="timeline-item"><div class="timeline-week">Weeks 7-12</div><div class="timeline-content"><h5>Evaluate &amp; Scale</h5><p>Measure ROI against KPIs, document playbook, expand to next departments, establish ongoing governance</p></div></div>
-                    </div>
-                    <div class="tip-box" style="margin-top: 10px;"><strong>Pro Tip:</strong> Set a "Week 4 checkpoint" -- if the pilot is not showing early signals of value, pivot rather than persist.</div>
-                </section>
-                <section>
-                    <h2>Common Rollout Pitfalls</h2>
-                    <p>Learn from others' mistakes</p>
-                    <div class="two-column" style="margin-top: 20px;">
-                        <div>
-                            <div class="warning-box"><strong>1. "Boiling the ocean"</strong><p style="font-size: 0.85em;">Trying to transform everything at once. Start with one focused pilot.</p></div>
-                            <div class="warning-box"><strong>2. Ignoring data quality</strong><p style="font-size: 0.85em;">AI is only as good as the data it works with. Clean data first.</p></div>
-                            <div class="warning-box"><strong>3. No executive sponsor</strong><p style="font-size: 0.85em;">Without top-level backing, AI projects stall at the first obstacle.</p></div>
-                        </div>
-                        <div>
-                            <div class="warning-box"><strong>4. Tool-first thinking</strong><p style="font-size: 0.85em;">Buying tools before defining the problem. Always start with the use case.</p></div>
-                            <div class="warning-box"><strong>5. Skipping change management</strong><p style="font-size: 0.85em;">Great technology fails without people adoption. Invest in training and communication.</p></div>
-                            <div class="tip-box"><strong>Antidote:</strong> Follow the LAUNCH framework step by step. Each phase builds on the previous one.</div>
-                        </div>
-                    </div>
-                </section>
-            </section>
-            <!-- Section 4: Measuring AI ROI (2 vertical) -->
-            <section>
-                <section>
-                    <h2>AI ROI Framework</h2>
-                    <p>Measuring the return on your AI investment</p>
-                    <table class="comparison-table" style="margin-top: 20px;">
-                        <tr><th>Metric Category</th><th>What to Measure</th><th>Example KPIs</th></tr>
-                        <tr><td><strong>Efficiency</strong></td><td>Time saved on automated tasks</td><td>Hours saved/week, processing speed increase</td></tr>
-                        <tr><td><strong>Quality</strong></td><td>Improvement in output accuracy</td><td>Error rate reduction, consistency scores</td></tr>
-                        <tr><td><strong>Revenue</strong></td><td>New or increased revenue from AI</td><td>Conversion uplift, new product revenue</td></tr>
-                        <tr><td><strong>Cost</strong></td><td>Reduction in operational costs</td><td>Cost per transaction, headcount reallocation</td></tr>
-                        <tr><td><strong>Experience</strong></td><td>Customer and employee satisfaction</td><td>NPS change, employee engagement scores</td></tr>
-                        <tr><td><strong>Innovation</strong></td><td>New capabilities enabled by AI</td><td>New features launched, time-to-market reduction</td></tr>
-                    </table>
-                    <div class="tip-box" style="margin-top: 10px;"><strong>Baseline First:</strong> Always measure your "before" state so you can prove the impact of "after."</div>
-                </section>
-                <section>
-                    <h2>Building Your AI Dashboard</h2>
-                    <p>Track what matters with a simple AI impact scorecard</p>
-                    <div class="four-column" style="margin-top: 25px;">
-                        <div class="stat-card" style="border-top-color: var(--accent-green);"><div class="stat-number" style="color: var(--accent-green);">12h</div><div class="stat-label">Hours Saved per Week</div></div>
-                        <div class="stat-card" style="border-top-color: var(--itag-light);"><div class="stat-number">94%</div><div class="stat-label">Output Accuracy Rate</div></div>
-                        <div class="stat-card" style="border-top-color: var(--accent-orange);"><div class="stat-number" style="color: var(--accent-orange);">3.2x</div><div class="stat-label">ROI on AI Investment</div></div>
-                        <div class="stat-card" style="border-top-color: var(--accent-green);"><div class="stat-number" style="color: var(--accent-green);">+18</div><div class="stat-label">Employee NPS Improvement</div></div>
-                    </div>
-                    <div class="two-column" style="margin-top: 25px;">
-                        <div class="tip-box"><strong>Weekly Cadence:</strong> Review dashboard weekly during pilot, monthly once scaled. Share with stakeholders.</div>
-                        <div class="card"><h4>Dashboard Best Practices</h4><ul style="font-size: 0.8em;"><li>Limit to 5-8 key metrics</li><li>Include leading <em>and</em> lagging indicators</li><li>Show trend lines, not just snapshots</li><li>Tie every metric to a business outcome</li></ul></div>
-                    </div>
-                </section>
-            </section>
-            <!-- Section 5: Interactive (2 vertical) -->
-            <section>
-                <section>
-                    <h2>Interactive: AI Readiness Assessment</h2>
-                    <div class="exercise-box">
-                        <h4>Your Organisation's AI Readiness (10 minutes)</h4>
-                        <p>Rate your organisation on each dimension from 1 (not ready) to 5 (fully ready):</p>
-                        <div class="two-column" style="margin-top: 15px;">
-                            <div><ul style="font-size: 0.85em;"><li><strong>Data Maturity:</strong> Is your data clean, accessible, and governed?</li><li><strong>Infrastructure:</strong> Do you have the cloud/compute needed?</li><li><strong>Skills &amp; Talent:</strong> Can your team work with AI tools?</li></ul></div>
-                            <div><ul style="font-size: 0.85em;"><li><strong>Leadership Buy-in:</strong> Is there executive support and budget?</li><li><strong>Governance:</strong> Are AI policies and ethics frameworks in place?</li><li><strong>Culture:</strong> Is the organisation open to AI-driven change?</li></ul></div>
-                        </div>
-                    </div>
-                    <div class="tip-box" style="margin-top: 15px;"><strong>Scoring Guide:</strong> 25-30 = Ready to scale | 18-24 = Ready to pilot | 12-17 = Foundation building | &lt;12 = Start with awareness</div>
-                </section>
-                <section>
-                    <h2>Group Discussion</h2>
-                    <p>Share your assessment and discuss with your table</p>
-                    <div class="three-column" style="margin-top: 25px;">
-                        <div class="card" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><h4>Biggest Strength?</h4><p style="font-size: 0.85em;">Which dimension scored highest? How can you leverage it to accelerate AI adoption?</p></div>
-                        <div class="card" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><h4>Biggest Gap?</h4><p style="font-size: 0.85em;">Which area needs the most improvement? What is one action you could take this week?</p></div>
-                        <div class="card" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><h4>First Pilot Idea?</h4><p style="font-size: 0.85em;">Based on your assessment, what would be an ideal first AI pilot for your team?</p></div>
-                    </div>
-                    <div class="exercise-box" style="margin-top: 25px;"><h4>Table Exercise (10 minutes)</h4><p>Each person shares their top score, lowest score, and one pilot idea. The group selects the best pilot to present to the room.</p></div>
-                </section>
-            </section>
-            <!-- Slide 20: Continue Journey -->
-            <section>
-                <h2>Continue Your AI Journey</h2>
-                <div class="two-column" style="margin-top: 30px;">
-                    <div class="card"><h4>Key Takeaways</h4><ul style="font-size: 0.85em;"><li>AI transforms tasks, not entire jobs</li><li>Use the <strong>LAUNCH</strong> framework for rollout</li><li>Start small with quick wins</li><li>Invest in people as much as technology</li><li>Measure ROI from day one</li></ul></div>
-                    <div class="card"><h4>Your Action Items</h4><ul style="font-size: 0.85em;"><li>Complete the AI readiness assessment for your team</li><li>Identify your first AI pilot candidate</li><li>Secure an executive sponsor</li><li>Begin upskilling with AI literacy basics</li><li>Set a 90-day rollout target date</li></ul></div>
                 </div>
-                <div class="tip-box" style="margin-top: 25px;"><h4 style="margin-top: 0;">ITAG Skillnet AI Advantage Programme</h4><p>This seminar is part of a comprehensive AI upskilling initiative. Additional workshops and resources are available through your organisation.</p></div>
             </section>
-            <!-- Slide 21: Thank You -->
+
+            <!-- 2.4: U - Upskilling the Workforce -->
             <section>
-                <h2>Thank You!</h2>
-                <div style="margin-top: 50px;">
-                    <p style="font-size: 1.2em;">AI's Impact on Work &amp; Rolling Out AI Successfully</p>
-                    <p style="color: var(--itag-light);">ITAG Skillnet AI Advantage</p>
+                <h2><span class="launch-letter">U</span> Upskilling the Workforce</h2>
+                <p>People are your most important AI asset</p>
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <div class="card">
+                            <h4>Tiered Training Approach</h4>
+                            <table class="comparison-table" style="font-size: 0.85em; margin: 10px 0;">
+                                <tr><th>Tier</th><th>Who</th><th>What</th></tr>
+                                <tr><td><strong>Foundation</strong></td><td>All staff</td><td>AI literacy, responsible use, prompt basics</td></tr>
+                                <tr><td><strong>Practitioner</strong></td><td>Power users</td><td>Advanced prompting, workflow automation, tool selection</td></tr>
+                                <tr><td><strong>Technical</strong></td><td>IT &amp; data teams</td><td>Fine-tuning, RAG, deployment, MLOps</td></tr>
+                                <tr><td><strong>Strategic</strong></td><td>Leadership</td><td>Governance, risk, ROI, vendor management</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tip-box">
+                            <strong>Best Practice:</strong> Create internal "AI Champions" &mdash; enthusiastic early adopters in each department who mentor colleagues, share use cases, and serve as the bridge between IT and business.
+                        </div>
+                        <div class="warning-box" style="margin-top: 10px;">
+                            <strong>Do Not:</strong> Roll out tools without training. Workday research found that nearly 40% of time saved by AI is lost to rework &mdash; correcting errors, rewriting content, and verifying outputs. <span style="font-size: 0.8em; color: #999;">(Source: Workday, "Beyond Productivity," January 2026)</span>
+                        </div>
+                        <div class="case-study" style="margin-top: 10px;">
+                            <h4>Training Drives Adoption</h4>
+                            <p style="font-size: 0.85em;">BCG found that 79% of employees who received 5+ hours of AI training became regular users, compared with just 67% of those who received less. 48% of employees rank training as the most crucial factor for gen AI adoption. <span style="font-size: 0.85em; color: #999;">(Source: BCG, "AI at Work," 2025)</span></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="tip-box" style="margin-top: 40px;"><strong>Remember:</strong> The organisations that succeed with AI are not those with the best technology -- they are those that <em>LAUNCH</em> with the right strategy, the right skills, and the right culture.</div>
             </section>
+
+            <!-- 2.5: N - Navigate Change Management -->
+            <section>
+                <h2><span class="launch-letter">N</span> Navigate Change Management</h2>
+                <p>Technology is easy; people are hard</p>
+                <div class="three-column" style="margin-top: 20px;">
+                    <div class="card">
+                        <h4>Communicate</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Be transparent about AI's role</li>
+                            <li>Address job security fears directly and honestly</li>
+                            <li>Share success stories early and often</li>
+                            <li>Create open feedback channels</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>Involve</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Include end-users in pilot selection</li>
+                            <li>Co-design new workflows with teams</li>
+                            <li>Let teams choose their first use case</li>
+                            <li>Celebrate and reward early adopters</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>Sustain</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Track adoption metrics weekly</li>
+                            <li>Address resistance with empathy</li>
+                            <li>Iterate based on real feedback</li>
+                            <li>Build AI literacy into performance goals</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="two-column" style="margin-top: 15px;">
+                    <div class="tip-box">
+                        <strong>The Adoption Gap:</strong> BCG reports that 74% of companies struggle to achieve and scale value from AI. NTT DATA found 70-85% of gen AI deployments fail to meet desired ROI &mdash; often due to insufficient change management. Invest in people as much as technology. <span style="font-size: 0.8em; color: #999;">(Sources: BCG, Oct 2024; NTT DATA, 2024)</span>
+                    </div>
+                    <div class="warning-box">
+                        <strong>Resistance Is Data:</strong> When people push back, they are telling you something. Listen for legitimate concerns about workflow, workload, or job security &mdash; and address them.
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2.6: C - Champion Quick Wins -->
+            <section>
+                <h2><span class="launch-letter">C</span> Champion Quick Wins</h2>
+                <p>Start small, prove value, build momentum</p>
+                <table class="pilot-table">
+                    <tr><th>Pilot Criteria</th><th>Low Score (1-2)</th><th>High Score (4-5)</th></tr>
+                    <tr>
+                        <td><strong>Business Impact</strong></td>
+                        <td class="score-low">Nice to have</td>
+                        <td class="score-high">Directly tied to KPI</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Readiness</strong></td>
+                        <td class="score-low">Data scattered/dirty</td>
+                        <td class="score-high">Clean, accessible data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Team Enthusiasm</strong></td>
+                        <td class="score-low">Resistant/sceptical</td>
+                        <td class="score-high">Eager early adopters</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Time to Value</strong></td>
+                        <td class="score-low">6+ months</td>
+                        <td class="score-high">Results in 2-4 weeks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Level</strong></td>
+                        <td class="score-low">Customer-facing/regulated</td>
+                        <td class="score-high">Internal, low-risk process</td>
+                    </tr>
+                </table>
+                <div class="two-column" style="margin-top: 10px;">
+                    <div class="tip-box">
+                        <strong>Ideal First Pilot:</strong> An internal process with an enthusiastic team, clean data, and measurable results within 30 days. Quick wins create the political capital for bigger initiatives.
+                    </div>
+                    <div class="case-study">
+                        <h4>Why Quick Wins Matter</h4>
+                        <p style="font-size: 0.85em;">In a BCG financial services case study, 85% of participants reported using AI more frequently after a structured pilot programme, and 98% generated new use case ideas. Quick wins create the evidence that funds bigger initiatives. <span style="font-size: 0.85em; color: #999;">(Source: BCG, "To Unlock the Full Value of AI, Invest in Your People," 2025)</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2.7: H - Harvest & Scale -->
+            <section>
+                <h2><span class="launch-letter">H</span> Harvest &amp; Scale</h2>
+                <p>Turn pilot successes into organisation-wide transformation</p>
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <div class="framework-step">
+                            <div class="step-number">1</div>
+                            <div><strong>Document learnings:</strong> Capture what worked, what didn't, and why. Create a knowledge base for future initiatives</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">2</div>
+                            <div><strong>Standardise processes:</strong> Create repeatable playbooks for AI deployment that other teams can follow</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">3</div>
+                            <div><strong>Scale horizontally:</strong> Apply successful patterns to similar use cases across departments</div>
+                        </div>
+                        <div class="framework-step">
+                            <div class="step-number">4</div>
+                            <div><strong>Establish governance:</strong> Create AI policies, review boards, ethical guidelines, and compliance frameworks</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <h4>Scaling Checklist</h4>
+                            <ul style="font-size: 0.8em;">
+                                <li>Pilot results documented and shared widely</li>
+                                <li>ROI validated against initial metrics</li>
+                                <li>Deployment playbook created for other teams</li>
+                                <li>Governance framework in place</li>
+                                <li>Training programme scaled across organisation</li>
+                                <li>Budget allocated for next phase</li>
+                            </ul>
+                        </div>
+                        <div class="tip-box" style="margin-top: 10px;">
+                            <strong>Key:</strong> Scaling is not about doing more &mdash; it is about doing what works, better and broader. Let your quick wins tell the story.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2.8: LAUNCH Summary -->
+            <section>
+                <h2>LAUNCH at a Glance</h2>
+                <p>Your six-step roadmap from assessment to scale</p>
+                <table class="comparison-table" style="margin-top: 15px;">
+                    <tr><th>Phase</th><th>Focus</th><th>Key Output</th><th>Typical Duration</th></tr>
+                    <tr>
+                        <td><strong style="color: var(--itag-light);">L</strong> &mdash; Landscape</td>
+                        <td>Audit processes, data, infrastructure</td>
+                        <td>AI opportunity map</td>
+                        <td>Weeks 1-2</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: var(--itag-light);">A</strong> &mdash; Alignment</td>
+                        <td>Link to strategy, secure sponsorship</td>
+                        <td>Prioritised initiative list</td>
+                        <td>Week 3</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: var(--itag-light);">U</strong> &mdash; Upskilling</td>
+                        <td>Train teams, build AI literacy</td>
+                        <td>Training plan &amp; AI champions</td>
+                        <td>Weeks 3-6</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: var(--itag-light);">N</strong> &mdash; Navigate</td>
+                        <td>Manage change, communicate</td>
+                        <td>Comms plan &amp; feedback loops</td>
+                        <td>Weeks 3-12</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: var(--itag-light);">C</strong> &mdash; Champion</td>
+                        <td>Run pilots, prove value</td>
+                        <td>Pilot results &amp; business case</td>
+                        <td>Weeks 4-8</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: var(--itag-light);">H</strong> &mdash; Harvest</td>
+                        <td>Scale successes, govern</td>
+                        <td>Playbooks &amp; governance</td>
+                        <td>Weeks 8-12+</td>
+                    </tr>
+                </table>
+                <div class="tip-box" style="margin-top: 10px;">
+                    <strong>Remember:</strong> LAUNCH is iterative, not waterfall. Phases overlap. You can revisit earlier phases as you learn more. The goal is continuous improvement, not perfection.
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 3: AI READINESS & ROLLOUT ==================== -->
+            <!-- 3.1: AI Readiness Assessment -->
+            <section>
+                <h2>AI Readiness Assessment</h2>
+                <p>How ready is your organisation for AI?</p>
+                <div class="readiness-radar">
+                    <div class="radar-dimension">
+                        <div class="radar-label">Data Maturity</div>
+                        <div class="radar-bar-bg">
+                            <div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--itag-light)); --fill-width: 65%;"></div>
+                        </div>
+                        <div class="radar-score" style="color: var(--accent-orange);">65%</div>
+                    </div>
+                    <div class="radar-dimension">
+                        <div class="radar-label">Infrastructure</div>
+                        <div class="radar-bar-bg">
+                            <div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--itag-light)); --fill-width: 55%;"></div>
+                        </div>
+                        <div class="radar-score" style="color: var(--accent-orange);">55%</div>
+                    </div>
+                    <div class="radar-dimension">
+                        <div class="radar-label">Skills &amp; Talent</div>
+                        <div class="radar-bar-bg">
+                            <div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--accent-green)); --fill-width: 40%;"></div>
+                        </div>
+                        <div class="radar-score" style="color: #ff6666;">40%</div>
+                    </div>
+                    <div class="radar-dimension">
+                        <div class="radar-label">Leadership Buy-in</div>
+                        <div class="radar-bar-bg">
+                            <div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--accent-green)); --fill-width: 80%;"></div>
+                        </div>
+                        <div class="radar-score" style="color: var(--accent-green);">80%</div>
+                    </div>
+                    <div class="radar-dimension">
+                        <div class="radar-label">Governance</div>
+                        <div class="radar-bar-bg">
+                            <div class="radar-bar-fill" style="background: linear-gradient(90deg, var(--itag-blue), var(--accent-orange)); --fill-width: 30%;"></div>
+                        </div>
+                        <div class="radar-score" style="color: #ff6666;">30%</div>
+                    </div>
+                </div>
+                <div class="warning-box" style="margin-top: 10px;">
+                    <strong>Sample scores shown above.</strong> In the interactive exercise, you will rate your own organisation across these dimensions using our AI Readiness Assessment Tool.
+                </div>
+            </section>
+
+            <!-- 3.2: 90-Day Rollout Template -->
+            <section>
+                <h2>90-Day Rollout Template</h2>
+                <p>A structured plan to go from assessment to results</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-week">Weeks 1-2</div>
+                        <div class="timeline-content">
+                            <h5>L &amp; A &mdash; Assess &amp; Align</h5>
+                            <p>Complete readiness assessment, audit top processes, identify 3 pilot candidates, secure executive sponsor, define success metrics for each candidate</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-week">Weeks 3-4</div>
+                        <div class="timeline-content">
+                            <h5>U &amp; N &mdash; Prepare &amp; Communicate</h5>
+                            <p>Run AI literacy workshops, appoint AI champions, announce pilot to stakeholders, establish feedback channels, set up tools and environments</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-week">Weeks 5-8</div>
+                        <div class="timeline-content">
+                            <h5>C &mdash; Pilot &amp; Learn</h5>
+                            <p>Launch first pilot with selected team, provide hands-on coaching, collect feedback weekly, track KPIs, iterate rapidly. Week 6 checkpoint: pivot or proceed?</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-week">Weeks 9-12</div>
+                        <div class="timeline-content">
+                            <h5>H &mdash; Evaluate &amp; Scale</h5>
+                            <p>Measure ROI against KPIs, document playbook, present results to leadership, expand to next 2-3 departments, establish ongoing governance</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-box" style="margin-top: 10px;">
+                    <strong>Pro Tip:</strong> Set a "Week 6 checkpoint" &mdash; if the pilot is not showing early signals of value, pivot rather than persist. Failing fast is cheaper than failing slow.
+                </div>
+            </section>
+
+            <!-- 3.3: Common Rollout Pitfalls -->
+            <section>
+                <h2>Common Rollout Pitfalls</h2>
+                <p>Learn from others' mistakes</p>
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <div class="warning-box">
+                            <strong>1. "Boiling the ocean"</strong>
+                            <p style="font-size: 0.85em;">Trying to transform everything at once. Start with one focused pilot and build from there.</p>
+                        </div>
+                        <div class="warning-box">
+                            <strong>2. Ignoring data quality</strong>
+                            <p style="font-size: 0.85em;">AI is only as good as the data it works with. Clean your data first, or your AI will confidently produce rubbish.</p>
+                        </div>
+                        <div class="warning-box">
+                            <strong>3. No executive sponsor</strong>
+                            <p style="font-size: 0.85em;">Without top-level backing and budget commitment, AI projects stall at the first obstacle.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="warning-box">
+                            <strong>4. Tool-first thinking</strong>
+                            <p style="font-size: 0.85em;">Buying tools before defining the problem. "We need ChatGPT" is not a strategy. Start with the use case.</p>
+                        </div>
+                        <div class="warning-box">
+                            <strong>5. Skipping change management</strong>
+                            <p style="font-size: 0.85em;">Great technology fails without people adoption. Invest in training and communication from day one.</p>
+                        </div>
+                        <div class="tip-box">
+                            <strong>Antidote:</strong> Follow the LAUNCH framework step by step. Each phase builds on the previous one, preventing these pitfalls systematically.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 4: MEASURING AI ROI ==================== -->
+            <!-- 4.1: AI ROI Framework -->
+            <section>
+                <h2>Measuring AI Success &amp; ROI</h2>
+                <p>What gets measured gets managed</p>
+                <table class="comparison-table" style="margin-top: 20px;">
+                    <tr><th>Metric Category</th><th>What to Measure</th><th>Example KPIs</th></tr>
+                    <tr>
+                        <td><strong>Efficiency</strong></td>
+                        <td>Time saved on automated tasks</td>
+                        <td>Hours saved/week, processing speed increase</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Quality</strong></td>
+                        <td>Improvement in output accuracy</td>
+                        <td>Error rate reduction, consistency scores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Revenue</strong></td>
+                        <td>New or increased revenue from AI</td>
+                        <td>Conversion uplift, new product revenue</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cost</strong></td>
+                        <td>Reduction in operational costs</td>
+                        <td>Cost per transaction, licence ROI</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Experience</strong></td>
+                        <td>Customer and employee satisfaction</td>
+                        <td>NPS change, employee engagement scores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Innovation</strong></td>
+                        <td>New capabilities enabled by AI</td>
+                        <td>New features launched, time-to-market reduction</td>
+                    </tr>
+                </table>
+                <div class="tip-box" style="margin-top: 10px;">
+                    <strong>Baseline First:</strong> Always measure your "before" state so you can prove the impact of "after." Without a baseline, you have opinions, not evidence.
+                </div>
+            </section>
+
+            <!-- 4.2: AI Dashboard -->
+            <section>
+                <h2>Building Your AI Dashboard</h2>
+                <p>Track what matters with a simple AI impact scorecard</p>
+                <div class="four-column" style="margin-top: 25px;">
+                    <div class="stat-card" style="border-top-color: var(--accent-green);">
+                        <div class="stat-number" style="color: var(--accent-green);">12h</div>
+                        <div class="stat-label">Hours Saved per Week</div>
+                    </div>
+                    <div class="stat-card" style="border-top-color: var(--itag-light);">
+                        <div class="stat-number">94%</div>
+                        <div class="stat-label">Output Accuracy Rate</div>
+                    </div>
+                    <div class="stat-card" style="border-top-color: var(--accent-orange);">
+                        <div class="stat-number" style="color: var(--accent-orange);">3.2x</div>
+                        <div class="stat-label">ROI on AI Investment</div>
+                    </div>
+                    <div class="stat-card" style="border-top-color: var(--accent-green);">
+                        <div class="stat-number" style="color: var(--accent-green);">+18</div>
+                        <div class="stat-label">Employee NPS Improvement</div>
+                    </div>
+                </div>
+                <div class="two-column" style="margin-top: 25px;">
+                    <div class="tip-box">
+                        <strong>Weekly Cadence:</strong> Review your dashboard weekly during the pilot phase, monthly once scaled. Share transparently with all stakeholders.
+                    </div>
+                    <div class="card">
+                        <h4>Dashboard Best Practices</h4>
+                        <ul style="font-size: 0.8em;">
+                            <li>Limit to 5-8 key metrics</li>
+                            <li>Include leading <em>and</em> lagging indicators</li>
+                            <li>Show trend lines, not just snapshots</li>
+                            <li>Tie every metric to a business outcome</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 5: INTERACTIVE EXERCISES ==================== -->
+            <!-- 5.1: Individual Assessment -->
+            <section>
+                <h2>Interactive: AI Readiness Assessment</h2>
+                <div class="exercise-box">
+                    <h4>Your Organisation's AI Readiness (10 minutes)</h4>
+                    <p>Rate your organisation on each dimension from 1 (not ready) to 5 (fully ready):</p>
+                    <div class="two-column" style="margin-top: 15px;">
+                        <div>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Data Maturity:</strong> Is your data clean, accessible, and governed?</li>
+                                <li><strong>Infrastructure:</strong> Do you have the cloud/compute resources needed?</li>
+                                <li><strong>Skills &amp; Talent:</strong> Can your team work effectively with AI tools?</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <ul style="font-size: 0.85em;">
+                                <li><strong>Leadership Buy-in:</strong> Is there executive support and budget?</li>
+                                <li><strong>Governance:</strong> Are AI policies and ethics frameworks in place?</li>
+                                <li><strong>Culture:</strong> Is the organisation open to AI-driven change?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-box" style="margin-top: 15px;">
+                    <strong>Scoring Guide:</strong> 25-30 = Ready to scale | 18-24 = Ready to pilot | 12-17 = Foundation building | &lt;12 = Start with awareness
+                </div>
+            </section>
+
+            <!-- 5.2: Group Discussion -->
+            <section>
+                <h2>Group Discussion</h2>
+                <p>Share your assessment and discuss with your table</p>
+                <div class="three-column" style="margin-top: 25px;">
+                    <div class="card" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <h4>Biggest Strength?</h4>
+                        <p style="font-size: 0.85em;">Which dimension scored highest? How can you leverage it to accelerate AI adoption?</p>
+                    </div>
+                    <div class="card" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <h4>Biggest Gap?</h4>
+                        <p style="font-size: 0.85em;">Which area needs the most improvement? What is one action you could take this week?</p>
+                    </div>
+                    <div class="card" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <h4>First Pilot Idea?</h4>
+                        <p style="font-size: 0.85em;">Based on your assessment, what would be an ideal first AI pilot for your team?</p>
+                    </div>
+                </div>
+                <div class="exercise-box" style="margin-top: 25px;">
+                    <h4>Table Exercise (10 minutes)</h4>
+                    <p>Each person shares their top score, lowest score, and one pilot idea. The group selects the best pilot to present to the room. Use the LAUNCH framework to explain <em>how</em> you would roll it out.</p>
+                </div>
+            </section>
+
+            <!-- 5.3: Action Planning -->
+            <section>
+                <h2>Your 30-Day Action Plan</h2>
+                <p>Leave with concrete next steps</p>
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <div class="card">
+                            <h4>Week 1: Quick Wins</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Try one AI tool for a real work task</li>
+                                <li>Share what you learned with a colleague</li>
+                                <li>Identify your top 3 AI-amenable processes</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="margin-top: 10px;">
+                            <h4>Week 2-3: Build Momentum</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Complete the readiness assessment with your team</li>
+                                <li>Brief your manager on your pilot idea</li>
+                                <li>Start an "AI use case" log</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card">
+                            <h4>Week 4: Commit</h4>
+                            <ul style="font-size: 0.85em;">
+                                <li>Secure an executive sponsor for your pilot</li>
+                                <li>Define 3 success metrics</li>
+                                <li>Set a pilot launch date</li>
+                            </ul>
+                        </div>
+                        <div class="exercise-box" style="margin-top: 10px;">
+                            <h4>Personal Commitment</h4>
+                            <p style="font-size: 0.85em;">Write down <strong>one thing</strong> you will do differently starting tomorrow as a result of this seminar. Share it with the person next to you.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SLIDE: CONTINUE YOUR JOURNEY ==================== -->
+            <section>
+            <h2>Continue Your AI Journey</h2>
+            <div class="two-column" style="margin-top: 30px;">
+                <div class="card">
+                    <h4>Key Takeaways</h4>
+                    <ul style="font-size: 0.85em;">
+                        <li>AI transforms <em>tasks</em>, not entire jobs</li>
+                        <li>Use the <strong>LAUNCH</strong> framework for structured rollout</li>
+                        <li>Start small with quick wins to build momentum</li>
+                        <li>Invest in people as much as technology</li>
+                        <li>Measure ROI from day one with clear baselines</li>
+                        <li>Change management is 70% of the battle</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Your Action Items</h4>
+                    <ul style="font-size: 0.85em;">
+                        <li>Complete the AI readiness assessment for your team</li>
+                        <li>Identify your first AI pilot candidate</li>
+                        <li>Secure an executive sponsor</li>
+                        <li>Begin upskilling with AI literacy basics</li>
+                        <li>Set a 90-day rollout target date</li>
+                        <li>Complete the take-home exercise workbook</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tip-box" style="margin-top: 25px;">
+                <h4 style="margin-top: 0;">ITAG Skillnet AI Advantage Programme</h4>
+                <p>This seminar is part of a comprehensive AI upskilling initiative. Additional workshops, resources, and peer learning opportunities are available through your organisation and at <strong>www.itag.ie</strong>.</p>
+            </div>
+            </section>
+
+            <!-- ==================== SLIDE: THANK YOU ==================== -->
+            <section>
+            <h2>Thank You!</h2>
+            <div style="margin-top: 50px;">
+                <p style="font-size: 1.2em;">AI's Impact on Work &amp; Rolling Out AI Successfully</p>
+                <p style="color: var(--itag-light);">ITAG Skillnet AI Advantage</p>
+            </div>
+            <div class="tip-box" style="margin-top: 40px;">
+                <strong>Remember:</strong> The organisations that succeed with AI are not those with the best technology &mdash; they are those that <em>LAUNCH</em> with the right strategy, the right skills, and the right culture.
+            </div>
+            <p style="margin-top: 30px; font-size: 0.7em; color: #666;">
+                Don't forget to complete the <strong>Take-Home Exercise Workbook</strong> to reinforce today's learning.
+            </p>
+            </section>
+
         </div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
     <script>
-        Reveal.initialize({ hash: true, slideNumber: true, transition: 'slide', plugins: [ RevealHighlight ], keyboard: { 33: function() { scrollCurrentSlide(-200); }, 34: function() { scrollCurrentSlide(200); } } });
-        function scrollCurrentSlide(amount) { const currentSlide = Reveal.getCurrentSlide(); if (currentSlide) { const scrollTarget = currentSlide.querySelector('.slide-content') || currentSlide; scrollTarget.scrollBy({ top: amount, behavior: 'smooth' }); } }
-        document.addEventListener('DOMContentLoaded', function() { document.querySelectorAll('.reveal .slides > section > section, .reveal .slides > section:not(:has(section))').forEach(function(slide) { if (slide.querySelector('.slide-content')) return; const wrapper = document.createElement('div'); wrapper.className = 'slide-content'; while (slide.firstChild) { wrapper.appendChild(slide.firstChild); } slide.appendChild(wrapper); }); });
-        function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { document.exitFullscreen(); } }
-        document.addEventListener('keydown', function(e) { if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); } if (e.key === 'PageUp' || e.keyCode === 33) { scrollCurrentSlide(-200); e.preventDefault(); } if (e.key === 'PageDown' || e.keyCode === 34) { scrollCurrentSlide(200); e.preventDefault(); } });
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ],
+            keyboard: {
+            33: function() { scrollCurrentSlide(-200); },
+            34: function() { scrollCurrentSlide(200); },
+            38: function() { scrollCurrentSlide(-150); },
+            40: function() { scrollCurrentSlide(150); }
+            }
+        });
+
+        function scrollCurrentSlide(amount) {
+            const currentSlide = Reveal.getCurrentSlide();
+            if (currentSlide) {
+            const scrollTarget = currentSlide.querySelector('.slide-content') || currentSlide;
+            scrollTarget.scrollBy({ top: amount, behavior: 'smooth' });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.reveal .slides > section').forEach(function(slide) {
+            if (slide.querySelector('.slide-content')) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slide-content';
+            while (slide.firstChild) {
+                wrapper.appendChild(slide.firstChild);
+            }
+            slide.appendChild(wrapper);
+            });
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            } else {
+            document.exitFullscreen();
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'f' || e.key === 'F') {
+            toggleFullscreen();
+            }
+            if (e.key === 'PageUp' || e.keyCode === 33) {
+            scrollCurrentSlide(-200);
+            e.preventDefault();
+            }
+            if (e.key === 'PageDown' || e.keyCode === 34) {
+            scrollCurrentSlide(200);
+            e.preventDefault();
+            }
+            if (e.key === 'ArrowDown' || e.keyCode === 40) {
+            scrollCurrentSlide(150);
+            e.preventDefault();
+            }
+            if (e.key === 'ArrowUp' || e.keyCode === 38) {
+            scrollCurrentSlide(-150);
+            e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>

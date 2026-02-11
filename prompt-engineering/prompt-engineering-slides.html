@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering Masterclass</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/night.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+    <style>
+        :root {
+            --primary: #42affa;
+            --primary-dark: #1a8ad4;
+            --accent-green: #00cc66;
+            --accent-orange: #ff9933;
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+        }
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            color: var(--primary);
+        }
+        .reveal h1 { font-size: 1.8em; margin-bottom: 0.2em; }
+        .reveal h2 {
+            font-size: 1.3em;
+            border-bottom: 2px solid var(--primary-dark);
+            padding-bottom: 6px;
+            margin-bottom: 0.3em;
+        }
+        .reveal h3 { font-size: 0.95em; margin: 0.2em 0; }
+        .reveal h4 { font-size: 0.85em; margin: 0.2em 0; }
+        .reveal p { font-size: 0.75em; margin: 0.3em 0; }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.5em;
+            border: 2px solid var(--primary-dark);
+            border-radius: 6px;
+            margin: 8px 0;
+            background: var(--bg-dark);
+            overflow: auto;
+            max-height: 300px;
+        }
+        .reveal pre code {
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            display: block;
+            overflow-x: auto;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            text-align: left;
+        }
+        .card {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-dark);
+        }
+        .card h4 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 0.85em;
+        }
+        .card p, .card li { font-size: 0.7em; }
+        .tip-box {
+            background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-green);
+            margin: 8px 0;
+            text-align: left;
+            font-size: 0.7em;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-orange);
+            margin: 8px 0;
+            text-align: left;
+            font-size: 0.7em;
+        }
+        .highlight { color: var(--accent-green); font-weight: bold; }
+        .exercise-box {
+            background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 2px solid var(--primary);
+            margin: 10px 0;
+            text-align: left;
+        }
+        .exercise-box h4 { color: var(--primary); margin-top: 0; font-size: 0.85em; }
+        .exercise-box li, .exercise-box p { font-size: 0.7em; }
+        .prompt-example {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin: 6px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.65em;
+            text-align: left;
+            overflow: auto;
+            max-height: 250px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.6em;
+        }
+        .comparison-table th {
+            background: var(--primary-dark);
+            color: white;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid #333;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: rgba(66,175,250,0.1);
+        }
+        .agenda-item {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.75em;
+        }
+        .agenda-time {
+            color: var(--primary);
+            font-weight: bold;
+            width: 60px;
+        }
+        .agenda-break {
+            color: var(--accent-orange);
+            font-style: italic;
+        }
+        ul { text-align: left; }
+        li { margin: 4px 0; font-size: 0.75em; }
+
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+        }
+        .fullscreen-btn:hover { background: var(--primary); }
+
+        /* Slide scrollbar */
+        .reveal .slides section { overflow: visible !important; }
+        .slide-content {
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 5px 15px 25px 15px;
+            box-sizing: border-box;
+        }
+        .slide-content::-webkit-scrollbar { width: 10px; }
+        .slide-content::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+        .slide-content::-webkit-scrollbar-thumb {
+            background: var(--primary-dark);
+            border-radius: 5px;
+            border: 2px solid rgba(0,0,0,0.3);
+        }
+        .slide-content::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        .slide-content {
+            scrollbar-width: auto;
+            scrollbar-color: var(--primary-dark) rgba(0,0,0,0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--primary-dark); }
+            50% { box-shadow: 0 0 20px var(--primary), 0 0 30px var(--primary-dark); }
+        }
+        @keyframes flowRight {
+            0% { transform: translateX(-10px); opacity: 0.3; }
+            50% { transform: translateX(10px); opacity: 1; }
+            100% { transform: translateX(-10px); opacity: 0.3; }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* AI Brain */
+        .ai-brain {
+            width: 100px;
+            height: 100px;
+            margin: 5px auto;
+            position: relative;
+        }
+        .brain-core {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 50%;
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .brain-ring {
+            position: absolute;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        .brain-ring:nth-child(1) { width: 55px; height: 55px; top: 22px; left: 22px; animation: spin 10s linear infinite; }
+        .brain-ring:nth-child(2) { width: 75px; height: 75px; top: 12px; left: 12px; animation: spin 15s linear infinite reverse; }
+        .brain-ring:nth-child(3) { width: 92px; height: 92px; top: 4px; left: 4px; animation: spin 20s linear infinite; }
+
+        /* CRAFT Circle - flexbox layout */
+        .craft-circle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin: 5px auto;
+        }
+        .craft-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+        .craft-row-wide { gap: 50px; }
+        .craft-center {
+            width: 90px; height: 90px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85em; font-weight: bold; letter-spacing: 1px;
+            animation: pulse 2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        .craft-item {
+            width: 75px; height: 75px;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+            border: 3px solid var(--primary-dark);
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        .craft-item span:first-child { font-size: 1.2em; font-weight: bold; color: var(--primary); }
+        .craft-item span:last-child { font-size: 0.5em; color: #aaa; margin-top: 2px; }
+        .craft-item:nth-child(1) { animation-delay: 0.1s; }
+        .craft-item:nth-child(2) { animation-delay: 0.2s; }
+        .craft-item:nth-child(3) { animation-delay: 0.3s; }
+        .craft-item:nth-child(4) { animation-delay: 0.4s; }
+        .craft-item:nth-child(5) { animation-delay: 0.5s; }
+
+        /* Technique Cards */
+        .technique-cards {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .technique-card {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+            padding: 12px 10px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-dark);
+            width: 120px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .technique-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-green);
+        }
+        .technique-card:nth-child(1) { animation-delay: 0.1s; }
+        .technique-card:nth-child(2) { animation-delay: 0.15s; }
+        .technique-card:nth-child(3) { animation-delay: 0.2s; }
+        .technique-card:nth-child(4) { animation-delay: 0.25s; }
+        .technique-card:nth-child(5) { animation-delay: 0.3s; }
+        .technique-card:nth-child(6) { animation-delay: 0.35s; }
+        .technique-card:nth-child(7) { animation-delay: 0.4s; }
+        .technique-card .icon { font-size: 1.6em; margin-bottom: 6px; }
+        .technique-card h4 { color: var(--primary); margin: 0 0 4px 0; font-size: 0.7em; }
+        .technique-card p { font-size: 0.6em; color: #aaa; margin: 0; }
+
+        /* Context Window */
+        .context-window {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 2px solid var(--primary-dark);
+            border-radius: 10px;
+            padding: 10px;
+            max-width: 650px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .context-window::before {
+            content: 'CONTEXT WINDOW';
+            position: absolute;
+            top: -10px; left: 15px;
+            background: var(--bg-dark);
+            padding: 0 8px;
+            font-size: 0.55em;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        .context-layer {
+            padding: 5px 8px;
+            margin: 3px 0;
+            border-radius: 5px;
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out forwards;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .context-layer:nth-child(1) { background: rgba(66,175,250,0.2); border-left: 3px solid var(--primary-dark); animation-delay: 0.2s; }
+        .context-layer:nth-child(2) { background: rgba(0,204,102,0.15); border-left: 3px solid var(--accent-green); animation-delay: 0.4s; }
+        .context-layer:nth-child(3) { background: rgba(255,153,51,0.15); border-left: 3px solid var(--accent-orange); animation-delay: 0.6s; }
+        .context-layer:nth-child(4) { background: rgba(153,51,255,0.15); border-left: 3px solid #9933ff; animation-delay: 0.8s; }
+        .layer-icon { font-size: 1.0em; }
+        .layer-content { flex: 1; }
+        .layer-content h5 { margin: 0; color: var(--primary); font-size: 0.65em; }
+        .layer-content p { margin: 0; font-size: 0.5em; color: #aaa; }
+
+        /* Context Stack */
+        .context-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .stack-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+            border-radius: 6px;
+            opacity: 0;
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        .stack-item:nth-child(1) { animation-delay: 0.1s; }
+        .stack-item:nth-child(2) { animation-delay: 0.2s; }
+        .stack-item:nth-child(3) { animation-delay: 0.3s; }
+        .stack-item:nth-child(4) { animation-delay: 0.4s; }
+        .stack-priority {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.7em;
+        }
+        .priority-high { background: var(--accent-green); }
+        .priority-med { background: var(--primary-dark); }
+        .priority-low { background: #666; }
+        .stack-label { flex: 1; font-size: 0.75em; }
+        .stack-tokens { font-size: 0.65em; color: #888; }
+
+        /* Prompt Evolution */
+        .prompt-evolution {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 5px 10px;
+        }
+        .prompt-stage {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            animation: fadeInLeft 0.6s ease-out forwards;
+        }
+        .prompt-stage:nth-child(1) { animation-delay: 0.2s; }
+        .prompt-stage:nth-child(2) { animation-delay: 0.6s; }
+        .prompt-stage:nth-child(3) { animation-delay: 1.0s; }
+        .stage-indicator {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1em; font-weight: bold;
+            flex-shrink: 0;
+        }
+        .stage-bad { background: linear-gradient(135deg, #660000, #990000); }
+        .stage-ok { background: linear-gradient(135deg, #665500, #998800); }
+        .stage-good { background: linear-gradient(135deg, #006633, #009944); animation: glow 2s ease-in-out infinite; }
+        .stage-content {
+            flex: 1;
+            background: #0d1117;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.6em;
+        }
+        .stage-label { font-size: 0.65em; color: #888; margin-bottom: 3px; }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+        .flow-box {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-dark);
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .flow-box h4 { margin: 0 0 3px 0; color: var(--primary); font-size: 0.75em; }
+        .flow-box p { margin: 0; font-size: 0.6em; color: #aaa; }
+        .flow-arrow {
+            font-size: 1.2em;
+            color: var(--accent-green);
+            animation: flowRight 1.5s ease-in-out infinite;
+        }
+
+        /* Context Meter */
+        .context-meter {
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px auto;
+            max-width: 550px;
+        }
+        .meter-bar {
+            height: 22px;
+            background: #0d1117;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--primary), var(--accent-orange), #ff4444);
+            border-radius: 15px;
+            width: 0;
+            animation: fillMeter 2s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+        @keyframes fillMeter {
+            0% { width: 0; }
+            100% { width: 75%; }
+        }
+        .meter-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.75em;
+            color: #888;
+        }
+
+        /* Print Styles */
+        @page { size: landscape; margin: 0; }
+        @media print {
+            .reveal .slides { width: 100% !important; height: auto !important; overflow: visible !important; transform: none !important; }
+            .reveal .slides > section {
+                width: 100% !important; height: 100vh !important; min-height: 100vh !important;
+                overflow: hidden !important; page-break-after: always !important;
+                transform: none !important; position: relative !important;
+                display: block !important; padding: 30px 40px !important;
+            }
+            .slide-content { max-height: none !important; overflow: visible !important; }
+            .two-column { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+            .three-column { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; }
+            .card, .tip-box, .warning-box, .exercise-box, .prompt-example { page-break-inside: avoid !important; }
+            .craft-item, .craft-center, .technique-card, .flow-box, .context-layer, .stack-item, .prompt-stage {
+                opacity: 1 !important; animation: none !important;
+            }
+            .fullscreen-btn { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+<!-- ============================================================ -->
+<!-- SLIDE 1: Title -->
+<!-- ============================================================ -->
+<section>
+    <div class="slide-content" style="text-align: center;">
+        <div class="ai-brain">
+            <div class="brain-ring"></div>
+            <div class="brain-ring"></div>
+            <div class="brain-ring"></div>
+            <div class="brain-core"></div>
+        </div>
+        <h1>Prompt Engineering Masterclass</h1>
+        <h3 style="color: #94a3b8;">Full-Day Interactive Workshop</h3>
+        <p style="color: #64748b; font-size: 0.8em;">Master the art and science of communicating with AI</p>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SLIDE 2: Agenda -->
+<!-- ============================================================ -->
+<section>
+    <div class="slide-content">
+        <h2>Today's Agenda</h2>
+        <div class="two-column">
+            <div>
+                <h4 style="color: var(--primary);">Morning (9:00 - 12:00)</h4>
+                <div class="agenda-item"><span class="agenda-time">9:00</span> Module 1: Introduction to Prompt Engineering</div>
+                <div class="agenda-item"><span class="agenda-time">9:30</span> Module 2: The CRAFT Framework Deep Dive</div>
+                <div class="agenda-item"><span class="agenda-time agenda-break">10:15</span> <span class="agenda-break">Break</span></div>
+                <div class="agenda-item"><span class="agenda-time">10:30</span> Module 3: Advanced Prompt Techniques</div>
+                <div class="agenda-item"><span class="agenda-time">11:15</span> Module 4: Context Engineering</div>
+            </div>
+            <div>
+                <h4 style="color: var(--primary);">Afternoon (1:00 - 4:00)</h4>
+                <div class="agenda-item"><span class="agenda-time">1:00</span> Module 5: Prompt Chains &amp; Workflows</div>
+                <div class="agenda-item"><span class="agenda-time">1:45</span> Module 6: Testing &amp; Refining Prompts</div>
+                <div class="agenda-item"><span class="agenda-time agenda-break">2:30</span> <span class="agenda-break">Break</span></div>
+                <div class="agenda-item"><span class="agenda-time">2:45</span> Module 7: Real-World Applications</div>
+                <div class="agenda-item"><span class="agenda-time">3:40</span> Wrap-Up &amp; Next Steps</div>
+            </div>
+        </div>
+        <div class="tip-box" style="margin-top: 10px;">
+            <strong>Format:</strong> Each module includes presentation content, live examples, and hands-on exercises. Two interactive labs use Jupyter notebooks.
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODULE 1: Introduction to Prompt Engineering -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 3: What Is Prompt Engineering? -->
+<section>
+    <div class="slide-content">
+        <h2>What Is Prompt Engineering?</h2>
+        <p>The discipline of designing, structuring, and refining inputs to AI language models to produce accurate, relevant, and useful outputs.</p>
+        <div class="three-column" style="margin-top: 10px;">
+            <div class="card">
+                <h4>Design</h4>
+                <p>Crafting inputs that clearly communicate your intent, context, and expectations to the model</p>
+            </div>
+            <div class="card">
+                <h4>Structure</h4>
+                <p>Organizing information so the AI can process it efficiently and prioritize what matters most</p>
+            </div>
+            <div class="card">
+                <h4>Refine</h4>
+                <p>Iteratively improving prompts based on output quality, testing, and systematic evaluation</p>
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>Key Insight:</strong> The quality of your AI output is directly proportional to the quality of your input. A well-crafted prompt transforms generic responses into expert-level deliverables.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 4: How LLMs Process Your Prompts -->
+<section>
+    <div class="slide-content">
+        <h2>How LLMs Process Your Prompts</h2>
+        <div class="flow-diagram">
+            <div class="flow-box" style="animation-delay: 0.1s;">
+                <h4>Tokenization</h4>
+                <p>Text split into tokens<br>(words &amp; subwords)</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.3s;">
+                <h4>Attention</h4>
+                <p>Model weighs token<br>relationships</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.5s;">
+                <h4>Pattern Matching</h4>
+                <p>Identifies relevant<br>training patterns</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.7s;">
+                <h4>Generation</h4>
+                <p>Tokens produced<br>one at a time</p>
+            </div>
+        </div>
+        <div class="card" style="margin-top: 10px;">
+            <h4>Why This Matters for Prompting</h4>
+            <ul>
+                <li><strong>Token order matters</strong> &mdash; information placed early in the prompt receives more attention</li>
+                <li><strong>Context is finite</strong> &mdash; every model has a maximum context window (token limit)</li>
+                <li><strong>Patterns drive output</strong> &mdash; the model generates what "looks like" a continuation of your prompt</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 5: Key LLM Parameters -->
+<section>
+    <div class="slide-content">
+        <h2>Key LLM Parameters</h2>
+        <table class="comparison-table">
+            <tr><th>Parameter</th><th>What It Controls</th><th>Range</th><th>When to Adjust</th></tr>
+            <tr><td><strong>Temperature</strong></td><td>Creativity vs consistency</td><td>0.0 &ndash; 2.0</td><td>Low (0-0.3) for facts; High (0.7-1.2) for creative work</td></tr>
+            <tr><td><strong>Max Tokens</strong></td><td>Response length limit</td><td>1 &ndash; 128K+</td><td>Set to expected output length + buffer</td></tr>
+            <tr><td><strong>Top-p</strong></td><td>Vocabulary diversity</td><td>0.0 &ndash; 1.0</td><td>Lower for precise tasks; higher for varied language</td></tr>
+            <tr><td><strong>System Message</strong></td><td>Persistent behavioral instructions</td><td>Text</td><td>Always &mdash; sets persona, rules, and constraints</td></tr>
+            <tr><td><strong>Stop Sequences</strong></td><td>When to stop generating</td><td>Text tokens</td><td>For structured output or multi-turn workflows</td></tr>
+        </table>
+        <div class="warning-box">
+            <strong>Common Mistake:</strong> Setting temperature to 0 for everything. Factual tasks need low temperature, but creative brainstorming and drafting benefit from moderate values (0.7&ndash;0.9).
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 6: The Prompt Engineering Spectrum -->
+<section>
+    <div class="slide-content">
+        <h2>The Prompt Engineering Spectrum</h2>
+        <div class="prompt-evolution">
+            <div class="prompt-stage">
+                <div class="stage-indicator stage-bad">1</div>
+                <div>
+                    <div class="stage-label">Ad Hoc &mdash; Casual, unstructured</div>
+                    <div class="stage-content">"Write me something about AI."</div>
+                </div>
+            </div>
+            <div class="prompt-stage">
+                <div class="stage-indicator stage-ok">2</div>
+                <div>
+                    <div class="stage-label">Structured &mdash; Some detail and direction</div>
+                    <div class="stage-content">"Write a 500-word article about AI in healthcare for a business audience. Include statistics."</div>
+                </div>
+            </div>
+            <div class="prompt-stage">
+                <div class="stage-indicator stage-good">3</div>
+                <div>
+                    <div class="stage-label">Professional &mdash; Full CRAFT framework applied</div>
+                    <div class="stage-content">[Context] Our hospital network serves 2M patients across 12 facilities. We're evaluating AI diagnostic tools for radiology.
+[Role] Act as a healthcare technology analyst with 10 years of experience in clinical AI adoption.
+[Action] Write a strategic briefing on AI-assisted radiology, covering current capabilities, integration challenges, and ROI expectations.
+[Format] Executive summary (3 sentences), followed by 4 sections with headers, ending with a recommendation matrix.
+[Tone] Professional, evidence-based, suitable for a C-suite audience.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 7: Exercise: Before & After -->
+<section>
+    <div class="slide-content">
+        <h2>Exercise: Your First Before &amp; After</h2>
+        <div class="exercise-box">
+            <h4>Instructions (5 minutes)</h4>
+            <ol>
+                <li>Think of a prompt you've used recently with an AI tool</li>
+                <li>Write it down as your "before" version</li>
+                <li>Identify what's missing: Is there context? A clear role? Specific format?</li>
+                <li>Write an improved "after" version adding what you identified</li>
+            </ol>
+            <p style="margin-top: 15px;"><strong>Discuss:</strong> What changed most? What do you expect will be different about the output?</p>
+        </div>
+        <div class="tip-box">
+            <strong>Tip:</strong> Don't worry about perfection yet. We'll formalize this process with the CRAFT framework in the next module.
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODULE 2: The CRAFT Framework Deep Dive -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 8: The CRAFT Framework -->
+<section>
+    <div class="slide-content">
+        <h2>The CRAFT Framework</h2>
+        <div class="craft-circle">
+            <div class="craft-row">
+                <div class="craft-item"><span>C</span><span>Context</span></div>
+            </div>
+            <div class="craft-row craft-row-wide">
+                <div class="craft-item"><span>T</span><span>Tone</span></div>
+                <div class="craft-center">CRAFT</div>
+                <div class="craft-item"><span>R</span><span>Role</span></div>
+            </div>
+            <div class="craft-row craft-row-wide">
+                <div class="craft-item"><span>F</span><span>Format</span></div>
+                <div class="craft-item"><span>A</span><span>Action</span></div>
+            </div>
+        </div>
+        <p style="text-align: center; color: #94a3b8; font-size: 0.65em;">A structured methodology for composing prompts that consistently produce high-quality outputs</p>
+    </div>
+</section>
+
+<!-- SLIDE 9: C - Context -->
+<section>
+    <div class="slide-content">
+        <h2>C: Context &mdash; Setting the Scene</h2>
+        <p>Context is the background information the AI needs to understand your situation, constraints, and domain.</p>
+        <div class="two-column" style="margin-top: 15px;">
+            <div>
+                <h4>What Context Includes</h4>
+                <ul>
+                    <li><strong>Domain</strong> &mdash; industry, field, or subject area</li>
+                    <li><strong>Situation</strong> &mdash; what's happening and why</li>
+                    <li><strong>Constraints</strong> &mdash; limitations, requirements, deadlines</li>
+                    <li><strong>Data</strong> &mdash; relevant facts, figures, or source material</li>
+                    <li><strong>Audience</strong> &mdash; who will consume the output</li>
+                </ul>
+            </div>
+            <div>
+                <p style="color: #ff6666; font-weight: bold; font-size: 0.9em;">Before:</p>
+                <div class="prompt-example" style="font-size: 0.75em;">"Write a report about our sales."</div>
+                <p style="color: var(--accent-green); font-weight: bold; font-size: 0.9em;">After:</p>
+                <div class="prompt-example" style="font-size: 0.75em;">"Our SaaS company had Q3 revenue of $2.4M, up 15% QoQ. Enterprise deals grew 40% but SMB churn increased to 8%. We're preparing for the board meeting next Tuesday."</div>
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>Rule of Thumb:</strong> If the AI would need to ask you a clarifying question, that information belongs in the context.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 10: R - Role -->
+<section>
+    <div class="slide-content">
+        <h2>R: Role &mdash; Defining the Expert</h2>
+        <p>The Role tells the AI which expert persona to adopt, shaping its knowledge, perspective, and communication style.</p>
+        <div class="three-column" style="margin-top: 15px;">
+            <div class="card">
+                <h4>Domain Expertise</h4>
+                <p>"Senior data scientist specializing in healthcare analytics"</p>
+            </div>
+            <div class="card">
+                <h4>Experience Level</h4>
+                <p>"With 15 years of experience in enterprise sales"</p>
+            </div>
+            <div class="card">
+                <h4>Communication Style</h4>
+                <p>"Known for making complex topics accessible to non-technical audiences"</p>
+            </div>
+        </div>
+        <div class="prompt-example" style="margin-top: 15px;">
+<strong>Effective Roles:</strong>
+- "Act as a senior financial analyst who specializes in SaaS metrics and board-level reporting."
+- "You are an experienced UX researcher who has conducted 200+ usability studies."
+- "Act as a technical architect evaluating cloud migration strategies for enterprise clients."</div>
+        <div class="warning-box">
+            <strong>Avoid vague roles:</strong> "Be an expert" tells the AI nothing. Specify <em>what kind</em> of expert, in <em>what domain</em>, with <em>what perspective</em>.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 11: A - Action -->
+<section>
+    <div class="slide-content">
+        <h2>A: Action &mdash; The Clear Instruction</h2>
+        <p>The Action is the specific task you want the AI to perform. Precision here determines output quality.</p>
+        <table class="comparison-table">
+            <tr><th>Category</th><th>Action Verbs</th><th>Use When</th></tr>
+            <tr><td><strong>Analysis</strong></td><td>Analyze, evaluate, compare, assess, diagnose</td><td>Breaking down complex information</td></tr>
+            <tr><td><strong>Creation</strong></td><td>Write, draft, compose, design, develop</td><td>Generating new content</td></tr>
+            <tr><td><strong>Transformation</strong></td><td>Summarize, translate, rewrite, simplify, expand</td><td>Changing existing content</td></tr>
+            <tr><td><strong>Decision</strong></td><td>Recommend, prioritize, rank, select, justify</td><td>Making or supporting choices</td></tr>
+            <tr><td><strong>Teaching</strong></td><td>Explain, illustrate, demonstrate, guide</td><td>Educational content</td></tr>
+        </table>
+        <div class="two-column" style="margin-top: 10px;">
+            <div>
+                <p style="color: #ff6666; font-size: 0.85em;"><strong>Vague:</strong> "Help with our strategy"</p>
+            </div>
+            <div>
+                <p style="color: var(--accent-green); font-size: 0.85em;"><strong>Precise:</strong> "Evaluate our 3 pricing options and recommend the best one based on customer retention data"</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 12: F - Format -->
+<section>
+    <div class="slide-content">
+        <h2>F: Format &mdash; Controlling the Output</h2>
+        <p>Format tells the AI <em>how</em> to structure its response. Without it, you get a wall of text.</p>
+        <div class="two-column">
+            <div>
+                <h4>Common Formats</h4>
+                <ul>
+                    <li><strong>Bullet points</strong> &mdash; for scannable lists</li>
+                    <li><strong>Numbered steps</strong> &mdash; for procedures</li>
+                    <li><strong>Tables</strong> &mdash; for comparisons</li>
+                    <li><strong>JSON/YAML</strong> &mdash; for structured data</li>
+                    <li><strong>Markdown</strong> &mdash; for formatted documents</li>
+                    <li><strong>Specific template</strong> &mdash; "Follow this structure: ..."</li>
+                </ul>
+            </div>
+            <div>
+                <div class="prompt-example" style="font-size: 0.75em;">
+<strong>Format specification examples:</strong>
+
+"Structure as: Executive Summary (3 sentences),
+Key Metrics (table), Recommendations (numbered list)"
+
+"Output as a JSON object with keys: title, summary,
+key_points (array), sentiment (positive/negative/neutral)"
+
+"Create a comparison table with columns: Feature,
+Option A, Option B, Recommendation"</div>
+            </div>
+        </div>
+        <div class="tip-box">
+            <strong>Power Move:</strong> Provide a template. "Format your response like this: [Title] / [One-sentence summary] / [3 key points as bullets] / [Recommended next step]"
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 13: T - Tone -->
+<section>
+    <div class="slide-content">
+        <h2>T: Tone &mdash; Setting the Voice</h2>
+        <p>Tone controls the personality, formality, and emotional register of the AI's response.</p>
+        <div class="two-column">
+            <div>
+                <h4>Tone Dimensions</h4>
+                <table class="comparison-table" style="font-size: 0.85em;">
+                    <tr><th>Spectrum</th><th>Low End</th><th>High End</th></tr>
+                    <tr><td>Formality</td><td>Casual, conversational</td><td>Formal, professional</td></tr>
+                    <tr><td>Technicality</td><td>Plain language</td><td>Technical, precise</td></tr>
+                    <tr><td>Directness</td><td>Diplomatic, nuanced</td><td>Direct, assertive</td></tr>
+                    <tr><td>Energy</td><td>Measured, calm</td><td>Enthusiastic, dynamic</td></tr>
+                    <tr><td>Depth</td><td>Concise, brief</td><td>Detailed, comprehensive</td></tr>
+                </table>
+            </div>
+            <div>
+                <div class="prompt-example" style="font-size: 0.75em;">
+<strong>Tone examples:</strong>
+
+"Professional and data-driven, suitable for C-suite"
+
+"Friendly and encouraging, like a helpful colleague
+explaining something at lunch"
+
+"Technical but accessible &mdash; assume the reader
+knows business but not engineering"
+
+"Direct and concise. No filler words.
+Every sentence must add value."</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 14: CRAFT in Action -->
+<section>
+    <div class="slide-content">
+        <h2>CRAFT in Action: Full Walkthrough</h2>
+        <div class="two-column">
+            <div>
+                <h4 style="color: var(--primary);">Business Report</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+<span style="color: #42affa;">[C]</span> Our B2B SaaS company (50 employees, $8M ARR) is losing enterprise deals to a competitor who launched an AI feature. Our product roadmap includes AI features in Q2.
+
+<span style="color: var(--accent-green);">[R]</span> Act as a competitive strategy consultant with deep B2B SaaS experience.
+
+<span style="color: var(--accent-orange);">[A]</span> Analyze our competitive position and create a 90-day action plan to protect existing deals while our AI features are in development.
+
+<span style="color: #9933ff;">[F]</span> Structure as: Situation Assessment (paragraph), Competitive Analysis (table), 90-Day Action Plan (numbered phases with milestones), Risk Mitigation (bullets).
+
+<span style="color: #00cccc;">[T]</span> Strategic and direct. This will be read by our CEO and VP Sales. Be candid about risks but constructive in recommendations.</div>
+            </div>
+            <div>
+                <h4 style="color: var(--primary);">Training Design</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+<span style="color: #42affa;">[C]</span> We need to train 200 customer support agents on a new ticketing system. They have varying tech skills (beginner to intermediate). Training must be completed within 2 weeks without disrupting support operations.
+
+<span style="color: var(--accent-green);">[R]</span> Act as a corporate training designer specializing in technology adoption programs.
+
+<span style="color: var(--accent-orange);">[A]</span> Design a blended learning program that gets all 200 agents proficient in the new system within 2 weeks.
+
+<span style="color: #9933ff;">[F]</span> Provide: Program Overview, Week 1 Schedule (daily breakdown), Week 2 Schedule, Assessment Criteria, and a "Quick Start" 1-page reference card outline.
+
+<span style="color: #00cccc;">[T]</span> Practical and implementation-focused. Assume resource constraints. Avoid theoretical padding &mdash; every element must be actionable.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 15: Exercise: Build CRAFT Prompt -->
+<section>
+    <div class="slide-content">
+        <h2>Exercise: Build Your First CRAFT Prompt</h2>
+        <div class="exercise-box">
+            <h4>Hands-On Exercise (10 minutes)</h4>
+            <ol>
+                <li>Open the <strong>CRAFT Prompt Builder</strong> interactive demo tool</li>
+                <li>Choose a real task from your work (email, report, analysis, content creation)</li>
+                <li>Fill in each CRAFT field with specific, detailed information</li>
+                <li>Review the generated prompt and check the quality score</li>
+                <li>Try a template from the library, then customize it for your use case</li>
+            </ol>
+            <p style="margin-top: 15px;">Or use <strong>Lab 1: CRAFT Prompt Builder</strong> (Jupyter notebook) for a deeper guided experience.</p>
+        </div>
+        <div class="tip-box">
+            <strong>Quality Target:</strong> Aim for a score of 80+ in the builder. If any CRAFT element is empty or vague, the score will reflect it.
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODULE 3: Advanced Prompt Techniques -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 16: Technique Overview -->
+<section>
+    <div class="slide-content">
+        <h2>Advanced Prompt Techniques</h2>
+        <div class="technique-cards">
+            <div class="technique-card">
+                <div class="icon">&#128218;</div>
+                <h4>Few-Shot</h4>
+                <p>Learn by example</p>
+            </div>
+            <div class="technique-card">
+                <div class="icon">&#128101;</div>
+                <h4>Chain of Thought</h4>
+                <p>Step-by-step reasoning</p>
+            </div>
+            <div class="technique-card">
+                <div class="icon">&#127795;</div>
+                <h4>Tree of Thoughts</h4>
+                <p>Multi-path exploration</p>
+            </div>
+            <div class="technique-card">
+                <div class="icon">&#128176;</div>
+                <h4>Self-Consistency</h4>
+                <p>Consensus answers</p>
+            </div>
+            <div class="technique-card">
+                <div class="icon">&#127917;</div>
+                <h4>Persona</h4>
+                <p>Expert perspectives</p>
+            </div>
+            <div class="technique-card">
+                <div class="icon">&#9881;</div>
+                <h4>System Messages</h4>
+                <p>Persistent behavior</p>
+            </div>
+            <div class="technique-card">
+                <div class="icon">&#128203;</div>
+                <h4>Output Constraints</h4>
+                <p>Structured formats</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 17: Few-Shot Learning -->
+<section>
+    <div class="slide-content">
+        <h2>Few-Shot Learning</h2>
+        <p>Provide examples of desired input-output pairs to establish a pattern the AI should follow.</p>
+        <div class="prompt-example">Classify the sentiment of customer reviews as POSITIVE, NEGATIVE, or NEUTRAL.
+
+<strong>Examples:</strong>
+Review: "The product exceeded my expectations! Amazing quality." &rarr; POSITIVE
+Review: "Shipping was delayed by 2 weeks and the item arrived damaged." &rarr; NEGATIVE
+Review: "It works as described. Nothing special but does the job." &rarr; NEUTRAL
+
+<strong>Now classify:</strong>
+Review: "I love the new interface but the load time is frustrating."</div>
+        <div class="tip-box">
+            <strong>The Sweet Spot:</strong> 3 examples is optimal. Fewer may not establish the pattern clearly. More than 5 wastes context tokens without meaningful improvement. Ensure your examples cover the range of expected outputs.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 18: Chain-of-Thought -->
+<section>
+    <div class="slide-content">
+        <h2>Chain-of-Thought Prompting</h2>
+        <p>Ask the AI to show its reasoning process step by step before giving a final answer.</p>
+        <div class="two-column">
+            <div>
+                <h4 style="color: #ff6666;">Without CoT</h4>
+                <div class="prompt-example" style="font-size: 0.75em;">A company has 120 employees. 35% work in engineering, 25% in sales, and the rest in operations. If engineering grows by 20% and sales by 10%, how many total employees in those two departments?
+
+<em>AI may jump to answer, possibly making arithmetic errors.</em></div>
+            </div>
+            <div>
+                <h4 style="color: var(--accent-green);">With CoT</h4>
+                <div class="prompt-example" style="font-size: 0.75em;">A company has 120 employees. 35% work in engineering, 25% in sales, and the rest in operations. If engineering grows by 20% and sales by 10%, how many total employees in those two departments?
+
+<strong>Think through this step by step, showing your work at each stage.</strong>
+
+<em>AI: Engineering = 120 &times; 0.35 = 42, +20% = 50.4 &asymp; 50
+Sales = 120 &times; 0.25 = 30, +10% = 33
+Total = 50 + 33 = 83</em></div>
+            </div>
+        </div>
+        <div class="card" style="margin-top: 10px;">
+            <h4>When to Use CoT</h4>
+            <ul>
+                <li>Math and logic problems</li>
+                <li>Complex multi-step analysis</li>
+                <li>Debugging and troubleshooting</li>
+                <li>Any task where you need to verify the AI's reasoning</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 19: Tree of Thoughts -->
+<section>
+    <div class="slide-content">
+        <h2>Tree of Thoughts &amp; Self-Consistency</h2>
+        <div class="two-column">
+            <div>
+                <h4>Tree of Thoughts</h4>
+                <p>Explore multiple reasoning paths before committing to an answer.</p>
+                <div class="prompt-example" style="font-size: 0.72em;">We're deciding between building a feature in-house vs. buying a vendor solution.
+
+Consider 3 different evaluation approaches:
+<strong>Path 1:</strong> Cost analysis (total cost of ownership over 3 years)
+<strong>Path 2:</strong> Speed-to-market (time to value comparison)
+<strong>Path 3:</strong> Strategic fit (alignment with product vision)
+
+For each path, evaluate both options, then synthesize the best recommendation across all three perspectives.</div>
+            </div>
+            <div>
+                <h4>Self-Consistency</h4>
+                <p>Generate multiple answers and select the consensus to reduce errors.</p>
+                <div class="prompt-example" style="font-size: 0.72em;">Solve this problem 3 times using different approaches. Then compare your answers and provide the most consistent result with an explanation of why you're confident.
+
+Problem: Should we expand to the European market in Q2 or Q3, given our current runway of 18 months and the regulatory timeline?
+
+<strong>Approach 1:</strong> Financial analysis
+<strong>Approach 2:</strong> Competitive timing
+<strong>Approach 3:</strong> Operational readiness</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 20: Persona Engineering -->
+<section>
+    <div class="slide-content">
+        <h2>Persona &amp; Multi-Persona Engineering</h2>
+        <p>Assign detailed expert personas for depth, or use multiple personas for diverse perspectives.</p>
+        <div class="prompt-example">
+<strong>Multi-Persona Panel Discussion</strong>
+
+Evaluate our plan to migrate from monolithic architecture to microservices. Provide analysis from three expert perspectives:
+
+<strong>CTO Perspective:</strong> Focus on technical complexity, team capabilities, and architectural risks. What technical debt do we need to address first?
+
+<strong>CFO Perspective:</strong> Focus on cost implications, ROI timeline, and budget risks. What's the financial case for and against?
+
+<strong>VP Engineering Perspective:</strong> Focus on team morale, hiring needs, and delivery timeline impact. How will this affect our product roadmap?
+
+End with a synthesis: Where do the three perspectives agree? Where do they conflict? What's the recommended path forward?</div>
+        <div class="tip-box">
+            <strong>Pro Technique:</strong> Multi-persona prompts force the AI to consider genuine trade-offs rather than giving a one-sided recommendation.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 21: System Messages -->
+<section>
+    <div class="slide-content">
+        <h2>System Messages &amp; Instruction Following</h2>
+        <p>System messages set persistent behavioral rules that apply to the entire conversation.</p>
+        <div class="two-column">
+            <div>
+                <h4>System Message (persistent)</h4>
+                <div class="prompt-example" style="font-size: 0.72em;">You are a senior financial analyst at a Fortune 500 company.
+
+Rules:
+- Always cite specific data to support claims
+- Flag assumptions explicitly
+- Use tables for comparisons
+- Never give investment advice
+- If uncertain, say "I need more data on X"
+- Keep responses under 500 words unless asked for more</div>
+            </div>
+            <div>
+                <h4>What Goes Where</h4>
+                <div class="card">
+                    <h4>System Message</h4>
+                    <ul style="font-size: 0.85em;">
+                        <li>Persona and expertise</li>
+                        <li>Behavioral rules and constraints</li>
+                        <li>Output format defaults</li>
+                        <li>Safety guardrails</li>
+                    </ul>
+                </div>
+                <div class="card" style="margin-top: 10px;">
+                    <h4>User Message</h4>
+                    <ul style="font-size: 0.85em;">
+                        <li>Specific task instructions</li>
+                        <li>Data and context for this request</li>
+                        <li>Format overrides for this response</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 22: Output Constraints -->
+<section>
+    <div class="slide-content">
+        <h2>Output Constraints &amp; Structured Output</h2>
+        <p>Strictly define what the output should look like for consistent, parseable results.</p>
+        <div class="two-column">
+            <div>
+                <h4>JSON Schema Output</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">Analyze this customer review and return a JSON object with exactly this structure:
+
+{
+  "sentiment": "positive|negative|neutral",
+  "confidence": 0.0-1.0,
+  "key_topics": ["topic1", "topic2"],
+  "action_required": true|false,
+  "suggested_response": "string"
+}
+
+Review: "Love the product but support response times are terrible. Waited 3 days for a simple question."</div>
+            </div>
+            <div>
+                <h4>Constraint Types</h4>
+                <div class="card">
+                    <h4>Length</h4>
+                    <p style="font-size: 0.85em;">"Maximum 3 sentences" / "Between 200-300 words" / "One paragraph"</p>
+                </div>
+                <div class="card" style="margin-top: 10px;">
+                    <h4>Format</h4>
+                    <p style="font-size: 0.85em;">"Use only bullet points" / "Return valid JSON" / "Use markdown table format"</p>
+                </div>
+                <div class="card" style="margin-top: 10px;">
+                    <h4>Content</h4>
+                    <p style="font-size: 0.85em;">"Only use information provided" / "Do not include opinions" / "Cite sources for every claim"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 23: Exercise: Technique Tournament -->
+<section>
+    <div class="slide-content">
+        <h2>Exercise: Technique Tournament</h2>
+        <div class="exercise-box">
+            <h4>Hands-On Exercise (15 minutes)</h4>
+            <p><strong>Task:</strong> "Recommend the best project management tool for a 30-person remote team"</p>
+            <ol>
+                <li>Write this prompt using <strong>Few-Shot</strong> (provide 3 example tool evaluations as a pattern)</li>
+                <li>Write it using <strong>Chain-of-Thought</strong> (ask for step-by-step evaluation criteria)</li>
+                <li>Write it using <strong>Multi-Persona</strong> (get opinions from PM, developer, and executive)</li>
+            </ol>
+            <p>Run all three in your preferred AI tool. Which technique produced the most useful result? Why?</p>
+        </div>
+        <div class="tip-box">
+            <strong>Goal:</strong> Develop intuition for which technique fits which situation. There's no single "best" technique &mdash; the right choice depends on the task.
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODULE 4: Context Engineering -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 24: What Is Context Engineering? -->
+<section>
+    <div class="slide-content">
+        <h2>What Is Context Engineering?</h2>
+        <p>Context engineering goes beyond prompting. It's the discipline of designing and managing the <strong>entire information environment</strong> in which an AI model operates.</p>
+        <div class="three-column" style="margin-top: 10px;">
+            <div class="card">
+                <h4>Prompting</h4>
+                <p>Writing a single instruction for one task</p>
+                <p style="font-size: 0.8em; color: #888; margin-top: 10px;">"What to say"</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-green);">
+                <h4>Context Engineering</h4>
+                <p>Managing all information the AI has access to across a session</p>
+                <p style="font-size: 0.8em; color: #888; margin-top: 10px;">"What to know"</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-orange);">
+                <h4>Why It Matters</h4>
+                <p>AI outputs are only as good as the context you provide. Garbage in, garbage out.</p>
+                <p style="font-size: 0.8em; color: #888; margin-top: 10px;">"Quality control"</p>
+            </div>
+        </div>
+        <div class="warning-box" style="margin-top: 15px;">
+            <strong>The Attention Problem:</strong> As context grows, the AI's ability to attend to specific details diminishes. More context is not always better.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 25: The Context Window Explained -->
+<section>
+    <div class="slide-content">
+        <h2>The Context Window Explained</h2>
+        <div class="context-window">
+            <div class="context-layer">
+                <div class="layer-icon">&#9881;</div>
+                <div class="layer-content">
+                    <h5>Layer 1: System Instructions (5-10% of tokens)</h5>
+                    <p>Persistent rules, persona, constraints. Always present. Sets behavioral foundation.</p>
+                </div>
+            </div>
+            <div class="context-layer">
+                <div class="layer-icon">&#128218;</div>
+                <div class="layer-content">
+                    <h5>Layer 2: Reference Material (40-60% of tokens)</h5>
+                    <p>Documents, data, examples the AI needs for this task. The "knowledge" layer.</p>
+                </div>
+            </div>
+            <div class="context-layer">
+                <div class="layer-icon">&#128172;</div>
+                <div class="layer-content">
+                    <h5>Layer 3: Conversation History (20-30% of tokens)</h5>
+                    <p>Prior messages in this session. Provides continuity and accumulated understanding.</p>
+                </div>
+            </div>
+            <div class="context-layer">
+                <div class="layer-icon">&#127919;</div>
+                <div class="layer-content">
+                    <h5>Layer 4: Current Task (10-20% of tokens)</h5>
+                    <p>The immediate question or instruction. What you want the AI to do right now.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 26: Context Budgeting -->
+<section>
+    <div class="slide-content">
+        <h2>Context Budgeting</h2>
+        <p>Every model has a finite context window. How you allocate tokens across layers determines output quality.</p>
+        <table class="comparison-table">
+            <tr><th>Model</th><th>Context Window</th><th>Approx. Pages of Text</th></tr>
+            <tr><td>GPT-4o</td><td>128K tokens</td><td>~200 pages</td></tr>
+            <tr><td>Claude 3.5 Sonnet</td><td>200K tokens</td><td>~350 pages</td></tr>
+            <tr><td>Gemini 1.5 Pro</td><td>1M tokens</td><td>~1,500 pages</td></tr>
+            <tr><td>Most practical limit</td><td>~10-30K tokens</td><td>~15-50 pages</td></tr>
+        </table>
+        <div class="context-meter">
+            <div class="meter-bar">
+                <div class="meter-fill"></div>
+            </div>
+            <div class="meter-labels">
+                <span>Empty</span>
+                <span>Optimal Zone</span>
+                <span>Overloaded</span>
+            </div>
+        </div>
+        <div class="warning-box">
+            <strong>Counter-intuitive:</strong> Models perform <em>worse</em> when the context window is stuffed to capacity. The "lost in the middle" effect means information in the middle of long contexts gets less attention.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 27: Information Priority Stack -->
+<section>
+    <div class="slide-content">
+        <h2>Information Priority Stack</h2>
+        <p>Not all context is equally important. Prioritize ruthlessly.</p>
+        <div class="context-stack">
+            <div class="stack-item">
+                <div class="stack-priority priority-high">1</div>
+                <div class="stack-label"><strong>Essential</strong> &mdash; Without this, the AI cannot complete the task. Core data, key constraints, critical requirements.</div>
+                <div class="stack-tokens">Always include</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-priority priority-high">2</div>
+                <div class="stack-label"><strong>Important</strong> &mdash; Significantly improves quality. Domain terminology, style examples, key relationships.</div>
+                <div class="stack-tokens">Include when possible</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-priority priority-med">3</div>
+                <div class="stack-label"><strong>Helpful</strong> &mdash; Adds nuance and polish. Edge cases, preferences, additional context.</div>
+                <div class="stack-tokens">Include if space</div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-priority priority-low">4</div>
+                <div class="stack-label"><strong>Nice-to-have</strong> &mdash; Marginal improvement. Background history, tangential references.</div>
+                <div class="stack-tokens">Usually omit</div>
+            </div>
+        </div>
+        <div class="tip-box" style="margin-top: 15px;">
+            <strong>Test:</strong> If you can remove a piece of context and the output quality doesn't change, it probably doesn't need to be there.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 28: Context Engineering in Practice -->
+<section>
+    <div class="slide-content">
+        <h2>Context Engineering in Practice</h2>
+        <div class="two-column">
+            <div>
+                <h4 style="color: #ff6666;">Poor Context</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">Here's our company handbook (47 pages). Also here's every email from the past month. And our org chart. And the project plan.
+
+Now answer this question: What's our vacation policy for new hires in the EU?
+
+<em>Problem: 95% of the context is irrelevant. The AI has to search through noise to find the signal.</em></div>
+            </div>
+            <div>
+                <h4 style="color: var(--accent-green);">Engineered Context</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">Here is the relevant section from our company handbook on vacation policy:
+
+[Section 4.2 - PTO Policy for EU Employees]
+"New hires accrue 2.08 days per month starting from date of hire. EU statutory minimums apply per country. Probation period: 6 months."
+
+Question: Summarize the vacation policy for new EU hires in 3 bullets, including the probation note.
+
+<em>Only essential information provided. Clear, focused task.</em></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 29: Exercise: Context Workshop -->
+<section>
+    <div class="slide-content">
+        <h2>Exercise: Context Engineering Workshop</h2>
+        <div class="exercise-box">
+            <h4>Hands-On Exercise (10 minutes)</h4>
+            <ol>
+                <li>Think of a document or dataset you commonly reference when using AI (a report, a brief, meeting notes)</li>
+                <li>Using the Priority Stack, categorize its information into the 4 levels</li>
+                <li>Write a prompt that includes only the Essential and Important context</li>
+                <li>Estimate: what percentage of the original document did you actually need?</li>
+            </ol>
+            <p style="margin-top: 10px;"><strong>Goal:</strong> Most people discover they only need 20-30% of what they typically paste into a prompt.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODULE 5: Prompt Chains & Workflows -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 30: Prompt Chains & Workflows -->
+<section>
+    <div class="slide-content">
+        <h2>Prompt Chains &amp; Workflows</h2>
+        <p>Complex tasks produce better results when broken into a series of focused prompts.</p>
+        <div class="three-column" style="margin-top: 10px;">
+            <div class="card">
+                <h4>What</h4>
+                <p>Multi-step sequences where each prompt's output feeds into the next prompt's input</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-green);">
+                <h4>Why</h4>
+                <p>Each step gets the AI's full attention. Quality compounds across the chain instead of degrading.</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-orange);">
+                <h4>When</h4>
+                <p>Any task that involves research + analysis + creation, or where a single prompt produces mediocre results</p>
+            </div>
+        </div>
+        <div class="tip-box" style="margin-top: 15px;">
+            <strong>Mental Model:</strong> Think of prompt chains like an assembly line. Each station does one thing well. The finished product is better than any single station could produce alone.
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 31: Skill Chains -->
+<section>
+    <div class="slide-content">
+        <h2>Skill Chains: Connecting Prompts</h2>
+        <div class="flow-diagram">
+            <div class="flow-box" style="animation-delay: 0.1s;">
+                <h4>Step 1: Research</h4>
+                <p>Extract key facts</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.3s;">
+                <h4>Step 2: Analyze</h4>
+                <p>Identify patterns</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.5s;">
+                <h4>Step 3: Draft</h4>
+                <p>Create content</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.7s;">
+                <h4>Step 4: Refine</h4>
+                <p>Polish &amp; format</p>
+            </div>
+        </div>
+        <div class="card" style="margin-top: 10px;">
+            <h4>How It Works</h4>
+            <ul>
+                <li>Each step has a single, clear CRAFT prompt</li>
+                <li>The output of Step N becomes context for Step N+1</li>
+                <li>You can review and adjust between steps</li>
+                <li>If one step fails, you only redo that step &mdash; not the whole task</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 32: Task Decomposition -->
+<section>
+    <div class="slide-content">
+        <h2>Task Decomposition</h2>
+        <div class="two-column">
+            <div>
+                <h4 style="color: #ff6666;">Monolithic Prompt</h4>
+                <div class="prompt-example" style="font-size: 0.72em;">"Research the top AI trends for 2025, create a detailed outline, write a 2000-word blog article with citations, optimize it for SEO, add social media snippets, and format it for WordPress."
+
+<em style="color: #ff6666;">Problem: 6 different tasks competing for attention. Each suffers from divided focus. The AI tries to do everything at once and does nothing well.</em></div>
+            </div>
+            <div>
+                <h4 style="color: var(--accent-green);">Decomposed Chain</h4>
+                <div class="prompt-example" style="font-size: 0.72em;"><strong>Step 1:</strong> "Research the top 5 AI trends for 2025 with credible sources. For each, provide the trend name, a key statistic, and a one-sentence impact statement."
+
+<strong>Step 2:</strong> "Using these trends, create a blog outline for an HR director audience. Include an attention-grabbing title and 5 sections."
+
+<strong>Step 3:</strong> "Write the full blog post following this outline. 2000 words, professional but engaging."
+
+<strong>Step 4:</strong> "Add SEO metadata, suggest 3 social media snippets, and format for WordPress."</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 33: Workflow Patterns -->
+<section>
+    <div class="slide-content">
+        <h2>Workflow Patterns</h2>
+        <div class="three-column">
+            <div class="card">
+                <h4>Sequential</h4>
+                <p style="text-align: center; font-size: 1.5em; margin: 10px 0;">A &#10132; B &#10132; C &#10132; D</p>
+                <p style="font-size: 0.85em;">Steps run in order, each using the previous output. Best for research-to-creation pipelines.</p>
+                <p style="font-size: 0.8em; color: var(--accent-green);"><strong>Example:</strong> Research &#10132; Outline &#10132; Draft &#10132; Edit</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-green);">
+                <h4>Fan-Out</h4>
+                <p style="text-align: center; font-size: 1.2em; margin: 10px 0;">&#8627; B<br>A &#8627; C<br>&#8627; D</p>
+                <p style="font-size: 0.85em;">Same prompt applied to multiple inputs in parallel. Best for batch processing.</p>
+                <p style="font-size: 0.8em; color: var(--accent-green);"><strong>Example:</strong> Analyze 10 customer reviews simultaneously</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-orange);">
+                <h4>Iterative</h4>
+                <p style="text-align: center; font-size: 1.2em; margin: 10px 0;">A &#10132; B &#10132; A' &#10132; B'</p>
+                <p style="font-size: 0.85em;">Same prompt applied repeatedly, refining output each time. Best for quality improvement.</p>
+                <p style="font-size: 0.8em; color: var(--accent-green);"><strong>Example:</strong> Draft &#10132; Critique &#10132; Revise &#10132; Final</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 34: Case Study: Content Production -->
+<section>
+    <div class="slide-content">
+        <h2>Case Study: Content Production Workflow</h2>
+        <div class="two-column">
+            <div>
+                <h4>Step 1: Research</h4>
+                <div class="prompt-example" style="font-size: 0.68em;">[Context] We publish a weekly technology newsletter for HR leaders.
+[Action] Extract the 5 most significant AI-in-hiring statistics from 2024-2025. For each provide the source, exact figure, and one-sentence interpretation for HR directors.</div>
+                <h4>Step 2: Outline</h4>
+                <div class="prompt-example" style="font-size: 0.68em;">[Context] Using the research below, create a newsletter article outline.
+[Action] Write an outline with: compelling subject line, opening hook, 5 sections (one per stat), and call to action.
+[Format] Outline with section headers, key points as sub-bullets, suggested word count per section.</div>
+            </div>
+            <div>
+                <h4>Step 3: Draft</h4>
+                <div class="prompt-example" style="font-size: 0.68em;">[Context] Following this outline for our HR technology newsletter.
+[Action] Write the full article. 1200 words. Weave statistics naturally into the narrative.
+[Tone] Authoritative but conversational. End each section with a practical takeaway.</div>
+                <h4>Step 4: Polish</h4>
+                <div class="prompt-example" style="font-size: 0.68em;">[Action] Review this draft. Fix awkward transitions, strengthen the opening, verify all statistics have attributions.
+[Format] Return the polished article plus: 3 social media snippets (LinkedIn, Twitter, newsletter teaser).</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 35: Exercise: Design Your Workflow -->
+<section>
+    <div class="slide-content">
+        <h2>Exercise: Design Your Workflow</h2>
+        <div class="exercise-box">
+            <h4>Hands-On Exercise (15 minutes)</h4>
+            <ol>
+                <li>Choose a complex task from your work that you've struggled to get good AI results on</li>
+                <li>Decompose it into 3-4 sequential prompt steps</li>
+                <li>Write a CRAFT prompt for each step</li>
+                <li>Identify what output from each step feeds into the next</li>
+            </ol>
+            <p style="margin-top: 10px;">For a deeper guided experience, try <strong>Lab 2: Prompt Chains &amp; Testing</strong> (Jupyter notebook).</p>
+        </div>
+        <div class="tip-box">
+            <strong>Common tasks that benefit from chains:</strong> Report writing, competitive analysis, content calendars, proposal creation, data analysis narratives, training material development.
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODULE 6: Testing & Refining Prompts -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 36: Testing & Refining -->
+<section>
+    <div class="slide-content">
+        <h2>Testing &amp; Refining Prompts</h2>
+        <p>Professional prompt engineering is iterative. Expect to refine a prompt 3-5 times before it consistently produces the quality you need.</p>
+        <div class="two-column" style="margin-top: 10px;">
+            <div class="card">
+                <h4>Amateur Approach</h4>
+                <ul>
+                    <li>Write one prompt</li>
+                    <li>Accept whatever comes back</li>
+                    <li>If it's bad, start over from scratch</li>
+                    <li>No systematic improvement</li>
+                </ul>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-green);">
+                <h4>Professional Approach</h4>
+                <ul>
+                    <li>Define success criteria first</li>
+                    <li>Write, test, evaluate systematically</li>
+                    <li>Diagnose specific failure modes</li>
+                    <li>Make targeted refinements</li>
+                    <li>Track iterations and improvements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 37: The Prompt Engineering Cycle -->
+<section>
+    <div class="slide-content">
+        <h2>The Prompt Engineering Cycle</h2>
+        <div class="flow-diagram">
+            <div class="flow-box" style="animation-delay: 0.1s;">
+                <h4>Define Criteria</h4>
+                <p>What does "good" look like?</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.2s;">
+                <h4>Write Prompt</h4>
+                <p>Apply CRAFT + techniques</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.3s;">
+                <h4>Test</h4>
+                <p>Run with varied inputs</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.4s;">
+                <h4>Evaluate</h4>
+                <p>Score against criteria</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.5s;">
+                <h4>Diagnose</h4>
+                <p>Identify failure modes</p>
+            </div>
+            <div class="flow-arrow">&#10132;</div>
+            <div class="flow-box" style="animation-delay: 0.6s;">
+                <h4>Refine</h4>
+                <p>Targeted improvements</p>
+            </div>
+        </div>
+        <div class="card" style="margin-top: 15px;">
+            <h4>Step 1 is Critical</h4>
+            <p>Before writing a single word, define what "good" looks like. What must the output contain? What format? What level of detail? How will you know if it succeeded? This is the most commonly skipped step.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 38: Common Failure Modes -->
+<section>
+    <div class="slide-content">
+        <h2>Common Failure Modes &amp; Fixes</h2>
+        <table class="comparison-table">
+            <tr><th>Failure Mode</th><th>Symptoms</th><th>Fix</th></tr>
+            <tr>
+                <td><strong>Hallucination</strong></td>
+                <td>AI invents facts, cites non-existent sources, states incorrect information confidently</td>
+                <td>Add "Only use information provided." Request source citations. Provide reference material in context.</td>
+            </tr>
+            <tr>
+                <td><strong>Verbosity</strong></td>
+                <td>Response is 3x longer than needed, padded with filler phrases and qualifications</td>
+                <td>Specify word/sentence limits. Add "Be concise." Use format constraints like bullet points or tables.</td>
+            </tr>
+            <tr>
+                <td><strong>Off-Topic Drift</strong></td>
+                <td>Response starts well but wanders into tangential or unrequested territory</td>
+                <td>Strengthen the Action element. Add "Focus exclusively on X." Remove distracting context.</td>
+            </tr>
+            <tr>
+                <td><strong>Inconsistency</strong></td>
+                <td>Same prompt gives different quality results each time it's run</td>
+                <td>Lower temperature. Add few-shot examples. Make instructions more specific. Add output validation.</td>
+            </tr>
+            <tr>
+                <td><strong>Shallow Analysis</strong></td>
+                <td>Surface-level response that restates the obvious without insight</td>
+                <td>Add Chain-of-Thought. Request "detailed analysis with evidence." Specify depth: "provide 3 layers of analysis."</td>
+            </tr>
+        </table>
+    </div>
+</section>
+
+<!-- SLIDE 39: Validation Techniques -->
+<section>
+    <div class="slide-content">
+        <h2>Validation Techniques</h2>
+        <div class="two-column">
+            <div>
+                <div class="card">
+                    <h4>Self-Check</h4>
+                    <p>Ask the AI to critique its own output against your criteria: "Review your response. Does it meet all 5 of these requirements? List any gaps."</p>
+                </div>
+                <div class="card" style="margin-top: 15px;">
+                    <h4>Rubric Scoring</h4>
+                    <p>Define 5 quality dimensions, score each 1-5: Relevance, Completeness, Format Compliance, Accuracy, Actionability. Score consistently across iterations.</p>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="border-left-color: var(--accent-orange);">
+                    <h4>Red Teaming</h4>
+                    <p>Try to break your prompt with edge cases and adversarial inputs. What happens with ambiguous requests? Missing data? Conflicting instructions?</p>
+                </div>
+                <div class="card" style="margin-top: 15px; border-left-color: var(--accent-green);">
+                    <h4>A/B Testing</h4>
+                    <p>Run two prompt versions on the same inputs. Compare results across 3-5 test cases. The version that scores consistently higher wins.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 40: Response Prediction & Debugging -->
+<section>
+    <div class="slide-content">
+        <h2>Response Prediction &amp; Debugging</h2>
+        <div class="two-column">
+            <div>
+                <h4>Predict Before You Run</h4>
+                <div class="card">
+                    <p>Before running a prompt, predict what the output will look like:</p>
+                    <ul style="font-size: 0.85em;">
+                        <li>What format will it be?</li>
+                        <li>How long will it be?</li>
+                        <li>What key points will it cover?</li>
+                        <li>What might it get wrong?</li>
+                    </ul>
+                    <p style="font-size: 0.85em; margin-top: 10px; color: var(--accent-green);"><strong>If you can't predict the output, the prompt isn't specific enough.</strong></p>
+                </div>
+            </div>
+            <div>
+                <h4>Systematic Debug Checklist</h4>
+                <div class="card">
+                    <ol style="font-size: 0.85em;">
+                        <li><strong>Is the Context sufficient?</strong> Does the AI have everything it needs?</li>
+                        <li><strong>Is the Role appropriate?</strong> Is the expertise level right?</li>
+                        <li><strong>Is the Action unambiguous?</strong> Could it be interpreted differently?</li>
+                        <li><strong>Is the Format specified?</strong> Does the AI know what structure to use?</li>
+                        <li><strong>Is the Tone defined?</strong> Is the voice and style clear?</li>
+                        <li><strong>Are there conflicting instructions?</strong> Does anything contradict?</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 41: Exercise: Prompt Testing Lab -->
+<section>
+    <div class="slide-content">
+        <h2>Exercise: Prompt Testing Lab</h2>
+        <div class="exercise-box">
+            <h4>Hands-On Exercise (15 minutes)</h4>
+            <ol>
+                <li>Open the <strong>Prompt Testing Lab</strong> interactive tool</li>
+                <li>Write your prompt in <strong>Version A</strong></li>
+                <li>Score it using the 5-dimension rubric</li>
+                <li>Click "Start New Iteration" &mdash; your Version A moves to the base, and you write an improved Version B</li>
+                <li>Repeat for 3 iterations. Track your score improvement.</li>
+            </ol>
+            <p style="margin-top: 10px;"><strong>Target:</strong> Improve your total score by at least 5 points across 3 iterations.</p>
+        </div>
+        <div class="tip-box">
+            <strong>Common improvements per iteration:</strong> Iteration 1: Add missing CRAFT elements. Iteration 2: Add technique (CoT, examples). Iteration 3: Tighten constraints and format.
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODULE 7: Real-World Applications -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 42: Real-World Applications -->
+<section>
+    <div class="slide-content">
+        <h2>Real-World Applications</h2>
+        <div class="two-column">
+            <div class="card">
+                <h4>Business</h4>
+                <ul>
+                    <li>Customer support responses</li>
+                    <li>Sales proposals and follow-ups</li>
+                    <li>Market analysis and competitive intelligence</li>
+                    <li>Internal communications and presentations</li>
+                </ul>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-green);">
+                <h4>Creative &amp; Content</h4>
+                <ul>
+                    <li>Blog posts, articles, and newsletters</li>
+                    <li>Social media content calendars</li>
+                    <li>Brainstorming and ideation sessions</li>
+                    <li>Style transfer and tone adaptation</li>
+                </ul>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-orange);">
+                <h4>Analytical</h4>
+                <ul>
+                    <li>Data interpretation and summaries</li>
+                    <li>Sentiment analysis pipelines</li>
+                    <li>Report generation from raw data</li>
+                    <li>Trend identification and forecasting</li>
+                </ul>
+            </div>
+            <div class="card" style="border-left-color: #9933ff;">
+                <h4>Educational</h4>
+                <ul>
+                    <li>Curriculum and lesson planning</li>
+                    <li>Quiz and assessment generation</li>
+                    <li>Multi-level explanations</li>
+                    <li>Study guide creation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 43: Business Applications -->
+<section>
+    <div class="slide-content">
+        <h2>Business Applications</h2>
+        <div class="two-column">
+            <div>
+                <h4>Customer Support Response</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+<span style="color: #42affa;">[C]</span> Customer "TechCorp" (Enterprise tier, $50K ARR) has reported their API integration failing after our v3.2 update. They've been a client for 2 years. Their contract renewal is in 6 weeks.
+
+<span style="color: var(--accent-green);">[R]</span> Act as a senior customer success manager with technical understanding.
+
+<span style="color: var(--accent-orange);">[A]</span> Draft a response that acknowledges the issue, provides immediate next steps, and reassures them about resolution timeline.
+
+<span style="color: #9933ff;">[F]</span> Format: Greeting, acknowledgment, immediate action plan (numbered), timeline commitment, closing.
+
+<span style="color: #00cccc;">[T]</span> Empathetic, professional, and solution-oriented. Convey urgency without panic.</div>
+            </div>
+            <div>
+                <h4>Sales Proposal Section</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+<span style="color: #42affa;">[C]</span> Prospect: mid-market financial services firm, 500 employees, currently using Competitor X (3-year contract ending in Q2). Pain points: slow reporting, poor mobile experience, no AI features.
+
+<span style="color: var(--accent-green);">[R]</span> Act as an enterprise sales strategist specializing in competitive displacement.
+
+<span style="color: var(--accent-orange);">[A]</span> Write the "Why Switch" section of our proposal, directly addressing each pain point with our capabilities.
+
+<span style="color: #9933ff;">[F]</span> 3 paragraphs: Pain Point &#10132; Our Solution &#10132; Expected Impact. Include one quantified benefit per pain point.
+
+<span style="color: #00cccc;">[T]</span> Confident but not aggressive. Let the value proposition speak for itself.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 44: Creative & Content Applications -->
+<section>
+    <div class="slide-content">
+        <h2>Creative &amp; Content Applications</h2>
+        <div class="two-column">
+            <div>
+                <h4>Content Creation Chain</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+<strong>Step 1: Ideation</strong>
+[C] We run a B2B SaaS blog targeting CTOs. Our product helps with cloud cost optimization.
+[A] Generate 10 blog post ideas that address real pain points CTOs face with cloud spending. For each, provide: title, target keyword, and a hook sentence.
+
+<strong>Step 2: Draft</strong>
+[A] Write blog post #3 from the list. 1500 words. Include a real-world scenario, 3 actionable tips, and a soft CTA for our free cost assessment tool.
+[T] Authoritative but approachable. Write like a cloud architect sharing lessons learned, not a salesperson.</div>
+            </div>
+            <div>
+                <h4>Style Transfer</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+[C] Here is our internal technical documentation for our API rate limiting feature:
+"Rate limiting is implemented using a token bucket algorithm with a default of 1000 requests per minute per API key."
+
+[A] Rewrite this for three different audiences:
+1. <strong>Developer docs:</strong> Technical, include code examples
+2. <strong>Sales one-pager:</strong> Benefits-focused, non-technical
+3. <strong>Customer FAQ:</strong> Plain language, addresses "what does this mean for me?"
+
+[F] Provide all three versions, clearly labeled, each under 100 words.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 45: Analytical & Educational -->
+<section>
+    <div class="slide-content">
+        <h2>Analytical &amp; Educational Applications</h2>
+        <div class="two-column">
+            <div>
+                <h4>Data Analysis</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+[C] Here are our website analytics for Q4:
+- Organic traffic: 45K (+12% QoQ)
+- Bounce rate: 68% (+5%)
+- Avg session: 2.1 min (-15%)
+- Conversion rate: 2.3% (-0.4%)
+
+[R] Act as a digital marketing analyst.
+
+[A] Diagnose why traffic is up but engagement and conversions are down. Provide 3 hypotheses ranked by likelihood, with specific data points supporting each.
+
+[F] For each hypothesis: Title, Evidence, Recommended Investigation, Quick Fix.</div>
+            </div>
+            <div>
+                <h4>Educational Content</h4>
+                <div class="prompt-example" style="font-size: 0.7em;">
+[C] I'm creating training material for new managers (first-time people leaders, promoted from individual contributor roles).
+
+[R] Act as a leadership development facilitator with experience in tech companies.
+
+[A] Explain the concept of "psychological safety" at three different levels:
+1. Executive summary (2 sentences)
+2. Team leader guide (1 paragraph with examples)
+3. Deep dive (3 paragraphs with research citations and practical exercises)
+
+[F] Label each level clearly. Include at least one concrete workplace example per level.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 46: Building a Prompt Library -->
+<section>
+    <div class="slide-content">
+        <h2>Building a Personal Prompt Library</h2>
+        <p>Your best prompts are an asset. Organizing and sharing them multiplies their value.</p>
+        <div class="two-column">
+            <div>
+                <h4>How to Organize</h4>
+                <div class="card">
+                    <ul>
+                        <li><strong>By task type:</strong> Writing, analysis, coding, communication, research</li>
+                        <li><strong>Track versions:</strong> v1.0, v1.1, v2.0 &mdash; know what changed and why</li>
+                        <li><strong>Note the model:</strong> Prompts may behave differently across GPT-4, Claude, Gemini</li>
+                        <li><strong>Tag with metadata:</strong> Use case, domain, confidence level, last tested</li>
+                        <li><strong>Share with your team:</strong> A shared prompt library compounds in value</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <h4>Recommended Categories</h4>
+                <div class="card" style="border-left-color: var(--accent-green);">
+                    <ul>
+                        <li>Email templates (follow-up, cold outreach, internal)</li>
+                        <li>Analysis prompts (data, competitive, risk)</li>
+                        <li>Content creation (blog, social, documentation)</li>
+                        <li>Meeting prompts (agendas, summaries, action items)</li>
+                        <li>Code and technical (review, debug, explain)</li>
+                        <li>Decision support (evaluate, compare, recommend)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 47: Exercise: Capstone Challenge -->
+<section>
+    <div class="slide-content">
+        <h2>Exercise: Capstone Challenge</h2>
+        <div class="exercise-box">
+            <h4>Capstone Challenge (20 minutes)</h4>
+            <p>Apply everything you've learned today to solve a real challenge from your work.</p>
+            <ol>
+                <li><strong>Choose a real task</strong> you do at work that involves AI (or could)</li>
+                <li><strong>Apply CRAFT</strong> to write a structured prompt</li>
+                <li><strong>Add a technique</strong> (few-shot, CoT, persona, or output constraints)</li>
+                <li><strong>Consider context engineering</strong> &mdash; what information does the AI need? What can you cut?</li>
+                <li><strong>If it's complex, decompose it</strong> into a 2-3 step chain</li>
+                <li><strong>Score it</strong> using the 5-dimension rubric (clarity, specificity, context, format, technique)</li>
+            </ol>
+            <p style="margin-top: 10px;"><strong>Share your solution with the group.</strong> What worked? What would you iterate on next?</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- WRAP-UP -->
+<!-- ============================================================ -->
+
+<!-- SLIDE 48: Key Takeaways -->
+<section>
+    <div class="slide-content">
+        <h2>Key Takeaways</h2>
+        <div class="three-column" style="margin-top: 10px;">
+            <div class="card" style="border-left-color: var(--primary);">
+                <h4>Foundation</h4>
+                <p>The <strong>CRAFT Framework</strong> gives you a reliable structure for every prompt: Context, Role, Action, Format, Tone.</p>
+                <p style="font-size: 0.85em; color: #aaa; margin-top: 10px;">If you remember one thing, remember CRAFT.</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-green);">
+                <h4>Techniques</h4>
+                <p><strong>Few-shot, Chain-of-Thought, Persona, Output Constraints</strong> &mdash; each technique is a tool. Match the tool to the task.</p>
+                <p style="font-size: 0.85em; color: #aaa; margin-top: 10px;">Context engineering and prompt chains handle complex work.</p>
+            </div>
+            <div class="card" style="border-left-color: var(--accent-orange);">
+                <h4>Professional Practice</h4>
+                <p><strong>Test, evaluate, iterate.</strong> Define success criteria first. Track your prompts. Build a library.</p>
+                <p style="font-size: 0.85em; color: #aaa; margin-top: 10px;">Professional prompting is a skill that improves with deliberate practice.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 49: Resources & Next Steps -->
+<section>
+    <div class="slide-content">
+        <h2>Resources &amp; Next Steps</h2>
+        <div class="two-column">
+            <div>
+                <h4>Course Materials</h4>
+                <div class="card">
+                    <ul>
+                        <li><strong>Student Notes</strong> &mdash; Complete reference with all frameworks, examples, and exercises</li>
+                        <li><strong>CRAFT Prompt Builder</strong> &mdash; Interactive tool for building structured prompts</li>
+                        <li><strong>Prompt Testing Lab</strong> &mdash; A/B testing and iterative refinement tool</li>
+                        <li><strong>Lab 1</strong> &mdash; CRAFT framework hands-on notebook</li>
+                        <li><strong>Lab 2</strong> &mdash; Prompt chains and testing notebook</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <h4>Continue Learning</h4>
+                <div class="card" style="border-left-color: var(--accent-green);">
+                    <ul>
+                        <li><strong>Practice daily</strong> &mdash; Apply CRAFT to one real task each day</li>
+                        <li><strong>Build your library</strong> &mdash; Save your best prompts, version them, share with colleagues</li>
+                        <li><strong>Stay current</strong> &mdash; Models evolve; techniques that work today may improve or change</li>
+                        <li><strong>Experiment</strong> &mdash; Try new models, new techniques, and push boundaries</li>
+                        <li><strong>Teach others</strong> &mdash; Explaining prompt engineering deepens your own understanding</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SLIDE 50: Thank You -->
+<section>
+    <div class="slide-content" style="text-align: center;">
+        <div class="ai-brain">
+            <div class="brain-ring"></div>
+            <div class="brain-ring"></div>
+            <div class="brain-ring"></div>
+            <div class="brain-core"></div>
+        </div>
+        <h1>Thank You!</h1>
+        <h3 style="color: #94a3b8;">Prompt Engineering Masterclass</h3>
+        <p style="color: #64748b; font-size: 0.9em; margin-top: 15px;">Questions? Let's discuss.</p>
+        <div class="tip-box" style="max-width: 500px; margin: 10px auto; text-align: center;">
+            <strong>Remember:</strong> Great prompts are built, not born. Start with CRAFT, add techniques, and iterate. Your AI outputs will never be the same.
+        </div>
+    </div>
+</section>
+
+        </div>
+    </div>
+
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">&#x26F6; Fullscreen</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: false,
+            transition: 'slide',
+            plugins: [RevealHighlight]
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Custom scroll handling for slide-content
+        document.addEventListener('keydown', function(e) {
+            const currentSlide = document.querySelector('.reveal .slides section.present');
+            if (!currentSlide) return;
+
+            const scrollable = currentSlide.querySelector('.slide-content');
+            if (!scrollable) return;
+
+            const isScrollable = scrollable.scrollHeight > scrollable.clientHeight;
+            if (!isScrollable) return;
+
+            const scrollTop = scrollable.scrollTop;
+            const scrollMax = scrollable.scrollHeight - scrollable.clientHeight;
+            const atTop = scrollTop <= 1;
+            const atBottom = scrollTop >= scrollMax - 1;
+
+            if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                if (!atBottom) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const delta = e.key === 'PageDown' ? scrollable.clientHeight * 0.8 : 100;
+                    scrollable.scrollBy({ top: delta, behavior: 'smooth' });
+                }
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                if (!atTop) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const delta = e.key === 'PageUp' ? scrollable.clientHeight * 0.8 : 100;
+                    scrollable.scrollBy({ top: -delta, behavior: 'smooth' });
+                }
+            }
+        }, true);
+    </script>
+</body>
+</html>

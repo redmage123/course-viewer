@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering Masterclass - Student Notes</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #1a8ad4;
+        }
+        header h1 { font-size: 2.2rem; color: #1a8ad4; margin-bottom: 5px; }
+        header p { color: #64748b; font-size: 1.1rem; }
+        .course-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        .course-info div {
+            background: #e0f2fe;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .course-info strong { color: #1a8ad4; }
+
+        .module {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        .module-header {
+            background: linear-gradient(135deg, #1a8ad4, #42affa);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px 10px 0 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .module-body {
+            background: white;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+        }
+        h3 {
+            color: #1a8ad4;
+            font-size: 1.15rem;
+            margin: 20px 0 10px 0;
+            border-bottom: 2px solid #e0f2fe;
+            padding-bottom: 5px;
+        }
+        h3:first-child { margin-top: 0; }
+        h4 { color: #334155; margin: 15px 0 8px 0; }
+        p { margin: 8px 0; }
+        ul, ol { margin: 8px 0 8px 25px; }
+        li { margin: 5px 0; }
+
+        .key-concept {
+            background: #f0f9ff;
+            border-left: 4px solid #1a8ad4;
+            padding: 12px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+        .key-concept strong { color: #1a8ad4; }
+
+        .prompt-example {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 12px 0;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .prompt-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .prompt-label.before { color: #f87171; }
+        .prompt-label.after { color: #4ade80; }
+        .prompt-label.example { color: #42affa; }
+
+        .tip-box {
+            background: #f0fdf4;
+            border-left: 4px solid #00cc66;
+            padding: 12px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+        .tip-box strong { color: #16a34a; }
+
+        .warning-box {
+            background: #fffbeb;
+            border-left: 4px solid #ff9933;
+            padding: 12px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+        .warning-box strong { color: #d97706; }
+
+        .exercise-notes {
+            background: #faf5ff;
+            border: 2px dashed #a78bfa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .exercise-notes h4 { color: #7c3aed; margin-top: 0; }
+        .note-lines {
+            margin-top: 15px;
+        }
+        .note-line {
+            border-bottom: 1px solid #d1d5db;
+            height: 30px;
+            margin: 5px 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        .comparison-table th {
+            background: #1a8ad4;
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .comparison-table tr:nth-child(even) { background: #f8fafc; }
+
+        .craft-reference {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 10px;
+            margin: 10px 0;
+            align-items: start;
+        }
+        .craft-letter {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #1a8ad4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .craft-desc { padding-top: 5px; }
+        .craft-desc strong { color: #1a8ad4; }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        @media print {
+            body { padding: 20px; font-size: 11pt; }
+            .module { page-break-inside: avoid; }
+            .module-header { background: #1a8ad4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .prompt-example { background: #1e293b !important; color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .craft-letter { background: #1a8ad4 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .comparison-table th { background: #1a8ad4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+
+        @media (max-width: 700px) {
+            .course-info { grid-template-columns: 1fr; }
+            .two-column { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prompt Engineering Masterclass</h1>
+            <p>Student Reference Notes &amp; Exercise Workbook</p>
+            <div class="course-info">
+                <div><strong>Duration:</strong> Full Day (6 hours)</div>
+                <div><strong>Format:</strong> Interactive Workshop</div>
+                <div><strong>Provider:</strong> AI Elevate</div>
+            </div>
+        </header>
+
+        <!-- MODULE 1 -->
+        <div class="module">
+            <div class="module-header">Module 1: Introduction to Prompt Engineering</div>
+            <div class="module-body">
+                <h3>What Is Prompt Engineering?</h3>
+                <p>Prompt engineering is the discipline of designing, structuring, and refining inputs to AI language models to produce accurate, relevant, and useful outputs. It bridges the gap between human intent and machine understanding.</p>
+
+                <div class="key-concept">
+                    <strong>Key Insight:</strong> The quality of your AI output is directly proportional to the quality of your input. A well-crafted prompt can transform a generic AI response into an expert-level deliverable.
+                </div>
+
+                <h3>How LLMs Process Your Prompts</h3>
+                <ol>
+                    <li><strong>Tokenization</strong> &mdash; Your text is broken into tokens (words, subwords, or characters)</li>
+                    <li><strong>Attention</strong> &mdash; The model weighs which tokens are most relevant to each other</li>
+                    <li><strong>Pattern Matching</strong> &mdash; The model identifies patterns from its training data</li>
+                    <li><strong>Generation</strong> &mdash; Tokens are generated one at a time, each influenced by all prior tokens</li>
+                </ol>
+
+                <h3>Key LLM Parameters</h3>
+                <table class="comparison-table">
+                    <tr><th>Parameter</th><th>What It Controls</th><th>Typical Range</th></tr>
+                    <tr><td><strong>Temperature</strong></td><td>Creativity vs. consistency of output</td><td>0.0 (deterministic) &ndash; 2.0 (very creative)</td></tr>
+                    <tr><td><strong>Max Tokens</strong></td><td>Maximum length of the response</td><td>100 &ndash; 4,096+</td></tr>
+                    <tr><td><strong>Top-p</strong></td><td>Nucleus sampling threshold for diversity</td><td>0.1 &ndash; 1.0</td></tr>
+                    <tr><td><strong>System Message</strong></td><td>Persistent instructions that frame all responses</td><td>N/A (text)</td></tr>
+                </table>
+
+                <h3>The Prompt Engineering Spectrum</h3>
+                <div class="key-concept">
+                    <strong>Stage 1 &mdash; Ad Hoc:</strong> "Write me something about AI"<br>
+                    <strong>Stage 2 &mdash; Structured:</strong> "Write a 500-word article about AI in healthcare for a business audience"<br>
+                    <strong>Stage 3 &mdash; Professional:</strong> Full CRAFT prompt with context, role, action, format, and tone specifications
+                </div>
+
+                <div class="exercise-notes">
+                    <h4>Exercise: Your First Before &amp; After</h4>
+                    <p>Take a prompt you've used recently. Write it below, then identify what's missing.</p>
+                    <div class="note-lines">
+                        <div class="note-line"></div>
+                        <div class="note-line"></div>
+                        <div class="note-line"></div>
+                        <div class="note-line"></div>
+                        <div class="note-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module">
+            <div class="module-header">Module 2: The CRAFT Framework Deep Dive</div>
+            <div class="module-body">
+                <h3>The CRAFT Framework</h3>
+                <p>CRAFT is a structured methodology for composing effective prompts. Each letter represents an essential component:</p>
+
+                <div class="craft-reference">
+                    <div class="craft-letter">C</div>
+                    <div class="craft-desc"><strong>Context</strong> &mdash; Background information the AI needs. Include domain, situation, constraints, and any relevant data. The more specific context you provide, the more relevant the output.</div>
+                </div>
+                <div class="craft-reference">
+                    <div class="craft-letter">R</div>
+                    <div class="craft-desc"><strong>Role</strong> &mdash; The expert persona the AI should adopt. Specify domain expertise, years of experience, communication style, and perspective. Example: "Act as a senior data scientist with 10 years of experience in healthcare analytics."</div>
+                </div>
+                <div class="craft-reference">
+                    <div class="craft-letter">A</div>
+                    <div class="craft-desc"><strong>Action</strong> &mdash; The specific task to perform. Use precise action verbs: analyze, compare, create, evaluate, summarize, design, recommend, critique, transform, explain.</div>
+                </div>
+                <div class="craft-reference">
+                    <div class="craft-letter">F</div>
+                    <div class="craft-desc"><strong>Format</strong> &mdash; How the output should be structured. Specify: bullet points, numbered list, table, JSON, markdown, specific headings, word count, or exact template to follow.</div>
+                </div>
+                <div class="craft-reference">
+                    <div class="craft-letter">T</div>
+                    <div class="craft-desc"><strong>Tone</strong> &mdash; The voice and style of the response. Consider: formal/casual, technical/accessible, direct/diplomatic, encouraging/critical, concise/detailed.</div>
+                </div>
+
+                <h3>CRAFT in Action: Example</h3>
+                <div class="prompt-label before">Before (Vague)</div>
+                <div class="prompt-example">Write a report about our sales.</div>
+
+                <div class="prompt-label after">After (CRAFT)</div>
+                <div class="prompt-example"><strong>[Context]</strong> Our SaaS company had Q3 revenue of $2.4M (up 15% QoQ). Enterprise deals grew 40% but SMB churn increased to 8%. We're preparing for the board meeting next Tuesday.
+
+<strong>[Role]</strong> Act as a senior business analyst who specializes in SaaS metrics and board communications.
+
+<strong>[Action]</strong> Create a Q3 sales performance report that highlights wins, identifies the SMB churn risk, and recommends 3 actionable steps for Q4.
+
+<strong>[Format]</strong> Structure as: Executive Summary (3 sentences), Key Metrics table, Wins section (bullets), Risk Analysis, Q4 Recommendations (numbered).
+
+<strong>[Tone]</strong> Professional and data-driven, suitable for board-level presentation. Be direct about risks while maintaining confidence in the growth trajectory.</div>
+
+                <h3>Action Verb Categories</h3>
+                <table class="comparison-table">
+                    <tr><th>Category</th><th>Verbs</th><th>Use When</th></tr>
+                    <tr><td>Analysis</td><td>Analyze, evaluate, compare, assess, diagnose</td><td>Breaking down complex information</td></tr>
+                    <tr><td>Creation</td><td>Write, draft, compose, design, develop</td><td>Generating new content</td></tr>
+                    <tr><td>Transformation</td><td>Summarize, translate, rewrite, simplify, expand</td><td>Changing existing content</td></tr>
+                    <tr><td>Decision</td><td>Recommend, prioritize, rank, select, justify</td><td>Making or supporting decisions</td></tr>
+                    <tr><td>Teaching</td><td>Explain, illustrate, demonstrate, teach, guide</td><td>Educational content</td></tr>
+                </table>
+
+                <div class="exercise-notes">
+                    <h4>Exercise: Build Your First CRAFT Prompt</h4>
+                    <p>Choose a real task from your work. Build a CRAFT prompt for it below.</p>
+                    <p><strong>Context:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div><div class="note-line"></div></div>
+                    <p><strong>Role:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Action:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Format:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Tone:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module">
+            <div class="module-header">Module 3: Advanced Prompt Techniques</div>
+            <div class="module-body">
+                <h3>Technique Reference</h3>
+                <table class="comparison-table">
+                    <tr><th>Technique</th><th>What It Does</th><th>When to Use</th></tr>
+                    <tr><td><strong>Few-Shot Learning</strong></td><td>Provide examples of desired input/output pairs</td><td>Classification, consistent formatting, style matching</td></tr>
+                    <tr><td><strong>Chain-of-Thought</strong></td><td>Ask the AI to show its reasoning step by step</td><td>Math, logic, complex analysis, debugging</td></tr>
+                    <tr><td><strong>Tree of Thoughts</strong></td><td>Explore multiple reasoning paths before deciding</td><td>Strategic decisions, creative problem-solving</td></tr>
+                    <tr><td><strong>Self-Consistency</strong></td><td>Generate multiple answers and select the consensus</td><td>Reducing errors, high-stakes decisions</td></tr>
+                    <tr><td><strong>Persona Engineering</strong></td><td>Assign detailed expert personas to the AI</td><td>Domain expertise, perspective-taking</td></tr>
+                    <tr><td><strong>System Messages</strong></td><td>Set persistent behavioral instructions</td><td>Consistent behavior across conversations</td></tr>
+                    <tr><td><strong>Output Constraints</strong></td><td>Strictly define output structure and boundaries</td><td>API integration, data extraction, templates</td></tr>
+                </table>
+
+                <h3>Few-Shot Learning</h3>
+                <div class="tip-box">
+                    <strong>Tip:</strong> Three examples is the sweet spot. Fewer may not establish the pattern; more can waste context tokens without improvement.
+                </div>
+                <div class="prompt-label example">Example: Sentiment Classification</div>
+                <div class="prompt-example">Classify the sentiment of customer reviews as POSITIVE, NEGATIVE, or NEUTRAL.
+
+Examples:
+Review: "The product exceeded my expectations!" → POSITIVE
+Review: "Shipping was delayed by 2 weeks." → NEGATIVE
+Review: "It works as described, nothing special." → NEUTRAL
+
+Now classify:
+Review: "I love the new interface but the load time is frustrating."</div>
+
+                <h3>Chain-of-Thought Prompting</h3>
+                <div class="two-column">
+                    <div>
+                        <div class="prompt-label before">Without CoT</div>
+                        <div class="prompt-example">A store has 45 shirts. They sell 60% on Monday and half the remainder on Tuesday. How many are left?</div>
+                        <p><em>AI may jump to an answer, possibly incorrectly.</em></p>
+                    </div>
+                    <div>
+                        <div class="prompt-label after">With CoT</div>
+                        <div class="prompt-example">A store has 45 shirts. They sell 60% on Monday and half the remainder on Tuesday. How many are left?
+
+Think through this step by step, showing your work at each stage.</div>
+                        <p><em>AI shows: 45 &times; 0.6 = 27 sold Mon, 18 remain, 18 / 2 = 9 left.</em></p>
+                    </div>
+                </div>
+
+                <h3>Multi-Persona Engineering</h3>
+                <div class="key-concept">
+                    <strong>Panel Discussion Technique:</strong> Ask the AI to analyze a decision from multiple expert perspectives. Example: "Evaluate this product launch plan from the perspective of the CEO (growth focus), CFO (financial risk), and CTO (technical feasibility). Have each expert provide their top 3 concerns."
+                </div>
+
+                <div class="exercise-notes">
+                    <h4>Exercise: Technique Tournament</h4>
+                    <p>Pick one task. Apply 3 different techniques. Rate which produced the best result.</p>
+                    <p><strong>Task:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Technique 1 result (rating 1-5):</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Technique 2 result (rating 1-5):</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Technique 3 result (rating 1-5):</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 4 -->
+        <div class="module">
+            <div class="module-header">Module 4: Context Engineering</div>
+            <div class="module-body">
+                <h3>What Is Context Engineering?</h3>
+                <p>Context engineering goes beyond prompt writing. It is the discipline of designing and managing the information environment in which an AI model operates. While a prompt is a single instruction, context engineering manages the AI's entire working memory.</p>
+
+                <h3>The 4 Layers of Context</h3>
+                <table class="comparison-table">
+                    <tr><th>Layer</th><th>Content</th><th>Token Budget</th></tr>
+                    <tr><td><strong>System Instructions</strong></td><td>Persistent rules, persona, constraints</td><td>5-10%</td></tr>
+                    <tr><td><strong>Reference Material</strong></td><td>Documents, data, examples the AI needs</td><td>40-60%</td></tr>
+                    <tr><td><strong>Conversation History</strong></td><td>Prior messages providing continuity</td><td>20-30%</td></tr>
+                    <tr><td><strong>Current Task</strong></td><td>The immediate instruction/question</td><td>10-20%</td></tr>
+                </table>
+
+                <h3>Context Budgeting</h3>
+                <div class="warning-box">
+                    <strong>Warning:</strong> More context is not always better. Overloading the context window dilutes attention and can actually reduce output quality. Be selective about what you include.
+                </div>
+
+                <h3>Information Priority Stack</h3>
+                <ol>
+                    <li><strong>Essential</strong> &mdash; Without this, the AI cannot complete the task (core data, key constraints)</li>
+                    <li><strong>Important</strong> &mdash; Significantly improves quality (domain terminology, style examples)</li>
+                    <li><strong>Helpful</strong> &mdash; Adds nuance and polish (edge cases, preferences)</li>
+                    <li><strong>Nice-to-have</strong> &mdash; Marginal improvement (background history, related context)</li>
+                </ol>
+                <div class="tip-box">
+                    <strong>Rule of Thumb:</strong> If removing a piece of context doesn't change the output, it probably doesn't need to be there. Prioritize ruthlessly.
+                </div>
+
+                <div class="exercise-notes">
+                    <h4>Exercise: Context Engineering Workshop</h4>
+                    <p>Take a document or brief you work with. Categorize its information using the priority stack.</p>
+                    <p><strong>Essential information:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div><div class="note-line"></div></div>
+                    <p><strong>Important information:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Helpful (include if space):</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Cut (nice-to-have, deprioritize):</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 5 -->
+        <div class="module">
+            <div class="module-header">Module 5: Prompt Chains &amp; Workflows</div>
+            <div class="module-body">
+                <h3>What Are Prompt Chains?</h3>
+                <p>Prompt chains break complex tasks into a series of simpler prompts where the output of one becomes the input to the next. This mirrors how experts decompose problems: research first, then outline, then draft, then refine.</p>
+
+                <h3>Three Workflow Patterns</h3>
+                <table class="comparison-table">
+                    <tr><th>Pattern</th><th>Description</th><th>Example</th></tr>
+                    <tr><td><strong>Sequential</strong></td><td>Steps run in order, each using the previous output</td><td>Research &rarr; Outline &rarr; Draft &rarr; Edit</td></tr>
+                    <tr><td><strong>Fan-Out</strong></td><td>Same prompt applied to multiple inputs in parallel</td><td>Analyze 10 customer reviews simultaneously</td></tr>
+                    <tr><td><strong>Iterative</strong></td><td>Same prompt applied repeatedly, refining each time</td><td>Draft &rarr; Critique &rarr; Revise &rarr; Critique &rarr; Final</td></tr>
+                </table>
+
+                <h3>Task Decomposition</h3>
+                <div class="two-column">
+                    <div>
+                        <div class="prompt-label before">Monolithic Prompt</div>
+                        <div class="prompt-example">Research AI trends, create an outline, write a 2000-word article, add citations, and format it for our blog with SEO optimization.</div>
+                        <p><em>Too many tasks. Output quality suffers on each.</em></p>
+                    </div>
+                    <div>
+                        <div class="prompt-label after">Decomposed Chain</div>
+                        <div class="prompt-example"><strong>Step 1:</strong> Research the top 5 AI trends for 2025 with sources.
+<strong>Step 2:</strong> Create a blog outline from these trends for a business audience.
+<strong>Step 3:</strong> Write the article following this outline (2000 words).
+<strong>Step 4:</strong> Add SEO metadata and format for WordPress.</div>
+                        <p><em>Each step gets full attention. Quality compounds.</em></p>
+                    </div>
+                </div>
+
+                <h3>Case Study: Content Production Workflow</h3>
+                <div class="prompt-label example">Step 1: Research</div>
+                <div class="prompt-example">Extract the 5 most important statistics about remote work adoption in 2024-2025. For each, provide the source, the exact figure, and a one-sentence interpretation.</div>
+
+                <div class="prompt-label example">Step 2: Outline</div>
+                <div class="prompt-example">Using these statistics, create a blog outline with: attention-grabbing title, introduction hook, 5 sections (one per stat), and a conclusion with call to action. Target audience: HR directors.</div>
+
+                <div class="prompt-label example">Step 3: Draft</div>
+                <div class="prompt-example">Write the full blog post following this outline. 1500 words. Professional but engaging tone. Include the statistics naturally in the narrative. End each section with a practical takeaway.</div>
+
+                <div class="prompt-label example">Step 4: Polish</div>
+                <div class="prompt-example">Review this blog post. Fix any awkward transitions, strengthen the opening paragraph, ensure all statistics have proper attribution, and add 3 suggested social media snippets for promotion.</div>
+
+                <div class="exercise-notes">
+                    <h4>Exercise: Design Your Workflow</h4>
+                    <p>Choose a complex task from your work. Break it into 3-4 prompt steps.</p>
+                    <p><strong>Task:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Step 1:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Step 2:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Step 3:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Step 4 (if needed):</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 6 -->
+        <div class="module">
+            <div class="module-header">Module 6: Testing &amp; Refining Prompts</div>
+            <div class="module-body">
+                <h3>The Prompt Engineering Cycle</h3>
+                <p><strong>Define Criteria &rarr; Write Prompt &rarr; Test &rarr; Evaluate &rarr; Diagnose &rarr; Refine &rarr; Repeat</strong></p>
+                <div class="key-concept">
+                    <strong>Key Principle:</strong> Professional prompt engineering is iterative. Expect to refine a prompt 3-5 times before it consistently produces the quality you need.
+                </div>
+
+                <h3>Common Failure Modes &amp; Fixes</h3>
+                <table class="comparison-table">
+                    <tr><th>Failure Mode</th><th>Symptoms</th><th>Fix</th></tr>
+                    <tr><td><strong>Hallucination</strong></td><td>AI invents facts, cites non-existent sources</td><td>Add "Only use information provided" constraint; request source citations; use retrieval-augmented generation</td></tr>
+                    <tr><td><strong>Verbosity</strong></td><td>Response is 3x longer than needed</td><td>Specify word/sentence limits; add "Be concise"; use format constraints (bullet points, tables)</td></tr>
+                    <tr><td><strong>Off-Topic</strong></td><td>Response drifts from the original request</td><td>Strengthen the Action element; add "Focus exclusively on X"; remove distracting context</td></tr>
+                    <tr><td><strong>Inconsistency</strong></td><td>Same prompt gives different quality results</td><td>Lower temperature; add few-shot examples; use more specific instructions; add output validation</td></tr>
+                    <tr><td><strong>Shallow Analysis</strong></td><td>Surface-level response lacking depth</td><td>Add Chain-of-Thought; request "detailed analysis with evidence"; specify depth expectations</td></tr>
+                </table>
+
+                <h3>Validation Techniques</h3>
+                <ul>
+                    <li><strong>Self-Check:</strong> Ask the AI to critique its own output against your criteria</li>
+                    <li><strong>Rubric Scoring:</strong> Define 5 quality dimensions, score each 1-5</li>
+                    <li><strong>Red Teaming:</strong> Try to break the prompt with edge cases and adversarial inputs</li>
+                    <li><strong>A/B Testing:</strong> Run two prompt versions on the same inputs, compare results</li>
+                </ul>
+
+                <h3>Response Prediction</h3>
+                <div class="tip-box">
+                    <strong>Tip:</strong> Before running a prompt, predict what the output will look like. If you can't predict it, the prompt probably isn't specific enough. This is the fastest diagnostic tool in your toolkit.
+                </div>
+
+                <div class="exercise-notes">
+                    <h4>Exercise: Prompt Testing Lab</h4>
+                    <p>Use the Prompt Testing Lab tool to refine a prompt through 3 iterations.</p>
+                    <p><strong>Original prompt:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div><div class="note-line"></div></div>
+                    <p><strong>Iteration 1 changes &amp; score:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Iteration 2 changes &amp; score:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Iteration 3 changes &amp; score:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 7 -->
+        <div class="module">
+            <div class="module-header">Module 7: Real-World Applications</div>
+            <div class="module-body">
+                <h3>Application Domains</h3>
+                <div class="two-column">
+                    <div>
+                        <h4>Business</h4>
+                        <ul>
+                            <li>Customer support response generation</li>
+                            <li>Sales proposal drafting</li>
+                            <li>Market analysis and competitive research</li>
+                            <li>Email and communication templates</li>
+                        </ul>
+                        <h4>Creative &amp; Content</h4>
+                        <ul>
+                            <li>Blog posts and articles</li>
+                            <li>Social media content calendars</li>
+                            <li>Brainstorming and ideation sessions</li>
+                            <li>Style transfer and tone adaptation</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Analytical</h4>
+                        <ul>
+                            <li>Data interpretation and summaries</li>
+                            <li>Sentiment analysis workflows</li>
+                            <li>Report generation from raw data</li>
+                            <li>Trend identification and forecasting</li>
+                        </ul>
+                        <h4>Educational</h4>
+                        <ul>
+                            <li>Curriculum and lesson plan design</li>
+                            <li>Quiz and assessment generation</li>
+                            <li>Explanations at different expertise levels</li>
+                            <li>Study guide creation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Building a Personal Prompt Library</h3>
+                <div class="key-concept">
+                    <strong>Why:</strong> Your best prompts are an asset. Organizing, versioning, and sharing them turns individual expertise into team capability.
+                </div>
+                <p><strong>How to organize:</strong></p>
+                <ul>
+                    <li>Group by task type (writing, analysis, coding, communication)</li>
+                    <li>Track versions &mdash; keep iteration history so you know what improved</li>
+                    <li>Note the model &mdash; prompts may behave differently across models</li>
+                    <li>Tag with metadata: use case, domain, confidence level, last tested date</li>
+                    <li>Share with your team &mdash; prompt libraries multiply in value with collaboration</li>
+                </ul>
+
+                <div class="exercise-notes">
+                    <h4>Exercise: Capstone Challenge</h4>
+                    <p>Build a complete prompt solution for a real challenge from your work. Apply everything you've learned today: CRAFT framework, advanced techniques, context engineering, and testing.</p>
+                    <p><strong>Your challenge:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div><div class="note-line"></div></div>
+                    <p><strong>Your CRAFT prompt:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+                    <p><strong>Techniques applied:</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                    <p><strong>Quality score (self-assessed, /25):</strong></p>
+                    <div class="note-lines"><div class="note-line"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK REFERENCE -->
+        <div class="module">
+            <div class="module-header">Quick Reference Card</div>
+            <div class="module-body">
+                <h3>CRAFT Framework Checklist</h3>
+                <ul>
+                    <li><strong>C</strong>ontext &mdash; Have I provided sufficient background information?</li>
+                    <li><strong>R</strong>ole &mdash; Have I defined the expert persona?</li>
+                    <li><strong>A</strong>ction &mdash; Is my instruction specific and unambiguous?</li>
+                    <li><strong>F</strong>ormat &mdash; Have I specified the output structure?</li>
+                    <li><strong>T</strong>one &mdash; Have I set the appropriate voice and style?</li>
+                </ul>
+
+                <h3>Prompt Quality Self-Check</h3>
+                <ul>
+                    <li>Can I predict what the output will look like? (If not, prompt needs work)</li>
+                    <li>Could someone else use this prompt and get the same quality result?</li>
+                    <li>Have I removed unnecessary information that could distract the model?</li>
+                    <li>Am I asking for one clear task, not bundling multiple tasks?</li>
+                    <li>Have I tested with at least 2-3 different inputs?</li>
+                </ul>
+
+                <h3>Recommended Tools</h3>
+                <table class="comparison-table">
+                    <tr><th>Tool</th><th>Best For</th></tr>
+                    <tr><td>CRAFT Prompt Builder (demo)</td><td>Structuring prompts with the framework</td></tr>
+                    <tr><td>Prompt Testing Lab (demo)</td><td>A/B testing and iterative refinement</td></tr>
+                    <tr><td>ChatGPT / Claude / Gemini</td><td>Running and testing your prompts</td></tr>
+                    <tr><td>Prompt library (personal)</td><td>Storing and versioning your best prompts</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>Prompt Engineering Masterclass &mdash; AI Elevate</p>
+            <p>Full-Day Interactive Workshop &bull; Student Reference Notes</p>
+        </footer>
+    </div>
+</body>
+</html>

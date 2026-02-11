@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRAFT Prompt Builder - Prompt Engineering Masterclass</title>
+    <style>
+        :root {
+            --primary: #42affa;
+            --primary-dark: #1a8ad4;
+            --green: #00cc66;
+            --orange: #ff9933;
+            --purple: #b366ff;
+            --cyan: #00d4ff;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0d1321;
+            --border: #334155;
+            --border-hover: #475569;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            --color-context: #42affa;
+            --color-role: #00cc66;
+            --color-action: #ff9933;
+            --color-format: #b366ff;
+            --color-tone: #00d4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ── Header ── */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--primary), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* ── Main Grid ── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 960px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Panels ── */
+        .panel {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            transition: border-color 0.3s;
+        }
+
+        .panel:hover {
+            border-color: var(--border-hover);
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title .icon {
+            font-size: 1.3rem;
+        }
+
+        /* ── CRAFT Fields ── */
+        .craft-field {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .craft-field-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .craft-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .craft-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .craft-letter.c { background: linear-gradient(135deg, var(--color-context), #2d8fd4); }
+        .craft-letter.r { background: linear-gradient(135deg, var(--color-role), #00994d); }
+        .craft-letter.a { background: linear-gradient(135deg, var(--color-action), #cc7a29); }
+        .craft-letter.f { background: linear-gradient(135deg, var(--color-format), #8a3dcc); }
+        .craft-letter.t { background: linear-gradient(135deg, var(--color-tone), #0099b3); }
+
+        .suggest-btn {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .suggest-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(66, 175, 250, 0.08);
+        }
+
+        .craft-field textarea {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: var(--text-primary);
+            font-size: 0.92rem;
+            resize: vertical;
+            min-height: 62px;
+            font-family: inherit;
+            line-height: 1.5;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .craft-field textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(66, 175, 250, 0.12);
+        }
+
+        .craft-field textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .craft-hint {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            padding-left: 40px;
+        }
+
+        /* ── Right Panel ── */
+        .output-wrapper {
+            position: relative;
+        }
+
+        .output-area {
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 280px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.88rem;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            transition: border-color 0.3s;
+            word-break: break-word;
+        }
+
+        .output-area:not(.empty) {
+            border-color: var(--primary-dark);
+        }
+
+        .output-area .label-context  { color: var(--color-context); font-weight: 700; }
+        .output-area .label-role     { color: var(--color-role);    font-weight: 700; }
+        .output-area .label-action   { color: var(--color-action);  font-weight: 700; }
+        .output-area .label-format   { color: var(--color-format);  font-weight: 700; }
+        .output-area .label-tone     { color: var(--color-tone);    font-weight: 700; }
+        .output-area .technique-text { color: var(--orange); font-style: italic; }
+
+        .placeholder-text {
+            color: var(--text-muted);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: italic;
+        }
+
+        /* ── Quality Score ── */
+        .quality-bar {
+            margin-top: 18px;
+            margin-bottom: 18px;
+        }
+
+        .quality-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .quality-label {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .quality-score-value {
+            font-weight: 700;
+            font-size: 1.15rem;
+            transition: color 0.4s;
+        }
+
+        .quality-track {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .quality-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s;
+            width: 0%;
+        }
+
+        /* ── Buttons ── */
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(66, 175, 250, 0.35);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #00994d, var(--green));
+            color: #fff;
+        }
+
+        .btn-green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 204, 102, 0.35);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #283347;
+            border-color: var(--border-hover);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid #7f1d1d;
+            color: #fca5a5;
+        }
+
+        .btn-danger:hover {
+            background: rgba(127, 29, 29, 0.25);
+            border-color: #991b1b;
+        }
+
+        /* ── Collapsible Sections ── */
+        .collapsible-section {
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .collapsible-section:hover {
+            border-color: var(--border-hover);
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(66, 175, 250, 0.04);
+        }
+
+        .collapsible-header h2 {
+            font-size: 1.15rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .collapsible-section.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s;
+            padding: 0 24px;
+        }
+
+        .collapsible-section.open .collapsible-body {
+            max-height: 800px;
+            padding: 0 24px 24px;
+        }
+
+        /* ── Advanced Options ── */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 700px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-group h3 {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-wrapper input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+            box-shadow: 0 0 0 6px rgba(66, 175, 250, 0.2);
+        }
+
+        .slider-wrapper input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--primary);
+            min-width: 32px;
+            text-align: right;
+        }
+
+        .select-wrapper {
+            margin-top: 8px;
+        }
+
+        .select-wrapper select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.92rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .select-wrapper select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .select-wrapper select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(66, 175, 250, 0.05);
+            border-color: var(--border);
+        }
+
+        .checkbox-item.active {
+            background: rgba(66, 175, 250, 0.08);
+            border-color: var(--primary-dark);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            background: var(--bg-input);
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+            margin-top: 2px;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkbox-item input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            width: 5px;
+            height: 10px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .checkbox-text .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .checkbox-text .desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        /* ── Template Library ── */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .template-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(66, 175, 250, 0.12);
+        }
+
+        .template-card h4 {
+            color: var(--primary);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .template-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: all 0.35s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-success {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .toast-info {
+            background: var(--primary-dark);
+            color: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        /* ── Animations ── */
+        @keyframes scoreFlash {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .score-flash {
+            animation: scoreFlash 0.35s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ═══════ Header ═══════ -->
+        <header>
+            <h1>CRAFT Prompt Builder</h1>
+            <p class="subtitle">Prompt Engineering Masterclass</p>
+        </header>
+
+        <!-- ═══════ Main Grid ═══════ -->
+        <div class="main-grid">
+            <!-- ── Left Panel: CRAFT Input Fields ── -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span class="icon">&#9998;</span>
+                    Build Your Prompt
+                </div>
+
+                <!-- Context -->
+                <div class="craft-field">
+                    <div class="craft-field-header">
+                        <label class="craft-label" for="field-context">
+                            <span class="craft-letter c">C</span>
+                            Context
+                        </label>
+                        <button class="suggest-btn" onclick="fillSuggestion('context')">Suggestion</button>
+                    </div>
+                    <textarea id="field-context" placeholder="Background information, situation, constraints..." rows="3"></textarea>
+                    <div class="craft-hint">What background information does the AI need?</div>
+                </div>
+
+                <!-- Role -->
+                <div class="craft-field">
+                    <div class="craft-field-header">
+                        <label class="craft-label" for="field-role">
+                            <span class="craft-letter r">R</span>
+                            Role
+                        </label>
+                        <button class="suggest-btn" onclick="fillSuggestion('role')">Suggestion</button>
+                    </div>
+                    <textarea id="field-role" placeholder="Who should the AI act as? Expert, advisor, critic..." rows="2"></textarea>
+                    <div class="craft-hint">What expert should the AI act as?</div>
+                </div>
+
+                <!-- Action -->
+                <div class="craft-field">
+                    <div class="craft-field-header">
+                        <label class="craft-label" for="field-action">
+                            <span class="craft-letter a">A</span>
+                            Action
+                        </label>
+                        <button class="suggest-btn" onclick="fillSuggestion('action')">Suggestion</button>
+                    </div>
+                    <textarea id="field-action" placeholder="The specific task you want the AI to perform..." rows="3"></textarea>
+                    <div class="craft-hint">What specific task should the AI perform?</div>
+                </div>
+
+                <!-- Format -->
+                <div class="craft-field">
+                    <div class="craft-field-header">
+                        <label class="craft-label" for="field-format">
+                            <span class="craft-letter f">F</span>
+                            Format
+                        </label>
+                        <button class="suggest-btn" onclick="fillSuggestion('format')">Suggestion</button>
+                    </div>
+                    <textarea id="field-format" placeholder="Bullet points, table, numbered list, paragraphs..." rows="2"></textarea>
+                    <div class="craft-hint">How should the output be structured?</div>
+                </div>
+
+                <!-- Tone -->
+                <div class="craft-field">
+                    <div class="craft-field-header">
+                        <label class="craft-label" for="field-tone">
+                            <span class="craft-letter t">T</span>
+                            Tone
+                        </label>
+                        <button class="suggest-btn" onclick="fillSuggestion('tone')">Suggestion</button>
+                    </div>
+                    <textarea id="field-tone" placeholder="Professional, casual, formal, friendly, technical..." rows="2"></textarea>
+                    <div class="craft-hint">What voice or style should be used?</div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+                </div>
+            </div>
+
+            <!-- ── Right Panel: Preview + Score ── -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span class="icon">&#128196;</span>
+                    Generated Prompt Preview
+                </div>
+
+                <!-- Quality Score -->
+                <div class="quality-bar">
+                    <div class="quality-header">
+                        <span class="quality-label">Prompt Quality Score</span>
+                        <span class="quality-score-value" id="scoreValue">0</span>
+                    </div>
+                    <div class="quality-track">
+                        <div class="quality-fill" id="scoreFill"></div>
+                    </div>
+                </div>
+
+                <!-- Output Area -->
+                <div class="output-wrapper">
+                    <div class="output-area empty" id="output">
+                        <span class="placeholder-text">Fill in the CRAFT fields to generate your structured prompt...</span>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-green" onclick="copyPrompt()">Copy to Clipboard</button>
+                    <button class="btn btn-secondary" onclick="exportJSON()">Export as JSON</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ Advanced Options ═══════ -->
+        <div class="collapsible-section" id="advancedSection">
+            <div class="collapsible-header" onclick="toggleSection('advancedSection')">
+                <h2>
+                    <span>&#9881;</span>
+                    Advanced Options
+                </h2>
+                <span class="chevron">&#9660;</span>
+            </div>
+            <div class="collapsible-body">
+                <div class="options-grid">
+                    <div>
+                        <!-- Temperature -->
+                        <div class="option-group">
+                            <h3>Temperature</h3>
+                            <div class="slider-wrapper">
+                                <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7" oninput="updateTemperature()">
+                                <span class="slider-value" id="tempValue">0.7</span>
+                            </div>
+                        </div>
+
+                        <!-- Output Format -->
+                        <div class="option-group" style="margin-top: 24px;">
+                            <h3>Output Format</h3>
+                            <div class="select-wrapper">
+                                <select id="outputFormat" onchange="buildPrompt()">
+                                    <option value="">Free text (default)</option>
+                                    <option value="bullet">Bullet points</option>
+                                    <option value="numbered">Numbered list</option>
+                                    <option value="json">JSON</option>
+                                    <option value="table">Markdown table</option>
+                                    <option value="code">Code</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technique Enhancers -->
+                    <div class="option-group">
+                        <h3>Technique Enhancers</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item" id="chk-cot-wrapper">
+                                <input type="checkbox" id="chk-cot" onchange="toggleCheckbox(this); buildPrompt();">
+                                <div class="checkbox-text">
+                                    <span class="name">Chain-of-Thought</span>
+                                    <span class="desc">Adds "Think step by step" instruction</span>
+                                </div>
+                            </label>
+                            <label class="checkbox-item" id="chk-few-wrapper">
+                                <input type="checkbox" id="chk-few" onchange="toggleCheckbox(this); buildPrompt();">
+                                <div class="checkbox-text">
+                                    <span class="name">Few-Shot</span>
+                                    <span class="desc">Adds placeholder for examples</span>
+                                </div>
+                            </label>
+                            <label class="checkbox-item" id="chk-sc-wrapper">
+                                <input type="checkbox" id="chk-sc" onchange="toggleCheckbox(this); buildPrompt();">
+                                <div class="checkbox-text">
+                                    <span class="name">Self-Consistency</span>
+                                    <span class="desc">Asks for 3 different approaches</span>
+                                </div>
+                            </label>
+                            <label class="checkbox-item" id="chk-persona-wrapper">
+                                <input type="checkbox" id="chk-persona" onchange="toggleCheckbox(this); buildPrompt();">
+                                <div class="checkbox-text">
+                                    <span class="name">Persona Lock</span>
+                                    <span class="desc">Maintains persona throughout response</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ Template Library ═══════ -->
+        <div class="collapsible-section open" id="templateSection">
+            <div class="collapsible-header" onclick="toggleSection('templateSection')">
+                <h2>
+                    <span>&#128218;</span>
+                    Template Library
+                </h2>
+                <span class="chevron">&#9660;</span>
+            </div>
+            <div class="collapsible-body">
+                <div class="template-grid" id="templateGrid">
+                    <!-- Templates inserted by JS -->
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Prompt Engineering Masterclass &mdash; CRAFT Prompt Builder
+        </footer>
+    </div>
+
+    <!-- Toasts -->
+    <div class="toast toast-success" id="toastSuccess">Copied to clipboard!</div>
+    <div class="toast toast-info" id="toastInfo">Template loaded!</div>
+
+    <script>
+    /* ══════════════════════════════════════════════
+       DATA
+    ══════════════════════════════════════════════ */
+
+    const FIELD_IDS = ['context', 'role', 'action', 'format', 'tone'];
+
+    const SUGGESTIONS = {
+        context: "I am a project manager at a mid-size technology company. We are planning our Q3 product roadmap and need to prioritize features based on customer feedback, engineering capacity, and business impact.",
+        role: "Act as a senior product strategy consultant with 15 years of experience in B2B SaaS companies, specializing in roadmap prioritization and stakeholder alignment.",
+        action: "Analyze the following feature requests and create a prioritized roadmap recommendation. For each feature, assess business value, engineering effort, and customer demand. Identify quick wins, strategic bets, and items to defer.",
+        format: "Present the analysis as: 1) Executive Summary (3 sentences), 2) Priority Matrix (table with columns: Feature, Business Value, Effort, Priority Tier), 3) Recommended Roadmap (timeline view), 4) Risk Factors (bullet list).",
+        tone: "Professional and data-driven. Use confident, clear language suitable for a board-level presentation. Avoid jargon where possible; explain technical concepts briefly."
+    };
+
+    const TEMPLATES = [
+        {
+            name: "Business Report",
+            desc: "Market analysis for quarterly review",
+            context: "Our company operates in the cloud computing market. Q3 revenue was $12M, down 5% from Q2. Key competitors launched new products in August. We need insights for the board meeting next week.",
+            role: "Act as a senior business analyst with expertise in cloud computing market dynamics and competitive analysis.",
+            action: "Create a comprehensive Q3 business performance report analyzing revenue trends, competitive landscape changes, and market opportunities. Include actionable recommendations for Q4 strategy.",
+            format: "Structure as: Executive Summary, Revenue Analysis (with YoY and QoQ comparisons), Competitive Landscape, SWOT Update, Strategic Recommendations (prioritized), and Key Metrics Dashboard outline.",
+            tone: "Professional, analytical, and executive-ready. Use data-driven language and support claims with specific metrics where possible."
+        },
+        {
+            name: "Email Draft",
+            desc: "Professional client follow-up",
+            context: "I had a product demo call yesterday with a prospective enterprise client (500+ employees). They were impressed by our analytics features but expressed concern about data migration complexity and integration with their existing Salesforce setup.",
+            role: "Act as an experienced enterprise sales professional who excels at consultative selling and overcoming objections.",
+            action: "Write a follow-up email that acknowledges their concerns, provides reassurance about migration support, highlights relevant case studies, and proposes a technical deep-dive session as next steps.",
+            format: "Professional email format with clear subject line, 3-4 short paragraphs, and a specific call-to-action. Keep under 250 words.",
+            tone: "Warm and professional. Confident but not pushy. Emphasize partnership over selling."
+        },
+        {
+            name: "Code Review",
+            desc: "Technical code analysis",
+            context: "I have a Python Flask REST API that handles user authentication and data processing. The codebase has grown organically over 18 months and we suspect there are security vulnerabilities and performance bottlenecks.",
+            role: "Act as a senior software engineer and security specialist with deep expertise in Python web applications, OWASP security practices, and API design patterns.",
+            action: "Review the provided code for security vulnerabilities, performance issues, code quality problems, and architectural concerns. Provide specific fixes with code examples for each issue found.",
+            format: "Organize findings by severity (Critical, High, Medium, Low). For each issue provide: Description, Location, Risk, Recommended Fix (with code snippet), and Prevention Strategy.",
+            tone: "Technical and precise. Constructive rather than critical. Explain the 'why' behind each recommendation."
+        },
+        {
+            name: "Content Creation",
+            desc: "Blog post writing",
+            context: "Our company blog targets technical decision-makers (CTOs, VPs of Engineering) in mid-market companies. We want to establish thought leadership in the AI/ML operations space. Our recent survey found that 73% of companies struggle with ML model deployment.",
+            role: "Act as a senior technical content strategist who writes for engineering leadership audiences, with deep knowledge of MLOps and AI infrastructure.",
+            action: "Write a compelling blog post about the top challenges in ML model deployment and practical strategies to overcome them. Reference industry data and real-world patterns. Include a subtle connection to our platform capabilities without being overtly promotional.",
+            format: "Blog post format: attention-grabbing headline, hook introduction, 5 main sections with subheadings, practical takeaways in each section, and a conclusion with call-to-action. Target 1,500-2,000 words.",
+            tone: "Authoritative yet accessible. Blend technical depth with practical advice. Use a conversational style that respects the reader's expertise."
+        },
+        {
+            name: "Data Analysis",
+            desc: "Dataset exploration prompt",
+            context: "I have a dataset with 50,000 rows of e-commerce transaction data including: customer_id, purchase_date, product_category, amount, payment_method, region, is_return, and customer_tenure_months. The data covers January 2024 to December 2024.",
+            role: "Act as a senior data scientist specializing in e-commerce analytics and customer behavior analysis.",
+            action: "Perform an exploratory data analysis. Identify key trends, seasonal patterns, and customer segments. Calculate important KPIs (AOV, return rate, customer lifetime indicators). Find anomalies or unexpected patterns. Suggest 3 predictive models that could be built from this data.",
+            format: "Structure as: 1) Dataset Overview & Quality Assessment, 2) Key Metrics Summary (table), 3) Trend Analysis (describe visualizations to create), 4) Customer Segmentation Findings, 5) Anomalies & Insights, 6) Recommended Next Steps with model suggestions.",
+            tone: "Analytical and methodical. Use statistical terminology appropriately. Present findings as actionable business insights, not just numbers."
+        },
+        {
+            name: "Meeting Summary",
+            desc: "Meeting minutes extraction",
+            context: "This is a 45-minute cross-functional product planning meeting with participants from engineering, design, product management, and customer success. The meeting discussed the upcoming v3.0 release timeline, resource allocation conflicts, and escalated customer issues.",
+            role: "Act as an executive assistant preparing concise, actionable meeting notes for senior leadership who could not attend.",
+            action: "Summarize the meeting transcript, extracting all decisions made, action items with owners and deadlines, unresolved issues, and key discussion points. Flag any items that need executive attention or approval.",
+            format: "Structure as: 1) Meeting Metadata (date, attendees, duration), 2) Key Decisions (numbered), 3) Action Items (table: Item, Owner, Deadline, Priority), 4) Open Issues Requiring Escalation, 5) Discussion Highlights, 6) Next Meeting Agenda Items.",
+            tone: "Concise, factual, and action-oriented. No editorializing. Use clear, direct language."
+        },
+        {
+            name: "Training Material",
+            desc: "Educational content creation",
+            context: "We are developing a 2-hour workshop on prompt engineering for non-technical business professionals. Attendees are managers and directors from marketing, sales, HR, and finance departments. Most have basic experience with ChatGPT but no formal training.",
+            role: "Act as an instructional designer and AI literacy expert who specializes in making complex technical concepts accessible to business professionals.",
+            action: "Create a comprehensive workshop module covering prompt engineering fundamentals, the CRAFT framework, common pitfalls, and hands-on exercises. Include facilitator notes, timing guides, and assessment questions.",
+            format: "Workshop format: Learning Objectives, Module Outline (with timing), Detailed Content for each section, 3 Hands-on Exercises (with solutions), Discussion Questions, Key Takeaways slide content, and a Quick Reference Card for attendees.",
+            tone: "Engaging, encouraging, and practical. Use business-relevant examples rather than technical ones. Make concepts relatable through analogies."
+        },
+        {
+            name: "Customer Support",
+            desc: "Support response template",
+            context: "A long-term enterprise customer (3 years, $50K ARR) has submitted an urgent ticket. Their data export feature is failing intermittently, causing delays in their month-end reporting process. This is the second time they have reported this issue in 3 months. Engineering has identified it as a timeout issue with large datasets.",
+            role: "Act as a senior customer success manager who balances empathy with technical communication and is skilled at de-escalating frustrated enterprise clients.",
+            action: "Draft a response that acknowledges the recurring issue, explains the root cause in non-technical terms, provides an immediate workaround, outlines the permanent fix timeline, and offers appropriate goodwill gesture to retain the relationship.",
+            format: "Professional email with: Acknowledgment paragraph, Root cause explanation (simple terms), Immediate workaround steps (numbered), Fix timeline and commitment, Goodwill offer, and direct contact information for escalation.",
+            tone: "Empathetic and accountable. Take ownership without over-apologizing. Project confidence that the issue will be resolved. Warm but professional."
+        }
+    ];
+
+    /* ══════════════════════════════════════════════
+       INIT
+    ══════════════════════════════════════════════ */
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTemplates();
+        // Attach live-update listeners
+        FIELD_IDS.forEach(id => {
+            document.getElementById('field-' + id).addEventListener('input', buildPrompt);
+        });
+        buildPrompt();
+    });
+
+    /* ══════════════════════════════════════════════
+       TEMPLATES
+    ══════════════════════════════════════════════ */
+
+    function renderTemplates() {
+        const grid = document.getElementById('templateGrid');
+        grid.innerHTML = TEMPLATES.map((t, i) =>
+            `<div class="template-card" onclick="loadTemplate(${i})">
+                <h4>${t.name}</h4>
+                <p>${t.desc}</p>
+            </div>`
+        ).join('');
+    }
+
+    function loadTemplate(index) {
+        const t = TEMPLATES[index];
+        document.getElementById('field-context').value = t.context;
+        document.getElementById('field-role').value    = t.role;
+        document.getElementById('field-action').value  = t.action;
+        document.getElementById('field-format').value  = t.format;
+        document.getElementById('field-tone').value    = t.tone;
+        buildPrompt();
+        showToast('toastInfo');
+    }
+
+    /* ══════════════════════════════════════════════
+       SUGGESTIONS
+    ══════════════════════════════════════════════ */
+
+    function fillSuggestion(field) {
+        const el = document.getElementById('field-' + field);
+        el.value = SUGGESTIONS[field];
+        el.focus();
+        buildPrompt();
+    }
+
+    /* ══════════════════════════════════════════════
+       BUILD PROMPT
+    ══════════════════════════════════════════════ */
+
+    function getFieldValues() {
+        const vals = {};
+        FIELD_IDS.forEach(id => {
+            vals[id] = document.getElementById('field-' + id).value.trim();
+        });
+        return vals;
+    }
+
+    function buildPrompt() {
+        const vals = getFieldValues();
+        const output = document.getElementById('output');
+        const hasContent = FIELD_IDS.some(id => vals[id].length > 0);
+
+        if (!hasContent) {
+            output.innerHTML = '<span class="placeholder-text">Fill in the CRAFT fields to generate your structured prompt...</span>';
+            output.classList.add('empty');
+            updateScore(vals);
+            return;
+        }
+
+        output.classList.remove('empty');
+        let html = '';
+
+        if (vals.context) {
+            html += `<span class="label-context">[Context]</span>\n${escapeHTML(vals.context)}\n\n`;
+        }
+        if (vals.role) {
+            html += `<span class="label-role">[Role]</span>\n${escapeHTML(vals.role)}\n\n`;
+        }
+        if (vals.action) {
+            html += `<span class="label-action">[Action]</span>\n${escapeHTML(vals.action)}\n\n`;
+        }
+        if (vals.format) {
+            html += `<span class="label-format">[Format]</span>\n${escapeHTML(vals.format)}\n\n`;
+        }
+        if (vals.tone) {
+            html += `<span class="label-tone">[Tone]</span>\n${escapeHTML(vals.tone)}\n\n`;
+        }
+
+        // Output format enhancer
+        const outputFmt = document.getElementById('outputFormat').value;
+        if (outputFmt) {
+            const fmtText = {
+                bullet: 'Present the output as bullet points.',
+                numbered: 'Present the output as a numbered list.',
+                json: 'Return the output in valid JSON format.',
+                table: 'Present the output as a Markdown table.',
+                code: 'Return the output as code with appropriate syntax.'
+            }[outputFmt];
+            if (fmtText) {
+                html += `<span class="technique-text">[Output Format] ${escapeHTML(fmtText)}</span>\n\n`;
+            }
+        }
+
+        // Technique enhancers
+        if (document.getElementById('chk-cot').checked) {
+            html += `<span class="technique-text">[Chain-of-Thought] Think step by step. Show your reasoning process before providing the final answer.</span>\n\n`;
+        }
+        if (document.getElementById('chk-few').checked) {
+            html += `<span class="technique-text">[Few-Shot Examples]\nExample 1:\nInput: [your example input]\nOutput: [your example output]\n\nExample 2:\nInput: [your example input]\nOutput: [your example output]</span>\n\n`;
+        }
+        if (document.getElementById('chk-sc').checked) {
+            html += `<span class="technique-text">[Self-Consistency] Provide 3 different approaches or perspectives, then synthesize the best elements into a final recommendation.</span>\n\n`;
+        }
+        if (document.getElementById('chk-persona').checked) {
+            html += `<span class="technique-text">[Persona Lock] Maintain this persona and expertise level throughout your entire response. Do not break character.</span>\n\n`;
+        }
+
+        output.innerHTML = html.trimEnd();
+        updateScore(vals);
+    }
+
+    function escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    /* ══════════════════════════════════════════════
+       QUALITY SCORE
+    ══════════════════════════════════════════════ */
+
+    let lastScore = -1;
+
+    function updateScore(vals) {
+        let score = 0;
+        let filledCount = 0;
+
+        FIELD_IDS.forEach(id => {
+            const text = vals[id];
+            if (text.length > 0) {
+                filledCount++;
+                // Base 20 pts per field if present
+                score += 12;
+                // Bonus for word count (up to 8 more per field)
+                const words = text.split(/\s+/).filter(w => w.length > 0).length;
+                if (words >= 5)  score += 2;
+                if (words >= 10) score += 2;
+                if (words >= 20) score += 2;
+                if (words >= 30) score += 2;
+            }
+        });
+
+        // All 5 fields populated bonus
+        if (filledCount === 5) {
+            score = Math.min(score + 10, 100);
+        }
+
+        score = Math.min(score, 100);
+
+        // Determine color
+        let color;
+        if (score < 30)       color = '#ef4444';
+        else if (score < 60)  color = var_orange();
+        else if (score < 80)  color = '#eab308';
+        else                  color = var_green();
+
+        const fill = document.getElementById('scoreFill');
+        const val  = document.getElementById('scoreValue');
+
+        fill.style.width = score + '%';
+        fill.style.background = `linear-gradient(90deg, ${color}, ${lighten(color)})`;
+        val.textContent = score;
+        val.style.color = color;
+
+        if (score !== lastScore && lastScore >= 0) {
+            val.classList.remove('score-flash');
+            void val.offsetWidth; // trigger reflow
+            val.classList.add('score-flash');
+        }
+        lastScore = score;
+    }
+
+    function var_orange() { return '#ff9933'; }
+    function var_green()  { return '#00cc66'; }
+
+    function lighten(hex) {
+        // Simple lighten: blend toward white
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        const f = 0.3;
+        const lr = Math.round(r + (255 - r) * f);
+        const lg = Math.round(g + (255 - g) * f);
+        const lb = Math.round(b + (255 - b) * f);
+        return `rgb(${lr}, ${lg}, ${lb})`;
+    }
+
+    /* ══════════════════════════════════════════════
+       ACTIONS
+    ══════════════════════════════════════════════ */
+
+    function clearAll() {
+        FIELD_IDS.forEach(id => {
+            document.getElementById('field-' + id).value = '';
+        });
+        document.getElementById('outputFormat').value = '';
+        document.getElementById('temperature').value = 0.7;
+        document.getElementById('tempValue').textContent = '0.7';
+        ['chk-cot', 'chk-few', 'chk-sc', 'chk-persona'].forEach(id => {
+            const cb = document.getElementById(id);
+            cb.checked = false;
+            cb.closest('.checkbox-item').classList.remove('active');
+        });
+        buildPrompt();
+    }
+
+    function copyPrompt() {
+        const output = document.getElementById('output');
+        const text = output.innerText;
+        if (!text || text.includes('Fill in the CRAFT fields')) return;
+
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('toastSuccess');
+        }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('toastSuccess');
+        });
+    }
+
+    function exportJSON() {
+        const vals = getFieldValues();
+        const hasContent = FIELD_IDS.some(id => vals[id].length > 0);
+        if (!hasContent) return;
+
+        const data = {
+            craft: {
+                context: vals.context,
+                role: vals.role,
+                action: vals.action,
+                format: vals.format,
+                tone: vals.tone
+            },
+            options: {
+                temperature: parseFloat(document.getElementById('temperature').value),
+                outputFormat: document.getElementById('outputFormat').value || 'free_text',
+                techniques: {
+                    chainOfThought: document.getElementById('chk-cot').checked,
+                    fewShot: document.getElementById('chk-few').checked,
+                    selfConsistency: document.getElementById('chk-sc').checked,
+                    personaLock: document.getElementById('chk-persona').checked
+                }
+            },
+            generatedPrompt: document.getElementById('output').innerText,
+            exportedAt: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'craft-prompt-' + Date.now() + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    /* ══════════════════════════════════════════════
+       UI HELPERS
+    ══════════════════════════════════════════════ */
+
+    function toggleSection(id) {
+        document.getElementById(id).classList.toggle('open');
+    }
+
+    function toggleCheckbox(cb) {
+        cb.closest('.checkbox-item').classList.toggle('active', cb.checked);
+    }
+
+    function updateTemperature() {
+        const val = document.getElementById('temperature').value;
+        document.getElementById('tempValue').textContent = parseFloat(val).toFixed(1);
+    }
+
+    function showToast(id) {
+        const el = document.getElementById(id);
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2200);
+    }
+    </script>
+</body>
+</html>

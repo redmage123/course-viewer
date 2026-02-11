@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Testing Lab</title>
+    <style>
+        :root {
+            --primary: #42affa;
+            --primary-dark: #1a8ad4;
+            --green: #00cc66;
+            --orange: #ff9933;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            --border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* ── Header ───────────────────────────────────── */
+        header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* ── Panels / Cards ───────────────────────────── */
+        .panel {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Two-Column Prompt Comparison ─────────────── */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 860px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .prompt-col .label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prompt-col .label .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .prompt-col.version-a .label .dot { background: var(--primary); }
+        .prompt-col.version-b .label .dot { background: var(--green); }
+        .prompt-col.version-a .label { color: var(--primary); }
+        .prompt-col.version-b .label { color: var(--green); }
+
+        textarea {
+            width: 100%;
+            min-height: 160px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95rem;
+            padding: 14px;
+            resize: vertical;
+            transition: border-color 0.2s;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .prompt-col.version-b textarea:focus {
+            border-color: var(--green);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* ── Evaluation Rubric ────────────────────────── */
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .rubric-table thead th {
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rubric-table thead th:nth-child(2) { color: var(--primary); text-align: center; }
+        .rubric-table thead th:nth-child(3) { color: var(--green); text-align: center; }
+
+        .rubric-table tbody td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(51,65,85,0.5);
+            vertical-align: middle;
+        }
+
+        .rubric-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .criteria-cell {
+            min-width: 200px;
+        }
+
+        .criteria-name {
+            font-weight: 600;
+            font-size: 0.93rem;
+            color: var(--text-primary);
+        }
+
+        .criteria-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ── Pill Radio Buttons ───────────────────────── */
+        .pill-group {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .pill-group input[type="radio"] {
+            display: none;
+        }
+
+        .pill-group label {
+            width: 36px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text-muted);
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .pill-group label:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .pill-group.version-a input:checked + label {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(66,175,250,0.35);
+        }
+
+        .pill-group.version-b input:checked + label {
+            background: var(--green);
+            border-color: var(--green);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0,204,102,0.35);
+        }
+
+        /* ── Responsive rubric ────────────────────────── */
+        @media (max-width: 700px) {
+            .rubric-table, .rubric-table thead, .rubric-table tbody,
+            .rubric-table th, .rubric-table td, .rubric-table tr {
+                display: block;
+            }
+            .rubric-table thead { display: none; }
+            .rubric-table tbody td {
+                padding: 8px 12px;
+                text-align: left;
+                border-bottom: none;
+            }
+            .rubric-table tbody td:first-child {
+                padding-top: 16px;
+                border-top: 1px solid var(--border);
+            }
+            .rubric-table tbody td:nth-child(2)::before {
+                content: 'Version A: ';
+                font-weight: 600;
+                color: var(--primary);
+                font-size: 0.82rem;
+                margin-right: 6px;
+            }
+            .rubric-table tbody td:nth-child(3)::before {
+                content: 'Version B: ';
+                font-weight: 600;
+                color: var(--green);
+                font-size: 0.82rem;
+                margin-right: 6px;
+            }
+            .pill-group { justify-content: flex-start; }
+        }
+
+        /* ── Results Section ──────────────────────────── */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 860px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .score-card {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            position: relative;
+            transition: box-shadow 0.4s, border-color 0.4s;
+        }
+
+        .score-card.winner-a {
+            border-color: var(--primary);
+            box-shadow: 0 0 24px rgba(66,175,250,0.2);
+        }
+
+        .score-card.winner-b {
+            border-color: var(--green);
+            box-shadow: 0 0 24px rgba(0,204,102,0.2);
+        }
+
+        .score-card .version-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .score-card.card-a .version-label { color: var(--primary); }
+        .score-card.card-b .version-label { color: var(--green); }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+            transition: color 0.3s;
+        }
+
+        .score-card.card-a .score-value { color: var(--primary); }
+        .score-card.card-b .score-value { color: var(--green); }
+
+        .score-max {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        /* Progress bar */
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(51,65,85,0.6);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .card-a .progress-fill { background: linear-gradient(90deg, var(--primary-dark), var(--primary)); }
+        .card-b .progress-fill { background: linear-gradient(90deg, #009e50, var(--green)); }
+
+        /* Winner badge */
+        .winner-badge {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .winner-badge.show {
+            display: flex;
+            animation: popIn 0.35s ease;
+        }
+
+        .card-a .winner-badge {
+            background: rgba(66,175,250,0.15);
+            color: var(--primary);
+        }
+
+        .card-b .winner-badge {
+            background: rgba(0,204,102,0.15);
+            color: var(--green);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Radar chart area */
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .radar-wrap canvas {
+            max-width: 100%;
+        }
+
+        /* ── Improvement Notes ─────────────────────────── */
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .iteration-badge {
+            background: rgba(66,175,250,0.12);
+            color: var(--primary);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .notes-textarea {
+            min-height: 100px;
+        }
+
+        /* ── Action Buttons ────────────────────────────── */
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 28px;
+        }
+
+        .btn {
+            padding: 12px 26px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(66,175,250,0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(66,175,250,0.4);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #009e50, var(--green));
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(0,204,102,0.25);
+        }
+
+        .btn-green:hover {
+            box-shadow: 0 6px 20px rgba(0,204,102,0.35);
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #cc7a29, var(--orange));
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(255,153,51,0.25);
+        }
+
+        .btn-orange:hover {
+            box-shadow: 0 6px 20px rgba(255,153,51,0.35);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid rgba(239,68,68,0.4);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239,68,68,0.1);
+            border-color: var(--danger);
+        }
+
+        /* ── Utility ──────────────────────────────────── */
+        .hidden { display: none; }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: all 0.35s ease;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Scroll smoothing */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- ────────── Header ────────── -->
+        <header>
+            <h1>Prompt Testing Lab</h1>
+            <p class="subtitle">Compare, Score &amp; Refine Your Prompts</p>
+        </header>
+
+        <!-- ────────── Prompt Comparison ────────── -->
+        <div class="panel">
+            <div class="section-title">
+                <span class="icon" style="background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;">A/B</span>
+                Prompt Comparison
+            </div>
+            <div class="comparison-grid">
+                <!-- Version A -->
+                <div class="prompt-col version-a">
+                    <div class="label"><span class="dot"></span> Version A</div>
+                    <textarea id="promptA" rows="6" placeholder="Enter your first prompt version here..."></textarea>
+                    <div class="char-count" id="charA">0 characters</div>
+                </div>
+                <!-- Version B -->
+                <div class="prompt-col version-b">
+                    <div class="label"><span class="dot"></span> Version B</div>
+                    <textarea id="promptB" rows="6" placeholder="Enter your revised prompt version here..."></textarea>
+                    <div class="char-count" id="charB">0 characters</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ────────── Evaluation Rubric ────────── -->
+        <div class="panel">
+            <div class="section-title">
+                <span class="icon" style="background:linear-gradient(135deg,var(--orange),#ffb84d);color:#fff;">&#9733;</span>
+                Evaluation Rubric
+            </div>
+            <table class="rubric-table" id="rubricTable">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>Version A (1-5)</th>
+                        <th>Version B (1-5)</th>
+                    </tr>
+                </thead>
+                <tbody id="rubricBody">
+                    <!-- Rows injected by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ────────── Results ────────── -->
+        <div class="panel" id="resultsPanel">
+            <div class="section-title">
+                <span class="icon" style="background:linear-gradient(135deg,var(--green),#33e085);color:#fff;">&#10003;</span>
+                Results
+            </div>
+
+            <div class="results-grid">
+                <!-- Score Card A -->
+                <div class="score-card card-a" id="scoreCardA">
+                    <div class="version-label">Version A</div>
+                    <div class="score-value" id="totalA">0</div>
+                    <div class="score-max">out of 25</div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressA"></div>
+                    </div>
+                    <div class="winner-badge" id="badgeA">&#10003; Winner</div>
+                </div>
+                <!-- Score Card B -->
+                <div class="score-card card-b" id="scoreCardB">
+                    <div class="version-label">Version B</div>
+                    <div class="score-value" id="totalB">0</div>
+                    <div class="score-max">out of 25</div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressB"></div>
+                    </div>
+                    <div class="winner-badge" id="badgeB">&#10003; Winner</div>
+                </div>
+            </div>
+
+            <!-- Radar Chart -->
+            <div class="radar-wrap">
+                <canvas id="radarCanvas" width="420" height="380"></canvas>
+            </div>
+        </div>
+
+        <!-- ────────── Improvement Notes ────────── -->
+        <div class="panel">
+            <div class="notes-header">
+                <div class="section-title" style="margin-bottom:0;">
+                    <span class="icon" style="background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;">&#9998;</span>
+                    Improvement Notes
+                </div>
+                <span class="iteration-badge" id="iterBadge">Iteration #1</span>
+            </div>
+            <textarea id="notes" class="notes-textarea" placeholder="What would you change in your next iteration?"></textarea>
+        </div>
+
+        <!-- ────────── Actions ────────── -->
+        <div class="actions">
+            <button class="btn btn-primary" onclick="scorePrompts()">&#9733; Score Prompts</button>
+            <button class="btn btn-green" onclick="newIteration()">&#8634; Start New Iteration</button>
+            <button class="btn btn-orange" onclick="exportReport()">&#8681; Export Report</button>
+            <button class="btn btn-danger" onclick="resetAll()">&#10005; Reset All</button>
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+    /* ═══════════════════════════════════════════════════
+       Data
+       ═══════════════════════════════════════════════════ */
+    const CRITERIA = [
+        { id: 'clarity',     name: 'Clarity',     desc: 'Is the instruction unambiguous?' },
+        { id: 'specificity', name: 'Specificity', desc: 'Are details precise enough?' },
+        { id: 'context',     name: 'Context',     desc: 'Is sufficient background provided?' },
+        { id: 'format',      name: 'Format',      desc: 'Is output structure defined?' },
+        { id: 'technique',   name: 'Technique',   desc: 'Are prompt engineering methods used?' }
+    ];
+
+    let iteration = 1;
+
+    /* ═══════════════════════════════════════════════════
+       Build Rubric Rows
+       ═══════════════════════════════════════════════════ */
+    (function buildRubric() {
+        const tbody = document.getElementById('rubricBody');
+        CRITERIA.forEach(c => {
+            const tr = document.createElement('tr');
+
+            // Criteria cell
+            const tdC = document.createElement('td');
+            tdC.classList.add('criteria-cell');
+            tdC.innerHTML = '<div class="criteria-name">' + c.name + '</div>' +
+                            '<div class="criteria-desc">' + c.desc + '</div>';
+            tr.appendChild(tdC);
+
+            // Version A pills
+            tr.appendChild(buildPillCell(c.id, 'a'));
+
+            // Version B pills
+            tr.appendChild(buildPillCell(c.id, 'b'));
+
+            tbody.appendChild(tr);
+        });
+    })();
+
+    function buildPillCell(criteriaId, version) {
+        const td = document.createElement('td');
+        const group = document.createElement('div');
+        group.className = 'pill-group version-' + version;
+
+        for (let v = 1; v <= 5; v++) {
+            const rid = criteriaId + '_' + version + '_' + v;
+            const name = criteriaId + '_' + version;
+
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.id = rid;
+            radio.name = name;
+            radio.value = v;
+            radio.addEventListener('change', autoCalculate);
+
+            const lbl = document.createElement('label');
+            lbl.setAttribute('for', rid);
+            lbl.textContent = v;
+
+            group.appendChild(radio);
+            group.appendChild(lbl);
+        }
+
+        td.appendChild(group);
+        return td;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       Character Counts
+       ═══════════════════════════════════════════════════ */
+    document.getElementById('promptA').addEventListener('input', function() {
+        document.getElementById('charA').textContent = this.value.length + ' characters';
+    });
+    document.getElementById('promptB').addEventListener('input', function() {
+        document.getElementById('charB').textContent = this.value.length + ' characters';
+    });
+
+    /* ═══════════════════════════════════════════════════
+       Scoring Logic
+       ═══════════════════════════════════════════════════ */
+    function getScores(version) {
+        return CRITERIA.map(c => {
+            const checked = document.querySelector('input[name="' + c.id + '_' + version + '"]:checked');
+            return checked ? parseInt(checked.value) : 0;
+        });
+    }
+
+    function totalScore(scores) {
+        return scores.reduce((a, b) => a + b, 0);
+    }
+
+    function autoCalculate() {
+        const scoresA = getScores('a');
+        const scoresB = getScores('b');
+        const tA = totalScore(scoresA);
+        const tB = totalScore(scoresB);
+
+        updateScoreCards(tA, tB);
+        drawRadar(scoresA, scoresB);
+    }
+
+    function scorePrompts() {
+        autoCalculate();
+        document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast('Scores calculated');
+    }
+
+    function updateScoreCards(tA, tB) {
+        document.getElementById('totalA').textContent = tA;
+        document.getElementById('totalB').textContent = tB;
+
+        document.getElementById('progressA').style.width = (tA / 25 * 100) + '%';
+        document.getElementById('progressB').style.width = (tB / 25 * 100) + '%';
+
+        const cardA = document.getElementById('scoreCardA');
+        const cardB = document.getElementById('scoreCardB');
+        const badgeA = document.getElementById('badgeA');
+        const badgeB = document.getElementById('badgeB');
+
+        // Reset
+        cardA.classList.remove('winner-a');
+        cardB.classList.remove('winner-b');
+        badgeA.classList.remove('show');
+        badgeB.classList.remove('show');
+
+        if (tA > 0 || tB > 0) {
+            if (tA > tB) {
+                cardA.classList.add('winner-a');
+                badgeA.classList.add('show');
+            } else if (tB > tA) {
+                cardB.classList.add('winner-b');
+                badgeB.classList.add('show');
+            } else if (tA === tB && tA > 0) {
+                // Tie - highlight both
+                cardA.classList.add('winner-a');
+                cardB.classList.add('winner-b');
+                badgeA.innerHTML = '&#8860; Tie';
+                badgeA.classList.add('show');
+                badgeB.innerHTML = '&#8860; Tie';
+                badgeB.classList.add('show');
+            }
+        }
+
+        // Reset tie text when not a tie
+        if (tA !== tB) {
+            badgeA.innerHTML = '&#10003; Winner';
+            badgeB.innerHTML = '&#10003; Winner';
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       Radar / Spider Chart  (Canvas API)
+       ═══════════════════════════════════════════════════ */
+    function drawRadar(scoresA, scoresB) {
+        const canvas = document.getElementById('radarCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width;
+        const H = canvas.height;
+        const cx = W / 2;
+        const cy = H / 2 + 10;
+        const R = Math.min(cx, cy) - 60;
+        const n = CRITERIA.length;
+        const angleStep = (2 * Math.PI) / n;
+        const startAngle = -Math.PI / 2; // top
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Helper: point on axis
+        function pt(i, r) {
+            const a = startAngle + i * angleStep;
+            return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+        }
+
+        // Draw concentric rings
+        for (let ring = 1; ring <= 5; ring++) {
+            const r = (ring / 5) * R;
+            ctx.beginPath();
+            for (let i = 0; i < n; i++) {
+                const p = pt(i, r);
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = 'rgba(51,65,85,0.6)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Ring label (small number on first axis)
+            if (ring < 5) {
+                const lp = pt(0, r);
+                ctx.fillStyle = '#475569';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(ring, lp.x + 12, lp.y + 3);
+            }
+        }
+
+        // Draw axis lines and labels
+        const labels = CRITERIA.map(c => c.name);
+        for (let i = 0; i < n; i++) {
+            const p = pt(i, R);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(p.x, p.y);
+            ctx.strokeStyle = 'rgba(51,65,85,0.5)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Label
+            const lp = pt(i, R + 28);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Segoe UI, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(labels[i], lp.x, lp.y);
+        }
+
+        // Draw filled area helper
+        function drawArea(scores, fillColor, strokeColor) {
+            ctx.beginPath();
+            for (let i = 0; i < n; i++) {
+                const val = scores[i] || 0;
+                const r = (val / 5) * R;
+                const p = pt(i, r);
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw dots
+            for (let i = 0; i < n; i++) {
+                const val = scores[i] || 0;
+                if (val === 0) continue;
+                const r = (val / 5) * R;
+                const p = pt(i, r);
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = strokeColor;
+                ctx.fill();
+            }
+        }
+
+        // Draw Version A
+        drawArea(scoresA, 'rgba(66,175,250,0.15)', '#42affa');
+        // Draw Version B
+        drawArea(scoresB, 'rgba(0,204,102,0.12)', '#00cc66');
+
+        // Legend
+        const legY = 20;
+        ctx.font = '12px Segoe UI, sans-serif';
+
+        // Version A legend
+        ctx.fillStyle = '#42affa';
+        ctx.fillRect(cx - 90, legY - 6, 14, 14);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.textAlign = 'left';
+        ctx.fillText('Version A', cx - 72, legY + 5);
+
+        // Version B legend
+        ctx.fillStyle = '#00cc66';
+        ctx.fillRect(cx + 20, legY - 6, 14, 14);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText('Version B', cx + 38, legY + 5);
+    }
+
+    // Initial empty radar
+    drawRadar([0,0,0,0,0], [0,0,0,0,0]);
+
+    /* ═══════════════════════════════════════════════════
+       New Iteration
+       ═══════════════════════════════════════════════════ */
+    function newIteration() {
+        // Copy B into A
+        const bText = document.getElementById('promptB').value;
+        document.getElementById('promptA').value = bText;
+        document.getElementById('promptB').value = '';
+        document.getElementById('charA').textContent = bText.length + ' characters';
+        document.getElementById('charB').textContent = '0 characters';
+
+        // Clear rubric
+        clearRubric();
+
+        // Clear results
+        updateScoreCards(0, 0);
+        drawRadar([0,0,0,0,0], [0,0,0,0,0]);
+
+        // Increment iteration
+        iteration++;
+        document.getElementById('iterBadge').textContent = 'Iteration #' + iteration;
+
+        // Clear notes
+        document.getElementById('notes').value = '';
+
+        showToast('Iteration #' + iteration + ' started');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ═══════════════════════════════════════════════════
+       Reset All
+       ═══════════════════════════════════════════════════ */
+    function resetAll() {
+        document.getElementById('promptA').value = '';
+        document.getElementById('promptB').value = '';
+        document.getElementById('charA').textContent = '0 characters';
+        document.getElementById('charB').textContent = '0 characters';
+        document.getElementById('notes').value = '';
+
+        clearRubric();
+        updateScoreCards(0, 0);
+        drawRadar([0,0,0,0,0], [0,0,0,0,0]);
+
+        iteration = 1;
+        document.getElementById('iterBadge').textContent = 'Iteration #1';
+
+        showToast('All cleared');
+    }
+
+    function clearRubric() {
+        CRITERIA.forEach(c => {
+            ['a', 'b'].forEach(v => {
+                const checked = document.querySelector('input[name="' + c.id + '_' + v + '"]:checked');
+                if (checked) checked.checked = false;
+            });
+        });
+    }
+
+    /* ═══════════════════════════════════════════════════
+       Export Report
+       ═══════════════════════════════════════════════════ */
+    function exportReport() {
+        const scoresA = getScores('a');
+        const scoresB = getScores('b');
+        const tA = totalScore(scoresA);
+        const tB = totalScore(scoresB);
+
+        let winner = 'Tie';
+        if (tA > tB) winner = 'Version A';
+        else if (tB > tA) winner = 'Version B';
+
+        const lines = [
+            '========================================',
+            '  PROMPT TESTING LAB - REPORT',
+            '  Iteration #' + iteration,
+            '  ' + new Date().toLocaleString(),
+            '========================================',
+            '',
+            '--- VERSION A ---',
+            document.getElementById('promptA').value || '(empty)',
+            '',
+            '--- VERSION B ---',
+            document.getElementById('promptB').value || '(empty)',
+            '',
+            '--- SCORES ---'
+        ];
+
+        CRITERIA.forEach((c, i) => {
+            lines.push(
+                '  ' + c.name + ': A=' + (scoresA[i] || '-') + '  B=' + (scoresB[i] || '-')
+            );
+        });
+
+        lines.push('');
+        lines.push('  Total:  A = ' + tA + '/25    B = ' + tB + '/25');
+        lines.push('  Winner: ' + winner);
+        lines.push('');
+        lines.push('--- IMPROVEMENT NOTES ---');
+        lines.push(document.getElementById('notes').value || '(none)');
+        lines.push('');
+        lines.push('========================================');
+
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'prompt-lab-report-iter' + iteration + '.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        showToast('Report downloaded');
+    }
+
+    /* ═══════════════════════════════════════════════════
+       Toast
+       ═══════════════════════════════════════════════════ */
+    function showToast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2200);
+    }
+    </script>
+</body>
+</html>

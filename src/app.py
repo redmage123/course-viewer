@@ -1302,6 +1302,56 @@ COURSES = {
                 ]
             }
         }
+    },
+    "prompt-engineering": {
+        "id": "prompt-engineering",
+        "name": "Prompt Engineering Masterclass",
+        "description": "Full-day interactive workshop on mastering prompt engineering, the CRAFT framework, advanced techniques, and real-world applications",
+        "icon": "✍️",
+        "duration": "1 day",
+        "category": "ai-business",
+        "syllabus": ["Introduction to Prompt Engineering", "The CRAFT Framework", "Advanced Prompt Techniques", "Context Engineering", "Prompt Chains & Workflows", "Testing & Refining Prompts", "Real-World Applications"],
+        "goals": ["Master the CRAFT framework for writing effective, structured prompts", "Apply advanced techniques including few-shot learning, chain-of-thought, and persona engineering", "Design and manage AI context windows for optimal results", "Build multi-step prompt chains and workflows for complex tasks", "Test, evaluate, and iteratively refine prompts to professional quality"],
+        "audience": "Business professionals, knowledge workers, and anyone who uses AI tools regularly",
+        "prerequisites": "Basic familiarity with AI chatbots (ChatGPT, Claude, Gemini, or similar)",
+        "topic_descriptions": {
+            "Introduction to Prompt Engineering": "Understand what prompt engineering is and why it matters for getting reliable, high-quality outputs from AI language models. You will learn how LLMs process prompts, explore key parameters like temperature and token limits, and see the spectrum from ad hoc prompting to professional prompt engineering practice.",
+            "The CRAFT Framework": "Master the CRAFT framework \u2014 Context, Role, Action, Format, Tone \u2014 a structured methodology for composing effective prompts that consistently produce high-quality AI outputs. You will practice applying each element and see dramatic before-and-after improvements in prompt quality.",
+            "Advanced Prompt Techniques": "Expand your toolkit with seven advanced prompting techniques: few-shot learning, chain-of-thought reasoning, tree of thoughts, self-consistency, persona engineering, system messages, and output constraints. You will learn when and how to apply each technique for maximum impact.",
+            "Context Engineering": "Go beyond basic prompting to master context engineering \u2014 the discipline of designing and managing the information environment in which an AI model operates. You will learn to budget tokens across context layers, prioritize information, and dramatically improve output relevance.",
+            "Prompt Chains & Workflows": "Learn to decompose complex tasks into multi-step prompt chains where the output of one prompt feeds into the next. You will explore sequential, fan-out, and iterative workflow patterns and apply them to real-world content production scenarios.",
+            "Testing & Refining Prompts": "Adopt a professional approach to prompt quality through systematic testing, evaluation, and iterative refinement. You will learn to diagnose common failure modes, apply validation techniques, and use A/B testing to continuously improve your prompts.",
+            "Real-World Applications": "Apply everything you have learned to real-world scenarios across business, creative, analytical, and educational domains. You will build domain-specific prompts, create a personal prompt library, and complete a capstone challenge using a genuine work task.",
+        },
+        "sections": {
+            "slides": {
+                "title": "Course Slides",
+                "items": [
+                    {"id": "pe-slides", "name": "Presentation Slides", "file": "prompt-engineering/prompt-engineering-slides.html", "type": "slides"},
+                    {"id": "pe-pdf", "name": "Slides (PDF Download)", "file": "prompt-engineering/prompt-engineering-slides.pdf", "type": "notes", "printable": True},
+                ]
+            },
+            "materials": {
+                "title": "Course Materials",
+                "items": [
+                    {"id": "pe-notes", "name": "Student Notes", "file": "prompt-engineering/student-notes.html", "type": "notes"},
+                ]
+            },
+            "labs": {
+                "title": "Hands-on Labs",
+                "items": [
+                    {"id": "pe-lab1", "name": "Lab 1: CRAFT Prompt Builder", "file": "prompt-engineering/labs/lab-01-craft-prompt-builder.ipynb", "type": "lab", "runnable": True},
+                    {"id": "pe-lab2", "name": "Lab 2: Prompt Chains & Testing", "file": "prompt-engineering/labs/lab-02-prompt-chains.ipynb", "type": "lab", "runnable": True},
+                ]
+            },
+            "demos": {
+                "title": "Interactive Demos",
+                "items": [
+                    {"id": "pe-craft-builder", "name": "CRAFT Prompt Builder (Interactive)", "file": "prompt-engineering/demo/index.html", "type": "demo", "external": True},
+                    {"id": "pe-prompt-lab", "name": "Prompt Testing Lab (Interactive)", "file": "prompt-engineering/demo/prompt-lab.html", "type": "demo", "external": True},
+                ]
+            }
+        }
     }
 }
 

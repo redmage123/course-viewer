@@ -23,16 +23,16 @@
             text-transform: none;
             color: var(--primary);
         }
-        .reveal h1 { font-size: 1.8em; margin-bottom: 0.2em; }
+        .reveal h1 { font-size: 1.6em; margin-bottom: 0.15em; }
         .reveal h2 {
-            font-size: 1.3em;
+            font-size: 1.1em;
             border-bottom: 2px solid var(--primary-dark);
-            padding-bottom: 6px;
-            margin-bottom: 0.3em;
+            padding-bottom: 4px;
+            margin-bottom: 0.2em;
         }
-        .reveal h3 { font-size: 0.95em; margin: 0.2em 0; }
-        .reveal h4 { font-size: 0.85em; margin: 0.2em 0; }
-        .reveal p { font-size: 0.75em; margin: 0.3em 0; }
+        .reveal h3 { font-size: 0.8em; margin: 0.15em 0; }
+        .reveal h4 { font-size: 0.75em; margin: 0.15em 0; }
+        .reveal p { font-size: 0.65em; margin: 0.2em 0; }
         .reveal pre {
             width: 100%;
             font-size: 0.5em;
@@ -52,82 +52,81 @@
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 10px;
             text-align: left;
         }
         .three-column {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
+            gap: 8px;
             text-align: left;
         }
         .card {
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
-            padding: 10px 12px;
+            padding: 6px 8px;
             border-radius: 8px;
             border-left: 3px solid var(--primary-dark);
         }
         .card h4 {
             color: var(--primary);
             margin-top: 0;
-            font-size: 0.85em;
+            font-size: 0.72em;
         }
-        .card p, .card li { font-size: 0.7em; }
+        .card p, .card li { font-size: 0.58em; }
         .tip-box {
             background: linear-gradient(135deg, #0d3320 0%, #1a4d30 100%);
-            padding: 8px 12px;
+            padding: 5px 8px;
             border-radius: 6px;
             border-left: 3px solid var(--accent-green);
-            margin: 8px 0;
+            margin: 5px 0;
             text-align: left;
-            font-size: 0.7em;
+            font-size: 0.58em;
         }
         .warning-box {
             background: linear-gradient(135deg, #4d2600 0%, #663300 100%);
-            padding: 8px 12px;
+            padding: 5px 8px;
             border-radius: 6px;
             border-left: 3px solid var(--accent-orange);
-            margin: 8px 0;
+            margin: 5px 0;
             text-align: left;
-            font-size: 0.7em;
+            font-size: 0.58em;
         }
         .highlight { color: var(--accent-green); font-weight: bold; }
         .exercise-box {
             background: linear-gradient(135deg, #1a1a4d 0%, #2d2d66 100%);
-            padding: 10px 14px;
+            padding: 6px 10px;
             border-radius: 8px;
             border: 2px solid var(--primary);
-            margin: 10px 0;
+            margin: 5px 0;
             text-align: left;
         }
-        .exercise-box h4 { color: var(--primary); margin-top: 0; font-size: 0.85em; }
-        .exercise-box li, .exercise-box p { font-size: 0.7em; }
+        .exercise-box h4 { color: var(--primary); margin-top: 0; font-size: 0.72em; }
+        .exercise-box li, .exercise-box p { font-size: 0.58em; }
         .prompt-example {
             background: #0d1117;
             border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 8px 10px;
-            margin: 6px 0;
+            padding: 6px 8px;
+            margin: 4px 0;
             font-family: 'Courier New', monospace;
-            font-size: 0.65em;
+            font-size: 0.55em;
+            line-height: 1.3;
             text-align: left;
-            overflow: auto;
-            max-height: 250px;
         }
         .comparison-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 0.6em;
+            margin: 5px 0;
+            font-size: 0.52em;
         }
         .comparison-table th {
             background: var(--primary-dark);
             color: white;
-            padding: 6px 8px;
+            padding: 4px 6px;
             text-align: left;
         }
         .comparison-table td {
-            padding: 5px 8px;
+            padding: 3px 6px;
             border-bottom: 1px solid #333;
         }
         .comparison-table tr:nth-child(even) {
@@ -136,23 +135,23 @@
         .agenda-item {
             display: flex;
             align-items: center;
-            padding: 5px 0;
+            padding: 3px 0;
             border-bottom: 1px solid #333;
-            font-size: 0.75em;
+            font-size: 0.6em;
         }
         .agenda-time {
             color: var(--primary);
             font-weight: bold;
-            min-width: 55px;
+            min-width: 45px;
             flex-shrink: 0;
-            margin-right: 8px;
+            margin-right: 6px;
         }
         .agenda-break {
             color: var(--accent-orange);
             font-style: italic;
         }
         ul { text-align: left; }
-        li { margin: 4px 0; font-size: 0.75em; }
+        li { margin: 2px 0; font-size: 0.62em; }
 
         .fullscreen-btn {
             position: fixed;
@@ -173,10 +172,10 @@
         .reveal .slides section { overflow: visible !important; }
         .slide-content {
             width: 100%;
-            max-height: 85vh;
+            max-height: 630px;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 5px 15px 25px 15px;
+            padding: 5px 15px 15px 15px;
             box-sizing: border-box;
         }
         .slide-content::-webkit-scrollbar { width: 10px; }
@@ -260,18 +259,18 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            margin: 5px auto;
+            gap: 5px;
+            margin: 3px auto;
         }
         .craft-row {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
         }
-        .craft-row-wide { gap: 50px; }
+        .craft-row-wide { gap: 40px; }
         .craft-center {
-            width: 90px; height: 90px;
+            width: 75px; height: 75px;
             background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -280,7 +279,7 @@
             flex-shrink: 0;
         }
         .craft-item {
-            width: 75px; height: 75px;
+            width: 60px; height: 60px;
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
             border: 3px solid var(--primary-dark);
             border-radius: 50%;
@@ -307,10 +306,10 @@
         }
         .technique-card {
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
-            padding: 12px 10px;
+            padding: 8px 6px;
             border-radius: 10px;
             border: 2px solid var(--primary-dark);
-            width: 120px;
+            width: 130px;
             text-align: center;
             opacity: 0;
             animation: fadeInUp 0.5s ease-out forwards;
@@ -327,34 +326,31 @@
         .technique-card:nth-child(5) { animation-delay: 0.3s; }
         .technique-card:nth-child(6) { animation-delay: 0.35s; }
         .technique-card:nth-child(7) { animation-delay: 0.4s; }
-        .technique-card .icon { font-size: 1.6em; margin-bottom: 6px; }
-        .technique-card h4 { color: var(--primary); margin: 0 0 4px 0; font-size: 0.7em; }
-        .technique-card p { font-size: 0.6em; color: #aaa; margin: 0; }
+        .technique-card .icon { font-size: 1.2em; margin-bottom: 3px; }
+        .technique-card h4 { color: var(--primary); margin: 0 0 2px 0; font-size: 0.55em; word-break: break-word; hyphens: auto; }
+        .technique-card p { font-size: 0.5em; color: #aaa; margin: 0; }
 
         /* Context Window */
         .context-window {
             background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
             border: 2px solid var(--primary-dark);
             border-radius: 10px;
-            padding: 10px;
+            padding: 20px 8px 8px 8px;
             max-width: 650px;
             margin: 0 auto;
             position: relative;
-            overflow: hidden;
         }
         .context-window::before {
             content: 'CONTEXT WINDOW';
             position: absolute;
-            top: -10px; left: 15px;
-            background: var(--bg-dark);
-            padding: 0 8px;
+            top: 4px; left: 15px;
             font-size: 0.55em;
             color: var(--primary);
             font-weight: bold;
         }
         .context-layer {
-            padding: 5px 8px;
-            margin: 3px 0;
+            padding: 3px 6px;
+            margin: 2px 0;
             border-radius: 5px;
             opacity: 0;
             animation: fadeInLeft 0.5s ease-out forwards;
@@ -366,24 +362,24 @@
         .context-layer:nth-child(2) { background: rgba(0,204,102,0.15); border-left: 3px solid var(--accent-green); animation-delay: 0.4s; }
         .context-layer:nth-child(3) { background: rgba(255,153,51,0.15); border-left: 3px solid var(--accent-orange); animation-delay: 0.6s; }
         .context-layer:nth-child(4) { background: rgba(153,51,255,0.15); border-left: 3px solid #9933ff; animation-delay: 0.8s; }
-        .layer-icon { font-size: 1.0em; }
+        .layer-icon { font-size: 0.8em; }
         .layer-content { flex: 1; }
-        .layer-content h5 { margin: 0; color: var(--primary); font-size: 0.65em; }
-        .layer-content p { margin: 0; font-size: 0.5em; color: #aaa; }
+        .layer-content h5 { margin: 0; color: var(--primary); font-size: 0.55em; }
+        .layer-content p { margin: 0; font-size: 0.42em; color: #aaa; }
 
         /* Context Stack */
         .context-stack {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            max-width: 500px;
+            gap: 4px;
+            max-width: 600px;
             margin: 0 auto;
         }
         .stack-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 14px;
+            gap: 8px;
+            padding: 4px 10px;
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
             border-radius: 6px;
             opacity: 0;
@@ -402,20 +398,20 @@
         .priority-high { background: var(--accent-green); }
         .priority-med { background: var(--primary-dark); }
         .priority-low { background: #666; }
-        .stack-label { flex: 1; font-size: 0.75em; }
-        .stack-tokens { font-size: 0.65em; color: #888; }
+        .stack-label { flex: 1; font-size: 0.6em; }
+        .stack-tokens { font-size: 0.5em; color: #888; }
 
         /* Prompt Evolution */
         .prompt-evolution {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            padding: 5px 10px;
+            gap: 6px;
+            padding: 3px 10px;
         }
         .prompt-stage {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             opacity: 0;
             animation: fadeInLeft 0.6s ease-out forwards;
         }
@@ -423,10 +419,10 @@
         .prompt-stage:nth-child(2) { animation-delay: 0.6s; }
         .prompt-stage:nth-child(3) { animation-delay: 1.0s; }
         .stage-indicator {
-            width: 40px; height: 40px;
+            width: 32px; height: 32px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.1em; font-weight: bold;
+            font-size: 0.9em; font-weight: bold;
             flex-shrink: 0;
         }
         .stage-bad { background: linear-gradient(135deg, #660000, #990000); }
@@ -435,12 +431,12 @@
         .stage-content {
             flex: 1;
             background: #0d1117;
-            padding: 8px 10px;
+            padding: 5px 8px;
             border-radius: 6px;
             font-family: 'Courier New', monospace;
-            font-size: 0.6em;
+            font-size: 0.5em;
         }
-        .stage-label { font-size: 0.65em; color: #888; margin-bottom: 3px; }
+        .stage-label { font-size: 0.55em; color: #888; margin-bottom: 2px; }
 
         /* Flow Diagram */
         .flow-diagram {
@@ -453,15 +449,15 @@
         }
         .flow-box {
             background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
-            padding: 10px 14px;
+            padding: 6px 10px;
             border-radius: 10px;
             border: 2px solid var(--primary-dark);
             text-align: center;
             opacity: 0;
             animation: fadeInUp 0.6s ease-out forwards;
         }
-        .flow-box h4 { margin: 0 0 3px 0; color: var(--primary); font-size: 0.75em; }
-        .flow-box p { margin: 0; font-size: 0.6em; color: #aaa; }
+        .flow-box h4 { margin: 0 0 2px 0; color: var(--primary); font-size: 0.65em; }
+        .flow-box p { margin: 0; font-size: 0.5em; color: #aaa; }
         .flow-arrow {
             font-size: 1.2em;
             color: var(--accent-green);
@@ -472,8 +468,8 @@
         .context-meter {
             background: var(--bg-dark);
             border-radius: 8px;
-            padding: 12px;
-            margin: 10px auto;
+            padding: 8px;
+            margin: 5px auto;
             max-width: 550px;
         }
         .meter-bar {
@@ -569,7 +565,7 @@
                 <div class="agenda-item"><span class="agenda-time">4:10</span> Wrap-Up &amp; Next Steps</div>
             </div>
         </div>
-        <div class="tip-box" style="margin-top: 10px;">
+        <div class="tip-box" style="margin-top: 5px;">
             <strong>Format:</strong> Each module includes presentation content, live examples, and hands-on exercises. Two interactive labs use Jupyter notebooks.
         </div>
     </div>
@@ -584,7 +580,7 @@
     <div class="slide-content">
         <h2>What Is Prompt Engineering?</h2>
         <p>The discipline of designing, structuring, and refining inputs to AI language models to produce accurate, relevant, and useful outputs.</p>
-        <div class="three-column" style="margin-top: 10px;">
+        <div class="three-column" style="margin-top: 5px;">
             <div class="card">
                 <h4>Design</h4>
                 <p>Crafting inputs that clearly communicate your intent, context, and expectations to the model</p>
@@ -629,7 +625,7 @@
                 <p>Tokens produced<br>one at a time</p>
             </div>
         </div>
-        <div class="card" style="margin-top: 10px;">
+        <div class="card" style="margin-top: 5px;">
             <h4>Why This Matters for Prompting</h4>
             <ul>
                 <li><strong>Token order matters</strong> &mdash; information placed early in the prompt receives more attention</li>
@@ -704,7 +700,7 @@
                 <li>Identify what's missing: Is there context? A clear role? Specific format?</li>
                 <li>Write an improved "after" version adding what you identified</li>
             </ol>
-            <p style="margin-top: 15px;"><strong>Discuss:</strong> What changed most? What do you expect will be different about the output?</p>
+            <p style="margin-top: 5px;"><strong>Discuss:</strong> What changed most? What do you expect will be different about the output?</p>
         </div>
         <div class="tip-box">
             <strong>Tip:</strong> Don't worry about perfection yet. We'll formalize this process with the CRAFT framework in the next module.
@@ -743,7 +739,7 @@
     <div class="slide-content">
         <h2>C: Context &mdash; Setting the Scene</h2>
         <p>Context is the background information the AI needs to understand your situation, constraints, and domain.</p>
-        <div class="two-column" style="margin-top: 15px;">
+        <div class="two-column" style="margin-top: 5px;">
             <div>
                 <h4>What Context Includes</h4>
                 <ul>
@@ -755,10 +751,10 @@
                 </ul>
             </div>
             <div>
-                <p style="color: #ff6666; font-weight: bold; font-size: 0.9em;">Before:</p>
-                <div class="prompt-example" style="font-size: 0.75em;">"Write a report about our sales."</div>
-                <p style="color: var(--accent-green); font-weight: bold; font-size: 0.9em;">After:</p>
-                <div class="prompt-example" style="font-size: 0.75em;">"Our SaaS company had Q3 revenue of $2.4M, up 15% QoQ. Enterprise deals grew 40% but SMB churn increased to 8%. We're preparing for the board meeting next Tuesday."</div>
+                <p style="color: #ff6666; font-weight: bold; font-size: 0.8em;">Before:</p>
+                <div class="prompt-example" style="font-size: 0.6em;">"Write a report about our sales."</div>
+                <p style="color: var(--accent-green); font-weight: bold; font-size: 0.8em;">After:</p>
+                <div class="prompt-example" style="font-size: 0.6em;">"Our SaaS company had Q3 revenue of $2.4M, up 15% QoQ. Enterprise deals grew 40% but SMB churn increased to 8%. We're preparing for the board meeting next Tuesday."</div>
             </div>
         </div>
         <div class="tip-box">
@@ -772,7 +768,7 @@
     <div class="slide-content">
         <h2>R: Role &mdash; Defining the Expert</h2>
         <p>The Role tells the AI which expert persona to adopt, shaping its knowledge, perspective, and communication style.</p>
-        <div class="three-column" style="margin-top: 15px;">
+        <div class="three-column" style="margin-top: 5px;">
             <div class="card">
                 <h4>Domain Expertise</h4>
                 <p>"Senior data scientist specializing in healthcare analytics"</p>
@@ -786,7 +782,7 @@
                 <p>"Known for making complex topics accessible to non-technical audiences"</p>
             </div>
         </div>
-        <div class="prompt-example" style="margin-top: 15px;">
+        <div class="prompt-example" style="margin-top: 5px;">
 <strong>Effective Roles:</strong>
 - "Act as a senior financial analyst who specializes in SaaS metrics and board-level reporting."
 - "You are an experienced UX researcher who has conducted 200+ usability studies."
@@ -810,12 +806,12 @@
             <tr><td><strong>Decision</strong></td><td>Recommend, prioritize, rank, select, justify</td><td>Making or supporting choices</td></tr>
             <tr><td><strong>Teaching</strong></td><td>Explain, illustrate, demonstrate, guide</td><td>Educational content</td></tr>
         </table>
-        <div class="two-column" style="margin-top: 10px;">
+        <div class="two-column" style="margin-top: 5px;">
             <div>
-                <p style="color: #ff6666; font-size: 0.85em;"><strong>Vague:</strong> "Help with our strategy"</p>
+                <p style="color: #ff6666; font-size: 0.7em;"><strong>Vague:</strong> "Help with our strategy"</p>
             </div>
             <div>
-                <p style="color: var(--accent-green); font-size: 0.85em;"><strong>Precise:</strong> "Evaluate our 3 pricing options and recommend the best one based on customer retention data"</p>
+                <p style="color: var(--accent-green); font-size: 0.7em;"><strong>Precise:</strong> "Evaluate our 3 pricing options and recommend the best one based on customer retention data"</p>
             </div>
         </div>
     </div>
@@ -839,7 +835,7 @@
                 </ul>
             </div>
             <div>
-                <div class="prompt-example" style="font-size: 0.75em;">
+                <div class="prompt-example" style="font-size: 0.55em;">
 <strong>Format specification examples:</strong>
 
 "Structure as: Executive Summary (3 sentences),
@@ -866,7 +862,7 @@ Option A, Option B, Recommendation"</div>
         <div class="two-column">
             <div>
                 <h4>Tone Dimensions</h4>
-                <table class="comparison-table" style="font-size: 0.85em;">
+                <table class="comparison-table" style="font-size: 0.7em;">
                     <tr><th>Spectrum</th><th>Low End</th><th>High End</th></tr>
                     <tr><td>Formality</td><td>Casual, conversational</td><td>Formal, professional</td></tr>
                     <tr><td>Technicality</td><td>Plain language</td><td>Technical, precise</td></tr>
@@ -876,7 +872,7 @@ Option A, Option B, Recommendation"</div>
                 </table>
             </div>
             <div>
-                <div class="prompt-example" style="font-size: 0.75em;">
+                <div class="prompt-example" style="font-size: 0.55em;">
 <strong>Tone examples:</strong>
 
 "Professional and data-driven, suitable for C-suite"
@@ -901,7 +897,7 @@ Every sentence must add value."</div>
         <div class="two-column">
             <div>
                 <h4 style="color: var(--primary);">Business Report</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 <span style="color: #42affa;">[C]</span> Our B2B SaaS company (50 employees, $8M ARR) is losing enterprise deals to a competitor who launched an AI feature. Our product roadmap includes AI features in Q2.
 
 <span style="color: var(--accent-green);">[R]</span> Act as a competitive strategy consultant with deep B2B SaaS experience.
@@ -914,7 +910,7 @@ Every sentence must add value."</div>
             </div>
             <div>
                 <h4 style="color: var(--primary);">Training Design</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 <span style="color: #42affa;">[C]</span> We need to train 200 customer support agents on a new ticketing system. They have varying tech skills (beginner to intermediate). Training must be completed within 2 weeks without disrupting support operations.
 
 <span style="color: var(--accent-green);">[R]</span> Act as a corporate training designer specializing in technology adoption programs.
@@ -942,7 +938,7 @@ Every sentence must add value."</div>
                 <li>Review the generated prompt and check the quality score</li>
                 <li>Try a template from the library, then customize it for your use case</li>
             </ol>
-            <p style="margin-top: 15px;">Or use <strong>Lab 1: CRAFT Prompt Builder</strong> (Jupyter notebook) for a deeper guided experience.</p>
+            <p style="margin-top: 5px;">Or use <strong>Lab 1: CRAFT Prompt Builder</strong> (Jupyter notebook) for a deeper guided experience.</p>
         </div>
         <div class="tip-box">
             <strong>Quality Target:</strong> Aim for a score of 80+ in the builder. If any CRAFT element is empty or vague, the score will reflect it.
@@ -1026,13 +1022,13 @@ Review: "I love the new interface but the load time is frustrating."</div>
         <div class="two-column">
             <div>
                 <h4 style="color: #ff6666;">Without CoT</h4>
-                <div class="prompt-example" style="font-size: 0.75em;">A company has 120 employees. 35% work in engineering, 25% in sales, and the rest in operations. If engineering grows by 20% and sales by 10%, how many total employees in those two departments?
+                <div class="prompt-example" style="font-size: 0.55em;">A company has 120 employees. 35% work in engineering, 25% in sales, and the rest in operations. If engineering grows by 20% and sales by 10%, how many total employees in those two departments?
 
 <em>AI may jump to answer, possibly making arithmetic errors.</em></div>
             </div>
             <div>
                 <h4 style="color: var(--accent-green);">With CoT</h4>
-                <div class="prompt-example" style="font-size: 0.75em;">A company has 120 employees. 35% work in engineering, 25% in sales, and the rest in operations. If engineering grows by 20% and sales by 10%, how many total employees in those two departments?
+                <div class="prompt-example" style="font-size: 0.55em;">A company has 120 employees. 35% work in engineering, 25% in sales, and the rest in operations. If engineering grows by 20% and sales by 10%, how many total employees in those two departments?
 
 <strong>Think through this step by step, showing your work at each stage.</strong>
 
@@ -1041,7 +1037,7 @@ Sales = 120 &times; 0.25 = 30, +10% = 33
 Total = 50 + 33 = 83</em></div>
             </div>
         </div>
-        <div class="card" style="margin-top: 10px;">
+        <div class="card" style="margin-top: 5px;">
             <h4>When to Use CoT</h4>
             <ul>
                 <li>Math and logic problems</li>
@@ -1061,7 +1057,7 @@ Total = 50 + 33 = 83</em></div>
             <div>
                 <h4>Tree of Thoughts</h4>
                 <p>Explore multiple reasoning paths before committing to an answer.</p>
-                <div class="prompt-example" style="font-size: 0.72em;">We're deciding between building a feature in-house vs. buying a vendor solution.
+                <div class="prompt-example" style="font-size: 0.5em;">We're deciding between building a feature in-house vs. buying a vendor solution.
 
 Consider 3 different evaluation approaches:
 <strong>Path 1:</strong> Cost analysis (total cost of ownership over 3 years)
@@ -1073,7 +1069,7 @@ For each path, evaluate both options, then synthesize the best recommendation ac
             <div>
                 <h4>Self-Consistency</h4>
                 <p>Generate multiple answers and select the consensus to reduce errors.</p>
-                <div class="prompt-example" style="font-size: 0.72em;">Solve this problem 3 times using different approaches. Then compare your answers and provide the most consistent result with an explanation of why you're confident.
+                <div class="prompt-example" style="font-size: 0.5em;">Solve this problem 3 times using different approaches. Then compare your answers and provide the most consistent result with an explanation of why you're confident.
 
 Problem: Should we expand to the European market in Q2 or Q3, given our current runway of 18 months and the regulatory timeline?
 
@@ -1116,7 +1112,7 @@ End with a synthesis: Where do the three perspectives agree? Where do they confl
         <div class="two-column">
             <div>
                 <h4>System Message (persistent)</h4>
-                <div class="prompt-example" style="font-size: 0.72em;">You are a senior financial analyst at a Fortune 500 company.
+                <div class="prompt-example" style="font-size: 0.52em;">You are a senior financial analyst at a Fortune 500 company.
 
 Rules:
 - Always cite specific data to support claims
@@ -1137,7 +1133,7 @@ Rules:
                         <li>Safety guardrails</li>
                     </ul>
                 </div>
-                <div class="card" style="margin-top: 10px;">
+                <div class="card" style="margin-top: 5px;">
                     <h4>User Message</h4>
                     <ul style="font-size: 0.85em;">
                         <li>Specific task instructions</li>
@@ -1158,7 +1154,7 @@ Rules:
         <div class="two-column">
             <div>
                 <h4>JSON Schema Output</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">Analyze this customer review and return a JSON object with exactly this structure:
+                <div class="prompt-example" style="font-size: 0.5em;">Analyze this customer review and return a JSON object with exactly this structure:
 
 {
   "sentiment": "positive|negative|neutral",
@@ -1174,15 +1170,15 @@ Review: "Love the product but support response times are terrible. Waited 3 days
                 <h4>Constraint Types</h4>
                 <div class="card">
                     <h4>Length</h4>
-                    <p style="font-size: 0.85em;">"Maximum 3 sentences" / "Between 200-300 words" / "One paragraph"</p>
+                    <p>"Maximum 3 sentences" / "Between 200-300 words" / "One paragraph"</p>
                 </div>
-                <div class="card" style="margin-top: 10px;">
+                <div class="card" style="margin-top: 3px;">
                     <h4>Format</h4>
-                    <p style="font-size: 0.85em;">"Use only bullet points" / "Return valid JSON" / "Use markdown table format"</p>
+                    <p>"Use only bullet points" / "Return valid JSON" / "Use markdown table format"</p>
                 </div>
-                <div class="card" style="margin-top: 10px;">
+                <div class="card" style="margin-top: 3px;">
                     <h4>Content</h4>
-                    <p style="font-size: 0.85em;">"Only use information provided" / "Do not include opinions" / "Cite sources for every claim"</p>
+                    <p>"Only use information provided" / "Do not include opinions" / "Cite sources"</p>
                 </div>
             </div>
         </div>
@@ -1218,7 +1214,7 @@ Review: "Love the product but support response times are terrible. Waited 3 days
     <div class="slide-content">
         <h2>What Is Context Engineering?</h2>
         <p>Context engineering goes beyond prompting. It's the discipline of designing and managing the <strong>entire information environment</strong> in which an AI model operates.</p>
-        <div class="three-column" style="margin-top: 10px;">
+        <div class="three-column" style="margin-top: 5px;">
             <div class="card">
                 <h4>Prompting</h4>
                 <p>Writing a single instruction for one task</p>
@@ -1235,7 +1231,7 @@ Review: "Love the product but support response times are terrible. Waited 3 days
                 <p style="font-size: 0.8em; color: #888; margin-top: 10px;">"Quality control"</p>
             </div>
         </div>
-        <div class="warning-box" style="margin-top: 15px;">
+        <div class="warning-box" style="margin-top: 5px;">
             <strong>The Attention Problem:</strong> As context grows, the AI's ability to attend to specific details diminishes. More context is not always better.
         </div>
     </div>
@@ -1333,7 +1329,7 @@ Review: "Love the product but support response times are terrible. Waited 3 days
                 <div class="stack-tokens">Usually omit</div>
             </div>
         </div>
-        <div class="tip-box" style="margin-top: 15px;">
+        <div class="tip-box" style="margin-top: 5px;">
             <strong>Test:</strong> If you can remove a piece of context and the output quality doesn't change, it probably doesn't need to be there.
         </div>
     </div>
@@ -1346,7 +1342,7 @@ Review: "Love the product but support response times are terrible. Waited 3 days
         <div class="two-column">
             <div>
                 <h4 style="color: #ff6666;">Poor Context</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">Here's our company handbook (47 pages). Also here's every email from the past month. And our org chart. And the project plan.
+                <div class="prompt-example" style="font-size: 0.5em;">Here's our company handbook (47 pages). Also here's every email from the past month. And our org chart. And the project plan.
 
 Now answer this question: What's our vacation policy for new hires in the EU?
 
@@ -1354,7 +1350,7 @@ Now answer this question: What's our vacation policy for new hires in the EU?
             </div>
             <div>
                 <h4 style="color: var(--accent-green);">Engineered Context</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">Here is the relevant section from our company handbook on vacation policy:
+                <div class="prompt-example" style="font-size: 0.5em;">Here is the relevant section from our company handbook on vacation policy:
 
 [Section 4.2 - PTO Policy for EU Employees]
 "New hires accrue 2.08 days per month starting from date of hire. EU statutory minimums apply per country. Probation period: 6 months."
@@ -1379,7 +1375,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                 <li>Write a prompt that includes only the Essential and Important context</li>
                 <li>Estimate: what percentage of the original document did you actually need?</li>
             </ol>
-            <p style="margin-top: 10px;"><strong>Goal:</strong> Most people discover they only need 20-30% of what they typically paste into a prompt.</p>
+            <p style="margin-top: 5px;"><strong>Goal:</strong> Most people discover they only need 20-30% of what they typically paste into a prompt.</p>
         </div>
     </div>
 </section>
@@ -1393,7 +1389,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
     <div class="slide-content">
         <h2>Prompt Chains &amp; Workflows</h2>
         <p>Complex tasks produce better results when broken into a series of focused prompts.</p>
-        <div class="three-column" style="margin-top: 10px;">
+        <div class="three-column" style="margin-top: 5px;">
             <div class="card">
                 <h4>What</h4>
                 <p>Multi-step sequences where each prompt's output feeds into the next prompt's input</p>
@@ -1407,7 +1403,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                 <p>Any task that involves research + analysis + creation, or where a single prompt produces mediocre results</p>
             </div>
         </div>
-        <div class="tip-box" style="margin-top: 15px;">
+        <div class="tip-box" style="margin-top: 5px;">
             <strong>Mental Model:</strong> Think of prompt chains like an assembly line. Each station does one thing well. The finished product is better than any single station could produce alone.
         </div>
     </div>
@@ -1438,7 +1434,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                 <p>Polish &amp; format</p>
             </div>
         </div>
-        <div class="card" style="margin-top: 10px;">
+        <div class="card" style="margin-top: 5px;">
             <h4>How It Works</h4>
             <ul>
                 <li>Each step has a single, clear CRAFT prompt</li>
@@ -1457,13 +1453,13 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
         <div class="two-column">
             <div>
                 <h4 style="color: #ff6666;">Monolithic Prompt</h4>
-                <div class="prompt-example" style="font-size: 0.72em;">"Research the top AI trends for 2025, create a detailed outline, write a 2000-word blog article with citations, optimize it for SEO, add social media snippets, and format it for WordPress."
+                <div class="prompt-example" style="font-size: 0.5em;">"Research the top AI trends for 2025, create a detailed outline, write a 2000-word blog article with citations, optimize it for SEO, add social media snippets, and format it for WordPress."
 
 <em style="color: #ff6666;">Problem: 6 different tasks competing for attention. Each suffers from divided focus. The AI tries to do everything at once and does nothing well.</em></div>
             </div>
             <div>
                 <h4 style="color: var(--accent-green);">Decomposed Chain</h4>
-                <div class="prompt-example" style="font-size: 0.72em;"><strong>Step 1:</strong> "Research the top 5 AI trends for 2025 with credible sources. For each, provide the trend name, a key statistic, and a one-sentence impact statement."
+                <div class="prompt-example" style="font-size: 0.5em;"><strong>Step 1:</strong> "Research the top 5 AI trends for 2025 with credible sources. For each, provide the trend name, a key statistic, and a one-sentence impact statement."
 
 <strong>Step 2:</strong> "Using these trends, create a blog outline for an HR director audience. Include an attention-grabbing title and 5 sections."
 
@@ -1482,21 +1478,21 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
         <div class="three-column">
             <div class="card">
                 <h4>Sequential</h4>
-                <p style="text-align: center; font-size: 1.5em; margin: 10px 0;">A &#10132; B &#10132; C &#10132; D</p>
-                <p style="font-size: 0.85em;">Steps run in order, each using the previous output. Best for research-to-creation pipelines.</p>
-                <p style="font-size: 0.8em; color: var(--accent-green);"><strong>Example:</strong> Research &#10132; Outline &#10132; Draft &#10132; Edit</p>
+                <p style="text-align: center; font-size: 1.1em; margin: 3px 0;">A &#10132; B &#10132; C &#10132; D</p>
+                <p style="font-size: 0.52em;">Steps run in order, each using the previous output. Best for research-to-creation pipelines.</p>
+                <p style="color: var(--accent-green); font-size: 0.52em;"><strong>Example:</strong> Research &#10132; Outline &#10132; Draft &#10132; Edit</p>
             </div>
             <div class="card" style="border-left-color: var(--accent-green);">
                 <h4>Fan-Out</h4>
-                <p style="text-align: center; font-size: 1.2em; margin: 10px 0;">&#8627; B<br>A &#8627; C<br>&#8627; D</p>
-                <p style="font-size: 0.85em;">Same prompt applied to multiple inputs in parallel. Best for batch processing.</p>
-                <p style="font-size: 0.8em; color: var(--accent-green);"><strong>Example:</strong> Analyze 10 customer reviews simultaneously</p>
+                <p style="text-align: center; font-size: 0.85em; margin: 3px 0;">&#8627; B<br>A &#8627; C<br>&#8627; D</p>
+                <p style="font-size: 0.52em;">Same prompt applied to multiple inputs in parallel. Best for batch processing.</p>
+                <p style="color: var(--accent-green); font-size: 0.52em;"><strong>Example:</strong> Analyze 10 customer reviews simultaneously</p>
             </div>
             <div class="card" style="border-left-color: var(--accent-orange);">
                 <h4>Iterative</h4>
-                <p style="text-align: center; font-size: 1.2em; margin: 10px 0;">A &#10132; B &#10132; A' &#10132; B'</p>
-                <p style="font-size: 0.85em;">Same prompt applied repeatedly, refining output each time. Best for quality improvement.</p>
-                <p style="font-size: 0.8em; color: var(--accent-green);"><strong>Example:</strong> Draft &#10132; Critique &#10132; Revise &#10132; Final</p>
+                <p style="text-align: center; font-size: 0.85em; margin: 3px 0;">A &#10132; B &#10132; A' &#10132; B'</p>
+                <p style="font-size: 0.52em;">Same prompt applied repeatedly, refining output each time. Best for quality improvement.</p>
+                <p style="color: var(--accent-green); font-size: 0.52em;"><strong>Example:</strong> Draft &#10132; Critique &#10132; Revise &#10132; Final</p>
             </div>
         </div>
     </div>
@@ -1509,20 +1505,20 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
         <div class="two-column">
             <div>
                 <h4>Step 1: Research</h4>
-                <div class="prompt-example" style="font-size: 0.68em;">[Context] We publish a weekly technology newsletter for HR leaders.
+                <div class="prompt-example" style="font-size: 0.5em;">[Context] We publish a weekly technology newsletter for HR leaders.
 [Action] Extract the 5 most significant AI-in-hiring statistics from 2024-2025. For each provide the source, exact figure, and one-sentence interpretation for HR directors.</div>
                 <h4>Step 2: Outline</h4>
-                <div class="prompt-example" style="font-size: 0.68em;">[Context] Using the research below, create a newsletter article outline.
+                <div class="prompt-example" style="font-size: 0.5em;">[Context] Using the research below, create a newsletter article outline.
 [Action] Write an outline with: compelling subject line, opening hook, 5 sections (one per stat), and call to action.
 [Format] Outline with section headers, key points as sub-bullets, suggested word count per section.</div>
             </div>
             <div>
                 <h4>Step 3: Draft</h4>
-                <div class="prompt-example" style="font-size: 0.68em;">[Context] Following this outline for our HR technology newsletter.
+                <div class="prompt-example" style="font-size: 0.5em;">[Context] Following this outline for our HR technology newsletter.
 [Action] Write the full article. 1200 words. Weave statistics naturally into the narrative.
 [Tone] Authoritative but conversational. End each section with a practical takeaway.</div>
                 <h4>Step 4: Polish</h4>
-                <div class="prompt-example" style="font-size: 0.68em;">[Action] Review this draft. Fix awkward transitions, strengthen the opening, verify all statistics have attributions.
+                <div class="prompt-example" style="font-size: 0.5em;">[Action] Review this draft. Fix awkward transitions, strengthen the opening, verify all statistics have attributions.
 [Format] Return the polished article plus: 3 social media snippets (LinkedIn, Twitter, newsletter teaser).</div>
             </div>
         </div>
@@ -1541,7 +1537,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                 <li>Write a CRAFT prompt for each step</li>
                 <li>Identify what output from each step feeds into the next</li>
             </ol>
-            <p style="margin-top: 10px;">For a deeper guided experience, try <strong>Lab 2: Prompt Chains &amp; Testing</strong> (Jupyter notebook).</p>
+            <p style="margin-top: 5px;">For a deeper guided experience, try <strong>Lab 2: Prompt Chains &amp; Testing</strong> (Jupyter notebook).</p>
         </div>
         <div class="tip-box">
             <strong>Common tasks that benefit from chains:</strong> Report writing, competitive analysis, content calendars, proposal creation, data analysis narratives, training material development.
@@ -1558,7 +1554,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
     <div class="slide-content">
         <h2>Testing &amp; Refining Prompts</h2>
         <p>Professional prompt engineering is iterative. Expect to refine a prompt 3-5 times before it consistently produces the quality you need.</p>
-        <div class="two-column" style="margin-top: 10px;">
+        <div class="two-column" style="margin-top: 5px;">
             <div class="card">
                 <h4>Amateur Approach</h4>
                 <ul>
@@ -1617,7 +1613,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                 <p>Targeted improvements</p>
             </div>
         </div>
-        <div class="card" style="margin-top: 15px;">
+        <div class="card" style="margin-top: 5px;">
             <h4>Step 1 is Critical</h4>
             <p>Before writing a single word, define what "good" looks like. What must the output contain? What format? What level of detail? How will you know if it succeeded? This is the most commonly skipped step.</p>
         </div>
@@ -1669,7 +1665,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                     <h4>Self-Check</h4>
                     <p>Ask the AI to critique its own output against your criteria: "Review your response. Does it meet all 5 of these requirements? List any gaps."</p>
                 </div>
-                <div class="card" style="margin-top: 15px;">
+                <div class="card" style="margin-top: 5px;">
                     <h4>Rubric Scoring</h4>
                     <p>Define 5 quality dimensions, score each 1-5: Relevance, Completeness, Format Compliance, Accuracy, Actionability. Score consistently across iterations.</p>
                 </div>
@@ -1736,7 +1732,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                 <li>Click "Start New Iteration" &mdash; your Version A moves to the base, and you write an improved Version B</li>
                 <li>Repeat for 3 iterations. Track your score improvement.</li>
             </ol>
-            <p style="margin-top: 10px;"><strong>Target:</strong> Improve your total score by at least 5 points across 3 iterations.</p>
+            <p style="margin-top: 5px;"><strong>Target:</strong> Improve your total score by at least 5 points across 3 iterations.</p>
         </div>
         <div class="tip-box">
             <strong>Common improvements per iteration:</strong> Iteration 1: Add missing CRAFT elements. Iteration 2: Add technique (CoT, examples). Iteration 3: Tighten constraints and format.
@@ -1800,7 +1796,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
         <div class="two-column">
             <div>
                 <h4>Customer Support Response</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 <span style="color: #42affa;">[C]</span> Customer "TechCorp" (Enterprise tier, $50K ARR) has reported their API integration failing after our v3.2 update. They've been a client for 2 years. Their contract renewal is in 6 weeks.
 
 <span style="color: var(--accent-green);">[R]</span> Act as a senior customer success manager with technical understanding.
@@ -1813,7 +1809,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
             </div>
             <div>
                 <h4>Sales Proposal Section</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 <span style="color: #42affa;">[C]</span> Prospect: mid-market financial services firm, 500 employees, currently using Competitor X (3-year contract ending in Q2). Pain points: slow reporting, poor mobile experience, no AI features.
 
 <span style="color: var(--accent-green);">[R]</span> Act as an enterprise sales strategist specializing in competitive displacement.
@@ -1835,7 +1831,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
         <div class="two-column">
             <div>
                 <h4>Content Creation Chain</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 <strong>Step 1: Ideation</strong>
 [C] We run a B2B SaaS blog targeting CTOs. Our product helps with cloud cost optimization.
 [A] Generate 10 blog post ideas that address real pain points CTOs face with cloud spending. For each, provide: title, target keyword, and a hook sentence.
@@ -1846,7 +1842,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
             </div>
             <div>
                 <h4>Style Transfer</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 [C] Here is our internal technical documentation for our API rate limiting feature:
 "Rate limiting is implemented using a token bucket algorithm with a default of 1000 requests per minute per API key."
 
@@ -1868,7 +1864,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
         <div class="two-column">
             <div>
                 <h4>Data Analysis</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 [C] Here are our website analytics for Q4:
 - Organic traffic: 45K (+12% QoQ)
 - Bounce rate: 68% (+5%)
@@ -1883,7 +1879,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
             </div>
             <div>
                 <h4>Educational Content</h4>
-                <div class="prompt-example" style="font-size: 0.7em;">
+                <div class="prompt-example" style="font-size: 0.46em;">
 [C] I'm creating training material for new managers (first-time people leaders, promoted from individual contributor roles).
 
 [R] Act as a leadership development facilitator with experience in tech companies.
@@ -1949,7 +1945,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
                 <li><strong>If it's complex, decompose it</strong> into a 2-3 step chain</li>
                 <li><strong>Score it</strong> using the 5-dimension rubric (clarity, specificity, context, format, technique)</li>
             </ol>
-            <p style="margin-top: 10px;"><strong>Share your solution with the group.</strong> What worked? What would you iterate on next?</p>
+            <p style="margin-top: 5px;"><strong>Share your solution with the group.</strong> What worked? What would you iterate on next?</p>
         </div>
     </div>
 </section>
@@ -1962,7 +1958,7 @@ Question: Summarize the vacation policy for new EU hires in 3 bullets, including
 <section>
     <div class="slide-content">
         <h2>Key Takeaways</h2>
-        <div class="three-column" style="margin-top: 10px;">
+        <div class="three-column" style="margin-top: 5px;">
             <div class="card" style="border-left-color: var(--primary);">
                 <h4>Foundation</h4>
                 <p>The <strong>CRAFT Framework</strong> gives you a reliable structure for every prompt: Context, Role, Action, Format, Tone.</p>

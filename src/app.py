@@ -2823,29 +2823,14 @@ def periodic_cleanup():
 # ============================================================================
 
 if __name__ == '__main__':
-    import ssl
-
     # Start periodic cleanup (first run after 60 seconds, then every 30 min)
     cleanup_timer = threading.Timer(60, periodic_cleanup)
     cleanup_timer.daemon = True
     cleanup_timer.start()
 
-    cert_file = os.path.join(BASE_DIR, 'cert.pem')
-    key_file = os.path.join(BASE_DIR, 'key.pem')
-
-    if os.path.exists(cert_file) and os.path.exists(key_file):
-        print("=" * 60)
-        print("  Course Material Viewer - Multi-tenant Platform")
-        print("  Running on https://0.0.0.0:4050")
-        print("=" * 60)
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        context.load_cert_chain(cert_file, key_file)
-        app.run(host='0.0.0.0', port=4050, debug=True, ssl_context=context)
-    else:
-        print("=" * 60)
-        print("  Course Material Viewer - Multi-tenant Platform")
-        print("  Running on http://0.0.0.0:4050")
-        print("  WARNING: No SSL certificates found. Running without HTTPS.")
-        print("  Run generate_cert.sh to create a self-signed certificate.")
-        print("=" * 60)
-        app.run(host='0.0.0.0', port=4050, debug=True)
+    print("=" * 60)
+    print("  Course Material Viewer - Multi-tenant Platform")
+    print("  Running on http://0.0.0.0:4050")
+    print("  For HTTPS, use: ./run.sh (starts gunicorn with SSL)")
+    print("=" * 60)
+    app.run(host='0.0.0.0', port=4050, debug=True)

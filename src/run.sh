@@ -20,9 +20,31 @@ source venv/bin/activate
 echo "Installing dependencies..."
 pip install -q -r requirements.txt
 
-# Run the app
+# Generate SSL cert if missing
+if [ ! -f cert.pem ] || [ ! -f key.pem ]; then
+    echo "Generating SSL certificate..."
+    bash generate_cert.sh
+fi
+
+# Run the app with gunicorn + SSL
 echo ""
-echo "Starting server on https://localhost:4050"
-echo "Press Ctrl+C to stop"
-echo ""
-python app.py
+if [ -f cert.pem ] && [ -f key.pem ]; then
+    echo "Starting server on https://0.0.0.0:4050"
+    echo "Press Ctrl+C to stop"
+    echo ""
+    exec gunicorn --bind 0.0.0.0:4050 \
+        --workers 4 \
+        --threads 2 \
+        --certfile cert.pem \
+        --keyfile key.pem \
+        app:app
+else
+    echo "WARNING: No SSL certs found. Starting without HTTPS."
+    echo "Starting server on http://0.0.0.0:4050"
+    echo "Press Ctrl+C to stop"
+    echo ""
+    exec gunicorn --bind 0.0.0.0:4050 \
+        --workers 4 \
+        --threads 2 \
+        app:app
+fi

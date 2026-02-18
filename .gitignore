@@ -33,5 +33,9 @@ student-*.png
 # Memory bank
 memory-bank/
 
+# SSL certificates (private keys)
+src/cert.pem
+src/key.pem
+
 # Misc temp files
 lab-after-click.md

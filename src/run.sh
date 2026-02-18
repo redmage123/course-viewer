@@ -22,7 +22,7 @@ pip install -q -r requirements.txt
 
 # Run the app
 echo ""
-echo "Starting server on http://localhost:4050"
+echo "Starting server on https://localhost:4050"
 echo "Press Ctrl+C to stop"
 echo ""
 python app.py

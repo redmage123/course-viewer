@@ -21,3 +21,17 @@ src/workspaces/
 .env
 .env.local
 .env.*.local
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Test screenshots
+test-*.png
+admin-*.png
+student-*.png
+
+# Memory bank
+memory-bank/
+
+# Misc temp files
+lab-after-click.md

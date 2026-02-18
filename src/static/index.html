@@ -610,6 +610,131 @@
         }
         .modal-footer button:hover { color: #94a3b8; }
 
+        /* ========== ADMIN MODAL ========== */
+        .admin-modal {
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .admin-modal h2 {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+        .admin-btn {
+            background: none;
+            border: 1px solid #475569;
+            color: #94a3b8;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.15s;
+        }
+        .admin-btn:hover {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .admin-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .admin-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-group .hint {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin-top: 12px;
+        }
+        .admin-table th {
+            text-align: left;
+            padding: 8px 10px;
+            background: #0f172a;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #334155;
+        }
+        .admin-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #1e293b;
+            color: #e2e8f0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .admin-table tr:hover td {
+            background: rgba(56, 189, 248, 0.05);
+        }
+        .copy-all-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .copy-all-btn:hover {
+            background: #475569;
+        }
+        .admin-success {
+            color: #22c55e;
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+        }
+        .admin-errors {
+            color: #f43f5e;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+        .admin-errors li {
+            margin-left: 16px;
+            list-style: disc;
+        }
+
         /* ========== LOADING ========== */
         .loading-screen {
             display: flex;
@@ -1418,6 +1543,201 @@
                         <div className="modal-footer">
                             <button onClick={onSkip}>Continue as Guest</button>
                         </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function AdminModal({ courses, onClose }) {
+            const [courseId, setCourseId] = useState('');
+            const [expiresAt, setExpiresAt] = useState('');
+            const [input, setInput] = useState('');
+            const [preview, setPreview] = useState(null);
+            const [results, setResults] = useState(null);
+            const [adminLoading, setAdminLoading] = useState(false);
+            const [error, setError] = useState('');
+            const [copied, setCopied] = useState(false);
+
+            const parseInput = (text) => {
+                const lines = text.trim().split('\n').filter(l => l.trim());
+                return lines.map(line => {
+                    line = line.trim();
+                    // Format: Name <email>
+                    const angleMatch = line.match(/^(.+?)\s*<([^>]+)>/);
+                    if (angleMatch) return { name: angleMatch[1].trim(), email: angleMatch[2].trim() };
+                    // Format: Name\temail (tab-separated)
+                    const tabParts = line.split('\t');
+                    if (tabParts.length >= 2) return { name: tabParts[0].trim(), email: tabParts[tabParts.length - 1].trim() };
+                    // Format: Name, email (comma-separated)
+                    const commaParts = line.split(',');
+                    if (commaParts.length >= 2) {
+                        const email = commaParts[commaParts.length - 1].trim();
+                        const name = commaParts.slice(0, -1).join(',').trim();
+                        return { name, email };
+                    }
+                    return null;
+                }).filter(Boolean);
+            };
+
+            const generateUsername = (name) => {
+                const parts = name.trim().split(/\s+/);
+                if (parts.length < 2) return null;
+                const firstInitial = parts[0][0].toLowerCase();
+                const lastName = parts[parts.length - 1].toLowerCase().replace(/[^a-z0-9\-]/g, '');
+                return firstInitial + lastName;
+            };
+
+            const handlePreview = () => {
+                const students = parseInput(input);
+                if (!students.length) { setError('Could not parse any students. Use format: Name, email'); return; }
+                setError('');
+                const seen = new Set();
+                const previewed = students.map(s => {
+                    let username = generateUsername(s.name);
+                    if (!username) return { ...s, username: '(invalid name)' };
+                    let base = username;
+                    let counter = 1;
+                    while (seen.has(username)) { username = base + counter; counter++; }
+                    seen.add(username);
+                    return { ...s, username };
+                });
+                setPreview(previewed);
+                setResults(null);
+            };
+
+            const handleCreate = async () => {
+                if (!preview || !preview.length) return;
+                setAdminLoading(true);
+                setError('');
+                try {
+                    const res = await fetch('/api/admin/bulk-register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            students: preview.filter(s => s.username !== '(invalid name)').map(s => ({ name: s.name, email: s.email })),
+                            course_id: courseId,
+                            expires_at: expiresAt || ''
+                        })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        setResults(data);
+                        setPreview(null);
+                    } else {
+                        setError(data.error || 'Failed to create accounts');
+                    }
+                } catch (err) { setError('Connection error'); }
+                setAdminLoading(false);
+            };
+
+            const handleCopyAll = () => {
+                if (!results || !results.created) return;
+                const text = results.created.map(r =>
+                    `${r.full_name}\t${r.username}\t${r.password}\t${r.email}`
+                ).join('\n');
+                navigator.clipboard.writeText('Name\tUsername\tPassword\tEmail\n' + text);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            return (
+                <div className="modal-overlay" onClick={onClose}>
+                    <div className="modal admin-modal" onClick={e => e.stopPropagation()}>
+                        <div className="topic-modal-header">
+                            <h2>Student Management</h2>
+                            <button className="topic-modal-close" onClick={onClose}>&times;</button>
+                        </div>
+
+                        <div className="admin-row">
+                            <div className="form-group">
+                                <label>Course</label>
+                                <select value={courseId} onChange={e => setCourseId(e.target.value)}>
+                                    <option value="">-- Select course --</option>
+                                    {courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Expires (optional)</label>
+                                <input type="datetime-local" value={expiresAt} onChange={e => setExpiresAt(e.target.value)} />
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Students (one per line)</label>
+                            <textarea
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                placeholder={"Joe Smith, joe@example.com\nJane Doe <jane@example.com>\nBob Jones\tbob@example.com"}
+                                rows={6}
+                            />
+                            <div className="hint">Formats: Name, email | Name &lt;email&gt; | Name[tab]email</div>
+                        </div>
+
+                        <div className="admin-actions">
+                            <button className="btn btn-ghost" onClick={handlePreview} disabled={!input.trim()}>Preview</button>
+                            {preview && preview.length > 0 && (
+                                <button className="btn btn-primary" onClick={handleCreate} disabled={adminLoading}>
+                                    {adminLoading ? 'Creating...' : `Create ${preview.filter(s => s.username !== '(invalid name)').length} Accounts`}
+                                </button>
+                            )}
+                        </div>
+
+                        {error && <div className="form-error">{error}</div>}
+
+                        {preview && (
+                            <div>
+                                <h3 style={{fontSize:'0.875rem',color:'#94a3b8',marginBottom:'8px'}}>Preview</h3>
+                                <table className="admin-table">
+                                    <thead><tr><th>Full Name</th><th>Email</th><th>Username</th></tr></thead>
+                                    <tbody>
+                                        {preview.map((s, i) => (
+                                            <tr key={i}>
+                                                <td style={{fontFamily:'inherit'}}>{s.name}</td>
+                                                <td>{s.email}</td>
+                                                <td>{s.username}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
+                        {results && (
+                            <div>
+                                {results.total_created > 0 && (
+                                    <div className="admin-success">{results.total_created} account(s) created successfully</div>
+                                )}
+                                {results.errors && results.errors.length > 0 && (
+                                    <div className="admin-errors">
+                                        <ul>{results.errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                                    </div>
+                                )}
+                                {results.created && results.created.length > 0 && (
+                                    <div>
+                                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
+                                            <h3 style={{fontSize:'0.875rem',color:'#94a3b8'}}>Credentials</h3>
+                                            <button className="copy-all-btn" onClick={handleCopyAll}>
+                                                {copied ? 'Copied!' : 'Copy All'}
+                                            </button>
+                                        </div>
+                                        <table className="admin-table">
+                                            <thead><tr><th>Username</th><th>Password</th><th>Full Name</th><th>Email</th></tr></thead>
+                                            <tbody>
+                                                {results.created.map((r, i) => (
+                                                    <tr key={i}>
+                                                        <td>{r.username}</td>
+                                                        <td>{r.password}</td>
+                                                        <td style={{fontFamily:'inherit'}}>{r.full_name}</td>
+                                                        <td>{r.email}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             );
@@ -2631,6 +2951,7 @@
             const [courseDetail, setCourseDetail] = useState(null);
             const [topicPopup, setTopicPopup] = useState(null);
             const [notEnrolled, setNotEnrolled] = useState(false);
+            const [showAdmin, setShowAdmin] = useState(false);
 
             // Parse URL on load to restore state
             const getStateFromUrl = () => {
@@ -2816,6 +3137,9 @@
                 <div className="user-menu">
                     {user ? (
                         <>
+                            {user.role === 'instructor' && (
+                                <button className="admin-btn" onClick={() => setShowAdmin(true)} title="Student Management">&#9881;</button>
+                            )}
                             <div className="user-avatar">{user.username[0].toUpperCase()}</div>
                             <span className="user-name">{user.full_name || user.username}</span>
                             <button className="btn btn-ghost" onClick={handleLogout}>Logout</button>
@@ -2832,6 +3156,7 @@
             return (
                 <div className={`app ${selectedCourse && user && !notEnrolled ? 'with-sidebar' : ''}`}>
                     {showAuth && <AuthModal onLogin={(u) => { setUser(u); setShowAuth(false); }} onSkip={() => setShowAuth(false)} />}
+                    {showAdmin && <AdminModal courses={courses} onClose={() => setShowAdmin(false)} />}
 
                     {topicPopup && (
                         <div className="modal-overlay" onClick={() => setTopicPopup(null)}>
@@ -2857,9 +3182,14 @@
                             <div className="sidebar-header">
                                 <div className="sidebar-brand">
                                     <div className="sidebar-brand-text"><span>🎓</span> AI Elevate</div>
-                                    <button className="back-home" onClick={() => { setSelectedCourse(null); setSelectedCategory(null); setMaterials(null); setSelectedItem(null); setRunningLab(null); setCourseDetail(null); updateUrl(null, null, null); }}>
-                                        ← Home
-                                    </button>
+                                    <div style={{display:'flex',gap:'6px',alignItems:'center'}}>
+                                        {user.role === 'instructor' && (
+                                            <button className="admin-btn" onClick={() => setShowAdmin(true)} title="Student Management" style={{width:'28px',height:'28px',fontSize:'0.85rem'}}>&#9881;</button>
+                                        )}
+                                        <button className="back-home" onClick={() => { setSelectedCourse(null); setSelectedCategory(null); setMaterials(null); setSelectedItem(null); setRunningLab(null); setCourseDetail(null); updateUrl(null, null, null); }}>
+                                            ← Home
+                                        </button>
+                                    </div>
                                 </div>
                                 <select className="course-select" value={selectedCourse.id} onChange={e => {
                                     const c = courses.find(x => x.id === e.target.value);

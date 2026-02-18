@@ -284,6 +284,21 @@ def init_db():
             ('bbrelin', 'bbrelin@ai-elevate.ai', generate_password_hash('f00bar123!'), 'Braun Brelin', 'instructor')
         )
 
+    # Migration: Upgrade instructor accounts (pete → pmunro, mikeb → mburton)
+    pete = db.execute("SELECT id FROM users WHERE username = 'pete'").fetchone()
+    if pete:
+        db.execute("UPDATE users SET username = 'pmunro', role = 'instructor', expires_at = NULL WHERE username = 'pete'")
+
+    mikeb = db.execute("SELECT id FROM users WHERE username = 'mikeb@mycosystems.co.uk'").fetchone()
+    if mikeb:
+        db.execute("UPDATE users SET username = 'mburton', role = 'instructor', expires_at = NULL WHERE username = 'mikeb@mycosystems.co.uk'")
+
+    # Migration: Delete duplicate peter2 account
+    db.execute("DELETE FROM users WHERE username = 'peter2'")
+
+    # Migration: Ensure all instructors have no expiration
+    db.execute("UPDATE users SET expires_at = NULL WHERE role = 'instructor'")
+
     db.commit()
     db.close()
 
@@ -2431,6 +2446,117 @@ def admin_cleanup_expired():
     """Manually trigger cleanup of expired accounts (instructor only)"""
     count = cleanup_expired_accounts()
     return jsonify({'message': f'Cleaned up {count} expired account(s)', 'count': count})
+
+@app.route('/api/admin/bulk-register', methods=['POST'])
+@instructor_required
+def admin_bulk_register():
+    """Bulk register students and enroll them in a course (instructor only)"""
+    import re
+
+    data = request.get_json()
+    students = data.get('students', [])
+    course_id = data.get('course_id', '')
+    expires_at = data.get('expires_at', '')
+
+    # Normalize datetime-local format (2026-02-18T18:00) to DB format (2026-02-18 18:00:00)
+    if expires_at:
+        expires_at = expires_at.replace('T', ' ')
+        if len(expires_at) == 16:  # "2026-02-18 18:00" missing seconds
+            expires_at += ':00'
+
+    if not students:
+        return jsonify({'error': 'No students provided'}), 400
+
+    if course_id and course_id not in COURSES:
+        return jsonify({'error': f'Unknown course: {course_id}'}), 400
+
+    db = get_db()
+    try:
+        # Get existing usernames for collision detection
+        existing = db.execute('SELECT username FROM users').fetchall()
+        existing_usernames = {row['username'] for row in existing}
+
+        # Track usernames generated in this batch
+        batch_usernames = set()
+        results = []
+        errors = []
+
+        for i, student in enumerate(students):
+            name = student.get('name', '').strip()
+            email = student.get('email', '').strip().lower()
+
+            if not name or not email:
+                errors.append(f'Row {i+1}: Missing name or email')
+                continue
+
+            # Generate username: first initial + last name
+            parts = name.split()
+            if len(parts) < 2:
+                errors.append(f'Row {i+1}: Need first and last name for "{name}"')
+                continue
+
+            first_initial = parts[0][0].lower()
+            last_name = parts[-1].lower()  # Use last word for multi-word names
+            # Keep hyphens but remove other non-alphanumeric chars
+            last_name = re.sub(r'[^a-z0-9\-]', '', last_name)
+            base_username = first_initial + last_name
+
+            # Resolve collisions against existing DB users and current batch
+            username = base_username
+            counter = 1
+            while username in existing_usernames or username in batch_usernames:
+                username = f'{base_username}{counter}'
+                counter += 1
+
+            batch_usernames.add(username)
+
+            # Generate random password
+            password = secrets.token_urlsafe(10)[:10]
+
+            try:
+                db.execute(
+                    'INSERT INTO users (username, email, password_hash, full_name, role, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
+                    (username, email, generate_password_hash(password), name, 'student',
+                     expires_at if expires_at else None)
+                )
+
+                # Get the new user ID
+                user_row = db.execute('SELECT id FROM users WHERE username = ?', (username,)).fetchone()
+                user_id = user_row['id']
+
+                # Create workspace
+                user_workspace = os.path.join(WORKSPACES_DIR, str(user_id))
+                os.makedirs(user_workspace, exist_ok=True)
+
+                # Enroll in course if specified
+                if course_id:
+                    try:
+                        db.execute(
+                            'INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)',
+                            (user_id, course_id)
+                        )
+                    except sqlite3.IntegrityError:
+                        pass  # Already enrolled
+
+                results.append({
+                    'username': username,
+                    'password': password,
+                    'full_name': name,
+                    'email': email,
+                    'user_id': user_id
+                })
+            except sqlite3.IntegrityError as e:
+                errors.append(f'Row {i+1}: Email "{email}" already exists')
+
+        db.commit()
+        return jsonify({
+            'created': results,
+            'errors': errors,
+            'total_created': len(results),
+            'total_errors': len(errors)
+        })
+    finally:
+        db.close()
 
 # ============================================================================
 # Poll Routes

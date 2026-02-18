@@ -1359,6 +1359,34 @@
                             }
                             document.activeElement?.blur();
                         }
+                        // Arrow up at top of textarea → move to previous cell
+                        if (e.key === 'ArrowUp') {
+                            const ta = document.activeElement;
+                            if (ta.selectionStart === 0 && selected > 0) {
+                                e.preventDefault();
+                                setSelected(selected - 1);
+                                setCommandMode(true);
+                                ta.blur();
+                                setTimeout(() => {
+                                    const cell = containerRef.current?.querySelectorAll('.cell')[selected - 1];
+                                    cell?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                                }, 0);
+                            }
+                        }
+                        // Arrow down at bottom of textarea → move to next cell
+                        if (e.key === 'ArrowDown') {
+                            const ta = document.activeElement;
+                            if (ta.selectionEnd === ta.value.length && selected < notebook.cells.length - 1) {
+                                e.preventDefault();
+                                setSelected(selected + 1);
+                                setCommandMode(true);
+                                ta.blur();
+                                setTimeout(() => {
+                                    const cell = containerRef.current?.querySelectorAll('.cell')[selected + 1];
+                                    cell?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                                }, 0);
+                            }
+                        }
                         return;
                     }
 
@@ -1366,11 +1394,23 @@
                     switch (e.key) {
                         case 'ArrowUp': case 'k':
                             e.preventDefault();
-                            if (selected > 0) setSelected(selected - 1);
+                            if (selected > 0) {
+                                setSelected(selected - 1);
+                                setTimeout(() => {
+                                    containerRef.current?.querySelectorAll('.cell')[selected - 1]
+                                        ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                                }, 0);
+                            }
                             break;
                         case 'ArrowDown': case 'j':
                             e.preventDefault();
-                            if (selected < notebook.cells.length - 1) setSelected(selected + 1);
+                            if (selected < notebook.cells.length - 1) {
+                                setSelected(selected + 1);
+                                setTimeout(() => {
+                                    containerRef.current?.querySelectorAll('.cell')[selected + 1]
+                                        ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                                }, 0);
+                            }
                             break;
                         case 'Enter':
                             e.preventDefault();
@@ -1454,6 +1494,20 @@
             useEffect(() => {
                 autoResizeTextareas();
             });
+
+            // Forward wheel events from textareas to notebook container
+            useEffect(() => {
+                if (!containerRef.current) return;
+                const container = containerRef.current;
+                const handleWheel = (e) => {
+                    if (e.target.tagName === 'TEXTAREA') {
+                        e.preventDefault();
+                        container.scrollTop += e.deltaY;
+                    }
+                };
+                container.addEventListener('wheel', handleWheel, { passive: false });
+                return () => container.removeEventListener('wheel', handleWheel);
+            }, [notebook]);
 
             const getSource = (cell) => Array.isArray(cell.source) ? cell.source.join('') : cell.source;
 

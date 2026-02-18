@@ -190,12 +190,12 @@
 
         /* ========== MAIN CONTENT ========== */
         .main {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
             background: #0f172a;
             height: 100%;
             min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
         }
         .content-header {
             display: flex;
@@ -631,23 +631,20 @@
 
         /* ========== NOTEBOOK ========== */
         .notebook-container {
-            flex: 1 1 0%;
-            min-height: 0;
-            overflow-y: scroll;
             padding: 24px;
             background: #0f172a;
         }
-        .notebook-container::-webkit-scrollbar {
+        .main::-webkit-scrollbar {
             width: 10px;
         }
-        .notebook-container::-webkit-scrollbar-track {
+        .main::-webkit-scrollbar-track {
             background: #1e293b;
         }
-        .notebook-container::-webkit-scrollbar-thumb {
+        .main::-webkit-scrollbar-thumb {
             background: #475569;
             border-radius: 5px;
         }
-        .notebook-container::-webkit-scrollbar-thumb:hover {
+        .main::-webkit-scrollbar-thumb:hover {
             background: #64748b;
         }
         .notebook-toolbar-container {
@@ -742,7 +739,6 @@
             border-bottom: 1px solid #334155;
             overflow: hidden;
             transition: max-height 0.3s ease;
-            flex-shrink: 0;
         }
         .key-panel-container.collapsed { max-height: 32px; }
         .key-panel-container.expanded { max-height: 200px; }
@@ -1378,10 +1374,12 @@
                             }
                             document.activeElement?.blur();
                         }
-                        // Arrow up at top of textarea → move to previous cell
+                        // Arrow up on first line of textarea → move to previous cell
                         if (e.key === 'ArrowUp') {
                             const ta = document.activeElement;
-                            if (ta.selectionStart === 0 && selected > 0) {
+                            const textBefore = ta.value.substring(0, ta.selectionStart);
+                            const onFirstLine = !textBefore.includes('\n');
+                            if (onFirstLine && selected > 0) {
                                 e.preventDefault();
                                 setSelected(selected - 1);
                                 setCommandMode(true);
@@ -1392,10 +1390,12 @@
                                 }, 0);
                             }
                         }
-                        // Arrow down at bottom of textarea → move to next cell
+                        // Arrow down on last line of textarea → move to next cell
                         if (e.key === 'ArrowDown') {
                             const ta = document.activeElement;
-                            if (ta.selectionEnd === ta.value.length && selected < notebook.cells.length - 1) {
+                            const textAfter = ta.value.substring(ta.selectionEnd);
+                            const onLastLine = !textAfter.includes('\n');
+                            if (onLastLine && selected < notebook.cells.length - 1) {
                                 e.preventDefault();
                                 setSelected(selected + 1);
                                 setCommandMode(true);
@@ -1514,41 +1514,20 @@
                 autoResizeTextareas();
             });
 
-            // Forward wheel events from textareas to notebook container
+            // Forward wheel events from textareas to the main scroll container
             useEffect(() => {
                 if (!containerRef.current) return;
-                const container = containerRef.current;
+                const mainEl = containerRef.current.closest('.main');
+                if (!mainEl) return;
                 const handleWheel = (e) => {
                     if (e.target.tagName === 'TEXTAREA') {
                         e.preventDefault();
-                        container.scrollTop += e.deltaY;
+                        mainEl.scrollTop += e.deltaY;
                     }
                 };
-                container.addEventListener('wheel', handleWheel, { passive: false });
-                return () => container.removeEventListener('wheel', handleWheel);
+                mainEl.addEventListener('wheel', handleWheel, { passive: false });
+                return () => mainEl.removeEventListener('wheel', handleWheel);
             }, [notebook]);
-
-            // Ensure notebook-container height is explicitly constrained
-            // This fixes scroll issues where CSS flex layout doesn't constrain the container
-            useEffect(() => {
-                if (!containerRef.current) return;
-                const container = containerRef.current;
-                const setContainerHeight = () => {
-                    const main = container.closest('.main');
-                    if (!main) return;
-                    let usedHeight = 0;
-                    for (const child of main.children) {
-                        if (child !== container) {
-                            usedHeight += child.getBoundingClientRect().height;
-                        }
-                    }
-                    const available = main.getBoundingClientRect().height - usedHeight;
-                    container.style.maxHeight = Math.max(200, available) + 'px';
-                };
-                setContainerHeight();
-                window.addEventListener('resize', setContainerHeight);
-                return () => window.removeEventListener('resize', setContainerHeight);
-            }, [notebook, showToolbar, showKeyPanel]);
 
             const getSource = (cell) => Array.isArray(cell.source) ? cell.source.join('') : cell.source;
 

@@ -285,6 +285,12 @@ def init_db():
     except:
         db.execute('ALTER TABLE users ADD COLUMN expires_at TIMESTAMP')
 
+    # Migration: Add plain_password column to users if it doesn't exist
+    try:
+        db.execute('SELECT plain_password FROM users LIMIT 1')
+    except:
+        db.execute('ALTER TABLE users ADD COLUMN plain_password TEXT')
+
     # Create default admin user if not exists
     existing = db.execute('SELECT id FROM users WHERE username = ?', ('bbrelin',)).fetchone()
     if not existing:
@@ -2524,9 +2530,9 @@ def admin_bulk_register():
 
             try:
                 db.execute(
-                    'INSERT INTO users (username, email, password_hash, full_name, role, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
+                    'INSERT INTO users (username, email, password_hash, full_name, role, expires_at, plain_password) VALUES (?, ?, ?, ?, ?, ?, ?)',
                     (username, email, generate_password_hash(password), name, 'student',
-                     expires_at if expires_at else None)
+                     expires_at if expires_at else None, password)
                 )
 
                 # Get the new user ID
@@ -2578,7 +2584,7 @@ def get_course_enrollments(course_id):
     db = get_db()
     rows = db.execute('''
         SELECT e.id as enrollment_id, u.id as user_id, u.username, u.full_name, u.email,
-               e.enrolled_at, u.expires_at
+               e.enrolled_at, u.expires_at, u.plain_password
         FROM enrollments e
         JOIN users u ON e.user_id = u.id
         WHERE e.course_id = ?

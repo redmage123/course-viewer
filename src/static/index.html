@@ -841,6 +841,58 @@
             color: #93c5fd;
             font-size: 0.875rem;
         }
+        .fill-blank {
+            background: #1e293b;
+            border: none;
+            border-bottom: 2px solid #475569;
+            color: #e2e8f0;
+            font-size: inherit;
+            font-family: inherit;
+            padding: 2px 4px;
+            min-width: 80px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .fill-blank:focus {
+            border-bottom-color: #38bdf8;
+        }
+        .fill-blank-wide {
+            min-width: 200px;
+            width: 60%;
+        }
+        td .fill-blank {
+            width: 100%;
+            min-width: 40px;
+        }
+        blockquote .fill-blank {
+            width: 90%;
+            min-width: 200px;
+        }
+        .exercise-submit-wrapper {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+            text-align: center;
+        }
+        .exercise-submit-btn {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .exercise-submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
+        .exercise-submit-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+        .ai-review-cell {
+            background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.08));
+            border-left: 3px solid #7c3aed;
+            padding: 1rem;
+            border-radius: 8px;
+        }
 
         /* ========== LOADING ========== */
         .loading-screen {
@@ -1921,11 +1973,12 @@
                                     ) : roster.length > 0 ? (
                                         <div className="admin-table-wrapper">
                                             <table className="admin-table">
-                                                <thead><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Enrolled</th><th></th></tr></thead>
+                                                <thead><tr><th>Username</th><th>Password</th><th>Full Name</th><th>Email</th><th>Enrolled</th><th></th></tr></thead>
                                                 <tbody>
                                                     {roster.map(r => (
                                                         <tr key={r.enrollment_id}>
                                                             <td>{r.username}</td>
+                                                            <td style={{fontFamily:'monospace',fontSize:'0.8rem',color:'#94a3b8'}}>{r.plain_password || '—'}</td>
                                                             <td style={{fontFamily:'inherit'}}>{r.full_name}</td>
                                                             <td>{r.email}</td>
                                                             <td>{r.enrolled_at ? new Date(r.enrolled_at).toLocaleDateString() : ''}</td>
@@ -2039,7 +2092,7 @@
         }
 
         // Markdown to HTML converter with table, blockquote, and HR support
-        function renderMarkdownToHtml(md) {
+        function renderMarkdownToHtml(md, cellIdx, fillValues) {
             // First extract code blocks to protect them from other processing
             const codeBlocks = [];
             md = md.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
@@ -2173,7 +2226,24 @@
                 }
             }
 
-            return result.join('\n');
+            // Final pass: convert ___ runs to <input> elements for fill-in-the-blank
+            let html = result.join('\n');
+            if (typeof cellIdx === 'number') {
+                let blankCounter = 0;
+                html = html.replace(/_{3,}/g, () => {
+                    const key = cellIdx + '-' + blankCounter;
+                    const val = fillValues && fillValues[key] != null ? fillValues[key].replace(/"/g, '&quot;') : '';
+                    const wide = blankCounter === 0 || val.length > 20;
+                    blankCounter++;
+                    return '<input type="text" class="fill-blank' + (wide ? ' fill-blank-wide' : '') + '" data-fill-key="' + key + '" value="' + val + '" placeholder="Type here...">';
+                });
+            }
+            // Replace <!-- submit-exercise --> marker with a submit button (strip wrapping <p> if present)
+            html = html.replace(/<p>\s*<!--\s*submit-exercise\s*-->\s*<\/p>/g,
+                '<div class="exercise-submit-wrapper"><button class="exercise-submit-btn" data-cell-idx="' + cellIdx + '">\u{1F4DD} Submit for AI Review</button></div>');
+            html = html.replace(/<!--\s*submit-exercise\s*-->/g,
+                '<div class="exercise-submit-wrapper"><button class="exercise-submit-btn" data-cell-idx="' + cellIdx + '">\u{1F4DD} Submit for AI Review</button></div>');
+            return html;
         }
 
         // Inline markdown: bold, italic, code, links, strikethrough
@@ -2212,6 +2282,48 @@
             const [aiLoading, setAiLoading] = useState(false);
             const [aiModel, setAiModel] = useState('gpt-4o');
             const containerRef = useRef(null);
+            const fillBlanksRef = useRef({});
+
+            // Flush fill-in-the-blank values back into cell source for a given cell
+            const flushFillBlanks = (idx) => {
+                const src = getSource(notebook.cells[idx]);
+                let blankCounter = 0;
+                const patched = src.replace(/_{3,}/g, () => {
+                    const key = idx + '-' + blankCounter;
+                    blankCounter++;
+                    const val = fillBlanksRef.current[key];
+                    return val ? val : '___';
+                });
+                if (patched !== src) {
+                    setSource(idx, patched);
+                }
+            };
+
+            // Flush all fill-in-the-blank values across all cells
+            const flushAllFillBlanks = () => {
+                if (!notebook) return;
+                const cells = [...notebook.cells];
+                let changed = false;
+                cells.forEach((cell, idx) => {
+                    if (cell.cell_type !== 'markdown') return;
+                    const src = getSource(cell);
+                    let blankCounter = 0;
+                    const patched = src.replace(/_{3,}/g, () => {
+                        const key = idx + '-' + blankCounter;
+                        blankCounter++;
+                        const val = fillBlanksRef.current[key];
+                        return val ? val : '___';
+                    });
+                    if (patched !== src) {
+                        cells[idx] = { ...cells[idx], source: patched.split('\n').map((l,i,a) => i < a.length-1 ? l+'\n' : l) };
+                        changed = true;
+                    }
+                });
+                if (changed) {
+                    setNotebook({ ...notebook, cells });
+                    setDirty(true);
+                }
+            };
 
             const availableKernels = [
                 { id: 'pyodide', name: 'Python (Pyodide - Browser)', icon: '🐍' },
@@ -2295,7 +2407,7 @@
             useEffect(() => {
                 const handleKeyDown = (e) => {
                     if (!notebook) return;
-                    const isEditing = document.activeElement?.tagName === 'TEXTAREA';
+                    const isEditing = document.activeElement?.tagName === 'TEXTAREA' || document.activeElement?.tagName === 'INPUT';
 
                     // Global shortcuts (work in both modes)
                     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -2624,12 +2736,32 @@
             };
 
             const saveNotebook = async () => {
+                // Flush fill-in-the-blank values into cell sources before saving
+                let nb = notebook;
+                if (Object.keys(fillBlanksRef.current).length > 0) {
+                    const cells = [...notebook.cells];
+                    cells.forEach((cell, idx) => {
+                        if (cell.cell_type !== 'markdown') return;
+                        const src = getSource(cell);
+                        let bc = 0;
+                        const patched = src.replace(/_{3,}/g, () => {
+                            const val = fillBlanksRef.current[idx + '-' + bc];
+                            bc++;
+                            return val || '___';
+                        });
+                        if (patched !== src) {
+                            cells[idx] = { ...cells[idx], source: patched.split('\n').map((l,i,a) => i < a.length-1 ? l+'\n' : l) };
+                        }
+                    });
+                    nb = { ...notebook, cells };
+                    setNotebook(nb);
+                }
                 try {
                     await fetch(`/api/lab/${labId}/save`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
-                        body: JSON.stringify(notebook)
+                        body: JSON.stringify(nb)
                     });
                     setDirty(false);
                 } catch (e) { alert('Save failed'); }
@@ -2731,6 +2863,104 @@
                 if (!src.trim()) return;
                 setShowAIPanel(true);
                 sendAIPrompt(src);
+            };
+
+            const handleExerciseSubmit = async (cellIdx, buttonEl) => {
+                // Disable button
+                buttonEl.disabled = true;
+                const origText = buttonEl.textContent;
+                buttonEl.textContent = 'Submitting...';
+
+                try {
+                    // Find exercise boundaries: walk backward to find any ## heading
+                    let headerIdx = cellIdx;
+                    for (let i = cellIdx; i >= 0; i--) {
+                        const src = getSource(notebook.cells[i]);
+                        if (/^## /m.test(src)) {
+                            headerIdx = i;
+                            break;
+                        }
+                    }
+
+                    // Collect exercise context (all cell sources in range)
+                    const contextParts = [];
+                    for (let i = headerIdx; i <= cellIdx; i++) {
+                        const src = getSource(notebook.cells[i]).replace(/<!--\s*submit-exercise\s*-->/g, '');
+                        contextParts.push(src);
+                    }
+                    const exerciseContext = contextParts.join('\n\n');
+
+                    // Collect student answers from fill-blank inputs in the range
+                    const studentAnswers = [];
+                    for (let i = headerIdx; i <= cellIdx; i++) {
+                        let bc = 0;
+                        const src = getSource(notebook.cells[i]);
+                        const blanks = src.match(/_{3,}/g);
+                        if (!blanks) continue;
+                        blanks.forEach(() => {
+                            const key = i + '-' + bc;
+                            const val = fillBlanksRef.current[key];
+                            if (val && val.trim()) {
+                                studentAnswers.push('Cell ' + i + ', blank ' + (bc + 1) + ': ' + val);
+                            }
+                            bc++;
+                        });
+                    }
+
+                    const systemMsg = 'You are an AI teaching assistant for a Prompt Engineering Masterclass. A student completed an exercise on the CRAFT framework. Provide your own model answers, then evaluate the student\'s answers with specific feedback. Format your response as markdown.';
+                    const userMsg = 'Here is the exercise:\n\n' + exerciseContext +
+                        '\n\n---\n\nStudent\'s Answers:\n' + (studentAnswers.length > 0 ? studentAnswers.join('\n') : '(No answers provided yet)') +
+                        '\n\nPlease provide:\n1) Your model answer for each question\n2) Feedback on each student answer (what\'s good, what to improve)\n3) Overall assessment';
+
+                    // Call GPT API
+                    const res = await fetch('/api/openai/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            model: aiModel,
+                            messages: [
+                                { role: 'system', content: systemMsg },
+                                { role: 'user', content: userMsg }
+                            ]
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.error) {
+                        throw new Error(data.error.message || data.error);
+                    }
+                    const gptResponse = data.choices?.[0]?.message?.content || 'No response received.';
+
+                    // Insert or replace AI review cell
+                    const reviewCell = {
+                        cell_type: 'markdown',
+                        source: '## \u{1F916} AI Review\n\n' + gptResponse,
+                        metadata: { ai_review: true }
+                    };
+                    const cells = [...notebook.cells];
+
+                    // Check if next cell is already an AI review (prevent duplicates)
+                    if (cells[cellIdx + 1]?.metadata?.ai_review) {
+                        cells[cellIdx + 1] = reviewCell;
+                    } else {
+                        cells.splice(cellIdx + 1, 0, reviewCell);
+                    }
+                    setNotebook({ ...notebook, cells });
+
+                    // Re-index rendered cells and mark the new review cell as rendered
+                    const newRendered = {};
+                    cells.forEach((c, i) => {
+                        if (c.cell_type === 'markdown') newRendered[i] = true;
+                    });
+                    setRenderedCells(newRendered);
+
+                } catch (err) {
+                    alert('AI Review error: ' + err.message);
+                }
+
+                // Re-enable button
+                buttonEl.textContent = origText;
+                buttonEl.disabled = false;
             };
 
             const insertAIResponse = () => {
@@ -3151,10 +3381,25 @@
                                 </div>
                                 {cell.cell_type === 'markdown' && renderedCells[idx] ? (
                                     <div
-                                        className="cell-content markdown-rendered"
-                                        style={{padding:'16px',background:'#0f172a',cursor:'pointer',minHeight:'60px'}}
-                                        onClick={() => enterEditMode(idx)}
-                                        dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(getSource(cell)) }}
+                                        className={'cell-content markdown-rendered' + (cell.metadata?.ai_review ? ' ai-review-cell' : '')}
+                                        style={{padding:'16px',background: cell.metadata?.ai_review ? undefined : '#0f172a',cursor:'default',minHeight:'60px'}}
+                                        onDoubleClick={(e) => {
+                                            if (e.target.closest('input, select, textarea, button, a')) return;
+                                            flushFillBlanks(idx);
+                                            enterEditMode(idx);
+                                        }}
+                                        onInput={(e) => {
+                                            if (e.target.classList.contains('fill-blank')) {
+                                                fillBlanksRef.current[e.target.dataset.fillKey] = e.target.value;
+                                                setDirty(true);
+                                            }
+                                        }}
+                                        onClick={(e) => {
+                                            if (e.target.classList.contains('exercise-submit-btn')) {
+                                                handleExerciseSubmit(idx, e.target);
+                                            }
+                                        }}
+                                        dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(getSource(cell), idx, fillBlanksRef.current) }}
                                     />
                                 ) : (
                                     <div className="cell-content">

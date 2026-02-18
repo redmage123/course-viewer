@@ -262,6 +262,15 @@ def init_db():
             ai_tools_used TEXT,
             submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+
+        CREATE TABLE IF NOT EXISTS course_instructors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            course_id TEXT NOT NULL,
+            assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            UNIQUE(user_id, course_id)
+        );
     ''')
 
     # Migration: Add use_cases column if it doesn't exist
@@ -2557,6 +2566,121 @@ def admin_bulk_register():
         })
     finally:
         db.close()
+
+# ============================================================================
+# Course Roster & Instructor Assignment Routes
+# ============================================================================
+
+@app.route('/api/admin/course/<course_id>/enrollments')
+@instructor_required
+def get_course_enrollments(course_id):
+    """Get enrolled students for a course"""
+    db = get_db()
+    rows = db.execute('''
+        SELECT e.id as enrollment_id, u.id as user_id, u.username, u.full_name, u.email,
+               e.enrolled_at, u.expires_at
+        FROM enrollments e
+        JOIN users u ON e.user_id = u.id
+        WHERE e.course_id = ?
+        ORDER BY u.full_name
+    ''', (course_id,)).fetchall()
+    db.close()
+    return jsonify([dict(r) for r in rows])
+
+@app.route('/api/admin/enrollment/<int:enrollment_id>', methods=['DELETE'])
+@instructor_required
+def delete_enrollment(enrollment_id):
+    """Remove a student enrollment (does not delete the user account)"""
+    db = get_db()
+    row = db.execute('SELECT id FROM enrollments WHERE id = ?', (enrollment_id,)).fetchone()
+    if not row:
+        db.close()
+        return jsonify({'error': 'Enrollment not found'}), 404
+    db.execute('DELETE FROM enrollments WHERE id = ?', (enrollment_id,))
+    db.commit()
+    db.close()
+    return jsonify({'success': True})
+
+@app.route('/api/admin/enroll-existing', methods=['POST'])
+@instructor_required
+def enroll_existing_student():
+    """Enroll an existing user by username or email"""
+    data = request.get_json()
+    course_id = data.get('course_id', '').strip()
+    identifier = data.get('identifier', '').strip()
+    if not course_id or not identifier:
+        return jsonify({'error': 'course_id and identifier are required'}), 400
+
+    db = get_db()
+    user = db.execute(
+        'SELECT id, username, full_name, email FROM users WHERE username = ? OR email = ?',
+        (identifier, identifier)
+    ).fetchone()
+    if not user:
+        db.close()
+        return jsonify({'error': f'No user found matching "{identifier}"'}), 404
+
+    try:
+        db.execute('INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)', (user['id'], course_id))
+        db.commit()
+    except sqlite3.IntegrityError:
+        db.close()
+        return jsonify({'error': f'{user["username"]} is already enrolled in this course'}), 409
+    db.close()
+    return jsonify({'success': True, 'username': user['username'], 'full_name': user['full_name']})
+
+@app.route('/api/course/<course_id>/instructors')
+def get_course_instructors(course_id):
+    """Public endpoint — get assigned instructors for a course"""
+    db = get_db()
+    rows = db.execute('''
+        SELECT ci.id as assignment_id, u.id as user_id, u.full_name, u.username
+        FROM course_instructors ci
+        JOIN users u ON ci.user_id = u.id
+        WHERE ci.course_id = ?
+        ORDER BY u.full_name
+    ''', (course_id,)).fetchall()
+    db.close()
+    return jsonify([dict(r) for r in rows])
+
+@app.route('/api/admin/course-instructors', methods=['POST'])
+@instructor_required
+def assign_course_instructor():
+    """Assign an instructor to a course"""
+    data = request.get_json()
+    course_id = data.get('course_id', '').strip()
+    user_id = data.get('user_id')
+    if not course_id or not user_id:
+        return jsonify({'error': 'course_id and user_id are required'}), 400
+
+    db = get_db()
+    user = db.execute('SELECT id, role FROM users WHERE id = ?', (user_id,)).fetchone()
+    if not user or user['role'] not in ('instructor', 'admin'):
+        db.close()
+        return jsonify({'error': 'User is not an instructor'}), 400
+
+    try:
+        db.execute('INSERT INTO course_instructors (user_id, course_id) VALUES (?, ?)', (user_id, course_id))
+        db.commit()
+    except sqlite3.IntegrityError:
+        db.close()
+        return jsonify({'error': 'Instructor already assigned to this course'}), 409
+    db.close()
+    return jsonify({'success': True})
+
+@app.route('/api/admin/course-instructor/<int:assignment_id>', methods=['DELETE'])
+@instructor_required
+def remove_course_instructor(assignment_id):
+    """Remove an instructor assignment from a course"""
+    db = get_db()
+    row = db.execute('SELECT id FROM course_instructors WHERE id = ?', (assignment_id,)).fetchone()
+    if not row:
+        db.close()
+        return jsonify({'error': 'Assignment not found'}), 404
+    db.execute('DELETE FROM course_instructors WHERE id = ?', (assignment_id,))
+    db.commit()
+    db.close()
+    return jsonify({'success': True})
 
 # ============================================================================
 # Poll Routes

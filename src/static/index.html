@@ -734,6 +734,113 @@
             margin-left: 16px;
             list-style: disc;
         }
+        .admin-section {
+            border-top: 1px solid #334155;
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+        .admin-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .admin-inline-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .admin-inline-form input {
+            flex: 1;
+            padding: 7px 10px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 0.8rem;
+        }
+        .admin-inline-form input:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .admin-delete-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            line-height: 1;
+            transition: all 0.15s;
+        }
+        .admin-delete-btn:hover {
+            color: #f43f5e;
+            background: rgba(244, 63, 94, 0.1);
+        }
+        .instructor-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: #1e3a5f;
+            border: 1px solid #2563eb;
+            border-radius: 20px;
+            color: #93c5fd;
+            font-size: 0.8rem;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .instructor-chip button {
+            background: none;
+            border: none;
+            color: #93c5fd;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0;
+            line-height: 1;
+            opacity: 0.7;
+            transition: opacity 0.15s;
+        }
+        .instructor-chip button:hover {
+            opacity: 1;
+            color: #f43f5e;
+        }
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            border-radius: 5px;
+        }
+        .admin-table-wrapper {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+        }
+        .admin-table-wrapper .admin-table {
+            margin-top: 0;
+        }
+        .admin-table-wrapper .admin-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .admin-empty {
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.8rem;
+            padding: 8px 0;
+        }
+        .instructor-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #93c5fd;
+            font-size: 0.875rem;
+        }
 
         /* ========== LOADING ========== */
         .loading-screen {
@@ -1558,17 +1665,75 @@
             const [error, setError] = useState('');
             const [copied, setCopied] = useState(false);
 
+            // Roster state
+            const [roster, setRoster] = useState([]);
+            const [rosterLoading, setRosterLoading] = useState(false);
+            const [addStudentId, setAddStudentId] = useState('');
+            const [addStudentError, setAddStudentError] = useState('');
+
+            // Instructor assignment state
+            const [courseInstructors, setCourseInstructors] = useState([]);
+            const [allInstructors, setAllInstructors] = useState([]);
+            const [assignInstructorId, setAssignInstructorId] = useState('');
+
+            // Fetch all instructor accounts on mount
+            useEffect(() => {
+                fetch('/api/admin/users', { credentials: 'include' })
+                    .then(res => res.json())
+                    .then(users => setAllInstructors(users.filter(u => u.role === 'instructor' || u.role === 'admin')))
+                    .catch(() => {});
+            }, []);
+
+            // Fetch roster + course instructors when course changes
+            const fetchRoster = (cid) => {
+                if (!cid) { setRoster([]); return; }
+                setRosterLoading(true);
+                fetch(`/api/admin/course/${cid}/enrollments`, { credentials: 'include' })
+                    .then(res => res.json())
+                    .then(data => { setRoster(data); setRosterLoading(false); })
+                    .catch(() => { setRoster([]); setRosterLoading(false); });
+            };
+
+            const fetchCourseInstructors = (cid) => {
+                if (!cid) { setCourseInstructors([]); return; }
+                fetch(`/api/course/${cid}/instructors`)
+                    .then(res => res.json())
+                    .then(data => setCourseInstructors(data))
+                    .catch(() => setCourseInstructors([]));
+            };
+
+            useEffect(() => {
+                let cancelled = false;
+                if (courseId) {
+                    setRosterLoading(true);
+                    setAddStudentError('');
+                    Promise.all([
+                        fetch(`/api/admin/course/${courseId}/enrollments`, { credentials: 'include' }).then(r => r.json()),
+                        fetch(`/api/course/${courseId}/instructors`).then(r => r.json())
+                    ]).then(([rosterData, instrData]) => {
+                        if (!cancelled) {
+                            setRoster(rosterData);
+                            setCourseInstructors(instrData);
+                            setRosterLoading(false);
+                        }
+                    }).catch(() => {
+                        if (!cancelled) { setRoster([]); setCourseInstructors([]); setRosterLoading(false); }
+                    });
+                } else {
+                    setRoster([]);
+                    setCourseInstructors([]);
+                }
+                return () => { cancelled = true; };
+            }, [courseId]);
+
             const parseInput = (text) => {
                 const lines = text.trim().split('\n').filter(l => l.trim());
                 return lines.map(line => {
                     line = line.trim();
-                    // Format: Name <email>
                     const angleMatch = line.match(/^(.+?)\s*<([^>]+)>/);
                     if (angleMatch) return { name: angleMatch[1].trim(), email: angleMatch[2].trim() };
-                    // Format: Name\temail (tab-separated)
                     const tabParts = line.split('\t');
                     if (tabParts.length >= 2) return { name: tabParts[0].trim(), email: tabParts[tabParts.length - 1].trim() };
-                    // Format: Name, email (comma-separated)
                     const commaParts = line.split(',');
                     if (commaParts.length >= 2) {
                         const email = commaParts[commaParts.length - 1].trim();
@@ -1624,6 +1789,7 @@
                     if (res.ok) {
                         setResults(data);
                         setPreview(null);
+                        fetchRoster(courseId);
                     } else {
                         setError(data.error || 'Failed to create accounts');
                     }
@@ -1641,102 +1807,231 @@
                 setTimeout(() => setCopied(false), 2000);
             };
 
+            const handleDeleteEnrollment = async (enrollmentId, username) => {
+                if (!confirm(`Remove ${username} from this course? (Their account will not be deleted.)`)) return;
+                try {
+                    const res = await fetch(`/api/admin/enrollment/${enrollmentId}`, {
+                        method: 'DELETE', credentials: 'include'
+                    });
+                    if (res.ok) fetchRoster(courseId);
+                } catch (err) {}
+            };
+
+            const handleEnrollExisting = async (e) => {
+                e.preventDefault();
+                if (!addStudentId.trim() || !courseId) return;
+                setAddStudentError('');
+                try {
+                    const res = await fetch('/api/admin/enroll-existing', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ course_id: courseId, identifier: addStudentId.trim() })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        setAddStudentId('');
+                        fetchRoster(courseId);
+                    } else {
+                        setAddStudentError(data.error || 'Failed to enroll student');
+                    }
+                } catch (err) { setAddStudentError('Connection error'); }
+            };
+
+            const handleAssignInstructor = async () => {
+                if (!assignInstructorId || !courseId) return;
+                try {
+                    const res = await fetch('/api/admin/course-instructors', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ course_id: courseId, user_id: parseInt(assignInstructorId) })
+                    });
+                    if (res.ok) {
+                        setAssignInstructorId('');
+                        fetchCourseInstructors(courseId);
+                    }
+                } catch (err) {}
+            };
+
+            const handleRemoveInstructor = async (assignmentId) => {
+                try {
+                    const res = await fetch(`/api/admin/course-instructor/${assignmentId}`, {
+                        method: 'DELETE', credentials: 'include'
+                    });
+                    if (res.ok) fetchCourseInstructors(courseId);
+                } catch (err) {}
+            };
+
+            const assignedIds = new Set(courseInstructors.map(ci => ci.user_id));
+            const availableInstructors = allInstructors.filter(i => !assignedIds.has(i.id));
+
             return (
                 <div className="modal-overlay" onClick={onClose}>
                     <div className="modal admin-modal" onClick={e => e.stopPropagation()}>
                         <div className="topic-modal-header">
-                            <h2>Student Management</h2>
+                            <h2>Course Management</h2>
                             <button className="topic-modal-close" onClick={onClose}>&times;</button>
                         </div>
 
-                        <div className="admin-row">
-                            <div className="form-group">
-                                <label>Course</label>
-                                <select value={courseId} onChange={e => setCourseId(e.target.value)}>
-                                    <option value="">-- Select course --</option>
-                                    {courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Expires (optional)</label>
-                                <input type="datetime-local" value={expiresAt} onChange={e => setExpiresAt(e.target.value)} />
-                            </div>
-                        </div>
-
                         <div className="form-group">
-                            <label>Students (one per line)</label>
-                            <textarea
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                placeholder={"Joe Smith, joe@example.com\nJane Doe <jane@example.com>\nBob Jones\tbob@example.com"}
-                                rows={6}
-                            />
-                            <div className="hint">Formats: Name, email | Name &lt;email&gt; | Name[tab]email</div>
+                            <label>Course</label>
+                            <select value={courseId} onChange={e => { setCourseId(e.target.value); setPreview(null); setResults(null); setError(''); }}>
+                                <option value="">-- Select course --</option>
+                                {courses.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+                            </select>
                         </div>
 
-                        <div className="admin-actions">
-                            <button className="btn btn-ghost" onClick={handlePreview} disabled={!input.trim()}>Preview</button>
-                            {preview && preview.length > 0 && (
-                                <button className="btn btn-primary" onClick={handleCreate} disabled={adminLoading}>
-                                    {adminLoading ? 'Creating...' : `Create ${preview.filter(s => s.username !== '(invalid name)').length} Accounts`}
-                                </button>
-                            )}
-                        </div>
-
-                        {error && <div className="form-error">{error}</div>}
-
-                        {preview && (
-                            <div>
-                                <h3 style={{fontSize:'0.875rem',color:'#94a3b8',marginBottom:'8px'}}>Preview</h3>
-                                <table className="admin-table">
-                                    <thead><tr><th>Full Name</th><th>Email</th><th>Username</th></tr></thead>
-                                    <tbody>
-                                        {preview.map((s, i) => (
-                                            <tr key={i}>
-                                                <td style={{fontFamily:'inherit'}}>{s.name}</td>
-                                                <td>{s.email}</td>
-                                                <td>{s.username}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-
-                        {results && (
-                            <div>
-                                {results.total_created > 0 && (
-                                    <div className="admin-success">{results.total_created} account(s) created successfully</div>
-                                )}
-                                {results.errors && results.errors.length > 0 && (
-                                    <div className="admin-errors">
-                                        <ul>{results.errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
-                                    </div>
-                                )}
-                                {results.created && results.created.length > 0 && (
-                                    <div>
-                                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
-                                            <h3 style={{fontSize:'0.875rem',color:'#94a3b8'}}>Credentials</h3>
-                                            <button className="copy-all-btn" onClick={handleCopyAll}>
-                                                {copied ? 'Copied!' : 'Copy All'}
-                                            </button>
+                        {courseId && (
+                            <>
+                                {/* Section 1: Assigned Instructors */}
+                                <div className="admin-section">
+                                    <div className="admin-section-title">Assigned Instructors</div>
+                                    {courseInstructors.length > 0 ? (
+                                        <div>
+                                            {courseInstructors.map(ci => (
+                                                <span key={ci.assignment_id} className="instructor-chip">
+                                                    {ci.full_name || ci.username}
+                                                    <button onClick={() => handleRemoveInstructor(ci.assignment_id)} title="Remove">&times;</button>
+                                                </span>
+                                            ))}
                                         </div>
-                                        <table className="admin-table">
-                                            <thead><tr><th>Username</th><th>Password</th><th>Full Name</th><th>Email</th></tr></thead>
-                                            <tbody>
-                                                {results.created.map((r, i) => (
-                                                    <tr key={i}>
-                                                        <td>{r.username}</td>
-                                                        <td>{r.password}</td>
-                                                        <td style={{fontFamily:'inherit'}}>{r.full_name}</td>
-                                                        <td>{r.email}</td>
-                                                    </tr>
+                                    ) : (
+                                        <div className="admin-empty">No instructors assigned</div>
+                                    )}
+                                    {availableInstructors.length > 0 && (
+                                        <div className="admin-inline-form">
+                                            <select value={assignInstructorId} onChange={e => setAssignInstructorId(e.target.value)}
+                                                style={{flex:1,padding:'7px 10px',background:'#0f172a',border:'1px solid #475569',borderRadius:'6px',color:'#e2e8f0',fontSize:'0.8rem'}}>
+                                                <option value="">-- Select instructor --</option>
+                                                {availableInstructors.map(i => (
+                                                    <option key={i.id} value={i.id}>{i.full_name || i.username} ({i.username})</option>
                                                 ))}
-                                            </tbody>
-                                        </table>
+                                            </select>
+                                            <button className="btn btn-primary btn-sm" onClick={handleAssignInstructor} disabled={!assignInstructorId}>Assign</button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Section 2: Enrolled Students (Roster) */}
+                                <div className="admin-section">
+                                    <div className="admin-section-title">Enrolled Students ({roster.length})</div>
+                                    {rosterLoading ? (
+                                        <div className="admin-empty">Loading...</div>
+                                    ) : roster.length > 0 ? (
+                                        <div className="admin-table-wrapper">
+                                            <table className="admin-table">
+                                                <thead><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Enrolled</th><th></th></tr></thead>
+                                                <tbody>
+                                                    {roster.map(r => (
+                                                        <tr key={r.enrollment_id}>
+                                                            <td>{r.username}</td>
+                                                            <td style={{fontFamily:'inherit'}}>{r.full_name}</td>
+                                                            <td>{r.email}</td>
+                                                            <td>{r.enrolled_at ? new Date(r.enrolled_at).toLocaleDateString() : ''}</td>
+                                                            <td><button className="admin-delete-btn" onClick={() => handleDeleteEnrollment(r.enrollment_id, r.username)} title="Remove enrollment">&times;</button></td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ) : (
+                                        <div className="admin-empty">No students enrolled</div>
+                                    )}
+                                    <form className="admin-inline-form" onSubmit={handleEnrollExisting}>
+                                        <input type="text" value={addStudentId} onChange={e => setAddStudentId(e.target.value)}
+                                            placeholder="Username or email" />
+                                        <button type="submit" className="btn btn-primary btn-sm" disabled={!addStudentId.trim()}>Enroll</button>
+                                    </form>
+                                    {addStudentError && <div className="form-error" style={{marginTop:'6px',fontSize:'0.8rem'}}>{addStudentError}</div>}
+                                </div>
+
+                                {/* Section 3: Bulk Register (existing flow) */}
+                                <div className="admin-section">
+                                    <div className="admin-section-title">Bulk Register New Students</div>
+
+                                    <div className="form-group" style={{marginBottom:'8px'}}>
+                                        <label>Expires (optional)</label>
+                                        <input type="datetime-local" value={expiresAt} onChange={e => setExpiresAt(e.target.value)} />
                                     </div>
-                                )}
-                            </div>
+
+                                    <div className="form-group">
+                                        <label>Students (one per line)</label>
+                                        <textarea
+                                            value={input}
+                                            onChange={e => setInput(e.target.value)}
+                                            placeholder={"Joe Smith, joe@example.com\nJane Doe <jane@example.com>\nBob Jones\tbob@example.com"}
+                                            rows={5}
+                                        />
+                                        <div className="hint">Formats: Name, email | Name &lt;email&gt; | Name[tab]email</div>
+                                    </div>
+
+                                    <div className="admin-actions">
+                                        <button className="btn btn-ghost" onClick={handlePreview} disabled={!input.trim()}>Preview</button>
+                                        {preview && preview.length > 0 && (
+                                            <button className="btn btn-primary" onClick={handleCreate} disabled={adminLoading}>
+                                                {adminLoading ? 'Creating...' : `Create ${preview.filter(s => s.username !== '(invalid name)').length} Accounts`}
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {error && <div className="form-error">{error}</div>}
+
+                                    {preview && (
+                                        <div>
+                                            <h3 style={{fontSize:'0.875rem',color:'#94a3b8',marginBottom:'8px'}}>Preview</h3>
+                                            <table className="admin-table">
+                                                <thead><tr><th>Full Name</th><th>Email</th><th>Username</th></tr></thead>
+                                                <tbody>
+                                                    {preview.map((s, i) => (
+                                                        <tr key={i}>
+                                                            <td style={{fontFamily:'inherit'}}>{s.name}</td>
+                                                            <td>{s.email}</td>
+                                                            <td>{s.username}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+
+                                    {results && (
+                                        <div>
+                                            {results.total_created > 0 && (
+                                                <div className="admin-success">{results.total_created} account(s) created successfully</div>
+                                            )}
+                                            {results.errors && results.errors.length > 0 && (
+                                                <div className="admin-errors">
+                                                    <ul>{results.errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                                                </div>
+                                            )}
+                                            {results.created && results.created.length > 0 && (
+                                                <div>
+                                                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
+                                                        <h3 style={{fontSize:'0.875rem',color:'#94a3b8'}}>Credentials</h3>
+                                                        <button className="copy-all-btn" onClick={handleCopyAll}>
+                                                            {copied ? 'Copied!' : 'Copy All'}
+                                                        </button>
+                                                    </div>
+                                                    <table className="admin-table">
+                                                        <thead><tr><th>Username</th><th>Password</th><th>Full Name</th><th>Email</th></tr></thead>
+                                                        <tbody>
+                                                            {results.created.map((r, i) => (
+                                                                <tr key={i}>
+                                                                    <td>{r.username}</td>
+                                                                    <td>{r.password}</td>
+                                                                    <td style={{fontFamily:'inherit'}}>{r.full_name}</td>
+                                                                    <td>{r.email}</td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </div>
                 </div>
@@ -2952,6 +3247,7 @@
             const [topicPopup, setTopicPopup] = useState(null);
             const [notEnrolled, setNotEnrolled] = useState(false);
             const [showAdmin, setShowAdmin] = useState(false);
+            const [courseInstructorNames, setCourseInstructorNames] = useState([]);
 
             // Parse URL on load to restore state
             const getStateFromUrl = () => {
@@ -3055,6 +3351,18 @@
                     setCourseDetail(null);
                 }
             }, [selectedCourse, user]);
+
+            // Fetch assigned instructors when course changes
+            useEffect(() => {
+                if (selectedCourse) {
+                    fetch(`/api/course/${selectedCourse.id}/instructors`)
+                        .then(res => res.json())
+                        .then(data => setCourseInstructorNames(data.map(i => i.full_name || i.username)))
+                        .catch(() => setCourseInstructorNames([]));
+                } else {
+                    setCourseInstructorNames([]);
+                }
+            }, [selectedCourse]);
 
             // Update URL when state changes
             useEffect(() => {
@@ -3293,6 +3601,9 @@
                                     {courseDetail && courseDetail.audience && (
                                         <span className="course-preview-audience-badge">👤 {courseDetail.audience}</span>
                                     )}
+                                    {courseInstructorNames.length > 0 && (
+                                        <span className="instructor-badge">👨‍🏫 {courseInstructorNames.join(', ')}</span>
+                                    )}
                                 </div>
                                 {courseDetail && courseDetail.goals && courseDetail.goals.length > 0 && (
                                     <div className="course-preview-goals">
@@ -3368,6 +3679,9 @@
                                 <div className="course-welcome-icon">{selectedCourse.icon}</div>
                                 <h2>{selectedCourse.name}</h2>
                                 <p>{selectedCourse.description}</p>
+                                {courseInstructorNames.length > 0 && (
+                                    <p className="instructor-badge" style={{marginTop:'4px'}}>👨‍🏫 Instructor: {courseInstructorNames.join(', ')}</p>
+                                )}
                                 <p style={{fontSize: '0.875rem', color: '#64748b'}}>Select a material from the sidebar to get started.</p>
                                 {materials && (
                                     <div className="stats-row">

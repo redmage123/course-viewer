@@ -864,6 +864,23 @@
             width: 100%;
             min-width: 40px;
         }
+        .fill-blank-score {
+            text-align: center;
+            width: 50px !important;
+            min-width: 50px !important;
+        }
+        .fill-blank-total {
+            text-align: center;
+            width: 50px !important;
+            min-width: 50px !important;
+            font-weight: 600;
+            color: #38bdf8 !important;
+            cursor: default;
+            background: rgba(56, 189, 248, 0.05);
+        }
+        .fill-blank-invalid {
+            border-bottom-color: #ef4444 !important;
+        }
         blockquote .fill-blank {
             width: 90%;
             min-width: 200px;
@@ -2115,10 +2132,17 @@
                         i++;
                     }
                     if (tableLines.length >= 2) {
-                        let tableHtml = '<table>';
                         // Check if second line is separator (|---|---|)
                         const isSep = /^\|[\s\-:]+\|/.test(tableLines[1]);
                         const startRow = isSep ? 2 : 0;
+                        // Detect scoring columns (headers containing "Score")
+                        let scoreColIndices = [];
+                        if (isSep) {
+                            const hdrCells = tableLines[0].split('|').filter(c => c.trim() !== '');
+                            hdrCells.forEach((c, ci) => { if (/score/i.test(c)) scoreColIndices.push(ci); });
+                        }
+                        const isScoreTable = scoreColIndices.length > 0;
+                        let tableHtml = '<table' + (isScoreTable ? ' class="scoring-table"' : '') + '>';
                         if (isSep) {
                             // Header row
                             const cells = tableLines[0].split('|').filter(c => c.trim() !== '');
@@ -2127,7 +2151,16 @@
                         tableHtml += '<tbody>';
                         for (let r = startRow; r < tableLines.length; r++) {
                             const cells = tableLines[r].split('|').filter(c => c.trim() !== '');
-                            tableHtml += '<tr>' + cells.map(c => '<td>' + inlineMarkdown(c.trim()) + '</td>').join('') + '</tr>';
+                            const isTotalRow = isScoreTable && /TOTAL/i.test(cells[0] || '');
+                            tableHtml += '<tr' + (isTotalRow ? ' class="score-total-row"' : '') + '>';
+                            cells.forEach((c, ci) => {
+                                let tdClass = '';
+                                if (isScoreTable && scoreColIndices.includes(ci)) {
+                                    tdClass = isTotalRow ? 'score-total-cell' : 'score-input-cell';
+                                }
+                                tableHtml += '<td' + (tdClass ? ' class="' + tdClass + '"' : '') + '>' + inlineMarkdown(c.trim()) + '</td>';
+                            });
+                            tableHtml += '</tr>';
                         }
                         tableHtml += '</tbody></table>';
                         result.push(tableHtml);
@@ -2238,6 +2271,11 @@
                     return '<input type="text" class="fill-blank' + (wide ? ' fill-blank-wide' : '') + '" data-fill-key="' + key + '" value="' + val + '" placeholder="Type here...">';
                 });
             }
+            // Enhance score inputs in scoring tables: score cells get validation, total cells get readonly
+            html = html.replace(/<td class="score-input-cell"><input type="text" class="fill-blank(?:\s+fill-blank-wide)?" data-fill-key="([^"]*)" value="([^"]*)" placeholder="Type here\.\.\.">/g,
+                '<td class="score-input-cell"><input type="text" class="fill-blank fill-blank-score" data-fill-key="$1" value="$2" placeholder="1-5" inputmode="numeric" maxlength="1">');
+            html = html.replace(/<td class="score-total-cell"><input type="text" class="fill-blank(?:\s+fill-blank-wide)?" data-fill-key="([^"]*)" value="([^"]*)" placeholder="Type here\.\.\.">/g,
+                '<td class="score-total-cell"><input type="text" class="fill-blank fill-blank-total" data-fill-key="$1" value="$2" placeholder="auto" readonly>');
             // Replace <!-- submit-exercise --> marker with a submit button (strip wrapping <p> if present)
             html = html.replace(/<p>\s*<!--\s*submit-exercise\s*-->\s*<\/p>/g,
                 '<div class="exercise-submit-wrapper"><button class="exercise-submit-btn" data-cell-idx="' + cellIdx + '">\u{1F4DD} Submit for AI Review</button></div>');
@@ -2865,6 +2903,64 @@
                 sendAIPrompt(src);
             };
 
+            // Validate score input (1-5) and auto-compute totals in scoring tables
+            const handleScoreInput = (input) => {
+                const td = input.closest('td');
+                const tr = td?.closest('tr');
+                const table = tr?.closest('table.scoring-table');
+                if (!table) return;
+
+                // Validate: must be empty or single digit 1-5
+                const val = input.value.trim();
+                if (val !== '' && !/^[1-5]$/.test(val)) {
+                    input.classList.add('fill-blank-invalid');
+                    input.title = 'Score must be 1\u20135';
+                } else {
+                    input.classList.remove('fill-blank-invalid');
+                    input.title = '';
+                }
+
+                // Determine which column this input is in
+                const colIdx = Array.from(tr.children).indexOf(td);
+
+                // Find TOTAL row and score rows
+                const bodyRows = Array.from(table.querySelectorAll('tbody tr'));
+                let totalRow = null;
+                const scoreRows = [];
+                for (const row of bodyRows) {
+                    if (row.classList.contains('score-total-row')) {
+                        totalRow = row;
+                    } else {
+                        scoreRows.push(row);
+                    }
+                }
+                if (!totalRow) return;
+
+                // Sum valid scores in this column
+                let total = 0;
+                let validCount = 0;
+                for (const row of scoreRows) {
+                    const cells = Array.from(row.children);
+                    if (cells[colIdx]) {
+                        const si = cells[colIdx].querySelector('input.fill-blank-score');
+                        if (si && /^[1-5]$/.test(si.value.trim())) {
+                            total += parseInt(si.value);
+                            validCount++;
+                        }
+                    }
+                }
+
+                // Update total input
+                const totalCells = Array.from(totalRow.children);
+                if (totalCells[colIdx]) {
+                    const totalInput = totalCells[colIdx].querySelector('input.fill-blank-total');
+                    if (totalInput) {
+                        totalInput.value = validCount > 0 ? total.toString() : '';
+                        fillBlanksRef.current[totalInput.dataset.fillKey] = totalInput.value;
+                    }
+                }
+            };
+
             const handleExerciseSubmit = async (cellIdx, buttonEl) => {
                 // Disable button
                 buttonEl.disabled = true;
@@ -3392,6 +3488,9 @@
                                             if (e.target.classList.contains('fill-blank')) {
                                                 fillBlanksRef.current[e.target.dataset.fillKey] = e.target.value;
                                                 setDirty(true);
+                                                if (e.target.classList.contains('fill-blank-score')) {
+                                                    handleScoreInput(e.target);
+                                                }
                                             }
                                         }}
                                         onClick={(e) => {

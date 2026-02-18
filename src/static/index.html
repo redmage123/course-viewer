@@ -1365,6 +1365,10 @@
                     const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(body) });
                     const data = await res.json();
                     if (res.ok) onLogin(data.user);
+                    else if (res.status === 403 && data.error && data.error.includes('expired')) {
+                        // Account expired — continue as guest
+                        onSkip();
+                    }
                     else setError(data.error || 'An error occurred');
                 } catch (err) { setError('Connection error'); }
                 setLoading(false);

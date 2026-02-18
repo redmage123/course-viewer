@@ -634,6 +634,12 @@
             padding: 24px;
             background: #0f172a;
         }
+        .main.ai-panel-open { overflow: hidden; }
+        .main.ai-panel-open .notebook-container {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
         .main::-webkit-scrollbar {
             width: 10px;
         }
@@ -904,6 +910,17 @@
         }
         .cell-run-btn:hover { background: #16a34a; }
         .cell-run-btn:disabled { background: #475569; cursor: not-allowed; }
+        .cell-ai-btn {
+            padding: 4px 8px;
+            background: #7c3aed;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .cell-ai-btn:hover { background: #6d28d9; }
+        .cell-ai-btn:disabled { background: #475569; cursor: not-allowed; }
         .kernel-status {
             display: flex;
             align-items: center;
@@ -920,6 +937,160 @@
         .kernel-dot.loading { background: #eab308; animation: pulse 1s infinite; }
         .kernel-dot.error { background: #f43f5e; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* ========== AI CHAT PANEL ========== */
+        .ai-panel-toggle {
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .ai-panel-toggle:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .ai-panel-toggle.active { box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.4); }
+        .ai-chat-panel {
+            background: #1e293b;
+            border-top: 2px solid #8b5cf6;
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+            flex-shrink: 0;
+            transition: height 0.2s ease;
+        }
+        .ai-chat-panel.collapsed { height: 0; overflow: hidden; border-top: none; }
+        .ai-chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: linear-gradient(90deg, rgba(139,92,246,0.15) 0%, rgba(99,102,241,0.05) 100%);
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        .ai-chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #c4b5fd;
+        }
+        .ai-chat-header-actions { display: flex; gap: 6px; align-items: center; }
+        .ai-chat-body {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            min-height: 0;
+        }
+        .ai-chat-input-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ai-chat-textarea {
+            flex: 1;
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            color: #e2e8f0;
+            padding: 10px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            resize: none;
+            line-height: 1.5;
+        }
+        .ai-chat-textarea:focus { outline: none; border-color: #8b5cf6; }
+        .ai-chat-textarea::placeholder { color: #64748b; }
+        .ai-chat-send-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .ai-chat-send-btn {
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .ai-chat-send-btn:hover { filter: brightness(1.1); }
+        .ai-chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+        .ai-chat-response-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .ai-chat-response-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .ai-chat-response {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 10px 12px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .ai-chat-response.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-style: italic;
+        }
+        .ai-chat-copy-btn {
+            padding: 3px 10px;
+            background: transparent;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+        .ai-chat-copy-btn:hover { background: #334155; color: #e2e8f0; }
+        .ai-chat-close-btn {
+            padding: 3px 8px;
+            background: transparent;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        .ai-chat-close-btn:hover { background: #334155; color: #e2e8f0; }
+        .ai-chat-model-select {
+            padding: 3px 8px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 4px;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
 
         /* ========== COURSE PREVIEW (Guest) ========== */
         .course-preview {
@@ -1416,6 +1587,11 @@
             const [showToolbar, setShowToolbar] = useState(true);
             const [showShortcuts, setShowShortcuts] = useState(false);
             const [showKeyPanel, setShowKeyPanel] = useState(true);
+            const [showAIPanel, setShowAIPanel] = useState(false);
+            const [aiPrompt, setAiPrompt] = useState('');
+            const [aiResponse, setAiResponse] = useState('');
+            const [aiLoading, setAiLoading] = useState(false);
+            const [aiModel, setAiModel] = useState('gpt-4o');
             const containerRef = useRef(null);
 
             const availableKernels = [
@@ -1423,23 +1599,30 @@
                 { id: 'server', name: 'Python (Server)', icon: '🖥️' }
             ];
 
+            // Toggle ai-panel-open class on .main parent when AI panel is shown
+            useEffect(() => {
+                const mainEl = containerRef.current?.closest('.main');
+                if (mainEl) {
+                    if (showAIPanel) mainEl.classList.add('ai-panel-open');
+                    else mainEl.classList.remove('ai-panel-open');
+                }
+                return () => {
+                    const mainEl = containerRef.current?.closest('.main');
+                    if (mainEl) mainEl.classList.remove('ai-panel-open');
+                };
+            }, [showAIPanel]);
+
             useEffect(() => {
                 fetch(`/api/lab/${labId}/notebook`, { credentials: 'include' })
                     .then(res => res.json())
                     .then(data => {
                         setNotebook(data);
-                        // Auto-render markdown cells on load
-                        // Keep cells editable if they contain fill-in blanks (___) or are short placeholders
+                        // Auto-render ALL markdown cells on load
                         if (data && data.cells) {
                             const rendered = {};
                             data.cells.forEach((cell, idx) => {
                                 if (cell.cell_type === 'markdown') {
-                                    const src = Array.isArray(cell.source) ? cell.source.join('') : (cell.source || '');
-                                    const hasBlankFields = src.includes('___');
-                                    const isShortPlaceholder = src.trim().length <= 80;
-                                    if (!hasBlankFields && !isShortPlaceholder) {
-                                        rendered[idx] = true;
-                                    }
+                                    rendered[idx] = true;
                                 }
                             });
                             setRenderedCells(rendered);
@@ -1895,6 +2078,64 @@
                 }
             };
 
+            const sendAIPrompt = async (promptOverride) => {
+                const prompt = promptOverride || aiPrompt;
+                if (!prompt.trim() || aiLoading) return;
+                if (promptOverride) setAiPrompt(promptOverride);
+                setAiLoading(true);
+                setAiResponse('');
+                try {
+                    const res = await fetch('/api/openai/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            model: aiModel,
+                            messages: [{ role: 'user', content: prompt }]
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.error) {
+                        setAiResponse('Error: ' + (data.error.message || data.error));
+                    } else {
+                        setAiResponse(data.choices?.[0]?.message?.content || JSON.stringify(data, null, 2));
+                    }
+                } catch (err) {
+                    setAiResponse('Error: ' + err.message);
+                }
+                setAiLoading(false);
+            };
+
+            const sendCellToAI = (idx) => {
+                const cell = notebook.cells[idx];
+                const src = Array.isArray(cell.source) ? cell.source.join('') : (cell.source || '');
+                if (!src.trim()) return;
+                setShowAIPanel(true);
+                sendAIPrompt(src);
+            };
+
+            const insertAIResponse = () => {
+                if (!aiResponse) return;
+                const newCell = { cell_type: 'markdown', metadata: {}, source: [aiResponse] };
+                const newCells = [...notebook.cells];
+                newCells.splice(selected + 1, 0, newCell);
+                setNotebook({ ...notebook, cells: newCells });
+                setSelected(selected + 1);
+                setRenderedCells(prev => {
+                    const updated = {};
+                    Object.keys(prev).forEach(k => {
+                        const ki = parseInt(k);
+                        updated[ki > selected ? ki + 1 : ki] = prev[k];
+                    });
+                    updated[selected + 1] = true;
+                    return updated;
+                });
+            };
+
+            const copyAIResponse = () => {
+                navigator.clipboard.writeText(aiResponse).catch(() => {});
+            };
+
             if (!notebook) return <div className="loading-screen"><div className="spinner"></div>Loading notebook...</div>;
 
             return (
@@ -1972,6 +2213,9 @@
                                 <div className={`kernel-dot ${status}`}></div>
                                 {status === 'ready' ? 'Ready' : status === 'loading' ? 'Loading...' : 'Error'}
                             </div>
+                            <button className={`ai-panel-toggle ${showAIPanel ? 'active' : ''}`} onClick={() => setShowAIPanel(!showAIPanel)} title="Test your prompts with AI">
+                                <span>🤖</span> Test Prompt
+                            </button>
                             <button className="btn btn-ghost" onClick={onBack}>← Back</button>
                         </div>
                     </div>
@@ -2274,13 +2518,23 @@
                                         >
                                             {running === idx ? '⏳' : cell.cell_type === 'markdown' ? '✓' : '▶'}
                                         </button>
+                                        {cell.cell_type === 'markdown' && (
+                                            <button
+                                                className="cell-ai-btn"
+                                                onClick={(e) => { e.stopPropagation(); sendCellToAI(idx); }}
+                                                disabled={aiLoading}
+                                                title="Send cell content to AI for testing"
+                                            >
+                                                {aiLoading ? '⏳' : '🤖'}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                                 {cell.cell_type === 'markdown' && renderedCells[idx] ? (
                                     <div
                                         className="cell-content markdown-rendered"
                                         style={{padding:'16px',background:'#0f172a',cursor:'pointer',minHeight:'60px'}}
-                                        onDoubleClick={() => enterEditMode(idx)}
+                                        onClick={() => enterEditMode(idx)}
                                         dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(getSource(cell)) }}
                                     />
                                 ) : (
@@ -2290,7 +2544,12 @@
                                             onChange={e => setSource(idx, e.target.value)}
                                             spellCheck="false"
                                             onFocus={() => setCommandMode(false)}
-                                            onBlur={() => setCommandMode(true)}
+                                            onBlur={() => {
+                                                setCommandMode(true);
+                                                if (cell.cell_type === 'markdown') {
+                                                    setRenderedCells(prev => ({ ...prev, [idx]: true }));
+                                                }
+                                            }}
                                             placeholder={cell.cell_type === 'markdown' ? 'Enter markdown text...' : 'Enter Python code...'}
                                         />
                                     </div>
@@ -2302,6 +2561,50 @@
                                 )}
                             </div>
                         ))}
+                    </div>
+                    <div className={`ai-chat-panel ${showAIPanel ? '' : 'collapsed'}`}>
+                        <div className="ai-chat-header">
+                            <div className="ai-chat-header-title">
+                                <span>🤖</span> Test Your Prompt
+                            </div>
+                            <div className="ai-chat-header-actions">
+                                <select className="ai-chat-model-select" value={aiModel} onChange={e => setAiModel(e.target.value)}>
+                                    <option value="gpt-4o">GPT-4o</option>
+                                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                </select>
+                                <button className="ai-chat-close-btn" onClick={() => setShowAIPanel(false)}>Close</button>
+                            </div>
+                        </div>
+                        <div className="ai-chat-body">
+                            <div className="ai-chat-input-area">
+                                <textarea
+                                    className="ai-chat-textarea"
+                                    value={aiPrompt}
+                                    onChange={e => setAiPrompt(e.target.value)}
+                                    placeholder="Paste or type your prompt here, then click Send to test it with AI..."
+                                    onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); e.stopPropagation(); sendAIPrompt(); } }}
+                                />
+                                <div className="ai-chat-send-row">
+                                    <button className="ai-chat-send-btn" onClick={sendAIPrompt} disabled={aiLoading || !aiPrompt.trim()}>
+                                        {aiLoading ? 'Sending...' : 'Send'}
+                                    </button>
+                                    <span style={{fontSize:'0.65rem',color:'#64748b'}}>Ctrl+Enter to send</span>
+                                </div>
+                            </div>
+                            <div className="ai-chat-response-area">
+                                <div className="ai-chat-response-header">
+                                    <span>AI Response</span>
+                                    {aiResponse && <>
+                                        <button className="ai-chat-copy-btn" onClick={insertAIResponse}>Insert Below Cell</button>
+                                        <button className="ai-chat-copy-btn" onClick={copyAIResponse}>Copy</button>
+                                    </>}
+                                </div>
+                                <div className={`ai-chat-response ${!aiResponse && !aiLoading ? 'empty' : ''}`}>
+                                    {aiLoading ? 'Generating response...' : aiResponse || 'Response will appear here'}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </>
             );
@@ -2323,6 +2626,7 @@
             const [selectedCategory, setSelectedCategory] = useState(null);
             const [courseDetail, setCourseDetail] = useState(null);
             const [topicPopup, setTopicPopup] = useState(null);
+            const [notEnrolled, setNotEnrolled] = useState(false);
 
             // Parse URL on load to restore state
             const getStateFromUrl = () => {
@@ -2384,9 +2688,22 @@
 
             useEffect(() => {
                 if (selectedCourse && user) {
+                    setNotEnrolled(false);
                     fetch(`/api/course/${selectedCourse.id}/materials`, { credentials: 'include' })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (res.status === 403) {
+                                return res.json().then(data => {
+                                    if (data.error === 'not_enrolled') {
+                                        setNotEnrolled(true);
+                                        setMaterials(null);
+                                    }
+                                    return null;
+                                });
+                            }
+                            return res.json();
+                        })
                         .then(data => {
+                            if (!data) return;
                             setMaterials(data);
                             // Restore selected item from URL
                             const urlState = getStateFromUrl();
@@ -2399,12 +2716,13 @@
                         });
                 } else if (selectedCourse && !user) {
                     setMaterials(null);
+                    setNotEnrolled(false);
                 }
             }, [selectedCourse, user]);
 
-            // Fetch course detail for guest preview
+            // Fetch course detail for guest preview (not logged in OR not enrolled)
             useEffect(() => {
-                if (selectedCourse && !user) {
+                if (selectedCourse && (!user || notEnrolled)) {
                     fetch(`/api/course/${selectedCourse.id}`)
                         .then(res => res.json())
                         .then(data => setCourseDetail(data));
@@ -2508,7 +2826,7 @@
             );
 
             return (
-                <div className={`app ${selectedCourse && user ? 'with-sidebar' : ''}`}>
+                <div className={`app ${selectedCourse && user && !notEnrolled ? 'with-sidebar' : ''}`}>
                     {showAuth && <AuthModal onLogin={(u) => { setUser(u); setShowAuth(false); }} onSkip={() => setShowAuth(false)} />}
 
                     {topicPopup && (
@@ -2530,7 +2848,7 @@
                         </header>
                     )}
 
-                    {selectedCourse && user && (
+                    {selectedCourse && user && !notEnrolled && (
                         <aside className="sidebar">
                             <div className="sidebar-header">
                                 <div className="sidebar-brand">
@@ -2613,9 +2931,9 @@
                                     <iframe className="content-frame" src={`/content/${selectedItem.file}`} title={selectedItem.name} />
                                 </div>
                             </>
-                        ) : selectedCourse && !user ? (
+                        ) : selectedCourse && (!user || notEnrolled) ? (
                             <div className="course-preview">
-                                <button className="course-preview-back" onClick={() => { setSelectedCourse(null); setCourseDetail(null); updateUrl(null, null, null); }}>
+                                <button className="course-preview-back" onClick={() => { setSelectedCourse(null); setCourseDetail(null); setNotEnrolled(false); updateUrl(null, null, null); }}>
                                     ← Back
                                 </button>
                                 <div className="course-preview-header">
@@ -2625,6 +2943,15 @@
                                     </div>
                                 </div>
                                 <div className="course-preview-description">{selectedCourse.description}</div>
+                                {notEnrolled && (
+                                    <div style={{background:'#1e293b',border:'1px solid #f59e0b',borderRadius:'8px',padding:'16px',margin:'16px 0',display:'flex',alignItems:'center',gap:'12px'}}>
+                                        <span style={{fontSize:'1.5rem'}}>🔒</span>
+                                        <div>
+                                            <div style={{color:'#f59e0b',fontWeight:'600',marginBottom:'4px'}}>Guest Access Only</div>
+                                            <div style={{color:'#94a3b8',fontSize:'0.875rem'}}>You are not enrolled in this course. Contact your instructor for access to materials and labs.</div>
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="course-preview-meta">
                                     {selectedCourse.duration && (
                                         <span className="course-preview-badge">⏱ {selectedCourse.duration}</span>
@@ -2690,13 +3017,19 @@
                                     </>
                                 )}
                                 <div className="course-preview-cta">
-                                    <p>Sign in to access all course materials, labs, and downloads.</p>
-                                    <button className="btn btn-primary btn-lg" onClick={() => setShowAuth(true)}>
-                                        Sign In to Access This Course
-                                    </button>
+                                    {notEnrolled ? (
+                                        <p style={{color:'#94a3b8'}}>You are viewing this course as a guest. Contact your instructor to get enrolled.</p>
+                                    ) : (
+                                        <>
+                                            <p>Sign in to access all course materials, labs, and downloads.</p>
+                                            <button className="btn btn-primary btn-lg" onClick={() => setShowAuth(true)}>
+                                                Sign In to Access This Course
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-                        ) : selectedCourse && user ? (
+                        ) : selectedCourse && user && !notEnrolled ? (
                             <div className="course-welcome">
                                 <div className="course-welcome-icon">{selectedCourse.icon}</div>
                                 <h2>{selectedCourse.name}</h2>

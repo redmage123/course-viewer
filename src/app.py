@@ -270,6 +270,12 @@ def init_db():
     except:
         db.execute('ALTER TABLE poll_responses ADD COLUMN use_cases TEXT')
 
+    # Migration: Add expires_at column to users if it doesn't exist
+    try:
+        db.execute('SELECT expires_at FROM users LIMIT 1')
+    except:
+        db.execute('ALTER TABLE users ADD COLUMN expires_at TIMESTAMP')
+
     # Create default admin user if not exists
     existing = db.execute('SELECT id FROM users WHERE username = ?', ('bbrelin',)).fetchone()
     if not existing:
@@ -305,6 +311,66 @@ def instructor_required(f):
             return jsonify({'error': 'Instructor access required'}), 403
         return f(*args, **kwargs)
     return decorated_function
+
+def is_enrolled(user_id, course_id):
+    """Check if a user is enrolled in a specific course"""
+    db = get_db()
+    enrollment = db.execute(
+        'SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?',
+        (user_id, course_id)
+    ).fetchone()
+    db.close()
+    return enrollment is not None
+
+def check_course_access(user_id, course_id):
+    """Check if user has full access to a course.
+    Instructors/admins always have access. Students need enrollment."""
+    if session.get('role') in ['instructor', 'admin']:
+        return True
+    return is_enrolled(user_id, course_id)
+
+def is_account_expired(user_row):
+    """Check if a user account has expired. Returns True if expired.
+    Accounts without expires_at never expire."""
+    expires_at = user_row['expires_at'] if 'expires_at' in user_row.keys() else None
+    if not expires_at:
+        return False
+    if isinstance(expires_at, str):
+        expires_at = datetime.strptime(expires_at, '%Y-%m-%d %H:%M:%S')
+    return datetime.utcnow() > expires_at
+
+def cleanup_expired_accounts():
+    """Delete expired user accounts and all their associated data."""
+    db = get_db()
+    expired = db.execute(
+        "SELECT id, username FROM users WHERE expires_at IS NOT NULL AND expires_at < ?",
+        (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),)
+    ).fetchall()
+
+    if not expired:
+        db.close()
+        return 0
+
+    expired_ids = [u['id'] for u in expired]
+    expired_names = [u['username'] for u in expired]
+    placeholders = ','.join('?' * len(expired_ids))
+
+    # Delete associated data
+    db.execute(f'DELETE FROM lab_progress WHERE user_id IN ({placeholders})', expired_ids)
+    db.execute(f'DELETE FROM lab_sessions WHERE user_id IN ({placeholders})', expired_ids)
+    db.execute(f'DELETE FROM enrollments WHERE user_id IN ({placeholders})', expired_ids)
+    db.execute(f'DELETE FROM users WHERE id IN ({placeholders})', expired_ids)
+    db.commit()
+
+    # Clean up workspace directories
+    for uid in expired_ids:
+        workspace_dir = os.path.join(BASE_DIR, 'workspaces', str(uid))
+        if os.path.exists(workspace_dir):
+            shutil.rmtree(workspace_dir, ignore_errors=True)
+
+    db.close()
+    app.logger.info(f"Cleaned up {len(expired_ids)} expired accounts: {expired_names}")
+    return len(expired_ids)
 
 # ============================================================================
 # Course Configuration
@@ -1429,15 +1495,27 @@ def login():
     db.close()
 
     if user and check_password_hash(user['password_hash'], password):
+        # Check if account has expired
+        if is_account_expired(user):
+            return jsonify({'error': 'Your account has expired. This course session has ended. Contact your instructor if you need extended access.'}), 403
+
         session['user_id'] = user['id']
         session['username'] = user['username']
         session['role'] = user['role']
 
-        # Update last login
+        # Update last login and get enrollments
         db = get_db()
         db.execute('UPDATE users SET last_login = ? WHERE id = ?',
                    (datetime.now(), user['id']))
         db.commit()
+
+        enrollments = []
+        if user['role'] == 'student':
+            enrollment_rows = db.execute(
+                'SELECT course_id FROM enrollments WHERE user_id = ?',
+                (user['id'],)
+            ).fetchall()
+            enrollments = [e['course_id'] for e in enrollment_rows]
         db.close()
 
         return jsonify({
@@ -1447,7 +1525,8 @@ def login():
                 'username': user['username'],
                 'email': user['email'],
                 'full_name': user['full_name'],
-                'role': user['role']
+                'role': user['role'],
+                'enrollments': enrollments
             }
         })
 
@@ -1466,21 +1545,38 @@ def get_current_user():
         return jsonify({'user': None})
 
     db = get_db()
-    user = db.execute('SELECT id, username, email, full_name, role FROM users WHERE id = ?',
+    user = db.execute('SELECT id, username, email, full_name, role, expires_at FROM users WHERE id = ?',
                       (session['user_id'],)).fetchone()
-    db.close()
 
     if user:
+        # Check if account has expired
+        if is_account_expired(user):
+            db.close()
+            session.clear()
+            return jsonify({'user': None, 'expired': True})
+
+        # Get enrolled course IDs for students
+        enrollments = []
+        if user['role'] == 'student':
+            enrollment_rows = db.execute(
+                'SELECT course_id FROM enrollments WHERE user_id = ?',
+                (user['id'],)
+            ).fetchall()
+            enrollments = [e['course_id'] for e in enrollment_rows]
+        db.close()
+
         return jsonify({
             'user': {
                 'id': user['id'],
                 'username': user['username'],
                 'email': user['email'],
                 'full_name': user['full_name'],
-                'role': user['role']
+                'role': user['role'],
+                'enrollments': enrollments
             }
         })
 
+    db.close()
     session.clear()
     return jsonify({'user': None})
 
@@ -1545,10 +1641,12 @@ def get_course(course_id):
 @app.route('/api/course/<course_id>/materials')
 @login_required
 def get_course_materials(course_id):
-    """Return materials for a specific course"""
-    if course_id in COURSES:
-        return jsonify(COURSES[course_id]["sections"])
-    return jsonify({"error": "Course not found"}), 404
+    """Return materials for a specific course. Students must be enrolled."""
+    if course_id not in COURSES:
+        return jsonify({"error": "Course not found"}), 404
+    if not check_course_access(session['user_id'], course_id):
+        return jsonify({"error": "not_enrolled", "message": "You are not enrolled in this course. Contact your instructor for access."}), 403
+    return jsonify(COURSES[course_id]["sections"])
 
 @app.route('/api/course/<course_id>/enroll', methods=['POST'])
 @login_required
@@ -1603,6 +1701,10 @@ def download_course_materials(course_id):
 
     if course_id not in COURSES:
         return jsonify({"error": "Course not found"}), 404
+
+    # Check enrollment for students
+    if not check_course_access(session['user_id'], course_id):
+        return jsonify({"error": "not_enrolled", "message": "You are not enrolled in this course."}), 403
 
     course = COURSES[course_id]
 
@@ -1695,15 +1797,21 @@ def start_lab(lab_id):
 
     # Find the lab in courses (only allow labs defined in config)
     lab_info = None
-    for course in COURSES.values():
+    lab_course_id = None
+    for cid, course in COURSES.items():
         for section in course['sections'].values():
             for item in section['items']:
                 if item['id'] == lab_id and item.get('runnable'):
                     lab_info = item
+                    lab_course_id = cid
                     break
 
     if not lab_info:
         return jsonify({'error': 'Lab not found or not runnable'}), 404
+
+    # Check enrollment for students
+    if not check_course_access(session['user_id'], lab_course_id):
+        return jsonify({"error": "not_enrolled", "message": "You are not enrolled in this course. Contact your instructor for access."}), 403
 
     try:
         user_id = session['user_id']
@@ -2024,9 +2132,9 @@ def openai_proxy():
     if not data:
         return jsonify({'error': 'No data provided'}), 400
 
-    api_key = data.get('api_key')
+    api_key = data.get('api_key') or os.environ.get('OPENAI_API_KEY')
     if not api_key:
-        return jsonify({'error': 'No API key provided'}), 400
+        return jsonify({'error': 'No API key provided. Set OPENAI_API_KEY environment variable or include api_key in the request.'}), 400
 
     # Build the OpenAI request
     openai_payload = {
@@ -2287,7 +2395,7 @@ def get_all_users():
     """Get all users (instructor only)"""
     db = get_db()
     users = db.execute(
-        'SELECT id, username, email, full_name, role, created_at, last_login FROM users'
+        'SELECT id, username, email, full_name, role, created_at, last_login, expires_at FROM users'
     ).fetchall()
     db.close()
 
@@ -2316,6 +2424,13 @@ def get_user_progress(user_id):
         'enrollments': [dict(e) for e in enrollments],
         'lab_progress': [dict(p) for p in lab_progress]
     })
+
+@app.route('/api/admin/cleanup-expired', methods=['POST'])
+@instructor_required
+def admin_cleanup_expired():
+    """Manually trigger cleanup of expired accounts (instructor only)"""
+    count = cleanup_expired_accounts()
+    return jsonify({'message': f'Cleaned up {count} expired account(s)', 'count': count})
 
 # ============================================================================
 # Poll Routes
@@ -2428,6 +2543,26 @@ def clear_poll_responses(poll_id):
     return jsonify({'message': 'Poll responses cleared'})
 
 # ============================================================================
+# Background Account Cleanup
+# ============================================================================
+
+import threading
+
+def periodic_cleanup():
+    """Run expired account cleanup every 30 minutes"""
+    with app.app_context():
+        try:
+            count = cleanup_expired_accounts()
+            if count > 0:
+                app.logger.info(f"Periodic cleanup: removed {count} expired account(s)")
+        except Exception as e:
+            app.logger.error(f"Periodic cleanup error: {e}")
+    # Schedule next run in 30 minutes
+    timer = threading.Timer(1800, periodic_cleanup)
+    timer.daemon = True
+    timer.start()
+
+# ============================================================================
 # Main
 # ============================================================================
 
@@ -2436,4 +2571,10 @@ if __name__ == '__main__':
     print("  Course Material Viewer - Multi-tenant Platform")
     print("  Running on http://localhost:4050")
     print("=" * 60)
+
+    # Start periodic cleanup (first run after 60 seconds, then every 30 min)
+    cleanup_timer = threading.Timer(60, periodic_cleanup)
+    cleanup_timer.daemon = True
+    cleanup_timer.start()
+
     app.run(host='0.0.0.0', port=4050, debug=True)

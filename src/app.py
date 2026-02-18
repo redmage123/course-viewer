@@ -21,7 +21,7 @@ from kernel_manager import kernel_pool
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 app = Flask(__name__, static_folder='static')
-app.secret_key = secrets.token_hex(32)
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', secrets.token_hex(32))
 CORS(app, supports_credentials=True)
 
 # Configuration

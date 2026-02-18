@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script async src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <style>
         /* ========== RESET & BASE ========== */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1182,6 +1182,7 @@
         .markdown-rendered h1 { font-size: 1.75rem; font-weight: 700; margin: 0.5em 0; color: #f1f5f9; }
         .markdown-rendered h2 { font-size: 1.5rem; font-weight: 600; margin: 0.5em 0; color: #f1f5f9; }
         .markdown-rendered h3 { font-size: 1.25rem; font-weight: 600; margin: 0.5em 0; color: #f1f5f9; }
+        .markdown-rendered h4 { font-size: 1.1rem; font-weight: 600; margin: 0.5em 0; color: #f1f5f9; }
         .markdown-rendered p { margin: 0.5em 0; }
         .markdown-rendered code { background: #334155; padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.875rem; }
         .markdown-rendered pre { background: #1e293b; padding: 12px; border-radius: 6px; overflow-x: auto; margin: 0.5em 0; }
@@ -2188,6 +2189,11 @@
                 }
 
                 // Headings
+                if (line.trim().startsWith('#### ')) {
+                    result.push('<h4>' + inlineMarkdown(line.trim().slice(5)) + '</h4>');
+                    i++;
+                    continue;
+                }
                 if (line.trim().startsWith('### ')) {
                     result.push('<h3>' + inlineMarkdown(line.trim().slice(4)) + '</h3>');
                     i++;
@@ -2397,14 +2403,23 @@
                             setRenderedCells(rendered);
                         }
                         setSaveAsName(labId + '-copy');
+                        // Load kernel in background — don't block notebook display
                         if (kernel === 'pyodide') {
-                            loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" })
-                                .then(async py => {
-                                    await py.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn']);
-                                    setPyodide(py);
-                                    setStatus('ready');
-                                })
-                                .catch(() => setStatus('error'));
+                            setStatus('ready');
+                            // Wait for async pyodide script, then load packages in background
+                            const initPyodide = () => {
+                                if (typeof loadPyodide === 'undefined') {
+                                    setTimeout(initPyodide, 500);
+                                    return;
+                                }
+                                loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" })
+                                    .then(async py => {
+                                        await py.loadPackage(['numpy', 'pandas', 'matplotlib', 'scikit-learn']);
+                                        setPyodide(py);
+                                    })
+                                    .catch(() => {});
+                            };
+                            initPyodide();
                         } else {
                             fetch('/api/kernel/start', {
                                 method: 'POST',

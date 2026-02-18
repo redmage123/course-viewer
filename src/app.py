@@ -1341,7 +1341,9 @@ COURSES = {
                 "title": "Hands-on Labs",
                 "items": [
                     {"id": "pe-lab1", "name": "Lab 1: CRAFT Prompt Builder", "file": "prompt-engineering/labs/lab-01-craft-prompt-builder.ipynb", "type": "lab", "runnable": True},
+                    {"id": "pe-lab1-solution", "name": "Lab 1: CRAFT Prompt Builder (Solution)", "file": "prompt-engineering/labs/lab-01-craft-prompt-builder-solution.ipynb", "type": "lab", "runnable": True},
                     {"id": "pe-lab2", "name": "Lab 2: Prompt Chains & Testing", "file": "prompt-engineering/labs/lab-02-prompt-chains.ipynb", "type": "lab", "runnable": True},
+                    {"id": "pe-lab2-solution", "name": "Lab 2: Prompt Chains & Testing (Solution)", "file": "prompt-engineering/labs/lab-02-prompt-chains-solution.ipynb", "type": "lab", "runnable": True},
                 ]
             },
             "demos": {

@@ -3003,10 +3003,21 @@
                         });
                     }
 
-                    const systemMsg = 'You are an AI teaching assistant for a Prompt Engineering Masterclass. A student completed an exercise on the CRAFT framework. Provide your own model answers, then evaluate the student\'s answers with specific feedback. Format your response as markdown.';
-                    const userMsg = 'Here is the exercise:\n\n' + exerciseContext +
-                        '\n\n---\n\nStudent\'s Answers:\n' + (studentAnswers.length > 0 ? studentAnswers.join('\n') : '(No answers provided yet)') +
-                        '\n\nPlease provide:\n1) Your model answer for each question\n2) Feedback on each student answer (what\'s good, what to improve)\n3) Overall assessment';
+                    // Detect if this is a scoring exercise (Before & After)
+                    const isScoringExercise = /Before\s*&\s*After/i.test(exerciseContext);
+
+                    let systemMsg, userMsg;
+                    if (isScoringExercise) {
+                        systemMsg = 'You are an AI teaching assistant for a Prompt Engineering Masterclass about the CRAFT framework. The student scored BEFORE and AFTER prompts using the CRAFT rubric (Clarity, Specificity, Context, Format, Actionability — each 1-5, total out of 25). Your job:\n1) Score both the BEFORE and AFTER prompts yourself using the same rubric, showing your score for each dimension\n2) Compare your scores with the student\'s scores — note where you agree and disagree\n3) Explain WHY the AFTER prompt scores higher on each dimension\n4) Give an overall assessment of the student\'s scoring accuracy\nFormat as markdown with clear headings.';
+                        userMsg = 'Here is the exercise with the BEFORE and AFTER prompts and the CRAFT scoring rubric:\n\n' + exerciseContext +
+                            '\n\n---\n\nStudent\'s Answers (scores and text inputs):\n' + (studentAnswers.length > 0 ? studentAnswers.join('\n') : '(No answers provided yet)') +
+                            '\n\nPlease score both prompts yourself and compare with the student\'s scores.';
+                    } else {
+                        systemMsg = 'You are an AI teaching assistant for a Prompt Engineering Masterclass. A student completed an exercise on the CRAFT framework. Provide your own model answers, then evaluate the student\'s answers with specific feedback. Format your response as markdown.';
+                        userMsg = 'Here is the exercise:\n\n' + exerciseContext +
+                            '\n\n---\n\nStudent\'s Answers:\n' + (studentAnswers.length > 0 ? studentAnswers.join('\n') : '(No answers provided yet)') +
+                            '\n\nPlease provide:\n1) Your model answer for each question\n2) Feedback on each student answer (what\'s good, what to improve)\n3) Overall assessment';
+                    }
 
                     // Call GPT API
                     const res = await fetch('/api/openai/chat', {

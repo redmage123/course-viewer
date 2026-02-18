@@ -883,6 +883,16 @@
         .markdown-rendered li { margin-left: 1.5em; }
         .markdown-rendered strong { color: #f1f5f9; }
         .markdown-rendered em { font-style: italic; }
+        .markdown-rendered table { border-collapse: collapse; width: 100%; margin: 0.75em 0; }
+        .markdown-rendered th, .markdown-rendered td { border: 1px solid #475569; padding: 8px 12px; text-align: left; }
+        .markdown-rendered th { background: #1e293b; font-weight: 600; color: #f1f5f9; }
+        .markdown-rendered td { background: #0f172a; }
+        .markdown-rendered tr:nth-child(even) td { background: #1a2332; }
+        .markdown-rendered blockquote { border-left: 3px solid #38bdf8; margin: 0.75em 0; padding: 8px 16px; background: #1e293b; color: #cbd5e1; }
+        .markdown-rendered blockquote p { margin: 0.25em 0; }
+        .markdown-rendered hr { border: none; border-top: 1px solid #475569; margin: 1.5em 0; }
+        .markdown-rendered ul, .markdown-rendered ol { margin: 0.5em 0; padding-left: 1.5em; }
+        .markdown-rendered input[type="checkbox"] { margin-right: 6px; }
         .cell-run-btn {
             padding: 4px 10px;
             background: #22c55e;
@@ -1238,21 +1248,152 @@
             );
         }
 
-        // Simple markdown to HTML converter
+        // Markdown to HTML converter with table, blockquote, and HR support
         function renderMarkdownToHtml(md) {
-            let html = md
-                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+            // First extract code blocks to protect them from other processing
+            const codeBlocks = [];
+            md = md.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+                codeBlocks.push('<pre><code>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></pre>');
+                return '\x00CODEBLOCK' + (codeBlocks.length - 1) + '\x00';
+            });
+
+            const lines = md.split('\n');
+            const result = [];
+            let i = 0;
+
+            while (i < lines.length) {
+                const line = lines[i];
+
+                // Table: detect consecutive lines starting with |
+                if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+                    const tableLines = [];
+                    while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+                        tableLines.push(lines[i].trim());
+                        i++;
+                    }
+                    if (tableLines.length >= 2) {
+                        let tableHtml = '<table>';
+                        // Check if second line is separator (|---|---|)
+                        const isSep = /^\|[\s\-:]+\|/.test(tableLines[1]);
+                        const startRow = isSep ? 2 : 0;
+                        if (isSep) {
+                            // Header row
+                            const cells = tableLines[0].split('|').filter(c => c.trim() !== '');
+                            tableHtml += '<thead><tr>' + cells.map(c => '<th>' + inlineMarkdown(c.trim()) + '</th>').join('') + '</tr></thead>';
+                        }
+                        tableHtml += '<tbody>';
+                        for (let r = startRow; r < tableLines.length; r++) {
+                            const cells = tableLines[r].split('|').filter(c => c.trim() !== '');
+                            tableHtml += '<tr>' + cells.map(c => '<td>' + inlineMarkdown(c.trim()) + '</td>').join('') + '</tr>';
+                        }
+                        tableHtml += '</tbody></table>';
+                        result.push(tableHtml);
+                    }
+                    continue;
+                }
+
+                // Blockquote: lines starting with >
+                if (line.trim().startsWith('>')) {
+                    const bqLines = [];
+                    while (i < lines.length && (lines[i].trim().startsWith('>') || (lines[i].trim() !== '' && bqLines.length > 0 && !lines[i].trim().startsWith('#') && !lines[i].trim().startsWith('|')))) {
+                        if (!lines[i].trim().startsWith('>') && lines[i].trim() === '') break;
+                        bqLines.push(lines[i].trim().replace(/^>\s?/, ''));
+                        i++;
+                    }
+                    result.push('<blockquote>' + bqLines.map(l => inlineMarkdown(l)).join('<br>') + '</blockquote>');
+                    continue;
+                }
+
+                // Horizontal rule
+                if (/^(\-{3,}|\*{3,}|_{3,})\s*$/.test(line.trim())) {
+                    result.push('<hr>');
+                    i++;
+                    continue;
+                }
+
+                // Headings
+                if (line.trim().startsWith('### ')) {
+                    result.push('<h3>' + inlineMarkdown(line.trim().slice(4)) + '</h3>');
+                    i++;
+                    continue;
+                }
+                if (line.trim().startsWith('## ')) {
+                    result.push('<h2>' + inlineMarkdown(line.trim().slice(3)) + '</h2>');
+                    i++;
+                    continue;
+                }
+                if (line.trim().startsWith('# ')) {
+                    result.push('<h1>' + inlineMarkdown(line.trim().slice(2)) + '</h1>');
+                    i++;
+                    continue;
+                }
+
+                // Unordered list
+                if (/^\s*[\-\*]\s+/.test(line)) {
+                    const listItems = [];
+                    while (i < lines.length && /^\s*[\-\*]\s+/.test(lines[i])) {
+                        const content = lines[i].replace(/^\s*[\-\*]\s+/, '');
+                        // Checkbox support
+                        if (content.startsWith('[ ] ')) {
+                            listItems.push('<li><input type="checkbox" disabled>' + inlineMarkdown(content.slice(4)) + '</li>');
+                        } else if (content.startsWith('[x] ') || content.startsWith('[X] ')) {
+                            listItems.push('<li><input type="checkbox" checked disabled>' + inlineMarkdown(content.slice(4)) + '</li>');
+                        } else {
+                            listItems.push('<li>' + inlineMarkdown(content) + '</li>');
+                        }
+                        i++;
+                    }
+                    result.push('<ul>' + listItems.join('') + '</ul>');
+                    continue;
+                }
+
+                // Ordered list
+                if (/^\s*\d+\.\s+/.test(line)) {
+                    const listItems = [];
+                    while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+                        listItems.push('<li>' + inlineMarkdown(lines[i].replace(/^\s*\d+\.\s+/, '')) + '</li>');
+                        i++;
+                    }
+                    result.push('<ol>' + listItems.join('') + '</ol>');
+                    continue;
+                }
+
+                // Code block placeholder
+                if (line.trim().startsWith('\x00CODEBLOCK')) {
+                    const idx = parseInt(line.trim().match(/\x00CODEBLOCK(\d+)\x00/)?.[1]);
+                    if (!isNaN(idx)) result.push(codeBlocks[idx]);
+                    i++;
+                    continue;
+                }
+
+                // Empty line
+                if (line.trim() === '') {
+                    i++;
+                    continue;
+                }
+
+                // Paragraph — collect consecutive non-empty lines
+                const paraLines = [];
+                while (i < lines.length && lines[i].trim() !== '' && !lines[i].trim().startsWith('#') && !lines[i].trim().startsWith('>') && !lines[i].trim().startsWith('|') && !/^(\-{3,}|\*{3,}|_{3,})\s*$/.test(lines[i].trim()) && !/^\s*[\-\*]\s+/.test(lines[i]) && !/^\s*\d+\.\s+/.test(lines[i]) && !lines[i].trim().startsWith('\x00CODEBLOCK')) {
+                    paraLines.push(lines[i]);
+                    i++;
+                }
+                if (paraLines.length > 0) {
+                    result.push('<p>' + inlineMarkdown(paraLines.join(' ')) + '</p>');
+                }
+            }
+
+            return result.join('\n');
+        }
+
+        // Inline markdown: bold, italic, code, links, strikethrough
+        function inlineMarkdown(text) {
+            return text
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                .replace(/`([^`]+)`/g, '<code>$1</code>')
-                .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-                .replace(/^\- (.*$)/gm, '<li>$1</li>')
-                .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
-                .replace(/\n\n/g, '</p><p>')
+                .replace(/~~(.+?)~~/g, '<del>$1</del>')
                 .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-            return '<p>' + html + '</p>';
         }
 
         // Notebook Viewer - Full Featured
@@ -1287,6 +1428,20 @@
                     .then(res => res.json())
                     .then(data => {
                         setNotebook(data);
+                        // Auto-render markdown cells on load (skip empty/placeholder cells for student editing)
+                        if (data && data.cells) {
+                            const rendered = {};
+                            data.cells.forEach((cell, idx) => {
+                                if (cell.cell_type === 'markdown') {
+                                    const src = Array.isArray(cell.source) ? cell.source.join('') : (cell.source || '');
+                                    // Skip rendering cells that are empty or just a short placeholder — keep them editable
+                                    if (src.trim().length > 80) {
+                                        rendered[idx] = true;
+                                    }
+                                }
+                            });
+                            setRenderedCells(rendered);
+                        }
                         setSaveAsName(labId + '-copy');
                         if (kernel === 'pyodide') {
                             loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" })

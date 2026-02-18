@@ -1428,14 +1428,16 @@
                     .then(res => res.json())
                     .then(data => {
                         setNotebook(data);
-                        // Auto-render markdown cells on load (skip empty/placeholder cells for student editing)
+                        // Auto-render markdown cells on load
+                        // Keep cells editable if they contain fill-in blanks (___) or are short placeholders
                         if (data && data.cells) {
                             const rendered = {};
                             data.cells.forEach((cell, idx) => {
                                 if (cell.cell_type === 'markdown') {
                                     const src = Array.isArray(cell.source) ? cell.source.join('') : (cell.source || '');
-                                    // Skip rendering cells that are empty or just a short placeholder — keep them editable
-                                    if (src.trim().length > 80) {
+                                    const hasBlankFields = src.includes('___');
+                                    const isShortPlaceholder = src.trim().length <= 80;
+                                    if (!hasBlankFields && !isShortPlaceholder) {
                                         rendered[idx] = true;
                                     }
                                 }

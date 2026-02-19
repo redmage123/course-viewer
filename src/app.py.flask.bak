@@ -1,12 +1,9 @@
 """
-FastAPI backend for Course Material Viewer
+Flask backend for Course Material Viewer
 Multi-tenant course platform with Jupyter notebook integration
 """
-from fastapi import FastAPI, Depends, HTTPException, Request
-from fastapi.responses import JSONResponse, FileResponse, HTMLResponse, StreamingResponse, Response
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from jose import jwt, JWTError
+from flask import Flask, send_from_directory, jsonify, request, session, redirect, url_for, send_file
+from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import os
@@ -14,23 +11,18 @@ import json
 import shutil
 import zipfile
 import io
-import re
-import logging
 from datetime import datetime, timedelta
+from functools import wraps
 import secrets
 from dotenv import load_dotenv
-from contextlib import asynccontextmanager
-import asyncio
-
 from kernel_manager import kernel_pool
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
-# JWT Configuration
-JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', os.environ.get('FLASK_SECRET_KEY', secrets.token_hex(32)))
-JWT_ALGORITHM = "HS256"
-JWT_EXPIRATION_HOURS = 24
+app = Flask(__name__, static_folder='static')
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', secrets.token_hex(32))
+CORS(app, supports_credentials=True)
 
 # Configuration
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -40,54 +32,6 @@ WORKSPACES_DIR = os.path.join(BASE_DIR, 'workspaces')
 
 # Ensure directories exist
 os.makedirs(WORKSPACES_DIR, exist_ok=True)
-
-# Logger
-logger = logging.getLogger("course_viewer")
-
-# ============================================================================
-# JWT Token Functions
-# ============================================================================
-
-def create_access_token(data: dict) -> str:
-    """Create a JWT access token"""
-    to_encode = data.copy()
-    # JWT 'sub' claim must be a string per RFC 7519
-    if "sub" in to_encode:
-        to_encode["sub"] = str(to_encode["sub"])
-    expire = datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
-
-def decode_access_token(token: str) -> dict:
-    """Decode and validate a JWT access token"""
-    return jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-
-# ============================================================================
-# Auth Dependencies (replace Flask decorators)
-# ============================================================================
-
-def get_current_user(request: Request) -> dict:
-    """Extract and validate JWT from Authorization header.
-    Returns user dict or raises HTTPException(401)."""
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Authentication required")
-    token = auth_header.split(" ", 1)[1]
-    try:
-        payload = decode_access_token(token)
-        return {
-            "user_id": int(payload["sub"]),
-            "username": payload.get("username", ""),
-            "role": payload.get("role", "student")
-        }
-    except (JWTError, ValueError, KeyError):
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-
-def require_instructor(user: dict = Depends(get_current_user)) -> dict:
-    """Require instructor or admin role"""
-    if user["role"] not in ("instructor", "admin"):
-        raise HTTPException(status_code=403, detail="Instructor access required")
-    return user
 
 # ============================================================================
 # Sandbox Security Utilities
@@ -116,6 +60,7 @@ def sanitize_path_component(component):
         raise SandboxError(f"Invalid path component: {component}")
 
     # Only allow alphanumeric, dash, underscore, and dot
+    import re
     if not re.match(r'^[\w\-\.]+$', component):
         raise SandboxError(f"Invalid characters in path component: {component}")
 
@@ -220,6 +165,7 @@ def validate_lab_id(lab_id):
     if not lab_id:
         raise SandboxError("Empty lab_id")
 
+    import re
     if not re.match(r'^[\w\-]+$', lab_id):
         raise SandboxError(f"Invalid lab_id format: {lab_id}")
 
@@ -371,9 +317,30 @@ def init_db():
     db.commit()
     db.close()
 
+# Initialize database on startup
+init_db()
+
 # ============================================================================
-# Helper functions
+# Authentication Decorators
 # ============================================================================
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'error': 'Authentication required'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+def instructor_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'error': 'Authentication required'}), 401
+        if session.get('role') not in ['instructor', 'admin']:
+            return jsonify({'error': 'Instructor access required'}), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 def is_enrolled(user_id, course_id):
     """Check if a user is enrolled in a specific course"""
@@ -385,10 +352,10 @@ def is_enrolled(user_id, course_id):
     db.close()
     return enrollment is not None
 
-def check_course_access(user_id, user_role, course_id):
+def check_course_access(user_id, course_id):
     """Check if user has full access to a course.
     Instructors/admins always have access. Students need enrollment."""
-    if user_role in ['instructor', 'admin']:
+    if session.get('role') in ['instructor', 'admin']:
         return True
     return is_enrolled(user_id, course_id)
 
@@ -432,8 +399,13 @@ def cleanup_expired_accounts():
             shutil.rmtree(workspace_dir, ignore_errors=True)
 
     db.close()
-    logger.info(f"Cleaned up {len(expired_ids)} expired accounts: {expired_names}")
+    app.logger.info(f"Cleaned up {len(expired_ids)} expired accounts: {expired_names}")
     return len(expired_ids)
+
+# ============================================================================
+# Course Configuration
+# ============================================================================
+
 # Course categories for organized navigation
 COURSE_CATEGORIES = {
     "python": {
@@ -1161,7 +1133,7 @@ COURSES = {
         "id": "intro-data-science-engineering",
         "name": "Introduction to Data Science & Engineering",
         "description": "3-day course for IT professionals and developers transitioning into data roles, covering data science foundations, data engineering fundamentals, and end-to-end machine learning",
-        "icon": "\U0001f4ca",
+        "icon": "\ud83d\udcca",
         "duration": "3 days",
         "category": "ai-technical",
         "syllabus": ["Data Science Foundations", "Data Exploration & Visualisation", "Data Engineering Fundamentals", "Building Data Pipelines", "ETL Processes", "End-to-End ML Projects", "Model Training & Evaluation", "Data Wrangling with Pandas"],
@@ -1208,7 +1180,7 @@ COURSES = {
         "id": "ai-data-discovery",
         "name": "Data Discovery: Harnessing AI, AGI & Vector Databases",
         "description": "2-day technical workshop on AI-powered data discovery, classification, vector databases, sensitive data detection, and compliance risk scoring",
-        "icon": "\U0001f50d",
+        "icon": "\ud83d\udd0d",
         "duration": "2 days",
         "category": "ai-technical",
         "syllabus": ["Data Discovery Fundamentals", "AI-Driven Classification", "Vector Databases & Semantic Search", "Unsupervised Clustering", "Sensitive Data Detection", "Hybrid Regex + NER Detection", "Compliance Risk Scoring", "Data Governance & Ethics"],
@@ -1482,57 +1454,13 @@ COURSES = {
 }
 
 # ============================================================================
-# Background Cleanup & App Lifespan
-# ============================================================================
-
-async def periodic_cleanup_loop():
-    """Run expired account cleanup every 30 minutes"""
-    await asyncio.sleep(60)  # First run after 60 seconds
-    while True:
-        try:
-            count = cleanup_expired_accounts()
-            if count > 0:
-                logger.info(f"Periodic cleanup: removed {count} expired account(s)")
-        except Exception as e:
-            logger.error(f"Periodic cleanup error: {e}")
-        await asyncio.sleep(1800)  # Every 30 minutes
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """App lifespan: init DB, start cleanup task"""
-    init_db()
-    task = asyncio.create_task(periodic_cleanup_loop())
-    yield
-    task.cancel()
-    try:
-        await task
-    except asyncio.CancelledError:
-        pass
-
-# ============================================================================
-# FastAPI App Initialization
-# ============================================================================
-
-app = FastAPI(lifespan=lifespan)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ============================================================================
 # Authentication Routes
 # ============================================================================
 
-from fastapi import Query
-
-@app.post('/api/auth/register')
-async def register(request: Request):
+@app.route('/api/auth/register', methods=['POST'])
+def register():
     """Register a new user"""
-    data = await request.json()
+    data = request.get_json()
 
     username = data.get('username', '').strip()
     email = data.get('email', '').strip().lower()
@@ -1540,10 +1468,10 @@ async def register(request: Request):
     full_name = data.get('full_name', '').strip()
 
     if not all([username, email, password]):
-        raise HTTPException(status_code=400, detail='Username, email, and password are required')
+        return jsonify({'error': 'Username, email, and password are required'}), 400
 
     if len(password) < 6:
-        raise HTTPException(status_code=400, detail='Password must be at least 6 characters')
+        return jsonify({'error': 'Password must be at least 6 characters'}), 400
 
     db = get_db()
     try:
@@ -1561,16 +1489,13 @@ async def register(request: Request):
         user_workspace = os.path.join(WORKSPACES_DIR, str(user['id']))
         os.makedirs(user_workspace, exist_ok=True)
 
-        # Create JWT token
-        token = create_access_token({
-            "sub": user['id'],
-            "username": user['username'],
-            "role": user['role']
-        })
+        # Set session
+        session['user_id'] = user['id']
+        session['username'] = user['username']
+        session['role'] = user['role']
 
-        return {
+        return jsonify({
             'message': 'Registration successful',
-            'token': token,
             'user': {
                 'id': user['id'],
                 'username': user['username'],
@@ -1578,16 +1503,16 @@ async def register(request: Request):
                 'full_name': user['full_name'],
                 'role': user['role']
             }
-        }
+        })
     except sqlite3.IntegrityError:
-        raise HTTPException(status_code=409, detail='Username or email already exists')
+        return jsonify({'error': 'Username or email already exists'}), 409
     finally:
         db.close()
 
-@app.post('/api/auth/login')
-async def login(request: Request):
+@app.route('/api/auth/login', methods=['POST'])
+def login():
     """Login user"""
-    data = await request.json()
+    data = request.get_json()
 
     username = data.get('username', '').strip()
     password = data.get('password', '')
@@ -1602,7 +1527,11 @@ async def login(request: Request):
     if user and check_password_hash(user['password_hash'], password):
         # Check if account has expired
         if is_account_expired(user):
-            raise HTTPException(status_code=403, detail='Your account has expired. This course session has ended. Contact your instructor if you need extended access.')
+            return jsonify({'error': 'Your account has expired. This course session has ended. Contact your instructor if you need extended access.'}), 403
+
+        session['user_id'] = user['id']
+        session['username'] = user['username']
+        session['role'] = user['role']
 
         # Update last login and get enrollments
         db = get_db()
@@ -1619,16 +1548,8 @@ async def login(request: Request):
             enrollments = [e['course_id'] for e in enrollment_rows]
         db.close()
 
-        # Create JWT token
-        token = create_access_token({
-            "sub": user['id'],
-            "username": user['username'],
-            "role": user['role']
-        })
-
-        return {
+        return jsonify({
             'message': 'Login successful',
-            'token': token,
             'user': {
                 'id': user['id'],
                 'username': user['username'],
@@ -1637,39 +1558,32 @@ async def login(request: Request):
                 'role': user['role'],
                 'enrollments': enrollments
             }
-        }
+        })
 
-    raise HTTPException(status_code=401, detail='Invalid credentials')
+    return jsonify({'error': 'Invalid credentials'}), 401
 
-@app.post('/api/auth/logout')
-async def logout():
-    """Logout user - client-side token discard"""
-    return {'message': 'Logged out successfully'}
+@app.route('/api/auth/logout', methods=['POST'])
+def logout():
+    """Logout user"""
+    session.clear()
+    return jsonify({'message': 'Logged out successfully'})
 
-@app.get('/api/auth/me')
-async def get_current_user_info(request: Request):
+@app.route('/api/auth/me')
+def get_current_user():
     """Get current logged in user"""
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return {'user': None}
-
-    token = auth_header.split(" ", 1)[1]
-    try:
-        payload = decode_access_token(token)
-    except JWTError:
-        return {'user': None}
-
-    user_id = int(payload["sub"])
+    if 'user_id' not in session:
+        return jsonify({'user': None})
 
     db = get_db()
     user = db.execute('SELECT id, username, email, full_name, role, expires_at FROM users WHERE id = ?',
-                      (user_id,)).fetchone()
+                      (session['user_id'],)).fetchone()
 
     if user:
         # Check if account has expired
         if is_account_expired(user):
             db.close()
-            return {'user': None, 'expired': True}
+            session.clear()
+            return jsonify({'user': None, 'expired': True})
 
         # Get enrolled course IDs for students
         enrollments = []
@@ -1681,7 +1595,7 @@ async def get_current_user_info(request: Request):
             enrollments = [e['course_id'] for e in enrollment_rows]
         db.close()
 
-        return {
+        return jsonify({
             'user': {
                 'id': user['id'],
                 'username': user['username'],
@@ -1690,16 +1604,17 @@ async def get_current_user_info(request: Request):
                 'role': user['role'],
                 'enrollments': enrollments
             }
-        }
+        })
 
     db.close()
-    return {'user': None}
+    session.clear()
+    return jsonify({'user': None})
 
 # ============================================================================
 # Course Routes
 # ============================================================================
 
-@app.get('/api/courses')
+@app.route('/api/courses')
 def get_courses():
     """Return list of all available courses with category info"""
     course_list = []
@@ -1712,16 +1627,18 @@ def get_courses():
             "category": course.get("category", "other"),
             "duration": course.get("duration", "")
         })
-    return course_list
+    return jsonify(course_list)
 
-@app.get('/api/categories')
+@app.route('/api/categories')
 def get_categories():
     """Return list of all course categories with their courses"""
+    # Sort categories by order
     sorted_categories = sorted(COURSE_CATEGORIES.values(), key=lambda x: x.get("order", 99))
 
     result = []
     for category in sorted_categories:
         cat_id = category["id"]
+        # Get courses in this category
         category_courses = []
         for course_id, course in COURSES.items():
             if course.get("category") == cat_id:
@@ -1733,7 +1650,7 @@ def get_categories():
                     "duration": course.get("duration", "")
                 })
 
-        if category_courses:
+        if category_courses:  # Only include categories with courses
             result.append({
                 "id": cat_id,
                 "name": category["name"],
@@ -1742,53 +1659,53 @@ def get_categories():
                 "courses": category_courses
             })
 
-    return result
+    return jsonify(result)
 
-@app.get('/api/course/{course_id}')
-def get_course(course_id: str):
+@app.route('/api/course/<course_id>')
+def get_course(course_id):
     """Return details for a specific course"""
     if course_id in COURSES:
-        return COURSES[course_id]
-    raise HTTPException(status_code=404, detail="Course not found")
+        return jsonify(COURSES[course_id])
+    return jsonify({"error": "Course not found"}), 404
 
-@app.get('/api/course/{course_id}/materials')
-def get_course_materials(course_id: str, user: dict = Depends(get_current_user)):
+@app.route('/api/course/<course_id>/materials')
+@login_required
+def get_course_materials(course_id):
     """Return materials for a specific course. Students must be enrolled."""
     if course_id not in COURSES:
-        raise HTTPException(status_code=404, detail="Course not found")
-    if not check_course_access(user['user_id'], user['role'], course_id):
-        return JSONResponse(
-            status_code=403,
-            content={"error": "not_enrolled", "message": "You are not enrolled in this course. Contact your instructor for access."}
-        )
-    return COURSES[course_id]["sections"]
+        return jsonify({"error": "Course not found"}), 404
+    if not check_course_access(session['user_id'], course_id):
+        return jsonify({"error": "not_enrolled", "message": "You are not enrolled in this course. Contact your instructor for access."}), 403
+    return jsonify(COURSES[course_id]["sections"])
 
-@app.post('/api/course/{course_id}/enroll')
-def enroll_course(course_id: str, user: dict = Depends(get_current_user)):
+@app.route('/api/course/<course_id>/enroll', methods=['POST'])
+@login_required
+def enroll_course(course_id):
     """Enroll current user in a course"""
     if course_id not in COURSES:
-        raise HTTPException(status_code=404, detail="Course not found")
+        return jsonify({"error": "Course not found"}), 404
 
     db = get_db()
     try:
         db.execute(
             'INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)',
-            (user['user_id'], course_id)
+            (session['user_id'], course_id)
         )
         db.commit()
-        return {"message": "Enrolled successfully"}
+        return jsonify({"message": "Enrolled successfully"})
     except sqlite3.IntegrityError:
-        return {"message": "Already enrolled"}
+        return jsonify({"message": "Already enrolled"})
     finally:
         db.close()
 
-@app.get('/api/my/enrollments')
-def get_my_enrollments(user: dict = Depends(get_current_user)):
+@app.route('/api/my/enrollments')
+@login_required
+def get_my_enrollments():
     """Get current user's enrollments"""
     db = get_db()
     enrollments = db.execute(
         'SELECT course_id, enrolled_at, progress FROM enrollments WHERE user_id = ?',
-        (user['user_id'],)
+        (session['user_id'],)
     ).fetchall()
     db.close()
 
@@ -1801,23 +1718,23 @@ def get_my_enrollments(user: dict = Depends(get_current_user)):
                 'progress': json.loads(e['progress']) if e['progress'] else {}
             })
 
-    return result
+    return jsonify(result)
 
-@app.get('/api/course/{course_id}/download')
-def download_course_materials(course_id: str, user: dict = Depends(get_current_user)):
+@app.route('/api/course/<course_id>/download')
+@login_required
+def download_course_materials(course_id):
     """Download all course materials as a zip file (sandboxed)"""
+    # Validate course_id format
+    import re
     if not re.match(r'^[\w\-]+$', course_id):
-        raise HTTPException(status_code=400, detail="Invalid course ID")
+        return jsonify({"error": "Invalid course ID"}), 400
 
     if course_id not in COURSES:
-        raise HTTPException(status_code=404, detail="Course not found")
+        return jsonify({"error": "Course not found"}), 404
 
     # Check enrollment for students
-    if not check_course_access(user['user_id'], user['role'], course_id):
-        return JSONResponse(
-            status_code=403,
-            content={"error": "not_enrolled", "message": "You are not enrolled in this course."}
-        )
+    if not check_course_access(session['user_id'], course_id):
+        return jsonify({"error": "not_enrolled", "message": "You are not enrolled in this course."}), 403
 
     course = COURSES[course_id]
 
@@ -1843,62 +1760,72 @@ def download_course_materials(course_id: str, user: dict = Depends(get_current_u
                         try:
                             safe_pdf_path = get_safe_path_in_materials(pdf_path)
                             if os.path.isfile(safe_pdf_path):
+                                # Use PDF instead of HTML for slides
                                 if pdf_path not in files_added:
                                     file_size = os.path.getsize(safe_pdf_path)
                                     total_size += file_size
                                     if total_size > max_zip_size:
-                                        raise HTTPException(status_code=413, detail="Download too large")
+                                        return jsonify({"error": "Download too large"}), 413
                                     zip_file.write(safe_pdf_path, pdf_path)
                                     files_added.add(pdf_path)
-                                continue
+                                continue  # Skip the HTML source file
                         except SandboxError:
-                            pass
+                            pass  # Fall through to try original file
 
+                    # Skip if already added
                     if file_path in files_added:
                         continue
 
                     try:
+                        # Get safe path within materials
                         safe_path = get_safe_path_in_materials(file_path)
 
                         if os.path.isfile(safe_path):
+                            # Check file size
                             file_size = os.path.getsize(safe_path)
                             total_size += file_size
                             if total_size > max_zip_size:
-                                raise HTTPException(status_code=413, detail="Download too large")
+                                return jsonify({"error": "Download too large"}), 413
+
+                            # Add individual file
                             zip_file.write(safe_path, file_path)
                             files_added.add(file_path)
+
                     except SandboxError:
+                        # Skip files that fail validation
                         continue
 
         zip_buffer.seek(0)
 
+        # Create safe filename
         safe_name = re.sub(r'[^\w\-]', '-', course_id).lower()
         filename = f"{safe_name}-materials.zip"
 
-        return StreamingResponse(
+        return send_file(
             zip_buffer,
-            media_type='application/zip',
-            headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+            mimetype='application/zip',
+            as_attachment=True,
+            download_name=filename
         )
 
-    except HTTPException:
-        raise
-    except Exception:
-        raise HTTPException(status_code=500, detail="Failed to create download")
+    except Exception as e:
+        return jsonify({"error": "Failed to create download"}), 500
 
 # ============================================================================
 # Lab Routes - Jupyter Integration
 # ============================================================================
 
-@app.post('/api/lab/{lab_id}/start')
-def start_lab(lab_id: str, user: dict = Depends(get_current_user)):
+@app.route('/api/lab/<lab_id>/start', methods=['POST'])
+@login_required
+def start_lab(lab_id):
     """Start a lab session for the current user (sandboxed)"""
     try:
+        # Validate lab_id to prevent injection
         validate_lab_id(lab_id)
     except SandboxError as e:
-        return JSONResponse(status_code=400, content={'error': f'Invalid lab ID: {str(e)}'})
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
-    # Find the lab in courses
+    # Find the lab in courses (only allow labs defined in config)
     lab_info = None
     lab_course_id = None
     for cid, course in COURSES.items():
@@ -1910,17 +1837,14 @@ def start_lab(lab_id: str, user: dict = Depends(get_current_user)):
                     break
 
     if not lab_info:
-        raise HTTPException(status_code=404, detail='Lab not found or not runnable')
+        return jsonify({'error': 'Lab not found or not runnable'}), 404
 
     # Check enrollment for students
-    if not check_course_access(user['user_id'], user['role'], lab_course_id):
-        return JSONResponse(
-            status_code=403,
-            content={"error": "not_enrolled", "message": "You are not enrolled in this course. Contact your instructor for access."}
-        )
+    if not check_course_access(session['user_id'], lab_course_id):
+        return jsonify({"error": "not_enrolled", "message": "You are not enrolled in this course. Contact your instructor for access."}), 403
 
     try:
-        user_id = user['user_id']
+        user_id = session['user_id']
 
         # Get sandboxed user workspace
         user_workspace = get_safe_user_workspace(user_id)
@@ -1931,40 +1855,43 @@ def start_lab(lab_id: str, user: dict = Depends(get_current_user)):
 
         # Copy notebook to user workspace if not exists
         if not os.path.exists(user_notebook) and os.path.exists(source_notebook):
+            # Ensure parent directory exists (for paths like out/lab-01.ipynb)
             notebook_dir = os.path.dirname(user_notebook)
             if notebook_dir:
                 os.makedirs(notebook_dir, exist_ok=True)
             safe_copy_file(source_notebook, user_notebook)
 
-        # Record lab session
+        # Record lab session (store relative path, not absolute)
         db = get_db()
         db.execute(
             'INSERT INTO lab_sessions (user_id, lab_id, notebook_path, last_activity) VALUES (?, ?, ?, ?)',
-            (user_id, lab_id, lab_info['file'], datetime.now())
+            (user_id, lab_id, lab_info['file'], datetime.now())  # Store relative path
         )
         db.commit()
         session_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
         db.close()
 
-        return {
+        return jsonify({
             'session_id': session_id,
             'lab_id': lab_id,
             'notebook_path': f'/api/lab/{lab_id}/notebook',
             'message': 'Lab session started'
-        }
+        })
 
     except SandboxError as e:
-        return JSONResponse(status_code=403, content={'error': f'Security error: {str(e)}'})
+        return jsonify({'error': f'Security error: {str(e)}'}), 403
 
-@app.get('/api/lab/{lab_id}/notebook')
-def get_lab_notebook(lab_id: str, user: dict = Depends(get_current_user)):
+@app.route('/api/lab/<lab_id>/notebook')
+@login_required
+def get_lab_notebook(lab_id):
     """Get the notebook content for a lab (sandboxed)"""
     try:
+        # Validate lab_id
         validate_lab_id(lab_id)
     except SandboxError as e:
-        return JSONResponse(status_code=400, content={'error': f'Invalid lab ID: {str(e)}'})
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
-    # Find lab file
+    # Find lab file (only allow labs defined in config)
     lab_file = None
     for course in COURSES.values():
         for section in course['sections'].values():
@@ -1974,47 +1901,50 @@ def get_lab_notebook(lab_id: str, user: dict = Depends(get_current_user)):
                     break
 
     if not lab_file:
-        raise HTTPException(status_code=404, detail='Lab not found')
+        return jsonify({'error': 'Lab not found'}), 404
 
     try:
-        user_id = user['user_id']
+        user_id = session['user_id']
 
         # Get sandboxed user workspace
         user_workspace = get_safe_user_workspace(user_id)
 
-        # Try user workspace first
+        # Try user workspace first (sandboxed path)
         try:
             notebook_path = get_safe_path_in_workspace(user_workspace, lab_file)
             if not os.path.exists(notebook_path):
                 raise FileNotFoundError()
         except (SandboxError, FileNotFoundError):
+            # Fall back to materials dir (sandboxed path)
             notebook_path = get_safe_path_in_materials(lab_file)
 
         if not os.path.exists(notebook_path):
-            raise HTTPException(status_code=404, detail='Notebook file not found')
+            return jsonify({'error': 'Notebook file not found'}), 404
 
         # Read with size limit (max 10MB)
         file_size = os.path.getsize(notebook_path)
         if file_size > 10 * 1024 * 1024:
-            raise HTTPException(status_code=413, detail='Notebook file too large')
+            return jsonify({'error': 'Notebook file too large'}), 413
 
         with open(notebook_path, 'r') as f:
             notebook = json.load(f)
 
-        return notebook
+        return jsonify(notebook)
 
     except SandboxError as e:
-        return JSONResponse(status_code=403, content={'error': f'Security error: {str(e)}'})
+        return jsonify({'error': f'Security error: {str(e)}'}), 403
 
-@app.post('/api/lab/{lab_id}/save')
-async def save_lab_notebook(lab_id: str, request: Request, user: dict = Depends(get_current_user)):
+@app.route('/api/lab/<lab_id>/save', methods=['POST'])
+@login_required
+def save_lab_notebook(lab_id):
     """Save the notebook content for a lab (sandboxed)"""
     try:
+        # Validate lab_id
         validate_lab_id(lab_id)
     except SandboxError as e:
-        return JSONResponse(status_code=400, content={'error': f'Invalid lab ID: {str(e)}'})
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
-    # Find lab file
+    # Find lab file (only allow labs defined in config)
     lab_file = None
     for course in COURSES.values():
         for section in course['sections'].values():
@@ -2024,15 +1954,15 @@ async def save_lab_notebook(lab_id: str, request: Request, user: dict = Depends(
                     break
 
     if not lab_file:
-        raise HTTPException(status_code=404, detail='Lab not found')
+        return jsonify({'error': 'Lab not found'}), 404
 
     try:
-        user_id = user['user_id']
+        user_id = session['user_id']
 
         # Get sandboxed user workspace
         user_workspace = get_safe_user_workspace(user_id)
 
-        # Get safe path for the notebook
+        # Get safe path for the notebook (within user's sandbox)
         notebook_path = get_safe_path_in_workspace(user_workspace, lab_file)
 
         # Ensure parent directory exists
@@ -2041,17 +1971,18 @@ async def save_lab_notebook(lab_id: str, request: Request, user: dict = Depends(
             os.makedirs(notebook_dir, exist_ok=True)
 
         # Get and validate notebook data
-        notebook_data = await request.json()
+        notebook_data = request.get_json()
         if not notebook_data:
-            raise HTTPException(status_code=400, detail='No notebook data provided')
+            return jsonify({'error': 'No notebook data provided'}), 400
 
+        # Validate it's a proper notebook structure
         if not isinstance(notebook_data, dict):
-            raise HTTPException(status_code=400, detail='Invalid notebook format')
+            return jsonify({'error': 'Invalid notebook format'}), 400
 
         # Check size limit (max 10MB when serialized)
         notebook_json = json.dumps(notebook_data, indent=2)
         if len(notebook_json) > 10 * 1024 * 1024:
-            raise HTTPException(status_code=413, detail='Notebook too large to save')
+            return jsonify({'error': 'Notebook too large to save'}), 413
 
         # Write atomically using temp file
         temp_path = notebook_path + '.tmp'
@@ -2061,170 +1992,181 @@ async def save_lab_notebook(lab_id: str, request: Request, user: dict = Depends(
         # Atomic rename
         os.replace(temp_path, notebook_path)
 
-        return {'message': 'Notebook saved successfully'}
+        return jsonify({'message': 'Notebook saved successfully'})
 
     except SandboxError as e:
-        return JSONResponse(status_code=403, content={'error': f'Security error: {str(e)}'})
+        return jsonify({'error': f'Security error: {str(e)}'}), 403
 
-@app.api_route('/api/lab/{lab_id}/progress', methods=['GET', 'POST'])
-async def lab_progress(lab_id: str, request: Request, user: dict = Depends(get_current_user)):
+@app.route('/api/lab/<lab_id>/progress', methods=['GET', 'POST'])
+@login_required
+def lab_progress(lab_id):
     """Get or save progress for a lab (with input validation)"""
     try:
+        # Validate lab_id
         validate_lab_id(lab_id)
     except SandboxError as e:
-        return JSONResponse(status_code=400, content={'error': f'Invalid lab ID: {str(e)}'})
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
     if request.method == 'POST':
-        data = await request.json()
+        data = request.get_json()
         cell_index = data.get('cell_index')
         output = data.get('output', '')
 
         # Validate cell_index
         if not isinstance(cell_index, int) or cell_index < 0 or cell_index > 1000:
-            raise HTTPException(status_code=400, detail='Invalid cell index')
+            return jsonify({'error': 'Invalid cell index'}), 400
 
         # Limit output size (max 1MB)
         output_json = json.dumps(output)
         if len(output_json) > 1024 * 1024:
-            raise HTTPException(status_code=413, detail='Output too large')
+            return jsonify({'error': 'Output too large'}), 413
 
         db = get_db()
         db.execute(
             'INSERT INTO lab_progress (user_id, lab_id, cell_index, output) VALUES (?, ?, ?, ?)',
-            (user['user_id'], lab_id, cell_index, output_json)
+            (session['user_id'], lab_id, cell_index, output_json)
         )
         db.commit()
         db.close()
 
-        return {'message': 'Progress saved'}
+        return jsonify({'message': 'Progress saved'})
     else:
         db = get_db()
         progress = db.execute(
             '''SELECT cell_index, output, completed_at FROM lab_progress
                WHERE user_id = ? AND lab_id = ? ORDER BY cell_index''',
-            (user['user_id'], lab_id)
+            (session['user_id'], lab_id)
         ).fetchall()
         db.close()
 
-        return [{
+        return jsonify([{
             'cell_index': p['cell_index'],
             'output': json.loads(p['output']) if p['output'] else None,
             'completed_at': p['completed_at']
-        } for p in progress]
+        } for p in progress])
 
 # ============================================================================
-# Server-Side Kernel API
+# Server-Side Kernel API (for PyTorch and other libraries not in Pyodide)
 # ============================================================================
 
-@app.post('/api/kernel/start')
-async def start_kernel(request: Request, user: dict = Depends(get_current_user)):
+@app.route('/api/kernel/start', methods=['POST'])
+@login_required
+def start_kernel():
     """Start or get a kernel for a lab"""
-    data = await request.json() if await request.body() else {}
+    data = request.get_json() or {}
     lab_id = data.get('lab_id')
 
     if not lab_id:
-        raise HTTPException(status_code=400, detail='lab_id required')
+        return jsonify({'error': 'lab_id required'}), 400
 
     try:
         validate_lab_id(lab_id)
     except SandboxError as e:
-        return JSONResponse(status_code=400, content={'error': f'Invalid lab ID: {str(e)}'})
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
-    result = kernel_pool.get_or_create_kernel(user['user_id'], lab_id)
+    result = kernel_pool.get_or_create_kernel(session['user_id'], lab_id)
 
     if result['status'] == 'error':
-        return JSONResponse(status_code=503, content={'error': result['message']})
+        return jsonify({'error': result['message']}), 503
 
-    return result
+    return jsonify(result)
 
-@app.post('/api/kernel/execute')
-async def execute_code(request: Request, user: dict = Depends(get_current_user)):
+@app.route('/api/kernel/execute', methods=['POST'])
+@login_required
+def execute_code():
     """Execute code in the user's kernel"""
-    data = await request.json() if await request.body() else {}
+    data = request.get_json() or {}
     lab_id = data.get('lab_id')
     code = data.get('code', '')
 
     if not lab_id:
-        raise HTTPException(status_code=400, detail='lab_id required')
+        return jsonify({'error': 'lab_id required'}), 400
 
     if not code.strip():
-        return {'status': 'ok', 'outputs': [], 'execution_count': 0}
+        return jsonify({'status': 'ok', 'outputs': [], 'execution_count': 0})
 
     try:
         validate_lab_id(lab_id)
     except SandboxError as e:
-        return JSONResponse(status_code=400, content={'error': f'Invalid lab ID: {str(e)}'})
+        return jsonify({'error': f'Invalid lab ID: {str(e)}'}), 400
 
     # Limit code size (max 100KB)
     if len(code) > 100 * 1024:
-        raise HTTPException(status_code=413, detail='Code too large')
+        return jsonify({'error': 'Code too large'}), 413
 
-    result = kernel_pool.execute_code(user['user_id'], lab_id, code)
-    return result
+    result = kernel_pool.execute_code(session['user_id'], lab_id, code)
+    return jsonify(result)
 
-@app.post('/api/kernel/interrupt')
-async def interrupt_kernel(request: Request, user: dict = Depends(get_current_user)):
+@app.route('/api/kernel/interrupt', methods=['POST'])
+@login_required
+def interrupt_kernel():
     """Interrupt a running kernel"""
-    data = await request.json() if await request.body() else {}
+    data = request.get_json() or {}
     lab_id = data.get('lab_id')
 
     if not lab_id:
-        raise HTTPException(status_code=400, detail='lab_id required')
+        return jsonify({'error': 'lab_id required'}), 400
 
-    result = kernel_pool.interrupt_kernel(user['user_id'], lab_id)
-    return result
+    result = kernel_pool.interrupt_kernel(session['user_id'], lab_id)
+    return jsonify(result)
 
-@app.post('/api/kernel/restart')
-async def restart_kernel(request: Request, user: dict = Depends(get_current_user)):
+@app.route('/api/kernel/restart', methods=['POST'])
+@login_required
+def restart_kernel():
     """Restart a kernel"""
-    data = await request.json() if await request.body() else {}
+    data = request.get_json() or {}
     lab_id = data.get('lab_id')
 
     if not lab_id:
-        raise HTTPException(status_code=400, detail='lab_id required')
+        return jsonify({'error': 'lab_id required'}), 400
 
-    result = kernel_pool.restart_kernel(user['user_id'], lab_id)
-    return result
+    result = kernel_pool.restart_kernel(session['user_id'], lab_id)
+    return jsonify(result)
 
-@app.post('/api/kernel/stop')
-async def stop_kernel(request: Request, user: dict = Depends(get_current_user)):
+@app.route('/api/kernel/stop', methods=['POST'])
+@login_required
+def stop_kernel():
     """Stop a kernel"""
-    data = await request.json() if await request.body() else {}
+    data = request.get_json() or {}
     lab_id = data.get('lab_id')
 
     if not lab_id:
-        raise HTTPException(status_code=400, detail='lab_id required')
+        return jsonify({'error': 'lab_id required'}), 400
 
-    result = kernel_pool.shutdown_kernel(user['user_id'], lab_id)
-    return result
+    result = kernel_pool.shutdown_kernel(session['user_id'], lab_id)
+    return jsonify(result)
 
-@app.get('/api/kernel/status')
-def kernel_status(lab_id: str = Query(None), user: dict = Depends(get_current_user)):
+@app.route('/api/kernel/status')
+@login_required
+def kernel_status():
     """Get kernel status for a lab"""
+    lab_id = request.args.get('lab_id')
+
     if not lab_id:
-        raise HTTPException(status_code=400, detail='lab_id required')
+        return jsonify({'error': 'lab_id required'}), 400
 
-    result = kernel_pool.get_kernel_info(user['user_id'], lab_id)
-    return result
+    result = kernel_pool.get_kernel_info(session['user_id'], lab_id)
+    return jsonify(result)
 
 # ============================================================================
-# OpenAI API Proxy
+# OpenAI API Proxy (for demo)
 # ============================================================================
 
-@app.post('/api/openai/chat')
-async def openai_proxy(request: Request):
+@app.route('/api/openai/chat', methods=['POST'])
+def openai_proxy():
     """Proxy requests to OpenAI API to avoid browser CORS/network issues"""
     import urllib.request
     import urllib.error
 
-    data = await request.json()
+    data = request.get_json()
     if not data:
-        raise HTTPException(status_code=400, detail='No data provided')
+        return jsonify({'error': 'No data provided'}), 400
 
     api_key = data.get('api_key') or os.environ.get('OPENAI_API_KEY')
     if not api_key:
-        raise HTTPException(status_code=400, detail='No API key provided. Set OPENAI_API_KEY environment variable or include api_key in the request.')
+        return jsonify({'error': 'No API key provided. Set OPENAI_API_KEY environment variable or include api_key in the request.'}), 400
 
+    # Build the OpenAI request
     openai_payload = {
         'model': data.get('model', 'gpt-4o'),
         'messages': data.get('messages', []),
@@ -2244,47 +2186,51 @@ async def openai_proxy(request: Request):
 
         with urllib.request.urlopen(req, timeout=60) as response:
             result = json.loads(response.read().decode('utf-8'))
-            return result
+            return jsonify(result)
 
     except urllib.error.HTTPError as e:
         error_body = e.read().decode('utf-8')
         try:
             error_json = json.loads(error_body)
-            return JSONResponse(status_code=e.code, content=error_json)
+            return jsonify(error_json), e.code
         except:
-            return JSONResponse(status_code=e.code, content={'error': {'message': error_body}})
+            return jsonify({'error': {'message': error_body}}), e.code
     except urllib.error.URLError as e:
-        return JSONResponse(status_code=500, content={'error': {'message': f'Network error: {str(e)}'}})
+        return jsonify({'error': {'message': f'Network error: {str(e)}'}}), 500
     except Exception as e:
-        return JSONResponse(status_code=500, content={'error': {'message': str(e)}})
+        return jsonify({'error': {'message': str(e)}}), 500
 
 
-@app.post('/api/generate-report')
-async def generate_report(request: Request):
+@app.route('/api/generate-report', methods=['POST'])
+def generate_report():
     """Generate a report/proposal using AI based on the WRITE framework prompt"""
     import urllib.request
     import urllib.error
 
-    data = await request.json()
+    data = request.get_json()
     if not data:
-        raise HTTPException(status_code=400, detail='No data provided')
+        return jsonify({'error': 'No data provided'}), 400
 
     prompt = data.get('prompt')
     if not prompt:
-        raise HTTPException(status_code=400, detail='No prompt provided')
+        return jsonify({'error': 'No prompt provided'}), 400
 
     model = data.get('model', 'gpt-5.2')
     doc_type = data.get('doc_type', 'proposal')
 
+    # Check for API key in environment or request
     api_key = os.environ.get('OPENAI_API_KEY') or data.get('api_key')
     anthropic_key = os.environ.get('ANTHROPIC_API_KEY') or data.get('anthropic_key')
 
+    # Determine which API to use based on model selection
     if model.startswith('claude') and anthropic_key:
+        # Use Anthropic API
         return _generate_with_anthropic(prompt, model, anthropic_key, doc_type)
     elif api_key:
+        # Use OpenAI API
         return _generate_with_openai(prompt, model, api_key, doc_type)
     else:
-        raise HTTPException(status_code=400, detail='No API key configured. Set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable, or provide api_key in the request.')
+        return jsonify({'error': 'No API key configured. Set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable, or provide api_key in the request.'}), 400
 
 
 def _generate_with_openai(prompt, model, api_key, doc_type):
@@ -2309,6 +2255,7 @@ def _generate_with_openai(prompt, model, api_key, doc_type):
         'temperature': 0.7
     }
 
+    # GPT-5.2 uses max_completion_tokens, older models use max_tokens
     if selected_model == 'gpt-5.2':
         openai_payload['max_completion_tokens'] = 4000
     else:
@@ -2327,23 +2274,23 @@ def _generate_with_openai(prompt, model, api_key, doc_type):
         with urllib.request.urlopen(req, timeout=120) as response:
             result = json.loads(response.read().decode('utf-8'))
             content = result.get('choices', [{}])[0].get('message', {}).get('content', '')
-            return {
+            return jsonify({
                 'report': content,
                 'model': model,
                 'doc_type': doc_type
-            }
+            })
 
     except urllib.error.HTTPError as e:
         error_body = e.read().decode('utf-8')
         try:
             error_json = json.loads(error_body)
-            return JSONResponse(status_code=e.code, content={'error': error_json.get('error', {}).get('message', 'API error')})
+            return jsonify({'error': error_json.get('error', {}).get('message', 'API error')}), e.code
         except:
-            return JSONResponse(status_code=e.code, content={'error': error_body})
+            return jsonify({'error': error_body}), e.code
     except urllib.error.URLError as e:
-        return JSONResponse(status_code=500, content={'error': f'Network error: {str(e)}'})
+        return jsonify({'error': f'Network error: {str(e)}'}), 500
     except Exception as e:
-        return JSONResponse(status_code=500, content={'error': str(e)})
+        return jsonify({'error': str(e)}), 500
 
 
 def _generate_with_anthropic(prompt, model, api_key, doc_type):
@@ -2351,6 +2298,7 @@ def _generate_with_anthropic(prompt, model, api_key, doc_type):
     import urllib.request
     import urllib.error
 
+    # Map model names to Anthropic model IDs
     model_map = {
         'claude-3': 'claude-3-sonnet-20240229',
         'claude-2': 'claude-2.1',
@@ -2387,36 +2335,37 @@ def _generate_with_anthropic(prompt, model, api_key, doc_type):
         with urllib.request.urlopen(req, timeout=120) as response:
             result = json.loads(response.read().decode('utf-8'))
             content = result.get('content', [{}])[0].get('text', '')
-            return {
+            return jsonify({
                 'report': content,
                 'model': model,
                 'doc_type': doc_type
-            }
+            })
 
     except urllib.error.HTTPError as e:
         error_body = e.read().decode('utf-8')
         try:
             error_json = json.loads(error_body)
-            return JSONResponse(status_code=e.code, content={'error': error_json.get('error', {}).get('message', 'API error')})
+            return jsonify({'error': error_json.get('error', {}).get('message', 'API error')}), e.code
         except:
-            return JSONResponse(status_code=e.code, content={'error': error_body})
+            return jsonify({'error': error_body}), e.code
     except urllib.error.URLError as e:
-        return JSONResponse(status_code=500, content={'error': f'Network error: {str(e)}'})
+        return jsonify({'error': f'Network error: {str(e)}'}), 500
     except Exception as e:
-        return JSONResponse(status_code=500, content={'error': str(e)})
+        return jsonify({'error': str(e)}), 500
 
 
 # ============================================================================
 # Content Serving (Sandboxed)
 # ============================================================================
 
-@app.get('/api/materials')
+@app.route('/api/materials')
 def get_materials():
     """Return list of all course materials (legacy)"""
-    return COURSES["mastering-ai"]["sections"]
+    return jsonify(COURSES["mastering-ai"]["sections"])
 
-@app.get('/content/{filename:path}')
-def serve_content(filename: str, user: dict = Depends(get_current_user)):
+@app.route('/content/<path:filename>')
+@login_required
+def serve_content(filename):
     """Serve course HTML files (sandboxed to materials directory)"""
     try:
         # Validate and resolve path within materials directory
@@ -2428,7 +2377,7 @@ def serve_content(filename: str, user: dict = Depends(get_current_user)):
             if os.path.isfile(index_path):
                 safe_path = index_path
             else:
-                raise HTTPException(status_code=404, detail='Directory listing not available. Please specify a file.')
+                return jsonify({'error': 'Directory listing not available. Please specify a file.'}), 404
 
         # Only serve allowed file types
         allowed_extensions = {'.html', '.css', '.js', '.png', '.jpg', '.jpeg',
@@ -2436,16 +2385,14 @@ def serve_content(filename: str, user: dict = Depends(get_current_user)):
                              '.mp4', '.webm', '.ogg', '.mp3', '.wav'}
         _, ext = os.path.splitext(safe_path)
         if ext.lower() not in allowed_extensions:
-            raise HTTPException(status_code=403, detail='File type not allowed')
+            return jsonify({'error': 'File type not allowed'}), 403
 
         if not os.path.isfile(safe_path):
-            raise HTTPException(status_code=404, detail='File not found')
+            return jsonify({'error': 'File not found'}), 404
 
-        # Determine media type
-        import mimetypes
-        media_type = mimetypes.guess_type(safe_path)[0] or 'application/octet-stream'
-
-        response = FileResponse(safe_path, media_type=media_type)
+        # Get the relative path from materials dir
+        rel_path = os.path.relpath(safe_path, MATERIALS_DIR)
+        response = send_from_directory(MATERIALS_DIR, rel_path)
         # Disable caching for HTML files during development
         if ext.lower() == '.html':
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -2454,14 +2401,27 @@ def serve_content(filename: str, user: dict = Depends(get_current_user)):
         return response
 
     except SandboxError as e:
-        raise HTTPException(status_code=403, detail=f'Access denied: {str(e)}')
+        return jsonify({'error': f'Access denied: {str(e)}'}), 403
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    """Serve React frontend"""
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    response = send_from_directory(app.static_folder, 'index.html')
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 # ============================================================================
 # Admin Routes
 # ============================================================================
 
-@app.get('/api/admin/users')
-def get_all_users(user: dict = Depends(require_instructor)):
+@app.route('/api/admin/users')
+@instructor_required
+def get_all_users():
     """Get all users (instructor only)"""
     db = get_db()
     users = db.execute(
@@ -2469,10 +2429,11 @@ def get_all_users(user: dict = Depends(require_instructor)):
     ).fetchall()
     db.close()
 
-    return [dict(u) for u in users]
+    return jsonify([dict(u) for u in users])
 
-@app.get('/api/admin/user/{user_id}/progress')
-def get_user_progress(user_id: int, user: dict = Depends(require_instructor)):
+@app.route('/api/admin/user/<int:user_id>/progress')
+@instructor_required
+def get_user_progress(user_id):
     """Get a specific user's progress (instructor only)"""
     db = get_db()
 
@@ -2481,7 +2442,7 @@ def get_user_progress(user_id: int, user: dict = Depends(require_instructor)):
         (user_id,)
     ).fetchall()
 
-    lab_progress_data = db.execute(
+    lab_progress = db.execute(
         '''SELECT lab_id, COUNT(*) as cells_completed, MAX(completed_at) as last_activity
            FROM lab_progress WHERE user_id = ? GROUP BY lab_id''',
         (user_id,)
@@ -2489,42 +2450,48 @@ def get_user_progress(user_id: int, user: dict = Depends(require_instructor)):
 
     db.close()
 
-    return {
+    return jsonify({
         'enrollments': [dict(e) for e in enrollments],
-        'lab_progress': [dict(p) for p in lab_progress_data]
-    }
+        'lab_progress': [dict(p) for p in lab_progress]
+    })
 
-@app.post('/api/admin/cleanup-expired')
-def admin_cleanup_expired(user: dict = Depends(require_instructor)):
+@app.route('/api/admin/cleanup-expired', methods=['POST'])
+@instructor_required
+def admin_cleanup_expired():
     """Manually trigger cleanup of expired accounts (instructor only)"""
     count = cleanup_expired_accounts()
-    return {'message': f'Cleaned up {count} expired account(s)', 'count': count}
+    return jsonify({'message': f'Cleaned up {count} expired account(s)', 'count': count})
 
-@app.post('/api/admin/bulk-register')
-async def admin_bulk_register(request: Request, user: dict = Depends(require_instructor)):
+@app.route('/api/admin/bulk-register', methods=['POST'])
+@instructor_required
+def admin_bulk_register():
     """Bulk register students and enroll them in a course (instructor only)"""
-    data = await request.json()
+    import re
+
+    data = request.get_json()
     students = data.get('students', [])
     course_id = data.get('course_id', '')
     expires_at = data.get('expires_at', '')
 
-    # Normalize datetime-local format
+    # Normalize datetime-local format (2026-02-18T18:00) to DB format (2026-02-18 18:00:00)
     if expires_at:
         expires_at = expires_at.replace('T', ' ')
-        if len(expires_at) == 16:
+        if len(expires_at) == 16:  # "2026-02-18 18:00" missing seconds
             expires_at += ':00'
 
     if not students:
-        raise HTTPException(status_code=400, detail='No students provided')
+        return jsonify({'error': 'No students provided'}), 400
 
     if course_id and course_id not in COURSES:
-        raise HTTPException(status_code=400, detail=f'Unknown course: {course_id}')
+        return jsonify({'error': f'Unknown course: {course_id}'}), 400
 
     db = get_db()
     try:
+        # Get existing usernames for collision detection
         existing = db.execute('SELECT username FROM users').fetchall()
         existing_usernames = {row['username'] for row in existing}
 
+        # Track usernames generated in this batch
         batch_usernames = set()
         results = []
         errors = []
@@ -2537,16 +2504,19 @@ async def admin_bulk_register(request: Request, user: dict = Depends(require_ins
                 errors.append(f'Row {i+1}: Missing name or email')
                 continue
 
+            # Generate username: first initial + last name
             parts = name.split()
             if len(parts) < 2:
                 errors.append(f'Row {i+1}: Need first and last name for "{name}"')
                 continue
 
             first_initial = parts[0][0].lower()
-            last_name = parts[-1].lower()
+            last_name = parts[-1].lower()  # Use last word for multi-word names
+            # Keep hyphens but remove other non-alphanumeric chars
             last_name = re.sub(r'[^a-z0-9\-]', '', last_name)
             base_username = first_initial + last_name
 
+            # Resolve collisions against existing DB users and current batch
             username = base_username
             counter = 1
             while username in existing_usernames or username in batch_usernames:
@@ -2555,6 +2525,7 @@ async def admin_bulk_register(request: Request, user: dict = Depends(require_ins
 
             batch_usernames.add(username)
 
+            # Generate random password
             password = secrets.token_urlsafe(10)[:10]
 
             try:
@@ -2564,38 +2535,41 @@ async def admin_bulk_register(request: Request, user: dict = Depends(require_ins
                      expires_at if expires_at else None, password)
                 )
 
+                # Get the new user ID
                 user_row = db.execute('SELECT id FROM users WHERE username = ?', (username,)).fetchone()
-                new_user_id = user_row['id']
+                user_id = user_row['id']
 
-                user_workspace = os.path.join(WORKSPACES_DIR, str(new_user_id))
+                # Create workspace
+                user_workspace = os.path.join(WORKSPACES_DIR, str(user_id))
                 os.makedirs(user_workspace, exist_ok=True)
 
+                # Enroll in course if specified
                 if course_id:
                     try:
                         db.execute(
                             'INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)',
-                            (new_user_id, course_id)
+                            (user_id, course_id)
                         )
                     except sqlite3.IntegrityError:
-                        pass
+                        pass  # Already enrolled
 
                 results.append({
                     'username': username,
                     'password': password,
                     'full_name': name,
                     'email': email,
-                    'user_id': new_user_id
+                    'user_id': user_id
                 })
-            except sqlite3.IntegrityError:
+            except sqlite3.IntegrityError as e:
                 errors.append(f'Row {i+1}: Email "{email}" already exists')
 
         db.commit()
-        return {
+        return jsonify({
             'created': results,
             'errors': errors,
             'total_created': len(results),
             'total_errors': len(errors)
-        }
+        })
     finally:
         db.close()
 
@@ -2603,8 +2577,9 @@ async def admin_bulk_register(request: Request, user: dict = Depends(require_ins
 # Course Roster & Instructor Assignment Routes
 # ============================================================================
 
-@app.get('/api/admin/course/{course_id}/enrollments')
-def get_course_enrollments(course_id: str, user: dict = Depends(require_instructor)):
+@app.route('/api/admin/course/<course_id>/enrollments')
+@instructor_required
+def get_course_enrollments(course_id):
     """Get enrolled students for a course"""
     db = get_db()
     rows = db.execute('''
@@ -2616,50 +2591,52 @@ def get_course_enrollments(course_id: str, user: dict = Depends(require_instruct
         ORDER BY u.full_name
     ''', (course_id,)).fetchall()
     db.close()
-    return [dict(r) for r in rows]
+    return jsonify([dict(r) for r in rows])
 
-@app.delete('/api/admin/enrollment/{enrollment_id}')
-def delete_enrollment(enrollment_id: int, user: dict = Depends(require_instructor)):
-    """Remove a student enrollment"""
+@app.route('/api/admin/enrollment/<int:enrollment_id>', methods=['DELETE'])
+@instructor_required
+def delete_enrollment(enrollment_id):
+    """Remove a student enrollment (does not delete the user account)"""
     db = get_db()
     row = db.execute('SELECT id FROM enrollments WHERE id = ?', (enrollment_id,)).fetchone()
     if not row:
         db.close()
-        raise HTTPException(status_code=404, detail='Enrollment not found')
+        return jsonify({'error': 'Enrollment not found'}), 404
     db.execute('DELETE FROM enrollments WHERE id = ?', (enrollment_id,))
     db.commit()
     db.close()
-    return {'success': True}
+    return jsonify({'success': True})
 
-@app.post('/api/admin/enroll-existing')
-async def enroll_existing_student(request: Request, user: dict = Depends(require_instructor)):
+@app.route('/api/admin/enroll-existing', methods=['POST'])
+@instructor_required
+def enroll_existing_student():
     """Enroll an existing user by username or email"""
-    data = await request.json()
+    data = request.get_json()
     course_id = data.get('course_id', '').strip()
     identifier = data.get('identifier', '').strip()
     if not course_id or not identifier:
-        raise HTTPException(status_code=400, detail='course_id and identifier are required')
+        return jsonify({'error': 'course_id and identifier are required'}), 400
 
     db = get_db()
-    found_user = db.execute(
+    user = db.execute(
         'SELECT id, username, full_name, email FROM users WHERE username = ? OR email = ?',
         (identifier, identifier)
     ).fetchone()
-    if not found_user:
+    if not user:
         db.close()
-        raise HTTPException(status_code=404, detail=f'No user found matching "{identifier}"')
+        return jsonify({'error': f'No user found matching "{identifier}"'}), 404
 
     try:
-        db.execute('INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)', (found_user['id'], course_id))
+        db.execute('INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)', (user['id'], course_id))
         db.commit()
     except sqlite3.IntegrityError:
         db.close()
-        raise HTTPException(status_code=409, detail=f'{found_user["username"]} is already enrolled in this course')
+        return jsonify({'error': f'{user["username"]} is already enrolled in this course'}), 409
     db.close()
-    return {'success': True, 'username': found_user['username'], 'full_name': found_user['full_name']}
+    return jsonify({'success': True, 'username': user['username'], 'full_name': user['full_name']})
 
-@app.get('/api/course/{course_id}/instructors')
-def get_course_instructors(course_id: str):
+@app.route('/api/course/<course_id>/instructors')
+def get_course_instructors(course_id):
     """Public endpoint — get assigned instructors for a course"""
     db = get_db()
     rows = db.execute('''
@@ -2670,78 +2647,84 @@ def get_course_instructors(course_id: str):
         ORDER BY u.full_name
     ''', (course_id,)).fetchall()
     db.close()
-    return [dict(r) for r in rows]
+    return jsonify([dict(r) for r in rows])
 
-@app.post('/api/admin/course-instructors')
-async def assign_course_instructor(request: Request, user: dict = Depends(require_instructor)):
+@app.route('/api/admin/course-instructors', methods=['POST'])
+@instructor_required
+def assign_course_instructor():
     """Assign an instructor to a course"""
-    data = await request.json()
+    data = request.get_json()
     course_id = data.get('course_id', '').strip()
-    target_user_id = data.get('user_id')
-    if not course_id or not target_user_id:
-        raise HTTPException(status_code=400, detail='course_id and user_id are required')
+    user_id = data.get('user_id')
+    if not course_id or not user_id:
+        return jsonify({'error': 'course_id and user_id are required'}), 400
 
     db = get_db()
-    found_user = db.execute('SELECT id, role FROM users WHERE id = ?', (target_user_id,)).fetchone()
-    if not found_user or found_user['role'] not in ('instructor', 'admin'):
+    user = db.execute('SELECT id, role FROM users WHERE id = ?', (user_id,)).fetchone()
+    if not user or user['role'] not in ('instructor', 'admin'):
         db.close()
-        raise HTTPException(status_code=400, detail='User is not an instructor')
+        return jsonify({'error': 'User is not an instructor'}), 400
 
     try:
-        db.execute('INSERT INTO course_instructors (user_id, course_id) VALUES (?, ?)', (target_user_id, course_id))
+        db.execute('INSERT INTO course_instructors (user_id, course_id) VALUES (?, ?)', (user_id, course_id))
         db.commit()
     except sqlite3.IntegrityError:
         db.close()
-        raise HTTPException(status_code=409, detail='Instructor already assigned to this course')
+        return jsonify({'error': 'Instructor already assigned to this course'}), 409
     db.close()
-    return {'success': True}
+    return jsonify({'success': True})
 
-@app.delete('/api/admin/course-instructor/{assignment_id}')
-def remove_course_instructor(assignment_id: int, user: dict = Depends(require_instructor)):
+@app.route('/api/admin/course-instructor/<int:assignment_id>', methods=['DELETE'])
+@instructor_required
+def remove_course_instructor(assignment_id):
     """Remove an instructor assignment from a course"""
     db = get_db()
     row = db.execute('SELECT id FROM course_instructors WHERE id = ?', (assignment_id,)).fetchone()
     if not row:
         db.close()
-        raise HTTPException(status_code=404, detail='Assignment not found')
+        return jsonify({'error': 'Assignment not found'}), 404
     db.execute('DELETE FROM course_instructors WHERE id = ?', (assignment_id,))
     db.commit()
     db.close()
-    return {'success': True}
+    return jsonify({'success': True})
 
 # ============================================================================
 # Poll Routes
 # ============================================================================
 
-@app.post('/api/poll/{poll_id}/submit')
-async def submit_poll_response(poll_id: str, request: Request):
+@app.route('/api/poll/<poll_id>/submit', methods=['POST'])
+def submit_poll_response(poll_id):
     """Submit a poll response (no auth required for anonymous polls)"""
+    import re
     if not re.match(r'^[\w\-]+$', poll_id):
-        raise HTTPException(status_code=400, detail='Invalid poll ID')
+        return jsonify({'error': 'Invalid poll ID'}), 400
 
-    data = await request.json()
+    data = request.get_json()
     if not data:
-        raise HTTPException(status_code=400, detail='No data provided')
+        return jsonify({'error': 'No data provided'}), 400
 
     session_id = data.get('session_id', '')
     technical_level = data.get('technical_level', '')
     use_cases = data.get('use_cases', [])
     ai_tools = data.get('ai_tools', [])
 
-    # Validate technical_level
+    # Validate technical_level (allow "other" or "other: text")
     valid_levels = ['none', 'beginner', 'intermediate', 'advanced', 'expert']
     if technical_level not in valid_levels and not technical_level.startswith('other'):
-        raise HTTPException(status_code=400, detail='Invalid technical level')
+        return jsonify({'error': 'Invalid technical level'}), 400
+    # Limit length of "other" text
     if len(technical_level) > 200:
         technical_level = technical_level[:200]
 
+    # Validate use_cases (list of strings)
     if not isinstance(use_cases, list):
-        raise HTTPException(status_code=400, detail='use_cases must be a list')
-    use_cases_str = ','.join([str(u)[:50] for u in use_cases[:20]])
+        return jsonify({'error': 'use_cases must be a list'}), 400
+    use_cases_str = ','.join([str(u)[:50] for u in use_cases[:20]])  # Limit
 
+    # Validate ai_tools (list of strings)
     if not isinstance(ai_tools, list):
-        raise HTTPException(status_code=400, detail='ai_tools must be a list')
-    ai_tools_str = ','.join([str(t)[:50] for t in ai_tools[:20]])
+        return jsonify({'error': 'ai_tools must be a list'}), 400
+    ai_tools_str = ','.join([str(t)[:50] for t in ai_tools[:20]])  # Limit
 
     db = get_db()
     db.execute(
@@ -2752,13 +2735,14 @@ async def submit_poll_response(poll_id: str, request: Request):
     db.commit()
     db.close()
 
-    return {'message': 'Response submitted successfully'}
+    return jsonify({'message': 'Response submitted successfully'})
 
-@app.get('/api/poll/{poll_id}/results')
-def get_poll_results(poll_id: str):
+@app.route('/api/poll/<poll_id>/results')
+def get_poll_results(poll_id):
     """Get aggregated poll results"""
+    import re
     if not re.match(r'^[\w\-]+$', poll_id):
-        raise HTTPException(status_code=400, detail='Invalid poll ID')
+        return jsonify({'error': 'Invalid poll ID'}), 400
 
     db = get_db()
     responses = db.execute(
@@ -2767,6 +2751,7 @@ def get_poll_results(poll_id: str):
     ).fetchall()
     db.close()
 
+    # Aggregate results
     technical_counts = {'none': 0, 'beginner': 0, 'intermediate': 0, 'advanced': 0, 'expert': 0}
     use_case_counts = {}
     tool_counts = {}
@@ -2777,6 +2762,7 @@ def get_poll_results(poll_id: str):
         if level in technical_counts:
             technical_counts[level] += 1
 
+        # Aggregate use cases
         use_cases = r['use_cases'].split(',') if r.get('use_cases') else []
         for use_case in use_cases:
             use_case = use_case.strip()
@@ -2789,56 +2775,62 @@ def get_poll_results(poll_id: str):
             if tool:
                 tool_counts[tool] = tool_counts.get(tool, 0) + 1
 
-    return {
+    return jsonify({
         'total_responses': total,
         'technical_levels': technical_counts,
         'use_cases': use_case_counts,
         'ai_tools': tool_counts,
-        'responses': [dict(r) for r in responses]
-    }
+        'responses': [dict(r) for r in responses]  # Individual responses for review
+    })
 
-@app.post('/api/poll/{poll_id}/clear')
-def clear_poll_responses(poll_id: str, user: dict = Depends(require_instructor)):
+@app.route('/api/poll/<poll_id>/clear', methods=['POST'])
+@instructor_required
+def clear_poll_responses(poll_id):
     """Clear all responses for a poll (instructor only)"""
+    import re
     if not re.match(r'^[\w\-]+$', poll_id):
-        raise HTTPException(status_code=400, detail='Invalid poll ID')
+        return jsonify({'error': 'Invalid poll ID'}), 400
 
     db = get_db()
     db.execute('DELETE FROM poll_responses WHERE poll_id = ?', (poll_id,))
     db.commit()
     db.close()
 
-    return {'message': 'Poll responses cleared'}
+    return jsonify({'message': 'Poll responses cleared'})
 
 # ============================================================================
-# Static Files & SPA Catch-all
+# Background Account Cleanup
 # ============================================================================
 
-# Mount static files
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+import threading
 
-@app.get('/{path:path}')
-def serve_spa(path: str):
-    """Serve SPA frontend"""
-    static_folder = os.path.join(BASE_DIR, 'static')
-    if path and os.path.exists(os.path.join(static_folder, path)):
-        return FileResponse(os.path.join(static_folder, path))
-    index_path = os.path.join(static_folder, 'index.html')
-    response = FileResponse(index_path, media_type='text/html')
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
+def periodic_cleanup():
+    """Run expired account cleanup every 30 minutes"""
+    with app.app_context():
+        try:
+            count = cleanup_expired_accounts()
+            if count > 0:
+                app.logger.info(f"Periodic cleanup: removed {count} expired account(s)")
+        except Exception as e:
+            app.logger.error(f"Periodic cleanup error: {e}")
+    # Schedule next run in 30 minutes
+    timer = threading.Timer(1800, periodic_cleanup)
+    timer.daemon = True
+    timer.start()
 
 # ============================================================================
 # Main
 # ============================================================================
 
 if __name__ == '__main__':
-    import uvicorn
+    # Start periodic cleanup (first run after 60 seconds, then every 30 min)
+    cleanup_timer = threading.Timer(60, periodic_cleanup)
+    cleanup_timer.daemon = True
+    cleanup_timer.start()
+
     print("=" * 60)
     print("  Course Material Viewer - Multi-tenant Platform")
     print("  Running on http://0.0.0.0:4050")
     print("  For HTTPS, use: ./run.sh (starts gunicorn with SSL)")
     print("=" * 60)
-    uvicorn.run(app, host='0.0.0.0', port=4050)
+    app.run(host='0.0.0.0', port=4050, debug=True)

@@ -26,7 +26,7 @@ if [ ! -f cert.pem ] || [ ! -f key.pem ]; then
     bash generate_cert.sh
 fi
 
-# Run the app with gunicorn + SSL
+# Run the app with gunicorn + uvicorn workers (ASGI) + SSL
 echo ""
 if [ -f cert.pem ] && [ -f key.pem ]; then
     echo "Starting server on https://0.0.0.0:4050"
@@ -34,7 +34,7 @@ if [ -f cert.pem ] && [ -f key.pem ]; then
     echo ""
     exec gunicorn --bind 0.0.0.0:4050 \
         --workers 4 \
-        --threads 2 \
+        --worker-class uvicorn.workers.UvicornWorker \
         --certfile cert.pem \
         --keyfile key.pem \
         app:app
@@ -45,6 +45,6 @@ else
     echo ""
     exec gunicorn --bind 0.0.0.0:4050 \
         --workers 4 \
-        --threads 2 \
+        --worker-class uvicorn.workers.UvicornWorker \
         app:app
 fi

@@ -1646,6 +1646,14 @@
 
         const icons = { slides: '📊', demo: '🎮', lab: '🧪', notes: '📝' };
 
+        // JWT token helper — replaces credentials: 'include' 
+        function authFetch(url, options = {}) {
+            const token = localStorage.getItem('token');
+            const headers = { ...(options.headers || {}) };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            return fetch(url, { ...options, headers });
+        }
+
         // Auth Modal
         function AuthModal({ onLogin, onSkip }) {
             const [mode, setMode] = useState('login');
@@ -1664,9 +1672,9 @@
                 const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
                 const body = mode === 'login' ? { username, password } : { username, email, password, full_name: fullName };
                 try {
-                    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(body) });
+                    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                     const data = await res.json();
-                    if (res.ok) onLogin(data.user);
+                    if (res.ok) { if (data.token) localStorage.setItem('token', data.token); onLogin(data.user); }
                     else if (res.status === 403 && data.error && data.error.includes('expired')) {
                         // Account expired — continue as guest
                         onSkip();
@@ -1748,7 +1756,7 @@
 
             // Fetch all instructor accounts on mount
             useEffect(() => {
-                fetch('/api/admin/users', { credentials: 'include' })
+                authFetch('/api/admin/users')
                     .then(res => res.json())
                     .then(users => setAllInstructors(users.filter(u => u.role === 'instructor' || u.role === 'admin')))
                     .catch(() => {});
@@ -1758,7 +1766,7 @@
             const fetchRoster = (cid) => {
                 if (!cid) { setRoster([]); return; }
                 setRosterLoading(true);
-                fetch(`/api/admin/course/${cid}/enrollments`, { credentials: 'include' })
+                authFetch(`/api/admin/course/${cid}/enrollments`)
                     .then(res => res.json())
                     .then(data => { setRoster(data); setRosterLoading(false); })
                     .catch(() => { setRoster([]); setRosterLoading(false); });
@@ -1778,7 +1786,7 @@
                     setRosterLoading(true);
                     setAddStudentError('');
                     Promise.all([
-                        fetch(`/api/admin/course/${courseId}/enrollments`, { credentials: 'include' }).then(r => r.json()),
+                        authFetch(`/api/admin/course/${courseId}/enrollments`).then(r => r.json()),
                         fetch(`/api/course/${courseId}/instructors`).then(r => r.json())
                     ]).then(([rosterData, instrData]) => {
                         if (!cancelled) {
@@ -1845,10 +1853,9 @@
                 setAdminLoading(true);
                 setError('');
                 try {
-                    const res = await fetch('/api/admin/bulk-register', {
+                    const res = await authFetch('/api/admin/bulk-register', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify({
                             students: preview.filter(s => s.username !== '(invalid name)').map(s => ({ name: s.name, email: s.email })),
                             course_id: courseId,
@@ -1880,8 +1887,8 @@
             const handleDeleteEnrollment = async (enrollmentId, username) => {
                 if (!confirm(`Remove ${username} from this course? (Their account will not be deleted.)`)) return;
                 try {
-                    const res = await fetch(`/api/admin/enrollment/${enrollmentId}`, {
-                        method: 'DELETE', credentials: 'include'
+                    const res = await authFetch(`/api/admin/enrollment/${enrollmentId}`, {
+                        method: 'DELETE'
                     });
                     if (res.ok) fetchRoster(courseId);
                 } catch (err) {}
@@ -1892,10 +1899,9 @@
                 if (!addStudentId.trim() || !courseId) return;
                 setAddStudentError('');
                 try {
-                    const res = await fetch('/api/admin/enroll-existing', {
+                    const res = await authFetch('/api/admin/enroll-existing', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify({ course_id: courseId, identifier: addStudentId.trim() })
                     });
                     const data = await res.json();
@@ -1911,10 +1917,9 @@
             const handleAssignInstructor = async () => {
                 if (!assignInstructorId || !courseId) return;
                 try {
-                    const res = await fetch('/api/admin/course-instructors', {
+                    const res = await authFetch('/api/admin/course-instructors', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify({ course_id: courseId, user_id: parseInt(assignInstructorId) })
                     });
                     if (res.ok) {
@@ -1926,8 +1931,8 @@
 
             const handleRemoveInstructor = async (assignmentId) => {
                 try {
-                    const res = await fetch(`/api/admin/course-instructor/${assignmentId}`, {
-                        method: 'DELETE', credentials: 'include'
+                    const res = await authFetch(`/api/admin/course-instructor/${assignmentId}`, {
+                        method: 'DELETE'
                     });
                     if (res.ok) fetchCourseInstructors(courseId);
                 } catch (err) {}
@@ -2388,7 +2393,7 @@
             }, [showAIPanel]);
 
             useEffect(() => {
-                fetch(`/api/lab/${labId}/notebook`, { credentials: 'include' })
+                authFetch(`/api/lab/${labId}/notebook`)
                     .then(res => res.json())
                     .then(data => {
                         setNotebook(data);
@@ -2421,10 +2426,9 @@
                             };
                             initPyodide();
                         } else {
-                            fetch('/api/kernel/start', {
+                            authFetch('/api/kernel/start', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                credentials: 'include',
                                 body: JSON.stringify({ lab_id: labId })
                             }).then(() => setStatus('ready')).catch(() => setStatus('error'));
                         }
@@ -2676,10 +2680,9 @@
                         const stdout = pyodide.runPython('sys.stdout.getvalue()');
                         setOutputs(prev => ({ ...prev, [idx]: { output: stdout || (result !== undefined ? String(result) : ''), error: false } }));
                     } else {
-                        const res = await fetch('/api/kernel/execute', {
+                        const res = await authFetch('/api/kernel/execute', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
                             body: JSON.stringify({ lab_id: labId, code })
                         });
                         const data = await res.json();
@@ -2810,10 +2813,9 @@
                     setNotebook(nb);
                 }
                 try {
-                    await fetch(`/api/lab/${labId}/save`, {
+                    await authFetch(`/api/lab/${labId}/save`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify(nb)
                     });
                     setDirty(false);
@@ -2822,10 +2824,9 @@
 
             const saveNotebookAs = async (newName) => {
                 try {
-                    await fetch(`/api/lab/${newName}/save`, {
+                    await authFetch(`/api/lab/${newName}/save`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify(notebook)
                     });
                     setShowSaveAs(false);
@@ -2846,10 +2847,9 @@
                     } catch { setStatus('error'); }
                 } else {
                     try {
-                        await fetch('/api/kernel/restart', {
+                        await authFetch('/api/kernel/restart', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
                             body: JSON.stringify({ lab_id: labId })
                         });
                         setStatus('ready');
@@ -2871,10 +2871,9 @@
                     } catch { setStatus('error'); }
                 } else {
                     try {
-                        await fetch('/api/kernel/start', {
+                        await authFetch('/api/kernel/start', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
                             body: JSON.stringify({ lab_id: labId })
                         });
                         setStatus('ready');
@@ -2889,10 +2888,9 @@
                 setAiLoading(true);
                 setAiResponse('');
                 try {
-                    const res = await fetch('/api/openai/chat', {
+                    const res = await authFetch('/api/openai/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify({
                             model: aiModel,
                             messages: [{ role: 'user', content: prompt }]
@@ -3035,10 +3033,9 @@
                     }
 
                     // Call GPT API
-                    const res = await fetch('/api/openai/chat', {
+                    const res = await authFetch('/api/openai/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
                         body: JSON.stringify({
                             model: aiModel,
                             messages: [
@@ -3648,7 +3645,7 @@
             };
 
             useEffect(() => {
-                fetch('/api/auth/me', { credentials: 'include' })
+                authFetch('/api/auth/me')
                     .then(res => res.json())
                     .then(data => { if (data.user) setUser(data.user); setAuthChecked(true); })
                     .catch(() => setAuthChecked(true));
@@ -3680,7 +3677,7 @@
             useEffect(() => {
                 if (selectedCourse && user) {
                     setNotEnrolled(false);
-                    fetch(`/api/course/${selectedCourse.id}/materials`, { credentials: 'include' })
+                    authFetch(`/api/course/${selectedCourse.id}/materials`)
                         .then(res => {
                             if (res.status === 403) {
                                 return res.json().then(data => {
@@ -3767,14 +3764,15 @@
             }, [courses, categories]);
 
             const handleLogout = async () => {
-                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                await authFetch('/api/auth/logout', { method: 'POST' });
+                localStorage.removeItem('token');
                 setUser(null);
             };
 
             const handleItemClick = async (item) => {
                 if (item.runnable && item.type === 'lab') {
                     if (!user) { setShowAuth(true); return; }
-                    await fetch(`/api/lab/${item.id}/start`, { method: 'POST', credentials: 'include' });
+                    await authFetch(`/api/lab/${item.id}/start`, { method: 'POST' });
                     setRunningLab(item.id);
                     setSelectedItem(null);
                 } else if (item.external) {

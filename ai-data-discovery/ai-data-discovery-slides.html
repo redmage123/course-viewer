@@ -11,6 +11,12 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100%;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
@@ -20,14 +26,11 @@
         }
 
         .slide {
-            display: none;
+            display: block;
             min-height: 100vh;
             padding: 40px 60px;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .slide.active {
-            display: block;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
         }
 
         @keyframes fadeIn {
@@ -280,6 +283,7 @@
         .code-block code {
             color: #e2e8f0;
             line-height: 1.6;
+            white-space: pre;
         }
 
         .keyword { color: #c792ea; }
@@ -1849,76 +1853,66 @@ doc = nlp(text)
     </div>
 
     <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
         let currentSlide = 1;
-        const totalSlides = 30;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
 
         function getVisibleSlide() {
-            const slides = document.querySelectorAll('.slide');
-            const viewportCenter = window.scrollY + window.innerHeight / 2;
-            let closestSlide = 1;
-            let closestDistance = Infinity;
-
-            slides.forEach((slide, index) => {
-                const rect = slide.getBoundingClientRect();
-                const slideCenter = window.scrollY + rect.top + rect.height / 2;
-                const distance = Math.abs(viewportCenter - slideCenter);
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestSlide = index + 1;
+            let closest = 0;
+            let closestDist = Infinity;
+            slides.forEach((slide, i) => {
+                const dist = Math.abs(slide.getBoundingClientRect().top);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = i;
                 }
             });
-            return closestSlide;
+            return closest + 1;
         }
 
-        function showSlide(n) {
-            const slides = document.querySelectorAll('.slide');
-
-            if (n > totalSlides) currentSlide = 1;
-            if (n < 1) currentSlide = totalSlides;
-
-            slides.forEach(slide => slide.classList.remove('active'));
-            slides[currentSlide - 1].classList.add('active');
-
-            // Scroll to the slide
-            slides[currentSlide - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
-
+        function updateCounter(n) {
+            if (n !== undefined) currentSlide = n;
+            else currentSlide = getVisibleSlide();
             document.getElementById('currentSlide').textContent = currentSlide;
             document.getElementById('prevBtn').disabled = currentSlide === 1;
             document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
         }
 
-        function changeSlide(direction) {
-            // Sync with visible slide before changing
-            currentSlide = getVisibleSlide();
-            currentSlide += direction;
-            showSlide(currentSlide);
+        function goToSlide(n) {
+            if (n < 1) n = 1;
+            if (n > totalSlides) n = totalSlides;
+            currentSlide = n;
+            updateCounter(n);
+            slides[n - 1].scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Update counter on scroll
+        function changeSlide(direction) {
+            currentSlide = getVisibleSlide();
+            goToSlide(currentSlide + direction);
+        }
+
+        // Update counter on scroll (for manual scroll / mouse wheel)
         let scrollTimeout;
         window.addEventListener('scroll', () => {
             clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                const visible = getVisibleSlide();
-                document.getElementById('currentSlide').textContent = visible;
-                document.getElementById('prevBtn').disabled = visible === 1;
-                document.getElementById('nextBtn').disabled = visible === totalSlides;
-            }, 100);
-        });
+            scrollTimeout = setTimeout(() => updateCounter(), 150);
+        }, true);
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
                 e.preventDefault();
                 changeSlide(1);
-            } else if (e.key === 'ArrowLeft') {
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
                 e.preventDefault();
                 changeSlide(-1);
             }
         });
 
         // Initialize
-        showSlide(currentSlide);
+        updateCounter();
     </script>
 </body>
 </html>
